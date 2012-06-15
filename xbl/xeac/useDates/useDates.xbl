@@ -1,0 +1,88 @@
+<xbl:xbl xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:xforms="http://www.w3.org/2002/xforms" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:xxforms="http://orbeon.org/oxf/xml/xforms"
+	xmlns:xbl="http://www.w3.org/ns/xbl" xmlns:xxbl="http://orbeon.org/oxf/xml/xbl" xmlns:xeac="https://github.com/ewg118/xEAC" xmlns:eac="urn:isbn:1-931666-33-4" xmlns="urn:isbn:1-931666-33-4">
+	<xbl:binding id="xeac-useDates" element="xeac|useDates">
+		<xbl:template>
+			<xforms:group xbl:attr="model context ref bind" xxbl:scope="outer">
+				<xbl:content includes="xforms|label,xforms|help,xforms|hint,xforms|alert"/>
+				<xforms:group xxbl:scope="inner">
+					<xxforms:variable name="binding" as="node()?">
+						<xxforms:sequence select="." xxbl:scope="outer"/>
+					</xxforms:variable>
+					<xxforms:variable name="display_path">../../../</xxforms:variable>
+
+					<xforms:group ref="$binding">
+						<div class="subsection">
+							<h4>Use Dates</h4>
+							<xforms:trigger appearance="minimal">
+								<xforms:delete ev:event="DOMActivate" nodeset="."/>
+								<xforms:label>
+									<xhtml:img src="/apps/xeac/images/remove.gif"/>
+								</xforms:label>
+							</xforms:trigger>
+
+							<div class="trigger_container">
+								<xforms:group ref=".[count(eac:date) = 0 and count(eac:dateRange) = 0 and count(eac:dateSet) = 0]">
+									<xforms:trigger appearance="minimal">
+										<xforms:label>
+											<img src="{$display_path}images/add.gif"/>Date</xforms:label>
+										<xforms:action ev:event="DOMActivate">
+											<xforms:insert context="." origin="instance('date-template')"/>
+										</xforms:action>
+									</xforms:trigger>
+									<xforms:trigger appearance="minimal">
+										<xforms:label>
+											<img src="{$display_path}images/add.gif"/>Date Range</xforms:label>
+										<xforms:action ev:event="DOMActivate">
+											<xforms:insert context="." origin="instance('dateRange-template')"/>
+										</xforms:action>
+									</xforms:trigger>
+									<xforms:trigger appearance="minimal">
+										<xforms:label>
+											<img src="{$display_path}images/add.gif"/>Date Set</xforms:label>
+										<xforms:action ev:event="DOMActivate">
+											<xforms:insert context="." origin="instance('dateSet-template')"/>
+										</xforms:action>
+									</xforms:trigger>
+								</xforms:group>
+							</div>
+
+
+							<xforms:group ref="eac:date">
+								<xeac:date/>
+							</xforms:group>
+
+							<xforms:group ref="eac:dateRange">
+								<xeac:dateRange/>
+							</xforms:group>
+							
+							<xforms:group ref="eac:dateSet">
+								<xeac:dateSet/>
+							</xforms:group>
+						</div>
+					</xforms:group>
+
+
+
+					<!-- ********************************************************************** -->
+					<xforms:model id="useDates-model">
+						<xforms:instance id="date-template">
+							<date standardDate=""/>
+						</xforms:instance>
+
+						<xforms:instance id="dateRange-template">
+							<dateRange>
+								<fromDate standardDate=""/>
+								<toDate standardDate=""/>
+							</dateRange>
+						</xforms:instance>
+
+						<xforms:instance id="dateSet-template">
+							<dateSet/>
+						</xforms:instance>
+					</xforms:model>
+				</xforms:group>
+			</xforms:group>
+		</xbl:template>
+	</xbl:binding>
+
+</xbl:xbl>

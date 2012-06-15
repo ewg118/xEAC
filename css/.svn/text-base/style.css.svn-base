@@ -1,0 +1,783 @@
+/*
+  ****************************************
+  GLOBAL
+  ****************************************
+ */
+html {
+	font-size:13px;
+	font-family:arial, helvetica, sans-serif;
+	background-color:silver;
+}
+#bd {
+	padding:5px;
+	background-color:white;
+}
+#doc4 {
+	border:1px solid gray;
+}
+h1 {
+	margin:0
+}
+#form h1,#form h2, #form h3, #form h4,#form h5,#form h6 {
+	display:inline;
+}
+#form ul li {
+	list-style-type:none;
+}
+.ui-multiselect-menu ul li {
+	list-style-type:none;
+}
+.ui-widget {
+	font-size:12px;
+}
+.ui-selectmenu {
+	float:left;
+}
+a:link {
+	color:#8BADCF;
+	text-decoration:none;
+}
+a:visited {
+	color:#8BADCF;
+	text-decoration:none;
+}
+a:hover {
+	color: #627eb7;
+}
+#linked_data a {
+	margin:5px;
+}
+/*
+  ***************************************
+  HEADER
+  ***************************************
+ */
+#banner {
+	background-color: #ebebeb;
+}
+#hd .align-left {
+	text-align:left;
+}
+#hd .align-right {
+	text-align:right;
+}
+#hd .align-center {
+	text-align:center;
+}
+.banner_text {
+	padding:20px;
+	font-size:24px;
+	font-weight:bold;
+	letter-spacing:4px;
+}
+/*
+  ***************************************
+  FOOTER
+  ***************************************
+ */
+#ft {
+	padding:10px 0;
+	text-align:center;
+	background-color:#ebebeb;
+	width:100%;
+}
+/*
+  ****************************************
+  ADMIN PAGE
+  ****************************************
+ */
+.page_toc {
+	font-size:12px;
+}
+.browse_table {
+	width:100%;
+}
+.odd-row {
+	background-color:white;
+	margin:10px 0;
+	padding:10px 0;
+	vertical-align:top;
+}
+.even-row {
+	background-color:#EFEFEF;
+	margin:10px 0;
+	padding:10px 0px;
+	vertical-align:top;
+}
+.center {
+	text-align:center;
+}
+.expand {
+	margin-left:25px;
+	font-size:12px;
+	color:#8BADCF;
+	cursor:pointer;
+	text-decoration:underline;
+}
+.reorder {
+	margin-left:25px;
+	font-size:12px;
+	color:#8BADCF;
+	text-decoration:underline;
+}
+.content {
+	width:75%;
+	float:left;
+}
+.content ul {
+	list-style-type:none;
+}
+/*
+  ****************************************
+  TEST PAGE
+  ****************************************
+ */
+ .error-table{
+ 	width:100%;
+ }
+.error-table td{
+	padding:5px;
+	border:0;
+}
+.error-table th{
+	border:0;	
+}
+.indicator{
+	width:5%;
+	text-align:center;
+}
+.test-success {
+	background-color:#47e547;
+}
+.test-fail {
+	background-color:red;
+}
+/*
+  ****************************************
+  FORM LAYOUT
+  ****************************************
+ */
+.submission {
+	text-align:center;
+	margin:10px 0;
+}
+.xforms-submit {
+	margin-left:10px;
+	margin-right:10px;
+}
+.navigation {
+	width:190px;
+	float:left;
+}
+#expand_components, #refresh {
+	cursor:pointer;
+	color:#8BADCF
+}
+#expand_components:hover, #refresh:hover {
+	cursor:pointer;
+	color:#627eb7;
+}
+#nav_list ul {
+	margin-left:15px;
+	padding:0;
+}
+#nav_list ul li {
+	list-style-type:none;
+}
+.list-hidden {
+	display:none;
+}
+.pair_div {
+	width:80%;
+	border:1px solid silver;
+	margin-bottom:2px;
+	display:table;
+	padding:2px;
+}
+/*
+  .xforms-group>div{
+  display:table;
+  }
+ */
+.section>div {
+	display:table;
+	width:100%;
+}
+.section {
+	margin-bottom:25px;
+	width:100%;
+}
+.subsection {
+	padding:10px 0 10px 25px;
+	width:95%;
+}
+/*
+  ****************************************
+  ORBEON XFORM SPECIFIC STYLE
+  ****************************************
+ */
+.xforms-label {
+	float:left;
+	width:10em;
+}
+.xforms-textarea-appearance-xxforms-autosize {
+	width: 30em;
+	margin-bottom: 2px;
+}
+.xforms-input input, .fr-autocomplete-search input {
+	width: 30em;
+	margin-bottom: 2px;
+}
+textarea{
+	width: 30em;
+	margin-bottom: 2px;
+	height:15em;
+}
+.xbl-fr-autocomplete .yui-ac {
+	position:relative;
+	float:left;
+}
+.xforms-select1 {
+	margin-bottom: 2px;
+	max-width:30em;
+}
+.xforms-select1 input {
+	margin-bottom: 2px
+}
+.xforms-submit img {
+	vertical-align: middle
+}
+.xforms-trigger-appearance-minimal img {
+	vertical-align: middle
+}
+.xforms-control {
+	margin-right: 10px;
+}
+.xforms-output {
+	margin:0;
+}
+.xforms-trigger {
+	text-decoration:none;
+}
+.xforms-repeat-selected-item-1, .xforms-repeat-selected-item-2, .xforms-repeat-selected-item-3, .xforms-repeat-selected-item-4 {
+	background:inherit;
+}
+.widget-tab-panel {
+	padding-top: 1em;
+}
+.widget-tabs-panel {
+	border:0;
+	padding:20px;
+}
+.fr-autocomplete-container .yui-ac-content {
+	overflow-x: hidden;
+	overflow-y: auto;
+	*height:expression(this.scrollHeight>100?"100px":"auto");
+	width:30em;
+}
+.yui-skin-sam .yui-ac-container {
+	position:relative;
+	top:0;
+	width:30em;
+	margin-right:1em;
+}
+.xbl-fr-autocomplete {
+	width:35em;
+}
+.xbl-fr-autocomplete .yui-ac {
+	position:relative;
+	float:left;
+}
+.xbl-fr-autocomplete .xforms-input-input {
+	width:30em;
+	margin-bottom:2px;
+}
+.yui-editor-editable-container {
+	height:100px;
+}
+.xforms-repeat-selected-item-2 {
+	background:none;
+}
+.yui-dialog {
+	width:600px;
+}
+.xxforms-dialog-body>a, .xxforms-dialog-body>span {
+	width:100px;
+}
+.xbl-eaditor-generic-elements, .xbl-eaditor-access-elements, .xbl-eaditor-attributes {
+	display:inline;
+	width:1em;
+}
+.attr-output {
+	color:silver;
+}
+.success {
+	width:50%;
+	padding:10px;
+	border:1px solid #3c803c;
+	margin:0 auto;
+	background-color:#47e547;
+	color:#3c803c;
+}
+.warning {
+	padding:25px;
+	margin:10px;
+	background-color:#ef8700;
+	border:2px solid #b76e0e;
+}
+.ui-state-error, .ui-state-highlight {
+	padding: 0pt 0.7em;
+	margin:20px auto;
+	width:400px;
+	font-size:12px;
+}
+/*
+  ****************************************
+  EAD DISPLAY STYLING
+  ****************************************
+ */
+#titlepage {
+	text-align:center;
+	margin-bottom:25px;
+	padding-bottom:25px;
+	border-bottom:1px solid silver;
+}
+#archdesc-did {
+	margin-bottom:25px;
+}
+#archdesc-info {
+	margin-bottom:25px;
+	padding-bottom:25px;
+	border-bottom:1px solid silver;
+}
+.toc_ul {
+	margin:0 0 0 1em;
+}
+.toc_ul li {
+	list-style-type:none;
+}
+#dsc-toc li {
+	list-style-type:circle;
+}
+.archdesc-did-elements {
+	display:table;
+	width:100%;
+}
+.archdesc-did-elements dt {
+	float:left;
+	width:200px;
+	margin-right:25px;
+	text-align:right;
+}
+.archdesc-did-elements dd {
+	margin-left:225px;
+}
+.c-did-elements {
+	margin:0.5em 0 0.5em 10px;
+}
+.c-did-elements dt {
+	float:left;
+	width:100px;
+	font-weight:normal;
+}
+.c-did-elements dd {
+	margin-left:125px;
+}
+#dsc-list li {
+	list-style-type:none;
+}
+div.ctop {
+	margin-bottom:25px;
+	padding-bottom:25px;
+	border-bottom:1px solid silver;
+	display:table;
+	width:100%;
+}
+div.cchild {
+	margin-left:25px;
+	margin-bottom:10px;
+	display:table;
+	width:95%;
+}
+div.container {
+	float:right;
+	color:gray;
+	width:20%;
+}
+.con1 {
+	width:80%;
+	float:left;
+}
+.clevel {
+	margin-left:10px;
+}
+.cchild p {
+	margin:0 0 5px 0;
+	padding:0px;
+}
+.external_link {
+	margin-left:10px;
+}
+/*
+  ****************************************
+  CONTROLLED VOCABULARY MANAGEMENT
+  ****************************************
+ */
+.term_results {
+	background-color:#EFEFEF;
+	border:1px solid silver;
+	padding:5px;
+	margin:20px;
+}
+/*
+  ****************************************
+  SEARCH/BROWSE RESULTS PAGE
+  ****************************************
+ */
+.flickr-link {
+	cursor:pointer;
+}
+#search_options {
+	display:block;
+	width:100%;
+}
+.result_div {
+	display:table;
+	padding:20px 0 20px 0;
+	border-bottom:1px dotted silver;
+	margin-bottom:20px;
+	width:100%;
+}
+.result_info {
+	margin-left:25px;
+	width:60%;
+	float:left;
+}
+.result_info dt {
+	float:left;
+	width:150px;
+}
+.result_info dd {
+	margin-left:150px;
+}
+.flickr-link {
+	cursor:pointer;
+}
+.search_forms {
+	display:table;
+	width:100%;
+	padding:5px;
+}
+.option_container {
+	width:225px;
+	margin-left:20px;
+	margin-right:20px;
+}
+.option_container>.ui-selectmenu {
+	margin-left:20px;
+}
+.category_list {
+	width:175px;
+	margin-left:0px;
+	margin-right:0px;
+}
+.search_text {
+	width:175px;
+	padding:0.3em 1em;
+	border:1px solid silver;
+	font-size:14px;
+}
+.year_int {
+	width:30px;
+	margin-left:0px;
+	margin-right:5px;
+}
+.year_era {
+	width:55px;
+	margin-right:5px;
+	margin-left:0px;
+}
+.year_range {
+	margin-left:15px;
+	margin-right:5px;
+	width:101px;
+}
+#removeBtn_1 {
+	display:none;
+}
+#searchItemTemplate {
+	display:none;
+}
+.searchItemTemplate {
+	padding:5px 0;
+	margin:10px 0;
+}
+button.ui-multiselect {
+	margin-bottom:10px;
+}
+.submit_div {
+	text-align:center;
+}
+.stacked_term {
+	margin:5px 0;
+}
+.remove_filter {
+	float:right;
+}
+/* Quick Search */
+.quick_search {
+	margin:5px 0;
+	padding:5px 0;
+	border-bottom:1px solid silver;
+	border-top:1px solid silver;
+}
+#qs_text {
+	width:100px;
+	border:1px solid silver;
+	padding:2px;
+}
+#qs_button {
+	float:right;
+}
+/* Date (century/decade) facet styling */
+.date-div {
+	margin-top:-10px;
+}
+.century-multiselect-checkboxes {
+	display:table;
+	width:100%;
+}
+.decades-list {
+	margin:0 0 0 25px;
+}
+.close {
+	float:right;
+	text-decoration:underline;
+	padding-right:10px;
+}
+.close:hover {
+	font-weight:bold;
+	cursor:pointer;
+}
+#backgroundPopup {
+	display:none;
+	position:fixed;
+	_position:absolute;
+/* hack for internet explorer 6 */
+	height:100%;
+	width:100%;
+	top:0;
+	left:0;
+	z-index:2001;
+/*
+  background-color:black;
+  opacity:0.6;
+ */
+}
+/*
+  ****************************************
+  PAGINATION
+  ****************************************
+ */
+.paging_div {
+	width:100%;
+	display:table;
+	padding-top:10px;
+	padding-bottom:10px;
+}
+.pagingBtn, .pagingSep {
+	padding:2px;
+	text-decoration:none;
+}
+.pagingBtn {
+	font-weight:bold;
+}
+.pagingBtn:hover {
+	background-color:#DDDDDD;
+	text-decoration:underline;
+}
+/*
+  ***************************************
+  MAPS
+  ***************************************
+ */
+#basicMap {
+	width:100%;
+	height:400px;
+	margin:0;
+}
+#resultMap {
+	width:600px;
+	height:400px;
+}
+#clear_results {
+	font-size:80%;
+	margin-left:25px;
+}
+#map_results {
+	font-size:11px;
+	margin-left:20px;
+}
+.ui-tabs .ui-tabs-hide {
+	position: absolute;
+	left: -10000px;
+}
+.departments {
+	margin:10px 0px;
+}
+.departments>input {
+	vertical-align:bottom;
+}
+/*
+  .olLayerGoogleCopyright {
+  top:-1000px;
+  }
+ */
+/*
+  ***************************************
+  MAPS PAGE FACET/SEARCH RESULTS STYLING
+  ***************************************
+ */
+#filter_list li {
+	list-style-type:none;
+}
+#add_filter {
+	font-weight:bold;
+	font-size:120%;
+	text-transform:capitalize;
+}
+#add_filter:first-letter {
+	font-size:140%;
+}
+.g_doc {
+	width:33%;
+	float:left;
+	height:325px;
+}
+.ci_c {
+	width:160px;
+	height:120px;
+	background-color:silver;
+	border:1px solid gray;
+	margin:5px;
+	text-align:center;
+}
+.ci {
+	max-width:250px;
+	max-height:150px;
+}
+.filter_facet {
+	width:12%;
+	float:left;
+	padding:2px;
+	margin:2px 2px;
+	z-index:0;
+	background-color:#D9D4C8;
+	border:1px solid #C2B9A9;
+	cursor:pointer;
+}
+.filter_facet_selected {
+	width:12%;
+	float:left;
+	padding:2px;
+	margin:2px 2px;
+	z-index:0;
+	background-color:#C2B9A9;
+	border:1px solid #C2B9A9;
+	cursor:pointer;
+}
+.filter_facet:hover {
+	color:gray;
+}
+.filter_heading {
+	width:100%;
+}
+.filter_terms {
+	position:absolute;
+	z-index:2002;
+	width:200px;
+	padding:3px;
+	margin:0;
+}
+li.term {
+	margin:2px 0;
+	display:table;
+	width:100%;
+}
+.fn {
+	float:left;
+	width:75%;
+}
+.ft {
+	float:left;
+	width:25%;
+	text-align:right;
+}
+.fn span, .category_term, .clear_terms, .ft span {
+	color:blue;
+}
+.fn span:hover, .category_term:hover, .clear_terms:hover {
+	color:#B5121B;
+	cursor:pointer;
+}
+.get_facets, .hide_facets {
+	float:right;
+	padding-right:5px;
+}
+.facet_list {
+	text-align:left;
+	font-weight:normal;
+	background:none repeat scroll 0 0 #D9D4C8;
+	overflow:auto;
+	z-index:2002;
+}
+.facet_list_expanded {
+	width:500px;
+	max-height:400px;
+	border:1px solid #C2B9A9;
+	z-index:2002;
+	position:absolute;
+}
+.facet_list_expanded li.term {
+	width:400px;
+	padding-left:50px;
+}
+.hidden {
+	display:none
+}
+/*
+  ***************************************
+  jQuery UI Menubar @VERSION
+  ***************************************
+  * Copyright 2011, AUTHORS.txt (http://jqueryui.com/about)
+  * Dual licensed under the MIT or GPL Version 2 licenses.
+  * http://jquery.org/license
+ */
+.ui-menubar {
+	list-style: none;
+	margin: 0;
+	padding-left: 0;
+	border-left:0px;
+	border-right:0px;
+}
+.ui-menubar-item {
+	float: left;
+	list-style-type:none;
+}
+.ui-menubar .ui-button {
+	float: left;
+	font-weight: normal;
+	border-top-width: 0 !important;
+	border-bottom-width: 0 !important;
+	margin: 0;
+	outline: none;
+}
+.ui-menubar .ui-menubar-link {
+	border-right: 1px dashed transparent;
+	border-left: 1px dashed transparent;
+}
+.ui-menubar .ui-menu {
+	width: 200px;
+	position: absolute;
+	z-index: 9999;
+}

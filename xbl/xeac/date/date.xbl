@@ -1,0 +1,37 @@
+<xbl:xbl xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:xforms="http://www.w3.org/2002/xforms" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:xxforms="http://orbeon.org/oxf/xml/xforms"
+	xmlns:xbl="http://www.w3.org/ns/xbl" xmlns:xxbl="http://orbeon.org/oxf/xml/xbl" xmlns:xeac="https://github.com/ewg118/xEAC" xmlns:eac="urn:isbn:1-931666-33-4" xmlns="urn:isbn:1-931666-33-4">
+	<xbl:binding id="xeac-date" element="xeac|date">
+		<xbl:template>
+			<xforms:group xbl:attr="model context ref bind" xxbl:scope="outer">
+				<xbl:content includes="xforms|label,xforms|help,xforms|hint,xforms|alert"/>
+				<xforms:group xxbl:scope="inner">
+					<xxforms:variable name="binding" as="node()?">
+						<xxforms:sequence select="." xxbl:scope="outer"/>
+					</xxforms:variable>
+					<xxforms:variable name="display_path">../../../</xxforms:variable>
+
+					<xforms:group ref="$binding">
+						<div>
+							<xforms:input ref="@standardDate">
+								<xforms:label>Date - Standard</xforms:label>
+								<xforms:alert>Required; must meet ISO specification</xforms:alert>								
+							</xforms:input>
+							<xforms:trigger appearance="minimal">
+								<xforms:delete ev:event="DOMActivate" nodeset="."/>
+								<xforms:label>
+									<xhtml:img src="/apps/xeac/images/remove.gif"/>
+								</xforms:label>
+							</xforms:trigger>
+						</div>
+						<!--<div>
+							<xforms:output ref=".">
+								<xforms:label>Date - Textual</xforms:label>
+							</xforms:output>
+						</div>-->
+					</xforms:group>
+				</xforms:group>
+			</xforms:group>
+		</xbl:template>
+	</xbl:binding>
+
+</xbl:xbl>

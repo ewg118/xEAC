@@ -1,0 +1,65 @@
+<xbl:xbl xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:xforms="http://www.w3.org/2002/xforms" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:xxforms="http://orbeon.org/oxf/xml/xforms"
+	xmlns:xbl="http://www.w3.org/ns/xbl" xmlns:xxbl="http://orbeon.org/oxf/xml/xbl" xmlns:xeac="https://github.com/ewg118/xEAC" xmlns:eac="urn:isbn:1-931666-33-4" xmlns="urn:isbn:1-931666-33-4">
+	<xbl:binding id="xeac-dateSet" element="xeac|dateSet">
+		<xbl:template>
+			<xforms:group xbl:attr="model context ref bind" xxbl:scope="outer">
+				<xbl:content includes="xforms|label,xforms|help,xforms|hint,xforms|alert"/>
+				<xforms:group xxbl:scope="inner">
+					<xxforms:variable name="binding" as="node()?">
+						<xxforms:sequence select="." xxbl:scope="outer"/>
+					</xxforms:variable>
+					<xxforms:variable name="display_path">../../../</xxforms:variable>
+
+					<xforms:group ref="$binding">
+						<h4>Date Set</h4>
+						<xforms:trigger appearance="minimal">
+							<xforms:delete ev:event="DOMActivate" nodeset="."/>
+							<xforms:label>
+								<xhtml:img src="/apps/xeac/images/remove.gif"/>
+							</xforms:label>
+						</xforms:trigger>
+						<div class="trigger_container">
+							<xforms:trigger appearance="minimal">
+								<xforms:label>
+									<img src="{$display_path}images/add.gif"/>Date</xforms:label>
+								<xforms:action ev:event="DOMActivate">
+									<xforms:insert context="." origin="instance('date-template')" nodeset="./child::node()[last()]"/>
+								</xforms:action>
+							</xforms:trigger>
+							<xforms:trigger appearance="minimal">
+								<xforms:label>
+									<img src="{$display_path}images/add.gif"/>Date Range</xforms:label>
+								<xforms:action ev:event="DOMActivate">
+									<xforms:insert context="." origin="instance('dateRange-template')" nodeset="./child::node()[last()]"/>
+								</xforms:action>
+							</xforms:trigger>
+						</div>
+						
+						<xforms:repeat nodeset="eac:date|eac:dateRange">
+							<xforms:group ref=".[local-name()='date']">
+								<xeac:date/>
+							</xforms:group>
+							<xforms:group ref=".[local-name()='dateRange']">
+								<xeac:dateRange/>
+							</xforms:group>
+						</xforms:repeat>			
+					</xforms:group>
+
+					<xforms:model id="dateSet-model">
+						<xforms:instance id="date-template">
+							<date standardDate=""/>
+						</xforms:instance>
+
+						<xforms:instance id="dateRange-template">
+							<dateRange>
+								<fromDate standardDate=""/>
+								<toDate standardDate=""/>
+							</dateRange>
+						</xforms:instance>
+					</xforms:model>
+				</xforms:group>
+			</xforms:group>
+		</xbl:template>
+	</xbl:binding>
+
+</xbl:xbl>

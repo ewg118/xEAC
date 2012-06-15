@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Copyright (C) 2007 Orbeon, Inc.
+
+    This program is free software; you can redistribute it and/or modify it under the terms of the
+    GNU Lesser General Public License as published by the Free Software Foundation; either version
+    2.1 of the License, or (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+    without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+    See the GNU Lesser General Public License for more details.
+
+    The full text of the license is available at http://www.gnu.org/copyleft/lesser.html
+-->
+<config xmlns="http://www.orbeon.com/oxf/controller" xmlns:oxf="http://www.orbeon.com/oxf/processors">
+
+	<!-- ****************
+	* ADMIN INTERFACE *
+	***************** -->
+	<page path-info="/xeac/admin/edit/eac/" view="eac.xhtml"/>
+	
+
+	<!-- ****************
+	* PUBLIC INTERFACE *
+	***************** -->
+	<!-- public xml view (internal elements supressed) -->
+	<page path-info="/xeac/xml/(.*)" matcher="oxf:perl5-matcher" view="xpl/xml-public.xpl"/>
+
+	<!-- public html view -->
+	<page path-info="/xeac/show/(.*)" matcher="oxf:perl5-matcher" model="xpl/xml-public.xpl" view="xpl/display.xpl"/>
+
+	<!-- solr doc service -->
+	<page path-info="/xeac/solr/(.*)" matcher="oxf:perl5-matcher" model="exist-url.xml" view="xpl/ead-publish.xpl"/>
+
+	<!-- index -->
+	<page path-info="/xeac/" model="exist-url.xml" view="xpl/index.xpl"/>
+
+	<!-- public search/browse interface -->
+	<page path-info="/xeac/results/" model="exist-url.xml" view="xpl/results.xpl"/>
+	<page path-info="/xeac/search/" model="exist-url.xml" view="xpl/search.xpl"/>
+	
+	<!-- Atom feed -->
+	<page path-info="/xeac/feed/" model="exist-url.xml" view="xpl/feed.xpl"/>
+
+	<epilogue url="oxf:/config/epilogue.xpl"/>
+</config>

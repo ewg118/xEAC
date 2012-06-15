@@ -1,0 +1,184 @@
+<xbl:xbl xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:xforms="http://www.w3.org/2002/xforms" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:xxforms="http://orbeon.org/oxf/xml/xforms"
+	xmlns:xbl="http://www.w3.org/ns/xbl" xmlns:xxbl="http://orbeon.org/oxf/xml/xbl" xmlns:xeac="https://github.com/ewg118/xEAC" xmlns:eac="urn:isbn:1-931666-33-4" xmlns="urn:isbn:1-931666-33-4">
+	<xbl:binding id="xeac-nameEntry" element="xeac|nameEntry">
+		<xbl:template>
+			<xforms:group xbl:attr="model context ref bind" xxbl:scope="outer">
+				<xbl:content includes="xforms|label,xforms|help,xforms|hint,xforms|alert"/>
+				<xforms:group xxbl:scope="inner">
+					<xxforms:variable name="binding" as="node()?">
+						<xxforms:sequence select="." xxbl:scope="outer"/>
+					</xxforms:variable>
+					<xxforms:variable name="display_path">../../../</xxforms:variable>
+
+					<xforms:group ref="$binding">
+						<div class="subsection">
+							<h3>Name Entry</h3>
+							<span class="add">
+								<xforms:trigger appearance="minimal">
+									<xforms:label>
+										<xhtml:img src="{$display_path}images/add.gif"/>
+									</xforms:label>
+									<xxforms:show ev:event="DOMActivate" dialog="nameEntry-objects"/>
+								</xforms:trigger>
+							</span>
+							<xforms:group ref=".[count(parent::node()/eac:nameEntry) &gt; 1 or count(parent::node()/eac:nameEntryParallel) &gt; 1]">
+								<xforms:trigger appearance="minimal">
+									<xforms:delete ev:event="DOMActivate" nodeset="."/>
+									<xforms:label>
+										<xhtml:img src="/apps/xeac/images/remove.gif"/>
+									</xforms:label>
+								</xforms:trigger>
+							</xforms:group>
+							<xxforms:dialog id="nameEntry-objects" appearance="full" level="modal" close="true" draggable="true" visible="false">
+								<xforms:label>Name Entry Objects</xforms:label>
+								<xforms:trigger appearance="minimal">
+									<xforms:label>
+										<img src="{$display_path}images/add.gif"/>Part</xforms:label>
+									<xforms:action ev:event="DOMActivate">
+										<xforms:insert context="." origin="instance('part-template')" nodeset="eac:part" position="after"/>
+										<xxforms:hide dialog="nameEntry-objects"/>
+									</xforms:action>
+								</xforms:trigger>
+								<xforms:group ref=".[not(parent::eac:nameEntryParallel)]">
+									<xforms:group ref=".[count(eac:authorizedForm) = 0]">
+										<xforms:trigger appearance="minimal">
+											<xforms:label>
+												<img src="{$display_path}images/add.gif"/>Authorized Form</xforms:label>
+											<xforms:action ev:event="DOMActivate">
+												<xforms:insert context="." origin="instance('authorizedForm-template')" nodeset="./child::node()[last()]"/>
+												<xxforms:hide dialog="nameEntry-objects"/>
+											</xforms:action>
+											
+										</xforms:trigger>
+									</xforms:group>
+									<xforms:group ref=".[count(eac:alternativeForm) = 0]">
+										<xforms:trigger appearance="minimal">
+											<xforms:label>
+												<img src="{$display_path}images/add.gif"/>Alternative Form</xforms:label>
+											<xforms:action ev:event="DOMActivate">
+												<xforms:insert context="." origin="instance('alternativeForm-template')" nodeset="./child::node()[last()]"/>
+												<xxforms:hide dialog="nameEntry-objects"/>
+											</xforms:action>											
+										</xforms:trigger>
+									</xforms:group>
+								</xforms:group>
+								<xforms:group ref=".[count(eac:preferredForm) = 0]">
+									<xforms:trigger appearance="minimal">
+										<xforms:label>
+											<img src="{$display_path}images/add.gif"/>Preferred Form</xforms:label>										
+										<xforms:action ev:event="DOMActivate">
+											<xforms:insert context="." origin="instance('preferredForm-template')" nodeset="./child::node()[last()]"/>
+											<xxforms:hide dialog="nameEntry-objects"/>
+										</xforms:action>
+									</xforms:trigger>
+								</xforms:group>
+								<xforms:group ref=".[count(eac:useDates) = 0]">
+									<xforms:trigger appearance="minimal">
+										<xforms:label>
+											<img src="{$display_path}images/add.gif"/>Use Dates</xforms:label>
+										<xforms:action ev:event="DOMActivate">
+											<xforms:insert context="." origin="instance('useDates-template')" nodeset="./child::node()[last()]"/>
+											<xxforms:hide dialog="nameEntry-objects"/>
+										</xforms:action>										
+									</xforms:trigger>
+								</xforms:group>
+							</xxforms:dialog>
+
+							<xforms:repeat nodeset="eac:part">
+								<div>
+									<xforms:input ref=".">
+										<xforms:label>Part</xforms:label>
+										<xforms:alert>Required</xforms:alert>
+									</xforms:input>
+									<xforms:group ref=".[count(parent::eac:nameEntry/eac:part) &gt; 1]">
+										<xforms:trigger appearance="minimal">
+											<xforms:delete ev:event="DOMActivate" nodeset="."/>
+											<xforms:label>
+												<xhtml:img src="/apps/xeac/images/remove.gif"/>
+											</xforms:label>
+										</xforms:trigger>
+									</xforms:group>
+								</div>
+							</xforms:repeat>
+
+							<xforms:group ref="eac:authorizedForm">
+								<div>
+									<xforms:input ref=".">
+										<xforms:label>Authorized Form</xforms:label>
+										<xforms:alert>Required</xforms:alert>
+									</xforms:input>
+									<xforms:trigger appearance="minimal">
+										<xforms:delete ev:event="DOMActivate" nodeset="."/>
+										<xforms:label>
+											<xhtml:img src="/apps/xeac/images/remove.gif"/>
+										</xforms:label>
+									</xforms:trigger>
+								</div>
+							</xforms:group>
+
+							<xforms:group ref="eac:alternativeForm">
+								<div>
+									<xforms:input ref=".">
+										<xforms:label>Alternative Form</xforms:label>
+										<xforms:alert>Required</xforms:alert>
+									</xforms:input>
+									<xforms:trigger appearance="minimal">
+										<xforms:delete ev:event="DOMActivate" nodeset="."/>
+										<xforms:label>
+											<xhtml:img src="/apps/xeac/images/remove.gif"/>
+										</xforms:label>
+									</xforms:trigger>
+								</div>
+							</xforms:group>
+
+							<xforms:group ref="eac:preferredForm">
+								<div>
+									<xforms:input ref=".">
+										<xforms:label>Preferred Form</xforms:label>
+										<xforms:alert>Required</xforms:alert>
+									</xforms:input>
+									<xforms:trigger appearance="minimal">
+										<xforms:delete ev:event="DOMActivate" nodeset="."/>
+										<xforms:label>
+											<xhtml:img src="/apps/xeac/images/remove.gif"/>
+										</xforms:label>
+									</xforms:trigger>
+								</div>
+							</xforms:group>
+							
+							<xforms:group ref="eac:useDates">
+								<xeac:useDates/>
+							</xforms:group>
+						</div>
+					</xforms:group>
+
+
+
+					<!-- ********************************************************************** -->
+					<xforms:model id="nameEntry-model">
+						<xforms:instance id="part-template">
+							<part/>
+						</xforms:instance>
+
+						<xforms:instance id="authorizedForm-template">
+							<authorizedForm/>
+						</xforms:instance>
+
+						<xforms:instance id="alternativeForm-template">
+							<alternativeForm/>
+						</xforms:instance>
+
+						<xforms:instance id="preferredForm-template">
+							<preferredForm/>
+						</xforms:instance>
+
+						<xforms:instance id="useDates-template">
+							<useDates/>
+						</xforms:instance>
+					</xforms:model>
+				</xforms:group>
+			</xforms:group>
+		</xbl:template>
+	</xbl:binding>
+
+</xbl:xbl>
