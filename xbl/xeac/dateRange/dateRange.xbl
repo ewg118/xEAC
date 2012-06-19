@@ -8,7 +8,7 @@
 					<xxforms:variable name="binding" as="node()?">
 						<xxforms:sequence select="." xxbl:scope="outer"/>
 					</xxforms:variable>
-					<xxforms:variable name="display_path">../../../</xxforms:variable>
+					<xxforms:variable name="display_path">../../</xxforms:variable>
 
 					<xforms:group ref="$binding">
 						<h4>Date Range</h4>

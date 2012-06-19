@@ -1,0 +1,312 @@
+<xbl:xbl xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:xforms="http://www.w3.org/2002/xforms" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:xxforms="http://orbeon.org/oxf/xml/xforms"
+	xmlns:fr="http://orbeon.org/oxf/xml/form-runner" xmlns:xbl="http://www.w3.org/ns/xbl" xmlns:xxbl="http://orbeon.org/oxf/xml/xbl" xmlns:xeac="https://github.com/ewg118/xEAC"
+	xmlns:eac="urn:isbn:1-931666-33-4" xmlns="urn:isbn:1-931666-33-4">
+	<xbl:binding id="xeac-placeEntry" element="xeac|placeEntry">
+		<xbl:template>
+			<xforms:group xbl:attr="model context ref bind" xxbl:scope="outer">
+				<xbl:content includes="xforms|label,xforms|help,xforms|hint,xforms|alert"/>
+				<xforms:group xxbl:scope="inner">
+					<xxforms:variable name="binding" as="node()?">
+						<xxforms:sequence select="." xxbl:scope="outer"/>
+					</xxforms:variable>
+					<xxforms:variable name="display_path">../../</xxforms:variable>
+					<xforms:action ev:event="xforms-enabled" ev:target="#observer">
+						<xforms:send submission="load-config"/>
+						<xforms:action if="string($binding/@vocabularySource)">
+							<xforms:setvalue ref="instance('interface-type')" value="'geonames'"/>
+						</xforms:action>
+						<xforms:action if="not($binding/@vocabularySource) and string($binding/text())">
+							<xforms:setvalue ref="instance('interface-type')" value="'local'"/>
+						</xforms:action>
+						<xforms:action if="not($binding/@vocabularySource) and not(string($binding/text()))">							
+							<xforms:setvalue ref="instance('interface-type')" value="'geonames'"/>
+						</xforms:action>
+					</xforms:action>
+					<xforms:group ref="$binding">
+						<xforms:group ref=".[string(text())]">
+							<xhtml:div>
+								<xforms:output ref=".">
+									<xforms:label>Location</xforms:label>
+								</xforms:output>
+								<xforms:group ref=".[string(@vocabularySource)]">
+									<xforms:trigger appearance="xxforms:link">
+										<xforms:label>
+											<img src="{$display_path}images/external.png"/>
+										</xforms:label>
+										<xforms:load ev:event="DOMActivate" show="new" ref="@vocabularySource"/>
+									</xforms:trigger>
+								</xforms:group>
+								<xforms:trigger appearance="minimal">
+									<xforms:action ev:event="DOMActivate">
+										<!-- delete all holdover values before removing bind, possible orbeon bug -->
+										<xforms:setvalue ref="instance('temp')"/>
+										<xforms:setvalue ref="instance('temp')/@vocabularySource"/>
+										<xforms:delete context="instance('geonames')/*"/>
+										<xforms:delete context="instance('geoname-temp')/*"/>
+										<xforms:setvalue ref="instance('search-query')"/>
+										<xforms:delete nodeset="."/>
+									</xforms:action>
+									<xforms:label>
+										<xhtml:img src="{$display_path}images/remove.gif"/>
+									</xforms:label>
+								</xforms:trigger>
+							</xhtml:div>
+						</xforms:group>
+						<xforms:group ref=".[not(string(text()))]">
+							<h4>Place Entry</h4>
+							<xforms:trigger appearance="minimal">
+								<xforms:action ev:event="DOMActivate">									
+									<xforms:delete ev:event="DOMActivate" nodeset="."/>
+								</xforms:action>
+								<xforms:label>
+									<img src="{$display_path}images/remove.gif"/>
+								</xforms:label>
+							</xforms:trigger>
+
+							<div style="display:table;width:100%;">
+								<radiogroup>
+									<xforms:select1 ref="instance('interface-type')" appearance="full">
+										<xforms:label>Interface Type</xforms:label>
+										<xforms:item>
+											<xforms:label>Geonames</xforms:label>
+											<xforms:value>geonames</xforms:value>
+										</xforms:item>
+										<xforms:item>
+											<xforms:label>Local Vocabulary</xforms:label>
+											<xforms:value>local</xforms:value>
+										</xforms:item>
+										<xforms:action ev:event="xforms-value-changed">
+											<xforms:action if=". = 'geonames'">
+												<!-- remove temporary values, applicable when switching back to geonames from local -->
+												<xforms:delete context="instance('geonames')/*"/>
+												<xforms:setvalue ref="instance('search-query')"/>
+
+												<!-- create attributes, clear $binding text when applicable -->
+												<xforms:setvalue ref="$binding"/>
+												<xforms:insert context="$binding" origin="xxforms:attribute('vocabularySource', '')" if="not($binding/@vocabularySource)"/>
+												<xforms:toggle case="geonames-search"/>												
+											</xforms:action>
+											<xforms:action if=". = 'local'">
+												<!-- delete attributes, clear $binding text when applicable -->
+												<xforms:delete context="instance('geonames')/*"/>
+												<xforms:setvalue ref="$binding" if="not($binding/@vocabularySource)"/>
+												<xforms:delete context="$binding/@vocabularySource" if="$binding/@vocabularySource"/>												
+												<xforms:toggle case="local-input"/>
+											</xforms:action>
+										</xforms:action>
+									</xforms:select1>
+								</radiogroup>
+							</div>
+							<xforms:switch>
+								<xforms:case id="default"/>
+								<xforms:case id="geonames-search">
+									<div>
+										<xforms:input ref="instance('search-query')">
+											<xforms:label>Search</xforms:label>
+										</xforms:input>
+										<xforms:trigger>
+											<xforms:action ev:event="DOMActivate">
+												<xforms:delete context="instance('geonames')/*"/>
+												<xforms:send submission="query-geonames"/>
+											</xforms:action>
+											<xforms:label>Search</xforms:label>
+										</xforms:trigger>
+									</div>
+
+									<xforms:group ref=".[count(instance('geonames')//geoname) &gt; 0]">
+										<xforms:select1 ref="instance('temp')/@vocabularySource" appearance="compact" id="geonames-list">
+											<xforms:label>Location</xforms:label>
+											<xforms:itemset nodeset="instance('geonames')//geoname">
+												<xforms:label ref="label"/>
+												<xforms:value ref="geonameId"/>
+											</xforms:itemset>
+										</xforms:select1>
+										<xforms:trigger>
+											<xforms:label>Select</xforms:label>
+											<xforms:action ev:event="DOMActivate">
+												<xforms:setvalue ref="$binding/@vocabularySource" value="concat('http://www.geonames.org/', instance('temp')/@vocabularySource, '/')"/>
+												<xforms:setvalue ref="$binding" value="instance('geonames')//geoname[contains(instance('temp')/@vocabularySource, geonameId)]/label"/>
+											</xforms:action>
+										</xforms:trigger>
+									</xforms:group>
+								</xforms:case>
+								<xforms:case id="local-input">
+									<div>
+										<xforms:input ref="instance('temp')" incremental="true">
+											<xforms:label>Location</xforms:label>
+										</xforms:input>
+										<xforms:group ref=".[string-length(instance('temp')) &gt; 0]">
+											<xforms:trigger>
+												<xforms:label>Select</xforms:label>
+												<xforms:action ev:event="DOMActivate">
+													<xforms:setvalue ref="$binding" value="instance('temp')"/>
+												</xforms:action>
+											</xforms:trigger>
+										</xforms:group>
+									</div>
+								</xforms:case>
+							</xforms:switch>
+						</xforms:group>
+					</xforms:group>
+					<!-- ********************************************************************** -->
+					<xforms:model id="placeEntry-model" xmlns:xi="http://www.w3.org/2001/XInclude">
+						<xforms:instance id="exist-url">
+							<xi:include href="../../../apps/xeac/exist-url.xml"/>
+						</xforms:instance>
+						<xforms:instance id="config">
+							<config xmlns=""/>
+						</xforms:instance>
+						<!-- temp instance used by both interfaces to avoid inconsistent referencing to $binding -->
+						<xforms:instance id="temp">
+							<temp vocabularySource="" xmlns=""/>
+						</xforms:instance>
+						<!-- instance of standard abbreviations for AACR2 Chapter 23 compliance-->
+						<xforms:instance id="abbreviations">
+							<abbreviations xmlns="">
+								<country code="US">
+									<place abbr="Ala.">Alabama</place>
+									<place abbr="Alaska">Alaska</place>
+									<place abbr="Ariz.">Arizona</place>
+									<place abbr="Ark.">Arkansas</place>
+									<place abbr="Calif.">California</place>
+									<place abbr="Colo.">Colorado</place>
+									<place abbr="Conn.">Connecticut</place>
+									<place abbr="Del.">Delaware</place>
+									<place abbr="D.C.">Washington, D.C.</place>
+									<place abbr="Fla.">Florida</place>
+									<place abbr="Ga.">Georgia</place>
+									<place abbr="Hawaii">Hawaii</place>
+									<place abbr="Idaho">Idaho</place>
+									<place abbr="Ill.">Illinois</place>
+									<place abbr="Ind.">Indiana</place>
+									<place abbr="Iowa">Iowa</place>
+									<place abbr="Kans.">Kansas</place>
+									<place abbr="Ky.">Kentucky</place>
+									<place abbr="La.">Louisiana</place>
+									<place abbr="Maine">Maine</place>
+									<place abbr="Md.">Maryland</place>
+									<place abbr="Mass.">Massachusetts</place>
+									<place abbr="Mich.">Michigan</place>
+									<place abbr="Minn.">Minnesota</place>
+									<place abbr="Miss.">Mississippi</place>
+									<place abbr="Mo.">Missouri</place>
+									<place abbr="Mont.">Montana</place>
+									<place abbr="Nebr.">Nebraska</place>
+									<place abbr="Nev.">Nevada</place>
+									<place abbr="N.H.">New Hampshire</place>
+									<place abbr="N.J.">New Jersey</place>
+									<place abbr="N.M.">New Mexico</place>
+									<place abbr="N.Y.">New York</place>
+									<place abbr="N.C.">North Carolina</place>
+									<place abbr="N.D.">North Dakota</place>
+									<place abbr="Ohio">Ohio</place>
+									<place abbr="Okla.">Oklahoma</place>
+									<place abbr="Oreg.">Oregon</place>
+									<place abbr="Pa.">Pennsylvania</place>
+									<place abbr="R.I.">Rhode Island</place>
+									<place abbr="S.C.">South Carolina</place>
+									<place abbr="S.D">South Dakota</place>
+									<place abbr="Tenn.">Tennessee</place>
+									<place abbr="Tex.">Texas</place>
+									<place abbr="Utah">Utah</place>
+									<place abbr="Vt.">Vermont</place>
+									<place abbr="Va.">Virginia</place>
+									<place abbr="Wash.">Washington</place>
+									<place abbr="W.Va.">West Virginia</place>
+									<place abbr="Wis.">Wisconsin</place>
+									<place abbr="Wyo.">Wyoming</place>
+									<place abbr="A.S.">American Samoa</place>
+									<place abbr="Guam">Guam</place>
+									<place abbr="M.P.">Northern Mariana Islands</place>
+									<place abbr="P.R.">Puerto Rico</place>
+									<place abbr="V.I.">U.S. Virgin Islands</place>
+								</country>
+								<country code="CA">
+									<place abbr="Alta.">Alberta</place>
+									<place abbr="B.C.">British Columbia</place>
+									<place abbr="Alta.">Manitoba</place>
+									<place abbr="Man.">Alberta</place>
+									<place abbr="N.B.">New Brunswick</place>
+									<place abbr="Nfld.">Newfoundland and Labrador</place>
+									<place abbr="N.W.T.">Northwest Territories</place>
+									<place abbr="N.S.">Nova Scotia</place>
+									<place abbr="NU">Nunavut</place>
+									<place abbr="Ont.">Ontario</place>
+									<place abbr="P.E.I.">Prince Edward Island</place>
+									<place abbr="Que.">Quebec</place>
+									<place abbr="Sask.">Saskatchewan</place>
+									<place abbr="Y.T.">Yukon</place>
+								</country>
+								<country code="AU">
+									<place abbr="A.C.T.">Australian Capital Territory</place>
+									<place abbr="J.B.T.">Jervis Bay Territory</place>
+									<place abbr="N.S.W.">New South Wales</place>
+									<place abbr="N.T.">Northern Territory</place>
+									<place abbr="Qld.">Queensland</place>
+									<place abbr="S.A.">South Australia</place>
+									<place abbr="Tas.">Tasmania</place>
+									<place abbr="Vic.">Victoria</place>
+									<place abbr="W.A.">Western Australia</place>
+								</country>
+							</abbreviations>
+						</xforms:instance>
+
+						<xforms:instance id="search-query">
+							<query/>
+						</xforms:instance>
+
+						<!-- geonames specific instances -->
+						<xforms:instance id="geoname-query-response">
+							<geoname/>
+						</xforms:instance>
+						<xforms:instance id="geoname-temp">
+							<geonames xmlns=""/>
+						</xforms:instance>
+						<xforms:instance id="geonameId">
+							<geonameId/>
+						</xforms:instance>
+						<xforms:instance id="geonames">
+							<geonames xmlns=""/>
+						</xforms:instance>
+						<xforms:instance id="geoname-template">
+							<geoname xmlns="">
+								<label/>
+								<geonameId/>
+							</geoname>
+						</xforms:instance>
+
+						<!-- mint type radio button -->
+						<xforms:instance id="interface-type">
+							<interface/>
+						</xforms:instance>
+
+						<xforms:submission id="load-config" serialization="none" method="get" action="{instance('exist-url')}xeac/config.xml" replace="instance" instance="config"/>
+
+						<!-- search for matching keywords -->
+						<xforms:submission id="query-geonames" serialization="none" method="get"
+							action="http://api.geonames.org/search?q={instance('search-query')}&amp;maxRows=100&amp;lang=en&amp;username={instance('config')/geonames_api_key}&amp;style=full&amp;minChars=2"
+							instance="geoname-temp" replace="instance">
+							<xforms:action ev:event="xforms-submit-done">
+								<xforms:message if="number(instance('geoname-temp')/totalResultsCount) = 0" level="modal">No results found for query.</xforms:message>
+								<!--<xforms:insert if="number(instance('geoname-temp')/totalResultsCount) &gt; 0" context="instance('geonames')" origin="instance('geoname-temp')"/>-->
+								<xforms:action xxforms:iterate="instance('geoname-temp')//geoname">
+									<xxforms:variable name="countryCode" select="countryCode"/>
+									<xxforms:variable name="countryName" select="countryName"/>
+									<xxforms:variable name="name" select="name"/>
+									<xxforms:variable name="adminName1" select="adminName1"/>
+									<xxforms:variable name="geonameId" select="geonameId"/>
+									<xxforms:variable name="fcode" select="fcode"/>
+									<!-- set a value equivalent to AACR2 standard for US, AU, CA, and GB.  This equation deviates from AACR2 for Malaysia since standard abbreviations for territories cannot be found -->
+									<xforms:setvalue ref="instance('geoname-template')/label"
+										value="if ($countryCode = 'US' or $countryCode = 'AU' or $countryCode = 'CA') then if ($fcode = 'ADM1') then $name else concat($name, ' (', instance('abbreviations')/country[@code=$countryCode]/place[. = $adminName1]/@abbr, ')') else if ($countryCode= 'GB') then  if ($fcode = 'ADM1') then $name else concat($name, ' (', $adminName1, ')') else if ($fcode = 'PCLI') then $name else concat($name, ' (', $countryName, ')')"/>
+									<xforms:setvalue ref="instance('geoname-template')/geonameId" value="$geonameId"/>
+									<xforms:insert context="instance('geonames')" origin="instance('geoname-template')" nodeset="./child::node()[last()]"/>
+								</xforms:action>
+							</xforms:action>
+						</xforms:submission>
+					</xforms:model>
+				</xforms:group>
+			</xforms:group>
+		</xbl:template>
+	</xbl:binding>
+</xbl:xbl>

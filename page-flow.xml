@@ -17,7 +17,7 @@
 	<!-- ****************
 	* ADMIN INTERFACE *
 	***************** -->
-	<page path-info="/xeac/admin/edit/eac/" view="eac.xhtml"/>
+	<page path-info="/xeac/admin/edit/" view="eac.xhtml"/>
 	
 
 	<!-- ****************

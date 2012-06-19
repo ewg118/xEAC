@@ -1,0 +1,78 @@
+<!-- Ethan Gruber, American Numismatic Society
+	Modification Date: June, 2012
+	Establish connection between an EAC-CPF record in xEAC to another record in xEAC -->
+<xbl:xbl xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:xforms="http://www.w3.org/2002/xforms" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:xxforms="http://orbeon.org/oxf/xml/xforms"
+	xmlns:exist="http://exist.sourceforge.net/NS/exist" xmlns:xbl="http://www.w3.org/ns/xbl" xmlns:xxbl="http://orbeon.org/oxf/xml/xbl" xmlns:xeac="https://github.com/ewg118/xEAC"
+	xmlns:fr="http://orbeon.org/oxf/xml/form-runner" xmlns:eac="urn:isbn:1-931666-33-4" xmlns="urn:isbn:1-931666-33-4">
+	<xbl:binding id="xeac-relation" element="xeac|relation">
+		<xbl:template>
+			<xforms:group xbl:attr="model context ref bind" xxbl:scope="outer">
+				<xbl:content includes="xforms|label,xforms|help,xforms|hint,xforms|alert"/>
+				<xforms:group xxbl:scope="inner">
+					<xxforms:variable name="binding" as="node()?">
+						<xxforms:sequence select="." xxbl:scope="outer"/>
+					</xxforms:variable>
+					<xforms:action ev:event="xforms-enabled" ev:target="#observer">
+						<xforms:send submission="load-config"/>						
+					</xforms:action>
+					<div>
+						<span class="add">
+							<xforms:trigger appearance="minimal">
+								<xforms:label>@</xforms:label>
+								<xforms:action ev:event="DOMActivate">
+									<xxforms:show dialog="relation-dialog"/>
+								</xforms:action>
+							</xforms:trigger>
+						</span>
+
+						<fr:xforms-inspector id="orbeon-xforms-inspector"/>
+					</div>
+
+
+
+					<xxforms:dialog id="relation-dialog" appearance="full" level="modal" close="true" draggable="true" visible="false">
+						<xforms:label>Establish Relationship</xforms:label>
+						<div>
+							<xforms:input ref="instance('solr-query')">
+								<xforms:label>Search</xforms:label>
+							</xforms:input>
+							<xforms:trigger>
+								<xforms:action ev:event="DOMActivate">
+									<!--<xforms:delete context="instance('eXist-result')/*"/>-->
+									<xforms:send submission="query-solr"/>
+								</xforms:action>
+								<xforms:label>Search</xforms:label>
+							</xforms:trigger>
+						</div>
+					</xxforms:dialog>
+
+					<!-- ***********************  INTERNAL MODEL *********************** -->
+					<xforms:model id="relation-model" xmlns:xi="http://www.w3.org/2001/XInclude">
+						<xforms:instance id="exist-url">
+							<xi:include href="../../../apps/xeac/exist-url.xml"/>
+						</xforms:instance>
+						<xforms:instance id="config">
+							<config xmlns=""/>
+						</xforms:instance>
+						
+						<xforms:instance id="solr-query">
+							<query/>
+						</xforms:instance>
+						
+						<!-- ***** SUBMISSIONS ***** -->
+						<xforms:submission id="load-config" serialization="none" method="get" action="{instance('exist-url')}xeac/config.xml" replace="instance" instance="config"/>
+
+						<xforms:submission id="query-solr" serialization="none" method="get"
+							action="{instance('config')/solr_all}select/?q={instance('solr-query')}&amp;rows=100"
+							replace="instance" instance="all-response">
+							<xforms:message ev:event="xforms-submit-error" level="modal">Solr is inaccessible. Please check Solr configuration.</xforms:message>
+							<!--<xforms:action ev:event="xforms-submit-done">
+								
+							</xforms:action>-->
+						</xforms:submission>
+					</xforms:model>
+				</xforms:group>
+			</xforms:group>
+		</xbl:template>
+	</xbl:binding>
+</xbl:xbl>
