@@ -9,12 +9,21 @@
 						<xxforms:sequence select="." xxbl:scope="outer"/>
 					</xxforms:variable>					
 
-					<div>
-						<xforms:input ref="$binding">
-							<xforms:label>Relation Entry</xforms:label>
-							<xforms:alert>Required</xforms:alert>
-						</xforms:input>
-					</div>
+					<xforms:group ref="$binding[string(parent::node()/@xlink:href)]">
+						<div>
+							<xforms:output ref="$binding">
+								<xforms:label>Relation Entry</xforms:label>								
+							</xforms:output>
+						</div>
+					</xforms:group>
+					<xforms:group ref="$binding[not(string(parent::node()/@xlink:href))]">
+						<div>
+							<xforms:input ref="$binding">
+								<xforms:label>Relation Entry</xforms:label>
+								<xforms:alert>Required</xforms:alert>
+							</xforms:input>
+						</div>
+					</xforms:group>					
 				</xforms:group>
 			</xforms:group>
 		</xbl:template>

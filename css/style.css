@@ -233,6 +233,13 @@ textarea{
 	margin-bottom: 2px;
 	height:15em;
 }
+.xxforms-dialog-body input, .xxforms-dialog-body select{
+	width: 20em;
+	margin-bottom: 2px;	
+}
+.xxforms-dialog-body {
+	text-align:left;
+}
 .xbl-fr-autocomplete .yui-ac {
 	position:relative;
 	float:left;

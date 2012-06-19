@@ -13,7 +13,7 @@
 						<xxforms:sequence select="." xxbl:scope="outer"/>
 					</xxforms:variable>
 					<xforms:action ev:event="xforms-enabled" ev:target="#observer">
-						<xforms:send submission="load-config"/>						
+						<xforms:send submission="load-config"/>
 					</xforms:action>
 					<div>
 						<span class="add">
@@ -30,7 +30,7 @@
 
 
 
-					<xxforms:dialog id="relation-dialog" appearance="full" level="modal" close="true" draggable="true" visible="false">
+					<xxforms:dialog id="relation-dialog" appearance="full" level="modal" close="false" draggable="true" visible="false">
 						<xforms:label>Establish Relationship</xforms:label>
 						<div>
 							<xforms:input ref="instance('solr-query')">
@@ -44,6 +44,93 @@
 								<xforms:label>Search</xforms:label>
 							</xforms:trigger>
 						</div>
+						<xforms:group ref=".[count(instance('response')//doc) &gt; 0]">
+							<div>
+								<xforms:select1 ref="instance('attributes')/attribute[@name='xlink:href']" appearance="compact">
+									<xforms:label>Name</xforms:label>
+									<xforms:itemset nodeset="instance('response')//doc">
+										<xforms:label ref="concat(str[@name='name'], ': (', str[@name='id'], ')')"/>
+										<xforms:value ref="str[@name='id']"/>
+									</xforms:itemset>
+									<xforms:action ev:event="xforms-value-changed">
+										<xforms:insert context="$binding" origin="xxforms:attribute('xlink:href', instance('attributes')/attribute[@name='xlink:href'])"
+											if="not(@xlink:href) and string-length(instance('attributes')/attribute[@name='xlink:href']) &gt; 0"/>
+										<xforms:setvalue ref="$binding/eac:relationEntry" value="instance('response')//doc[str[@name='id'] = $binding/@xlink:href]/str[@name='name']"/>										
+									</xforms:action>
+								</xforms:select1>
+								<xforms:group ref=".[string-length(instance('attributes')/attribute[@name='xlink:href']) &gt; 0]">
+									<xforms:trigger>
+										<xforms:action ev:event="DOMActivate">
+											<xforms:delete context="$binding" nodeset="@xlink:href"/>	
+											<xforms:setvalue ref="instance('attributes')/attribute[@name='xlink:href']"/>											
+										</xforms:action>
+										<xforms:label>Clear Selection</xforms:label>
+									</xforms:trigger>
+								</xforms:group>
+							</div>
+						</xforms:group>
+						<div>
+							<xforms:select1 ref="instance('attributes')/attribute[@name='cpfRelationType']">
+								<xforms:label>CPF Relation Type</xforms:label>
+								<xforms:item>
+									<xforms:label>Select...</xforms:label>
+									<xforms:value/>
+								</xforms:item>
+								<xforms:itemset nodeset="instance('cpfRelationType-list')/item">
+									<xforms:label ref="."/>
+									<xforms:value ref="."/>
+								</xforms:itemset>
+								<xforms:action ev:event="xforms-value-changed">
+									<xforms:insert context="$binding" origin="xxforms:attribute('cpfRelationType', instance('attributes')/attribute[@name='cpfRelationType'])"
+										if="not(@cpfRelationType) and string-length(instance('attributes')/attribute[@name='cpfRelationType']) &gt; 0"/>
+									<xforms:delete if="string-length(instance('attributes')/attribute[@name='cpfRelationType']) = 0" context="$binding" nodeset="@cpfRelationType"/>
+								</xforms:action>
+							</xforms:select1>
+						</div>
+						<div>
+							<xforms:select1 ref="instance('attributes')/attribute[@name='xlink:arcrole']">
+								<xforms:label>Xlink Arcrole</xforms:label>
+								<xforms:item>
+									<xforms:label>Select...</xforms:label>
+									<xforms:value/>
+								</xforms:item>
+								<xforms:itemset nodeset="instance('arcrole-list')/item">
+									<xforms:label ref="."/>
+									<xforms:value ref="."/>
+								</xforms:itemset>
+								<xforms:action ev:event="xforms-value-changed">
+									<xforms:insert context="$binding" origin="xxforms:attribute('xlink:arcrole', instance('attributes')/attribute[@name='xlink:arcrole'])"
+										if="not(@xlink:arcrole) and string-length(instance('attributes')/attribute[@name='xlink:arcrole']) &gt; 0"/>
+									<xforms:delete if="string-length(instance('attributes')/attribute[@name='xlink:arcrole']) = 0" context="$binding" nodeset="@xlink:arcrole"/>
+								</xforms:action>
+							</xforms:select1>
+						</div>
+						<div>
+							<xforms:select1 ref="instance('attributes')/attribute[@name='xlink:role']">
+								<xforms:label>Xlink Role</xforms:label>
+								<xforms:item>
+									<xforms:label>Select...</xforms:label>
+									<xforms:value/>
+								</xforms:item>
+								<xforms:itemset nodeset="instance('role-list')/item">
+									<xforms:label ref="."/>
+									<xforms:value ref="@role"/>
+								</xforms:itemset>
+								<xforms:action ev:event="xforms-value-changed">
+									<xforms:insert context="$binding" origin="xxforms:attribute('xlink:role', instance('attributes')/attribute[@name='xlink:role'])"
+										if="not(@xlink:role) and string-length(instance('attributes')/attribute[@name='xlink:role']) &gt; 0"/>
+									<xforms:delete if="string-length(instance('attributes')/attribute[@name='xlink:role']) = 0" context="$binding" nodeset="@xlink:role"/>
+								</xforms:action>
+							</xforms:select1>
+						</div>
+						<div style="text-align:right">
+							<xforms:trigger>
+								<xforms:action ev:event="DOMActivate">
+									<xxforms:hide dialog="relation-dialog"/>
+								</xforms:action>
+								<xforms:label>Close</xforms:label>
+							</xforms:trigger>
+						</div>
 					</xxforms:dialog>
 
 					<!-- ***********************  INTERNAL MODEL *********************** -->
@@ -54,17 +141,58 @@
 						<xforms:instance id="config">
 							<config xmlns=""/>
 						</xforms:instance>
-						
+
 						<xforms:instance id="solr-query">
 							<query/>
 						</xforms:instance>
+
+						<xforms:instance id="response">
+							<response xmlns=""/>
+						</xforms:instance>
+
+						<!-- controlled vocabulary -->					
+						<xforms:instance id="cpfRelationType-list">
+							<list xmlns="">
+								<item>identity</item>
+								<item>hierarchical</item>
+								<item>hierarchical-parent</item>
+								<item>hierarchical-child</item>
+								<item>temporal</item>
+								<item>temporal-earlier</item>
+								<item>temporal-later</item>
+								<item>family</item>
+								<item>associative</item>
+							</list>
+						</xforms:instance>
 						
+						<xforms:instance id="arcrole-list">
+							<list xmlns="">
+								<item>correspondedWith</item>
+								<item>associatedWith</item>
+							</list>
+						</xforms:instance>
+
+						<xforms:instance id="role-list">
+							<list xmlns="">
+								<item role="http://RDVocab.info/uri/schema/FRBRentitiesRDA/Person">Person</item>
+								<item role="http://RDVocab.info/uri/schema/FRBRentitiesRDA/CorporateBody">Corporate Body</item>
+							</list>
+						</xforms:instance>
+
+						<xforms:instance id="attributes">
+							<attributes xmlns="">
+								<attribute name="cpfRelationType"/>
+								<attribute name="xlink:arcrole"/>
+								<attribute name="xlink:href"/>
+								<attribute name="xlink:role"/>
+							</attributes>
+						</xforms:instance>
+
 						<!-- ***** SUBMISSIONS ***** -->
 						<xforms:submission id="load-config" serialization="none" method="get" action="{instance('exist-url')}xeac/config.xml" replace="instance" instance="config"/>
 
-						<xforms:submission id="query-solr" serialization="none" method="get"
-							action="{instance('config')/solr_all}select/?q={instance('solr-query')}&amp;rows=100"
-							replace="instance" instance="all-response">
+						<xforms:submission id="query-solr" serialization="none" method="get" action="{instance('config')/solr_all}select/?q=name_text:{instance('solr-query')}&amp;rows=100"
+							replace="instance" instance="response">
 							<xforms:message ev:event="xforms-submit-error" level="modal">Solr is inaccessible. Please check Solr configuration.</xforms:message>
 							<!--<xforms:action ev:event="xforms-submit-done">
 								

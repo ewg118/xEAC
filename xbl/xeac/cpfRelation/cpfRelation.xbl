@@ -77,7 +77,7 @@
 							</xxforms:dialog>
 
 
-							<!-- relationEntry: only required element -->
+							<!-- relationEntry: only required element -->							
 							<xforms:group ref="eac:relationEntry">
 								<xeac:relationEntry/>
 							</xforms:group>
