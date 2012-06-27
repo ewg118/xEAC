@@ -147,7 +147,7 @@
 							</xforms:group>
 							
 							<xforms:group ref="eac:useDates">
-								<xeac:useDates/>
+								<xeac:datesContainer/>
 							</xforms:group>
 						</div>
 					</xforms:group>

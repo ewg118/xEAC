@@ -311,7 +311,7 @@ textarea{
 .xxforms-dialog-body>a, .xxforms-dialog-body>span {
 	width:100px;
 }
-.xbl-eaditor-generic-elements, .xbl-eaditor-access-elements, .xbl-eaditor-attributes {
+.xbl-xeac-relation {
 	display:inline;
 	width:1em;
 }

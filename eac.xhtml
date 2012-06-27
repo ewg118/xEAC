@@ -57,6 +57,7 @@
 								<part/>
 							</nameEntry>
 						</identity>
+						<description/>
 						<relations/>
 					</cpfDescription>
 				</eac-cpf>
@@ -70,10 +71,28 @@
 			<xforms:instance id="config">
 				<config xmlns=""/>
 			</xforms:instance>
-			
+
 			<xforms:instance id="status">
 				<status xmlns=""/>
 			</xforms:instance>
+
+			<xforms:instance id="temp1">
+				<temp>
+					<value test="2">test</value>
+				</temp>
+			</xforms:instance>
+
+			<xforms:instance id="temp2">
+				<temp>
+					<value test="1">test</value>
+				</temp>
+			</xforms:instance>
+
+			<xforms:instance id="temp3">
+				<temp/>
+			</xforms:instance>
+
+			<xforms:bind ref="instance('temp3')" calculate="xxforms:serialize(instance('temp1'), 'text')"/>
 
 			<!--  *** controlled vocabulary lists *** -->
 			<xforms:instance id="maintenanceStatus-list">
@@ -112,6 +131,48 @@
 					<item>person</item>
 					<item>family</item>
 				</list>
+			</xforms:instance>
+
+			<!-- relations diff -->
+			<xforms:instance id="relations-pre">
+				<relations/>
+			</xforms:instance>
+
+			<xforms:instance id="relations-post">
+				<relations/>
+			</xforms:instance>
+
+			<xforms:instance id="rel-template">
+				<relation xlink:href="" xlink:arcrole=""/>
+			</xforms:instance>
+
+			<xforms:instance id="identifier">
+				<identifer/>
+			</xforms:instance>
+
+			<xforms:instance id="action-list">
+				<actions/>
+			</xforms:instance>
+
+			<xforms:instance id="action-template">
+				<action source="" dest=""/>
+			</xforms:instance>
+
+			<xforms:instance id="action-add">
+				<add type="" xlink:arcrole="" relationEntry=""/>
+			</xforms:instance>
+
+			<xforms:instance id="action-remove">
+				<remove/>
+			</xforms:instance>
+
+			<xforms:instance id="action-change">
+				<change xlink:arcrole=""/>
+			</xforms:instance>
+
+			<!-- temp instances -->
+			<xforms:instance id="temp-doc">
+				<eac-cpf xmlns="urn:isbn:1-931666-33-4"/>
 			</xforms:instance>
 
 			<!-- ******************* EAC ELEMENTS ****************** -->
@@ -153,19 +214,136 @@
 				<descriptiveNote/>
 			</xforms:instance>
 
+			<!-- description -->
+			<xforms:instance id="biogHist-template">
+				<biogHist/>
+			</xforms:instance>
+
+			<xforms:instance id="existDates-template">
+				<existDates/>
+			</xforms:instance>
+
+			<xforms:instance id="function-template">
+				<function>
+					<term/>
+				</function>
+			</xforms:instance>
+
+			<xforms:instance id="functions-template">
+				<functions>
+					<function>
+						<term/>
+					</function>
+				</functions>
+			</xforms:instance>
+
+			<xforms:instance id="generalContext-template">
+				<generalContext/>
+			</xforms:instance>
+
+			<xforms:instance id="languageUsed-template">
+				<languageUsed>
+					<language languageCode=""/>
+					<script scriptCode=""/>
+				</languageUsed>
+			</xforms:instance>
+
+			<xforms:instance id="languagesUsed-template">
+				<languagesUsed>
+					<languageUsed>
+						<language languageCode=""/>
+						<script scriptCode=""/>
+					</languageUsed>
+				</languagesUsed>
+			</xforms:instance>
+
+			<xforms:instance id="legalStatus-template">
+				<legalStatus>
+					<term/>
+				</legalStatus>
+			</xforms:instance>
+
+			<xforms:instance id="legalStatuses-template">
+				<legalStatuses>
+					<legalStatus>
+						<term/>
+					</legalStatus>
+				</legalStatuses>
+			</xforms:instance>
+
+			<xforms:instance id="localDescription-template">
+				<localDescription>
+					<term/>
+				</localDescription>
+			</xforms:instance>
+
+			<xforms:instance id="localDescriptions-template">
+				<localDescriptions>
+					<localDescription>
+						<term/>
+					</localDescription>
+				</localDescriptions>
+			</xforms:instance>
+
+			<xforms:instance id="mandate-template">
+				<mandate>
+					<term/>
+				</mandate>
+			</xforms:instance>
+
+			<xforms:instance id="mandates-template">
+				<mandates>
+					<mandate>
+						<term/>
+					</mandate>
+				</mandates>
+			</xforms:instance>
+
+			<xforms:instance id="occupation-template">
+				<occupation>
+					<term/>
+				</occupation>
+			</xforms:instance>
+
+			<xforms:instance id="occupations-template">
+				<occupations>
+					<occupation>
+						<term/>
+					</occupation>
+				</occupations>
+			</xforms:instance>
+
+			<xforms:instance id="place-template">
+				<place>
+					<term/>
+				</place>
+			</xforms:instance>
+
+			<xforms:instance id="places-template">
+				<places>
+					<place>
+						<term/>
+					</place>
+				</places>
+			</xforms:instance>
+
+			<xforms:instance id="structureOrGenealogy-template">
+				<structureOrGenealogy/>
+			</xforms:instance>
+
 			<!-- relations -->
 			<xforms:instance id="cpfRelation-template">
 				<cpfRelation xlink:type="simple">
 					<relationEntry/>
 				</cpfRelation>
 			</xforms:instance>
-			
+
 			<!-- ******************* SOLR INSTANCES ****************** -->
 			<!-- send to Solr -->
 			<xforms:instance id="addIndex">
 				<add xmlns=""/>
 			</xforms:instance>
-			
+
 			<!-- Instance for Solr commit-->
 			<xforms:instance id="sendCommit">
 				<commit/>
@@ -214,8 +392,12 @@
 			<!-- Submission to get the document -->
 			<xforms:submission id="load-doc" serialization="none" method="get" action="{instance('exist-url')}xeac/records/{instance('doc')/eac:control/eac:recordId}.xml" replace="instance"
 				instance="doc" xxforms:username="admin" xxforms:password="">
-				<xforms:message ev:event="xforms-submit-error" level="modal">Unable to load finding aid</xforms:message>
-				<xforms:send submission="load-toc" ev:event="xforms-submit-done"/>
+				<xforms:message ev:event="xforms-submit-error" level="modal">Unable to load EAC record</xforms:message>
+			</xforms:submission>
+
+			<xforms:submission id="load-temp-doc" serialization="none" method="get" action="{instance('exist-url')}xeac/records/{instance('identifier')}.xml" replace="instance" instance="temp-doc"
+				xxforms:username="admin" xxforms:password="">
+				<xforms:message ev:event="xforms-submit-error" level="modal">Unable to load EAC record</xforms:message>
 			</xforms:submission>
 
 			<!-- Submission to save the document -->
@@ -227,8 +409,93 @@
 					<!-- post to Solr unpublished core -->
 					<xforms:insert nodeset="instance('addIndex')" origin="xxforms:call-xpl('oxf:/apps/xeac/xpl/eac-to-solr-all.xpl', 'data', instance('doc'), 'data')"/>
 					<xforms:send submission="post-to-all"/>
+
+					<!-- *************** PROCESS RELATIONS **************** -->
+					<!-- generate post-edit list on Save -->
+					<xforms:action xxforms:iterate="instance('doc')/eac:cpfDescription/eac:relations/*">
+						<xforms:insert context="instance('relations-post')" nodeset="./child::node()[last()]" origin="instance('rel-template')"/>
+						<xforms:setvalue ref="instance('relations-post')/eac:relation[last()]/@xlink:href" value="context()/@xlink:href"/>
+						<xforms:setvalue ref="instance('relations-post')/eac:relation[last()]/@xlink:arcrole" value="context()/@xlink:arcrole"/>
+					</xforms:action>
+					<!-- ***** GENERATE ACTION LIST ***** -->
+					<xforms:action xxforms:iterate="instance('relations-post')/eac:relation[@xlink:href]">
+						<!-- create new relations -->
+						<xxforms:variable name="href" select="@xlink:href"/>
+						<xforms:action if="not(instance('relations-pre')/eac:relation[@xlink:href=$href])">
+							<xforms:insert context="instance('action-list')" nodeset="./child::node()[last()]" origin="instance('action-template')"/>
+							<xforms:setvalue ref="instance('action-list')/eac:action[last()]/@source" value="instance('doc')/eac:control/eac:recordId"/>
+							<xforms:setvalue ref="instance('action-list')/eac:action[last()]/@dest" value="context()/@xlink:href"/>
+							<!-- insert add action -->
+							<xforms:insert context="instance('action-list')/eac:action[last()]" origin="instance('action-add')"/>
+							<xforms:setvalue ref="instance('action-list')/eac:action[last()]/eac:add/@xlink:arcrole" value="context()/@xlink:arcrole"/>
+							<xforms:setvalue ref="instance('action-list')/eac:action[last()]/eac:add/@relationEntry" value="instance('doc')/eac:cpfDescription/eac:identity/eac:nameEntry/eac:part"/>
+						</xforms:action>
+						<!-- create changes by comparing pre and post relations with matching xlink:hrefs -->
+					</xforms:action>
+					<!-- add removals to action list: cpfRelations with xlink:hrefs that do not appear in post -->
+					<xforms:action xxforms:iterate="instance('relations-pre')/eac:relation[@xlink:href]">
+						<!-- create new relations -->
+						<xxforms:variable name="href" select="@xlink:href"/>
+						<xforms:action if="not(instance('relations-post')/eac:relation[@xlink:href=$href])">
+							<xforms:insert context="instance('action-list')" nodeset="./child::node()[last()]" origin="instance('action-template')"/>
+							<xforms:setvalue ref="instance('action-list')/eac:action[last()]/@source" value="instance('doc')/eac:control/eac:recordId"/>
+							<xforms:setvalue ref="instance('action-list')/eac:action[last()]/@dest" value="context()/@xlink:href"/>
+							<!-- insert remove action -->
+							<xforms:insert context="instance('action-list')/eac:action[last()]" origin="instance('action-remove')"/>
+						</xforms:action>
+					</xforms:action>
+					<!-- ***** PROCESS ACTION LIST ***** -->
+					<!-- iterate through additions -->
+					<xforms:action xxforms:iterate="instance('action-list')/eac:action[eac:add]">
+						<xxforms:variable name="href" select="context()/@source"/>
+						<xxforms:variable name="arcrole" select="context()/eac:add/@xlink:arcrole"/>
+						<xforms:setvalue ref="instance('identifier')" value="context()/@dest"/>
+						<xforms:send submission="load-temp-doc"/>
+						<xforms:action ev:event="xforms-submit-done">
+							<xforms:insert context="instance('temp-doc')/eac:cpfDescription/eac:relations" nodeset="./child::node()[last()]" origin="instance('cpfRelation-template')"/>
+							<!-- insert xlink attributes -->
+							<xforms:insert context="instance('temp-doc')/eac:cpfDescription/eac:relations/eac:cpfRelation[last()]" origin="xxforms:attribute('xlink:href', $href)"/>
+							<xforms:insert context="instance('temp-doc')/eac:cpfDescription/eac:relations/eac:cpfRelation[last()]" origin="xxforms:attribute('xlink:arcrole', $arcrole)"/>
+							<xforms:setvalue ref="instance('temp-doc')/eac:cpfDescription/eac:relations/eac:cpfRelation[last()]/eac:relationEntry" value="context()/eac:add/@relationEntry"/>
+							<xforms:send submission="save-temp-doc"/>
+						</xforms:action>
+					</xforms:action>
+					<!-- iterate through removals -->
+					<xforms:action xxforms:iterate="instance('action-list')/eac:action[eac:remove]">
+						<xxforms:variable name="href" select="context()/@source"/>
+						<xforms:setvalue ref="instance('identifier')" value="context()/@dest"/>
+						<xforms:send submission="load-temp-doc"/>
+						<xforms:action ev:event="xforms-submit-done">
+							<xforms:delete nodeset="instance('temp-doc')/eac:cpfDescription/eac:relations/eac:cpfRelation[@xlink:href=$href]"/>
+							<xforms:send submission="save-temp-doc"/>
+						</xforms:action>
+					</xforms:action>
+
+					<!-- reprocess pre list -->
+					<xforms:delete nodeset="instance('relations-pre')/*"/>
+					<xforms:action xxforms:iterate="instance('doc')/eac:cpfDescription/eac:relations/*">
+						<xforms:setvalue ref="instance('rel-template')/@xlink:href" value="context()/@xlink:href"/>
+						<xforms:setvalue ref="instance('rel-template')/@xlink:arcrole" value="context()/@xlink:arcrole"/>
+						<xforms:insert context="instance('relations-pre')" nodeset="./child::node()[last()]" origin="instance('rel-template')"/>
+					</xforms:action>
+					<!-- remove relations from post-list -->
+					<xforms:delete nodeset="instance('relations-post')/*"/>
+					<xforms:delete nodeset="instance('action-list')/*"/>
 					<!-- check to see if the document is already published to Solr -->
-					<!--<xforms:send submission="query-solr-for-publication"/>-->					
+					<!--<xforms:send submission="query-solr-for-publication"/>-->
+				</xforms:action>
+			</xforms:submission>
+
+			<xforms:submission id="save-temp-doc" ref="instance('temp-doc')" action="{instance('exist-url')}xeac/records/{instance('temp-doc')/eac:control/eac:recordId}.xml" method="put"
+				replace="none" xxforms:username="admin" xxforms:password="">
+				<xforms:message ev:event="xforms-submit-error" level="modal">Error Saving Documents. Be sure all required inputs are filled in.</xforms:message>
+				<xforms:action ev:event="xforms-submit-done">
+					<xforms:setvalue ref="instance('status')">EAC record saved.</xforms:setvalue>
+					<!-- post to Solr unpublished core -->
+					<xforms:insert nodeset="instance('addIndex')" origin="xxforms:call-xpl('oxf:/apps/xeac/xpl/eac-to-solr-all.xpl', 'data', instance('temp-doc'), 'data')"/>
+					<xforms:send submission="post-to-all"/>
+					<!-- check to see if the document is already published to Solr -->
+					<!--<xforms:send submission="query-solr-for-publication"/>-->
 				</xforms:action>
 			</xforms:submission>
 
@@ -250,8 +517,8 @@
 				<xforms:setvalue ev:event="xforms-submit-done" ref="instance('status')">EAC record saved and updated to search index.</xforms:setvalue>
 				<xforms:message ev:event="xforms-submit-error" level="modal">Data Failed to POST to Solr. Index may be offline or URL is incorrect.</xforms:message>
 			</xforms:submission>
-			
-			<!-- send commit -->			
+
+			<!-- send commit -->
 			<xforms:submission id="submit-commit" action="{instance('config')/solr_published}update" ref="instance('sendCommit')" instance="sendCommit" replace="none" method="post"/>
 
 			<!-- for unpublished documents, always save to unpublished core -->
@@ -273,28 +540,41 @@
 				<xforms:action if="string(xxforms:get-request-parameter('recordId'))">
 					<xforms:setvalue ref="instance('doc')/eac:control/eac:recordId" value="xxforms:get-request-parameter('recordId')"/>
 					<xforms:send submission="load-doc"/>
+
+					<!-- create relations list for diff -->
+					<xforms:action ev:event="xforms-submit-done">
+						<xforms:action xxforms:iterate="instance('doc')/eac:cpfDescription/eac:relations/*">
+							<xforms:setvalue ref="instance('rel-template')/@xlink:href" value="context()/@xlink:href"/>
+							<xforms:setvalue ref="instance('rel-template')/@xlink:arcrole" value="context()/@xlink:arcrole"/>
+							<xforms:insert context="instance('relations-pre')" nodeset="./child::node()[last()]" origin="instance('rel-template')"/>
+						</xforms:action>
+					</xforms:action>
 				</xforms:action>
 				<xforms:action if="not(string(xxforms:get-request-parameter('recordId')))">
 					<xforms:setvalue ref="instance('doc')/eac:control/eac:maintenanceHistory/eac:maintenanceEvent/eac:eventDateTime/@standardDateTime" value="current-dateTime()"/>
 					<!--<xforms:send submission="load-eac-template"/>-->
-				</xforms:action>				
+				</xforms:action>
 			</xforms:action>
-			
+
 			<xforms:action ev:event="xforms-ready">
 				<xforms:dispatch targetid="temp-tab" name="fr-toggle"/>
 			</xforms:action>
 		</xforms:model>
 
 		<!-- XBL components -->
+		<xi:include href="oxf:/xbl/xeac/citation/citation.xbl" xi:omit-xml-base="true"/>
 		<xi:include href="oxf:/xbl/xeac/cpfRelation/cpfRelation.xbl" xi:omit-xml-base="true"/>
+		<xi:include href="oxf:/xbl/xeac/datesContainer/datesContainer.xbl" xi:omit-xml-base="true"/>
 		<xi:include href="oxf:/xbl/xeac/date/date.xbl" xi:omit-xml-base="true"/>
 		<xi:include href="oxf:/xbl/xeac/dateRange/dateRange.xbl" xi:omit-xml-base="true"/>
 		<xi:include href="oxf:/xbl/xeac/dateSet/dateSet.xbl" xi:omit-xml-base="true"/>
+		<xi:include href="oxf:/xbl/xeac/descriptionTerm/descriptionTerm.xbl" xi:omit-xml-base="true"/>
+		<xi:include href="oxf:/xbl/xeac/descriptionTermGroup/descriptionTermGroup.xbl" xi:omit-xml-base="true"/>
+		<xi:include href="oxf:/xbl/xeac/descriptiveNote/descriptiveNote.xbl" xi:omit-xml-base="true"/>
 		<xi:include href="oxf:/xbl/xeac/nameEntry/nameEntry.xbl" xi:omit-xml-base="true"/>
 		<xi:include href="oxf:/xbl/xeac/placeEntry/placeEntry.xbl" xi:omit-xml-base="true"/>
 		<xi:include href="oxf:/xbl/xeac/relation/relation.xbl" xi:omit-xml-base="true"/>
 		<xi:include href="oxf:/xbl/xeac/relationEntry/relationEntry.xbl" xi:omit-xml-base="true"/>
-		<xi:include href="oxf:/xbl/xeac/useDates/useDates.xbl" xi:omit-xml-base="true"/>
 	</xhtml:head>
 
 	<xhtml:body class="yui-skin-sam">
@@ -314,13 +594,27 @@
 				<div id="yui-main">
 					<div id="form">
 						<div class="submission">
-							<xforms:submit submission="save-doc" appearance="minimal">
+							<xforms:trigger appearance="minimal">
 								<xforms:label><img src="/apps/xeac/images/save.gif" alt="Save"/>Save</xforms:label>
-							</xforms:submit>
+								<xforms:action ev:event="DOMActivate">
+									<xforms:send submission="save-doc"/>
+								</xforms:action>
+							</xforms:trigger>
 							<xforms:submit submission="load-doc" appearance="minimal">
 								<xforms:label><img src="/apps/xeac/images/recycle-green.png" alt="Revert"/>Load</xforms:label>
 							</xforms:submit>
 						</div>
+						<!--<xforms:trigger>
+							<xforms:label>Test</xforms:label>
+							<xforms:action ev:event="DOMActivate">
+								<xxforms:variable name="temp1" select="xxforms:serialize(instance('temp1'), 'text')"/>
+								<xxforms:variable name="temp2" select="instance('temp2')"/>
+								
+								<xforms:message level="modal">
+									<xforms:output value="$temp1"/>
+								</xforms:message>
+							</xforms:action>
+						</xforms:trigger>-->
 						<div class="section">
 							<h1>Edit EAC-CPF Record</h1>
 							<div class="trigger_container">
@@ -421,17 +715,241 @@
 									</xforms:group>
 								</div>
 							</fr:tab>
-							<!--**************************************** END IDENTITY **********************************-->
-							<fr:tab bind="description-tab">
+							<!--**************************************** DESCRIPTION **********************************-->
+							<fr:tab bind="description-tab" id="temp-tab">
 								<fr:label>Description</fr:label>
 								<div class="section">
 									<h1>Description</h1>
+									<span class="add">
+										<xforms:trigger appearance="minimal">
+											<xforms:label>
+												<xhtml:img src="{$display_path}images/add.gif"/>
+											</xforms:label>
+											<xxforms:show ev:event="DOMActivate" dialog="description-objects"/>
+										</xforms:trigger>
+									</span>
 									<xforms:trigger appearance="minimal">
 										<xforms:dispatch target="remove-description" name="fr-show" ev:event="DOMActivate"/>
 										<xforms:label>
 											<xhtml:img src="{$display_path}images/remove.gif"/>
 										</xforms:label>
 									</xforms:trigger>
+									<xxforms:dialog id="description-objects" appearance="full" level="modal" close="true" draggable="true" visible="false">
+										<xforms:label>Description Objects</xforms:label>
+										<xforms:group ref=".[count(eac:biogHist) = 0]">
+											<xforms:trigger appearance="minimal">
+												<xforms:label>
+													<img src="{$display_path}images/add.gif"/>Biog/Hist</xforms:label>
+												<xforms:action ev:event="DOMActivate">
+													<xforms:insert context="." origin="instance('biogHist-template')"/>
+													<xxforms:hide dialog="description-objects"/>
+												</xforms:action>
+											</xforms:trigger>
+										</xforms:group>
+										<xforms:group ref=".[count(eac:existDates) = 0]">
+											<xforms:trigger appearance="minimal">
+												<xforms:label>
+													<img src="{$display_path}images/add.gif"/>Dates of Existence</xforms:label>
+												<xforms:action ev:event="DOMActivate">
+													<xforms:insert context="." origin="instance('existDates-template')"/>
+													<xxforms:hide dialog="description-objects"/>
+												</xforms:action>
+											</xforms:trigger>
+										</xforms:group>
+										<xforms:group ref=".[count(eac:function) = 0 and count(eac:functions) = 0]">
+											<xforms:trigger appearance="minimal">
+												<xforms:label>
+													<img src="{$display_path}images/add.gif"/>Function</xforms:label>
+												<xforms:action ev:event="DOMActivate">
+													<xforms:insert context="." origin="instance('function-template')"/>
+													<xxforms:hide dialog="description-objects"/>
+												</xforms:action>
+											</xforms:trigger>
+											<xforms:trigger appearance="minimal">
+												<xforms:label>
+													<img src="{$display_path}images/add.gif"/>Functions</xforms:label>
+												<xforms:action ev:event="DOMActivate">
+													<xforms:insert context="." origin="instance('functions-template')"/>
+													<xxforms:hide dialog="description-objects"/>
+												</xforms:action>
+											</xforms:trigger>
+										</xforms:group>
+										<xforms:group ref=".[count(eac:generalContext) = 0]">
+											<xforms:trigger appearance="minimal">
+												<xforms:label>
+													<img src="{$display_path}images/add.gif"/>General Context</xforms:label>
+												<xforms:action ev:event="DOMActivate">
+													<xforms:insert context="." origin="instance('generalContext-template')"/>
+													<xxforms:hide dialog="description-objects"/>
+												</xforms:action>
+											</xforms:trigger>
+										</xforms:group>
+										<xforms:group ref=".[count(eac:languageUsed) = 0 and count(eac:languagesUsed) = 0]">
+											<xforms:trigger appearance="minimal">
+												<xforms:label>
+													<img src="{$display_path}images/add.gif"/>Language Used</xforms:label>
+												<xforms:action ev:event="DOMActivate">
+													<xforms:insert context="." origin="instance('languageUsed-template')"/>
+													<xxforms:hide dialog="description-objects"/>
+												</xforms:action>
+											</xforms:trigger>
+											<xforms:trigger appearance="minimal">
+												<xforms:label>
+													<img src="{$display_path}images/add.gif"/>Languages Used</xforms:label>
+												<xforms:action ev:event="DOMActivate">
+													<xforms:insert context="." origin="instance('languagesUsed-template')"/>
+													<xxforms:hide dialog="description-objects"/>
+												</xforms:action>
+											</xforms:trigger>
+										</xforms:group>
+										<xforms:group ref=".[count(eac:legalStatus) = 0 and count(eac:legalStatuses) = 0]">
+											<xforms:trigger appearance="minimal">
+												<xforms:label>
+													<img src="{$display_path}images/add.gif"/>Legal Status</xforms:label>
+												<xforms:action ev:event="DOMActivate">
+													<xforms:insert context="." origin="instance('legalStatus-template')"/>
+													<xxforms:hide dialog="description-objects"/>
+												</xforms:action>
+											</xforms:trigger>
+											<xforms:trigger appearance="minimal">
+												<xforms:label>
+													<img src="{$display_path}images/add.gif"/>Legal Statuses</xforms:label>
+												<xforms:action ev:event="DOMActivate">
+													<xforms:insert context="." origin="instance('legalStatuses-template')"/>
+													<xxforms:hide dialog="description-objects"/>
+												</xforms:action>
+											</xforms:trigger>
+										</xforms:group>
+										<xforms:group ref=".[count(eac:localDescription) = 0 and count(eac:localDescriptions) = 0]">
+											<xforms:trigger appearance="minimal">
+												<xforms:label>
+													<img src="{$display_path}images/add.gif"/>Local Description</xforms:label>
+												<xforms:action ev:event="DOMActivate">
+													<xforms:insert context="." origin="instance('localDescription-template')"/>
+													<xxforms:hide dialog="description-objects"/>
+												</xforms:action>
+											</xforms:trigger>
+											<xforms:trigger appearance="minimal">
+												<xforms:label>
+													<img src="{$display_path}images/add.gif"/>Local Descriptions</xforms:label>
+												<xforms:action ev:event="DOMActivate">
+													<xforms:insert context="." origin="instance('localDescriptions-template')"/>
+													<xxforms:hide dialog="description-objects"/>
+												</xforms:action>
+											</xforms:trigger>
+										</xforms:group>
+										<xforms:group ref=".[count(eac:mandate) = 0 and count(eac:mandates) = 0]">
+											<xforms:trigger appearance="minimal">
+												<xforms:label>
+													<img src="{$display_path}images/add.gif"/>Mandate</xforms:label>
+												<xforms:action ev:event="DOMActivate">
+													<xforms:insert context="." origin="instance('mandate-template')"/>
+													<xxforms:hide dialog="description-objects"/>
+												</xforms:action>
+											</xforms:trigger>
+											<xforms:trigger appearance="minimal">
+												<xforms:label>
+													<img src="{$display_path}images/add.gif"/>Mandates</xforms:label>
+												<xforms:action ev:event="DOMActivate">
+													<xforms:insert context="." origin="instance('mandates-template')"/>
+													<xxforms:hide dialog="description-objects"/>
+												</xforms:action>
+											</xforms:trigger>
+										</xforms:group>
+										<xforms:group ref=".[count(eac:occupation) = 0 and count(eac:occupations) = 0]">
+											<xforms:trigger appearance="minimal">
+												<xforms:label>
+													<img src="{$display_path}images/add.gif"/>Occupation</xforms:label>
+												<xforms:action ev:event="DOMActivate">
+													<xforms:insert context="." origin="instance('occupation-template')"/>
+													<xxforms:hide dialog="description-objects"/>
+												</xforms:action>
+											</xforms:trigger>
+											<xforms:trigger appearance="minimal">
+												<xforms:label>
+													<img src="{$display_path}images/add.gif"/>Occupations</xforms:label>
+												<xforms:action ev:event="DOMActivate">
+													<xforms:insert context="." origin="instance('occupations-template')"/>
+													<xxforms:hide dialog="description-objects"/>
+												</xforms:action>
+											</xforms:trigger>
+										</xforms:group>
+										<xforms:group ref=".[count(eac:place) = 0 and count(eac:places) = 0]">
+											<xforms:trigger appearance="minimal">
+												<xforms:label>
+													<img src="{$display_path}images/add.gif"/>Place</xforms:label>
+												<xforms:action ev:event="DOMActivate">
+													<xforms:insert context="." origin="instance('place-template')"/>
+													<xxforms:hide dialog="description-objects"/>
+												</xforms:action>
+											</xforms:trigger>
+											<xforms:trigger appearance="minimal">
+												<xforms:label>
+													<img src="{$display_path}images/add.gif"/>Places</xforms:label>
+												<xforms:action ev:event="DOMActivate">
+													<xforms:insert context="." origin="instance('places-template')"/>
+													<xxforms:hide dialog="description-objects"/>
+												</xforms:action>
+											</xforms:trigger>
+										</xforms:group>
+										<xforms:group ref=".[count(eac:structureOrGenealogy) = 0]">
+											<xforms:trigger appearance="minimal">
+												<xforms:label>
+													<img src="{$display_path}images/add.gif"/>Structure or Genealogy</xforms:label>
+												<xforms:action ev:event="DOMActivate">
+													<xforms:insert context="." origin="instance('structureOrGenealogy-template')"/>
+													<xxforms:hide dialog="description-objects"/>
+												</xforms:action>
+											</xforms:trigger>
+										</xforms:group>
+									</xxforms:dialog>
+									<!-- description elements -->
+									<xforms:group ref="eac:existDates">
+										<xeac:datesContainer/>
+									</xforms:group>
+									<xforms:group ref="eac:function">
+										<xeac:descriptionTerm/>
+									</xforms:group>
+									<xforms:group ref="eac:functions">
+										<xeac:descriptionTermGroup/>
+									</xforms:group>
+									<xforms:group ref="eac:languageUsed">
+										<xeac:descriptionTerm/>
+									</xforms:group>
+									<xforms:group ref="eac:languagesUsed">
+										<xeac:descriptionTermGroup/>
+									</xforms:group>
+									<xforms:group ref="eac:legalStatus">
+										<xeac:descriptionTerm/>
+									</xforms:group>
+									<xforms:group ref="eac:legalStatuses">
+										<xeac:descriptionTermGroup/>
+									</xforms:group>
+									<xforms:group ref="eac:localDescription">
+										<xeac:descriptionTerm/>
+									</xforms:group>
+									<xforms:group ref="eac:localDescriptions">
+										<xeac:descriptionTermGroup/>
+									</xforms:group>
+									<xforms:group ref="eac:mandate">
+										<xeac:descriptionTerm/>
+									</xforms:group>
+									<xforms:group ref="eac:mandates">
+										<xeac:descriptionTermGroup/>
+									</xforms:group>
+									<xforms:group ref="eac:occupation">
+										<xeac:descriptionTerm/>
+									</xforms:group>
+									<xforms:group ref="eac:occupations">
+										<xeac:descriptionTermGroup/>
+									</xforms:group>
+									<xforms:group ref="eac:place">
+										<xeac:descriptionTerm/>
+									</xforms:group>
+									<xforms:group ref="eac:places">
+										<xeac:descriptionTermGroup/>
+									</xforms:group>
+									<!-- alert for removal of description -->
 									<fr:alert-dialog id="remove-description">
 										<fr:label>Remove Description</fr:label>
 										<fr:message>Are you sure you want to remove the Description section?</fr:message>
@@ -448,7 +966,8 @@
 									</fr:alert-dialog>
 								</div>
 							</fr:tab>
-							<fr:tab bind="relations-tab" id="temp-tab">
+							<!--**************************************** RELATIONS **********************************-->
+							<fr:tab bind="relations-tab">
 								<fr:label>Relations</fr:label>
 								<div class="section">
 									<h1>Relations</h1>
@@ -472,7 +991,6 @@
 											</xforms:action>
 										</fr:positive-choice>
 									</fr:alert-dialog>
-									
 									<div class="trigger_container">
 										<xforms:trigger appearance="minimal">
 											<xforms:label>

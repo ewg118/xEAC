@@ -15,21 +15,14 @@
 					<xforms:action ev:event="xforms-enabled" ev:target="#observer">
 						<xforms:send submission="load-config"/>
 					</xforms:action>
-					<div>
-						<span class="add">
-							<xforms:trigger appearance="minimal">
-								<xforms:label>@</xforms:label>
-								<xforms:action ev:event="DOMActivate">
-									<xxforms:show dialog="relation-dialog"/>
-								</xforms:action>
-							</xforms:trigger>
-						</span>
-
-						<fr:xforms-inspector id="orbeon-xforms-inspector"/>
-					</div>
-
-
-
+					<span class="add">
+						<xforms:trigger appearance="minimal">
+							<xforms:label>@</xforms:label>
+							<xforms:action ev:event="DOMActivate">
+								<xxforms:show dialog="relation-dialog"/>
+							</xforms:action>
+						</xforms:trigger>
+					</span>
 					<xxforms:dialog id="relation-dialog" appearance="full" level="modal" close="false" draggable="true" visible="false">
 						<xforms:label>Establish Relationship</xforms:label>
 						<div>
@@ -44,7 +37,7 @@
 								<xforms:label>Search</xforms:label>
 							</xforms:trigger>
 						</div>
-						<xforms:group ref=".[count(instance('response')//doc) &gt; 0]">
+						<xforms:group ref=".[number(instance('response')//result[@name='response']/@numFound) &gt; 0]">
 							<div>
 								<xforms:select1 ref="instance('attributes')/attribute[@name='xlink:href']" appearance="compact">
 									<xforms:label>Name</xforms:label>
@@ -55,18 +48,23 @@
 									<xforms:action ev:event="xforms-value-changed">
 										<xforms:insert context="$binding" origin="xxforms:attribute('xlink:href', instance('attributes')/attribute[@name='xlink:href'])"
 											if="not(@xlink:href) and string-length(instance('attributes')/attribute[@name='xlink:href']) &gt; 0"/>
-										<xforms:setvalue ref="$binding/eac:relationEntry" value="instance('response')//doc[str[@name='id'] = $binding/@xlink:href]/str[@name='name']"/>										
+										<xforms:setvalue ref="$binding/eac:relationEntry" value="instance('response')//doc[str[@name='id'] = $binding/@xlink:href]/str[@name='name']"/>
 									</xforms:action>
 								</xforms:select1>
 								<xforms:group ref=".[string-length(instance('attributes')/attribute[@name='xlink:href']) &gt; 0]">
 									<xforms:trigger>
 										<xforms:action ev:event="DOMActivate">
-											<xforms:delete context="$binding" nodeset="@xlink:href"/>	
-											<xforms:setvalue ref="instance('attributes')/attribute[@name='xlink:href']"/>											
+											<xforms:delete context="$binding" nodeset="@xlink:href"/>
+											<xforms:setvalue ref="instance('attributes')/attribute[@name='xlink:href']"/>
 										</xforms:action>
 										<xforms:label>Clear Selection</xforms:label>
 									</xforms:trigger>
 								</xforms:group>
+							</div>
+						</xforms:group>
+						<xforms:group ref=".[number(instance('response')//result[@name='response']/@numFound) = 0]">
+							<div style="padding:10px 30px">
+								<i>No results found.</i>
 							</div>
 						</xforms:group>
 						<div>
@@ -150,7 +148,7 @@
 							<response xmlns=""/>
 						</xforms:instance>
 
-						<!-- controlled vocabulary -->					
+						<!-- controlled vocabulary -->
 						<xforms:instance id="cpfRelationType-list">
 							<list xmlns="">
 								<item>identity</item>
@@ -164,7 +162,7 @@
 								<item>associative</item>
 							</list>
 						</xforms:instance>
-						
+
 						<xforms:instance id="arcrole-list">
 							<list xmlns="">
 								<item>correspondedWith</item>

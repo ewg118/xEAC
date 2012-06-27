@@ -1,6 +1,6 @@
 <xbl:xbl xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:xforms="http://www.w3.org/2002/xforms" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:xxforms="http://orbeon.org/oxf/xml/xforms"
 	xmlns:xbl="http://www.w3.org/ns/xbl" xmlns:xxbl="http://orbeon.org/oxf/xml/xbl" xmlns:xeac="https://github.com/ewg118/xEAC" xmlns:eac="urn:isbn:1-931666-33-4" xmlns="urn:isbn:1-931666-33-4">
-	<xbl:binding id="xeac-useDates" element="xeac|useDates">
+	<xbl:binding id="xeac-descriptionTerm" element="xeac|descriptionTerm">
 		<xbl:template>
 			<xforms:group xbl:attr="model context ref bind" xxbl:scope="outer">
 				<xbl:content includes="xforms|label,xforms|help,xforms|hint,xforms|alert"/>
@@ -12,15 +12,34 @@
 
 					<xforms:group ref="$binding">
 						<div class="subsection">
-							<h4>Use Dates</h4>
+							<xforms:group ref=".[parent::eac:description]">
+								<h2>
+									<xforms:output value="concat(upper-case(substring(local-name(), 1, 1)), substring(local-name(), 2))"/>
+								</h2>
+							</xforms:group>
+							<xforms:group ref=".[not(parent::eac:description)]">
+								<h3>
+									<xforms:output value="concat(upper-case(substring(local-name(), 1, 1)), substring(local-name(), 2))"/>
+								</h3>
+							</xforms:group>
+
 							<xforms:trigger appearance="minimal">
 								<xforms:delete ev:event="DOMActivate" nodeset="."/>
 								<xforms:label>
-									<xhtml:img src="/apps/xeac/images/remove.gif"/>
+									<xhtml:img src="{$display_path}images/remove.gif"/>
 								</xforms:label>
 							</xforms:trigger>
 
 							<div class="trigger_container">
+								<xforms:group ref=".[count(eac:citation) = 0]">
+									<xforms:trigger appearance="minimal">
+										<xforms:label>
+											<img src="{$display_path}images/add.gif"/>Citation</xforms:label>
+										<xforms:action ev:event="DOMActivate">
+											<xforms:insert context="." origin="instance('citation-template')"/>
+										</xforms:action>
+									</xforms:trigger>
+								</xforms:group>
 								<xforms:group ref=".[count(eac:date) = 0 and count(eac:dateRange) = 0 and count(eac:dateSet) = 0]">
 									<xforms:trigger appearance="minimal">
 										<xforms:label>
@@ -44,8 +63,36 @@
 										</xforms:action>
 									</xforms:trigger>
 								</xforms:group>
+								<xforms:group ref=".[count(eac:descriptiveNote) = 0]">
+									<xforms:trigger appearance="minimal">
+										<xforms:label>
+											<img src="{$display_path}images/add.gif"/>Descriptive Note</xforms:label>
+										<xforms:action ev:event="DOMActivate">
+											<xforms:insert context="." origin="instance('descriptiveNote-template')"/>
+										</xforms:action>
+									</xforms:trigger>
+								</xforms:group>
+								<xforms:group ref=".[count(eac:placeEntry) = 0]">
+									<xforms:trigger appearance="minimal">
+										<xforms:label>
+											<img src="{$display_path}images/add.gif"/>Place Entry</xforms:label>
+										<xforms:action ev:event="DOMActivate">
+											<xforms:insert context="." origin="instance('placeEntry-template')"/>
+										</xforms:action>
+									</xforms:trigger>
+								</xforms:group>
 							</div>
-
+							
+							<div>
+								<xforms:input ref="eac:term">
+									<xforms:label>Term</xforms:label>
+									<xforms:alert>Required</xforms:alert>
+								</xforms:input>
+							</div>
+							
+							<xforms:group ref="eac:citation">
+								<xeac:citation/>
+							</xforms:group>
 
 							<xforms:group ref="eac:date">
 								<xeac:date/>
@@ -54,9 +101,17 @@
 							<xforms:group ref="eac:dateRange">
 								<xeac:dateRange/>
 							</xforms:group>
-							
+
 							<xforms:group ref="eac:dateSet">
 								<xeac:dateSet/>
+							</xforms:group>
+							
+							<xforms:group ref="eac:descriptiveNote">
+								<xeac:descriptiveNote/>
+							</xforms:group>
+							
+							<xforms:group ref="eac:placeEntry">
+								<xeac:placeEntry/>
 							</xforms:group>
 						</div>
 					</xforms:group>
@@ -64,7 +119,11 @@
 
 
 					<!-- ********************************************************************** -->
-					<xforms:model id="useDates-model">
+					<xforms:model id="descriptionTerm-model">
+						<xforms:instance id="citation-template">
+							<citation/>
+						</xforms:instance>
+						
 						<xforms:instance id="date-template">
 							<date standardDate=""/>
 						</xforms:instance>
@@ -78,6 +137,14 @@
 
 						<xforms:instance id="dateSet-template">
 							<dateSet/>
+						</xforms:instance>
+						
+						<xforms:instance id="descriptiveNote-template">
+							<descriptiveNote/>
+						</xforms:instance>
+						
+						<xforms:instance id="placeEntry-template">
+							<placeEntry/>
 						</xforms:instance>
 					</xforms:model>
 				</xforms:group>
