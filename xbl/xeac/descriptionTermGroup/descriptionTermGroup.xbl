@@ -35,35 +35,35 @@
 											<img src="{$display_path}images/add.gif"/>Language Used</xforms:label>
 										<xforms:insert ev:event="DOMActivate" context="." nodeset="./child::node()[last()]" origin="instance('languageUsed-template')"/>
 									</xforms:trigger>
-								</xforms:group>	
+								</xforms:group>
 								<xforms:group ref=".[local-name()='legalStatuses']">
 									<xforms:trigger appearance="minimal">
 										<xforms:label>
 											<img src="{$display_path}images/add.gif"/>Legal Status</xforms:label>
 										<xforms:insert ev:event="DOMActivate" context="." nodeset="./child::node()[last()]" origin="instance('legalStatus-template')"/>
 									</xforms:trigger>
-								</xforms:group>		
+								</xforms:group>
 								<xforms:group ref=".[local-name()='localDescriptions']">
 									<xforms:trigger appearance="minimal">
 										<xforms:label>
 											<img src="{$display_path}images/add.gif"/>Local Description</xforms:label>
 										<xforms:insert ev:event="DOMActivate" context="." nodeset="./child::node()[last()]" origin="instance('localDescription-template')"/>
 									</xforms:trigger>
-								</xforms:group>			
+								</xforms:group>
 								<xforms:group ref=".[local-name()='mandates']">
 									<xforms:trigger appearance="minimal">
 										<xforms:label>
 											<img src="{$display_path}images/add.gif"/>Mandate</xforms:label>
 										<xforms:insert ev:event="DOMActivate" context="." nodeset="./child::node()[last()]" origin="instance('mandate-template')"/>
 									</xforms:trigger>
-								</xforms:group>	
+								</xforms:group>
 								<xforms:group ref=".[local-name()='occupations']">
 									<xforms:trigger appearance="minimal">
 										<xforms:label>
 											<img src="{$display_path}images/add.gif"/>Occupation</xforms:label>
 										<xforms:insert ev:event="DOMActivate" context="." nodeset="./child::node()[last()]" origin="instance('occupation-template')"/>
 									</xforms:trigger>
-								</xforms:group>								
+								</xforms:group>
 								<xforms:group ref=".[local-name()='places']">
 									<xforms:trigger appearance="minimal">
 										<xforms:label>
@@ -79,7 +79,7 @@
 											<xforms:insert context="." origin="instance('citation-template')"/>
 										</xforms:action>
 									</xforms:trigger>
-								</xforms:group>								
+								</xforms:group>
 								<xforms:group ref=".[count(eac:descriptiveNote) = 0]">
 									<xforms:trigger appearance="minimal">
 										<xforms:label>
@@ -88,44 +88,46 @@
 											<xforms:insert context="." origin="instance('descriptiveNote-template')"/>
 										</xforms:action>
 									</xforms:trigger>
-								</xforms:group>								
+								</xforms:group>
 							</div>
-							
-							<xforms:repeat nodeset="eac:function">
-								<xeac:descriptionTerm/>
-							</xforms:repeat>
-							
-							<xforms:repeat nodeset="eac:languageUsed">
-								<xeac:descriptionTerm/>
-							</xforms:repeat>
-							
-							<xforms:repeat nodeset="eac:legalStatus">
-								<xeac:descriptionTerm/>
-							</xforms:repeat>
-							
-							<xforms:repeat nodeset="eac:localDescription">
-								<xeac:descriptionTerm/>
-							</xforms:repeat>
-							
-							<xforms:repeat nodeset="eac:mandate">
-								<xeac:descriptionTerm/>
-							</xforms:repeat>
-							
-							<xforms:repeat nodeset="eac:occupation">
-								<xeac:descriptionTerm/>
-							</xforms:repeat>
-							
-							<xforms:repeat nodeset="eac:place">
-								<xeac:descriptionTerm/>
-							</xforms:repeat>
-							
-							<xforms:group ref="eac:citation">
-								<xeac:citation/>
-							</xforms:group>
-							
-							<xforms:group ref="eac:descriptiveNote">
-								<xeac:descriptiveNote/>
-							</xforms:group>						
+
+							<div class="subsection">
+								<xforms:repeat nodeset="eac:function">
+									<xeac:descriptionTerm/>
+								</xforms:repeat>
+
+								<xforms:repeat nodeset="eac:languageUsed">
+									<xeac:descriptionTerm/>
+								</xforms:repeat>
+
+								<xforms:repeat nodeset="eac:legalStatus">
+									<xeac:descriptionTerm/>
+								</xforms:repeat>
+
+								<xforms:repeat nodeset="eac:localDescription">
+									<xeac:descriptionTerm/>
+								</xforms:repeat>
+
+								<xforms:repeat nodeset="eac:mandate">
+									<xeac:descriptionTerm/>
+								</xforms:repeat>
+
+								<xforms:repeat nodeset="eac:occupation">
+									<xeac:descriptionTerm/>
+								</xforms:repeat>
+
+								<xforms:repeat nodeset="eac:place">
+									<xeac:descriptionTerm/>
+								</xforms:repeat>
+
+								<xforms:group ref="eac:citation">
+									<xeac:citation/>
+								</xforms:group>
+
+								<xforms:group ref="eac:descriptiveNote">
+									<xeac:descriptiveNote/>
+								</xforms:group>
+							</div>
 						</div>
 					</xforms:group>
 
@@ -136,48 +138,48 @@
 								<term/>
 							</function>
 						</xforms:instance>
-						
+
 						<xforms:instance id="languageUsed-template">
 							<languageUsed>
 								<language languageCode=""/>
 								<script scriptCode=""/>
 							</languageUsed>
 						</xforms:instance>
-						
+
 						<xforms:instance id="legalStatus-template">
 							<legalStatus>
 								<term/>
 							</legalStatus>
 						</xforms:instance>
-						
+
 						<xforms:instance id="localDescription-template">
 							<localDescription>
 								<term/>
 							</localDescription>
 						</xforms:instance>
-						
+
 						<xforms:instance id="mandate-template">
 							<mandate>
 								<term/>
 							</mandate>
 						</xforms:instance>
-						
+
 						<xforms:instance id="occupation-template">
 							<occupation>
 								<term/>
 							</occupation>
 						</xforms:instance>
-						
+
 						<xforms:instance id="place-template">
 							<place>
 								<term/>
 							</place>
 						</xforms:instance>
-						
+
 						<xforms:instance id="citation-template">
 							<citation/>
 						</xforms:instance>
-						
+
 						<xforms:instance id="descriptiveNote-template">
 							<descriptiveNote/>
 						</xforms:instance>

@@ -11,32 +11,40 @@
 					<xxforms:variable name="display_path">../../</xxforms:variable>
 
 					<xforms:group ref="$binding">
-						<div class="subsection">
+						<div>
 							<xforms:group ref=".[parent::eac:description]">
-								<h2>
-									<xforms:output value="concat(upper-case(substring(local-name(), 1, 1)), substring(local-name(), 2))"/>
-								</h2>
-							</xforms:group>
-							<xforms:group ref=".[not(parent::eac:description)]">
 								<h3>
 									<xforms:output value="concat(upper-case(substring(local-name(), 1, 1)), substring(local-name(), 2))"/>
 								</h3>
 							</xforms:group>
-
+							<xforms:group ref=".[not(parent::eac:description)]">
+								<h4>
+									<xforms:output value="concat(upper-case(substring(local-name(), 1, 1)), substring(local-name(), 2))"/>
+								</h4>
+							</xforms:group>
+							<span class="add">
+								<xforms:trigger appearance="minimal">
+									<xforms:label>
+										<xhtml:img src="{$display_path}images/add.gif"/>
+									</xforms:label>
+									<xxforms:show ev:event="DOMActivate" dialog="descriptionTerm-objects"/>
+								</xforms:trigger>
+							</span>
 							<xforms:trigger appearance="minimal">
 								<xforms:delete ev:event="DOMActivate" nodeset="."/>
 								<xforms:label>
 									<xhtml:img src="{$display_path}images/remove.gif"/>
 								</xforms:label>
 							</xforms:trigger>
-
-							<div class="trigger_container">
+							<xxforms:dialog id="descriptionTerm-objects" appearance="full" level="modal" close="true" draggable="true" visible="false">
+								<xforms:label>Insert Element</xforms:label>
 								<xforms:group ref=".[count(eac:citation) = 0]">
 									<xforms:trigger appearance="minimal">
 										<xforms:label>
 											<img src="{$display_path}images/add.gif"/>Citation</xforms:label>
 										<xforms:action ev:event="DOMActivate">
 											<xforms:insert context="." origin="instance('citation-template')"/>
+											<xxforms:hide dialog="descriptionTerm-objects"/>
 										</xforms:action>
 									</xforms:trigger>
 								</xforms:group>
@@ -46,6 +54,7 @@
 											<img src="{$display_path}images/add.gif"/>Date</xforms:label>
 										<xforms:action ev:event="DOMActivate">
 											<xforms:insert context="." origin="instance('date-template')"/>
+											<xxforms:hide dialog="descriptionTerm-objects"/>
 										</xforms:action>
 									</xforms:trigger>
 									<xforms:trigger appearance="minimal">
@@ -53,6 +62,7 @@
 											<img src="{$display_path}images/add.gif"/>Date Range</xforms:label>
 										<xforms:action ev:event="DOMActivate">
 											<xforms:insert context="." origin="instance('dateRange-template')"/>
+											<xxforms:hide dialog="descriptionTerm-objects"/>
 										</xforms:action>
 									</xforms:trigger>
 									<xforms:trigger appearance="minimal">
@@ -60,6 +70,7 @@
 											<img src="{$display_path}images/add.gif"/>Date Set</xforms:label>
 										<xforms:action ev:event="DOMActivate">
 											<xforms:insert context="." origin="instance('dateSet-template')"/>
+											<xxforms:hide dialog="descriptionTerm-objects"/>
 										</xforms:action>
 									</xforms:trigger>
 								</xforms:group>
@@ -69,6 +80,7 @@
 											<img src="{$display_path}images/add.gif"/>Descriptive Note</xforms:label>
 										<xforms:action ev:event="DOMActivate">
 											<xforms:insert context="." origin="instance('descriptiveNote-template')"/>
+											<xxforms:hide dialog="descriptionTerm-objects"/>
 										</xforms:action>
 									</xforms:trigger>
 								</xforms:group>
@@ -78,18 +90,20 @@
 											<img src="{$display_path}images/add.gif"/>Place Entry</xforms:label>
 										<xforms:action ev:event="DOMActivate">
 											<xforms:insert context="." origin="instance('placeEntry-template')"/>
+											<xxforms:hide dialog="descriptionTerm-objects"/>
 										</xforms:action>
 									</xforms:trigger>
 								</xforms:group>
-							</div>
-							
+							</xxforms:dialog>
+
+
 							<div>
 								<xforms:input ref="eac:term">
 									<xforms:label>Term</xforms:label>
 									<xforms:alert>Required</xforms:alert>
 								</xforms:input>
 							</div>
-							
+
 							<xforms:group ref="eac:citation">
 								<xeac:citation/>
 							</xforms:group>
@@ -105,11 +119,11 @@
 							<xforms:group ref="eac:dateSet">
 								<xeac:dateSet/>
 							</xforms:group>
-							
+
 							<xforms:group ref="eac:descriptiveNote">
 								<xeac:descriptiveNote/>
 							</xforms:group>
-							
+
 							<xforms:group ref="eac:placeEntry">
 								<xeac:placeEntry/>
 							</xforms:group>
@@ -123,7 +137,7 @@
 						<xforms:instance id="citation-template">
 							<citation/>
 						</xforms:instance>
-						
+
 						<xforms:instance id="date-template">
 							<date standardDate=""/>
 						</xforms:instance>
@@ -138,11 +152,11 @@
 						<xforms:instance id="dateSet-template">
 							<dateSet/>
 						</xforms:instance>
-						
+
 						<xforms:instance id="descriptiveNote-template">
 							<descriptiveNote/>
 						</xforms:instance>
-						
+
 						<xforms:instance id="placeEntry-template">
 							<placeEntry/>
 						</xforms:instance>

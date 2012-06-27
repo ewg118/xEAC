@@ -11,7 +11,12 @@
 					<xxforms:variable name="display_path">../../</xxforms:variable>
 
 					<xforms:group ref="$binding">
-						<h4><xforms:output value="if (local-name()='useDates') then 'Use Dates' else 'Dates of Existence'"/></h4>
+						<xforms:group ref=".[parent::eac:description]">
+							<h3>Dates of Existence</h3>
+						</xforms:group>
+						<xforms:group ref=".[not(parent::eac:description)]">
+							<h4>Use Dates</h4>
+						</xforms:group>						
 						<xforms:trigger appearance="minimal">
 							<xforms:delete ev:event="DOMActivate" nodeset="."/>
 							<xforms:label>

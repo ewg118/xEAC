@@ -755,26 +755,22 @@
 													<xxforms:hide dialog="description-objects"/>
 												</xforms:action>
 											</xforms:trigger>
-										</xforms:group>
-										<xforms:group ref=".[count(eac:function) = 0 and count(eac:functions) = 0]">
-											<xforms:trigger appearance="minimal">
-												<xforms:label>
-													<img src="{$display_path}images/add.gif"/>Function</xforms:label>
-												<xforms:action ev:event="DOMActivate">
-													<xforms:insert context="." origin="instance('function-template')"/>
-													<xxforms:hide dialog="description-objects"/>
-												</xforms:action>
-											</xforms:trigger>
-											<xforms:trigger appearance="minimal">
-												<xforms:label>
-													<img src="{$display_path}images/add.gif"/>Functions</xforms:label>
-												<xforms:action ev:event="DOMActivate">
-													<xforms:insert context="." origin="instance('functions-template')"/>
-													<xxforms:hide dialog="description-objects"/>
-												</xforms:action>
-											</xforms:trigger>
-										</xforms:group>
-										<xforms:group ref=".[count(eac:generalContext) = 0]">
+										</xforms:group> <xforms:trigger appearance="minimal">
+											<xforms:label>
+												<img src="{$display_path}images/add.gif"/>Function</xforms:label>
+											<xforms:action ev:event="DOMActivate">
+												<xforms:insert context="." origin="instance('function-template')"/>
+												<xxforms:hide dialog="description-objects"/>
+											</xforms:action>
+										</xforms:trigger>
+										<xforms:trigger appearance="minimal">
+											<xforms:label>
+												<img src="{$display_path}images/add.gif"/>Functions</xforms:label>
+											<xforms:action ev:event="DOMActivate">
+												<xforms:insert context="." origin="instance('functions-template')"/>
+												<xxforms:hide dialog="description-objects"/>
+											</xforms:action>
+										</xforms:trigger> <xforms:group ref=".[count(eac:generalContext) = 0]">
 											<xforms:trigger appearance="minimal">
 												<xforms:label>
 													<img src="{$display_path}images/add.gif"/>General Context</xforms:label>
@@ -783,116 +779,97 @@
 													<xxforms:hide dialog="description-objects"/>
 												</xforms:action>
 											</xforms:trigger>
-										</xforms:group>
-										<xforms:group ref=".[count(eac:languageUsed) = 0 and count(eac:languagesUsed) = 0]">
-											<xforms:trigger appearance="minimal">
-												<xforms:label>
-													<img src="{$display_path}images/add.gif"/>Language Used</xforms:label>
-												<xforms:action ev:event="DOMActivate">
-													<xforms:insert context="." origin="instance('languageUsed-template')"/>
-													<xxforms:hide dialog="description-objects"/>
-												</xforms:action>
-											</xforms:trigger>
-											<xforms:trigger appearance="minimal">
-												<xforms:label>
-													<img src="{$display_path}images/add.gif"/>Languages Used</xforms:label>
-												<xforms:action ev:event="DOMActivate">
-													<xforms:insert context="." origin="instance('languagesUsed-template')"/>
-													<xxforms:hide dialog="description-objects"/>
-												</xforms:action>
-											</xforms:trigger>
-										</xforms:group>
-										<xforms:group ref=".[count(eac:legalStatus) = 0 and count(eac:legalStatuses) = 0]">
-											<xforms:trigger appearance="minimal">
-												<xforms:label>
-													<img src="{$display_path}images/add.gif"/>Legal Status</xforms:label>
-												<xforms:action ev:event="DOMActivate">
-													<xforms:insert context="." origin="instance('legalStatus-template')"/>
-													<xxforms:hide dialog="description-objects"/>
-												</xforms:action>
-											</xforms:trigger>
-											<xforms:trigger appearance="minimal">
-												<xforms:label>
-													<img src="{$display_path}images/add.gif"/>Legal Statuses</xforms:label>
-												<xforms:action ev:event="DOMActivate">
-													<xforms:insert context="." origin="instance('legalStatuses-template')"/>
-													<xxforms:hide dialog="description-objects"/>
-												</xforms:action>
-											</xforms:trigger>
-										</xforms:group>
-										<xforms:group ref=".[count(eac:localDescription) = 0 and count(eac:localDescriptions) = 0]">
-											<xforms:trigger appearance="minimal">
-												<xforms:label>
-													<img src="{$display_path}images/add.gif"/>Local Description</xforms:label>
-												<xforms:action ev:event="DOMActivate">
-													<xforms:insert context="." origin="instance('localDescription-template')"/>
-													<xxforms:hide dialog="description-objects"/>
-												</xforms:action>
-											</xforms:trigger>
-											<xforms:trigger appearance="minimal">
-												<xforms:label>
-													<img src="{$display_path}images/add.gif"/>Local Descriptions</xforms:label>
-												<xforms:action ev:event="DOMActivate">
-													<xforms:insert context="." origin="instance('localDescriptions-template')"/>
-													<xxforms:hide dialog="description-objects"/>
-												</xforms:action>
-											</xforms:trigger>
-										</xforms:group>
-										<xforms:group ref=".[count(eac:mandate) = 0 and count(eac:mandates) = 0]">
-											<xforms:trigger appearance="minimal">
-												<xforms:label>
-													<img src="{$display_path}images/add.gif"/>Mandate</xforms:label>
-												<xforms:action ev:event="DOMActivate">
-													<xforms:insert context="." origin="instance('mandate-template')"/>
-													<xxforms:hide dialog="description-objects"/>
-												</xforms:action>
-											</xforms:trigger>
-											<xforms:trigger appearance="minimal">
-												<xforms:label>
-													<img src="{$display_path}images/add.gif"/>Mandates</xforms:label>
-												<xforms:action ev:event="DOMActivate">
-													<xforms:insert context="." origin="instance('mandates-template')"/>
-													<xxforms:hide dialog="description-objects"/>
-												</xforms:action>
-											</xforms:trigger>
-										</xforms:group>
-										<xforms:group ref=".[count(eac:occupation) = 0 and count(eac:occupations) = 0]">
-											<xforms:trigger appearance="minimal">
-												<xforms:label>
-													<img src="{$display_path}images/add.gif"/>Occupation</xforms:label>
-												<xforms:action ev:event="DOMActivate">
-													<xforms:insert context="." origin="instance('occupation-template')"/>
-													<xxforms:hide dialog="description-objects"/>
-												</xforms:action>
-											</xforms:trigger>
-											<xforms:trigger appearance="minimal">
-												<xforms:label>
-													<img src="{$display_path}images/add.gif"/>Occupations</xforms:label>
-												<xforms:action ev:event="DOMActivate">
-													<xforms:insert context="." origin="instance('occupations-template')"/>
-													<xxforms:hide dialog="description-objects"/>
-												</xforms:action>
-											</xforms:trigger>
-										</xforms:group>
-										<xforms:group ref=".[count(eac:place) = 0 and count(eac:places) = 0]">
-											<xforms:trigger appearance="minimal">
-												<xforms:label>
-													<img src="{$display_path}images/add.gif"/>Place</xforms:label>
-												<xforms:action ev:event="DOMActivate">
-													<xforms:insert context="." origin="instance('place-template')"/>
-													<xxforms:hide dialog="description-objects"/>
-												</xforms:action>
-											</xforms:trigger>
-											<xforms:trigger appearance="minimal">
-												<xforms:label>
-													<img src="{$display_path}images/add.gif"/>Places</xforms:label>
-												<xforms:action ev:event="DOMActivate">
-													<xforms:insert context="." origin="instance('places-template')"/>
-													<xxforms:hide dialog="description-objects"/>
-												</xforms:action>
-											</xforms:trigger>
-										</xforms:group>
-										<xforms:group ref=".[count(eac:structureOrGenealogy) = 0]">
+										</xforms:group> <xforms:trigger appearance="minimal">
+											<xforms:label>
+												<img src="{$display_path}images/add.gif"/>Language Used</xforms:label>
+											<xforms:action ev:event="DOMActivate">
+												<xforms:insert context="." origin="instance('languageUsed-template')"/>
+												<xxforms:hide dialog="description-objects"/>
+											</xforms:action>
+										</xforms:trigger>
+										<xforms:trigger appearance="minimal">
+											<xforms:label>
+												<img src="{$display_path}images/add.gif"/>Languages Used</xforms:label>
+											<xforms:action ev:event="DOMActivate">
+												<xforms:insert context="." origin="instance('languagesUsed-template')"/>
+												<xxforms:hide dialog="description-objects"/>
+											</xforms:action>
+										</xforms:trigger> <xforms:trigger appearance="minimal">
+											<xforms:label>
+												<img src="{$display_path}images/add.gif"/>Legal Status</xforms:label>
+											<xforms:action ev:event="DOMActivate">
+												<xforms:insert context="." origin="instance('legalStatus-template')"/>
+												<xxforms:hide dialog="description-objects"/>
+											</xforms:action>
+										</xforms:trigger>
+										<xforms:trigger appearance="minimal">
+											<xforms:label>
+												<img src="{$display_path}images/add.gif"/>Legal Statuses</xforms:label>
+											<xforms:action ev:event="DOMActivate">
+												<xforms:insert context="." origin="instance('legalStatuses-template')"/>
+												<xxforms:hide dialog="description-objects"/>
+											</xforms:action>
+										</xforms:trigger> <xforms:trigger appearance="minimal">
+											<xforms:label>
+												<img src="{$display_path}images/add.gif"/>Local Description</xforms:label>
+											<xforms:action ev:event="DOMActivate">
+												<xforms:insert context="." origin="instance('localDescription-template')"/>
+												<xxforms:hide dialog="description-objects"/>
+											</xforms:action>
+										</xforms:trigger>
+										<xforms:trigger appearance="minimal">
+											<xforms:label>
+												<img src="{$display_path}images/add.gif"/>Local Descriptions</xforms:label>
+											<xforms:action ev:event="DOMActivate">
+												<xforms:insert context="." origin="instance('localDescriptions-template')"/>
+												<xxforms:hide dialog="description-objects"/>
+											</xforms:action>
+										</xforms:trigger> <xforms:trigger appearance="minimal">
+											<xforms:label>
+												<img src="{$display_path}images/add.gif"/>Mandate</xforms:label>
+											<xforms:action ev:event="DOMActivate">
+												<xforms:insert context="." origin="instance('mandate-template')"/>
+												<xxforms:hide dialog="description-objects"/>
+											</xforms:action>
+										</xforms:trigger>
+										<xforms:trigger appearance="minimal">
+											<xforms:label>
+												<img src="{$display_path}images/add.gif"/>Mandates</xforms:label>
+											<xforms:action ev:event="DOMActivate">
+												<xforms:insert context="." origin="instance('mandates-template')"/>
+												<xxforms:hide dialog="description-objects"/>
+											</xforms:action>
+										</xforms:trigger> <xforms:trigger appearance="minimal">
+											<xforms:label>
+												<img src="{$display_path}images/add.gif"/>Occupation</xforms:label>
+											<xforms:action ev:event="DOMActivate">
+												<xforms:insert context="." origin="instance('occupation-template')"/>
+												<xxforms:hide dialog="description-objects"/>
+											</xforms:action>
+										</xforms:trigger>
+										<xforms:trigger appearance="minimal">
+											<xforms:label>
+												<img src="{$display_path}images/add.gif"/>Occupations</xforms:label>
+											<xforms:action ev:event="DOMActivate">
+												<xforms:insert context="." origin="instance('occupations-template')"/>
+												<xxforms:hide dialog="description-objects"/>
+											</xforms:action>
+										</xforms:trigger> <xforms:trigger appearance="minimal">
+											<xforms:label>
+												<img src="{$display_path}images/add.gif"/>Place</xforms:label>
+											<xforms:action ev:event="DOMActivate">
+												<xforms:insert context="." origin="instance('place-template')"/>
+												<xxforms:hide dialog="description-objects"/>
+											</xforms:action>
+										</xforms:trigger>
+										<xforms:trigger appearance="minimal">
+											<xforms:label>
+												<img src="{$display_path}images/add.gif"/>Places</xforms:label>
+											<xforms:action ev:event="DOMActivate">
+												<xforms:insert context="." origin="instance('places-template')"/>
+												<xxforms:hide dialog="description-objects"/>
+											</xforms:action>
+										</xforms:trigger> <xforms:group ref=".[count(eac:structureOrGenealogy) = 0]">
 											<xforms:trigger appearance="minimal">
 												<xforms:label>
 													<img src="{$display_path}images/add.gif"/>Structure or Genealogy</xforms:label>
@@ -907,48 +884,48 @@
 									<xforms:group ref="eac:existDates">
 										<xeac:datesContainer/>
 									</xforms:group>
-									<xforms:group ref="eac:function">
+									<xforms:repeat nodeset="eac:function">
 										<xeac:descriptionTerm/>
-									</xforms:group>
-									<xforms:group ref="eac:functions">
+									</xforms:repeat>
+									<xforms:repeat nodeset="eac:functions">
 										<xeac:descriptionTermGroup/>
-									</xforms:group>
-									<xforms:group ref="eac:languageUsed">
+									</xforms:repeat>
+									<xforms:repeat nodeset="eac:languageUsed">
 										<xeac:descriptionTerm/>
-									</xforms:group>
-									<xforms:group ref="eac:languagesUsed">
+									</xforms:repeat>
+									<xforms:repeat nodeset="eac:languagesUsed">
 										<xeac:descriptionTermGroup/>
-									</xforms:group>
-									<xforms:group ref="eac:legalStatus">
+									</xforms:repeat>
+									<xforms:repeat nodeset="eac:legalStatus">
 										<xeac:descriptionTerm/>
-									</xforms:group>
-									<xforms:group ref="eac:legalStatuses">
+									</xforms:repeat>
+									<xforms:repeat nodeset="eac:legalStatuses">
 										<xeac:descriptionTermGroup/>
-									</xforms:group>
-									<xforms:group ref="eac:localDescription">
+									</xforms:repeat>
+									<xforms:repeat nodeset="eac:localDescription">
 										<xeac:descriptionTerm/>
-									</xforms:group>
-									<xforms:group ref="eac:localDescriptions">
+									</xforms:repeat>
+									<xforms:repeat nodeset="eac:localDescriptions">
 										<xeac:descriptionTermGroup/>
-									</xforms:group>
-									<xforms:group ref="eac:mandate">
+									</xforms:repeat>
+									<xforms:repeat nodeset="eac:mandate">
 										<xeac:descriptionTerm/>
-									</xforms:group>
-									<xforms:group ref="eac:mandates">
+									</xforms:repeat>
+									<xforms:repeat nodeset="eac:mandates">
 										<xeac:descriptionTermGroup/>
-									</xforms:group>
-									<xforms:group ref="eac:occupation">
+									</xforms:repeat>
+									<xforms:repeat nodeset="eac:occupation">
 										<xeac:descriptionTerm/>
-									</xforms:group>
-									<xforms:group ref="eac:occupations">
+									</xforms:repeat>
+									<xforms:repeat nodeset="eac:occupations">
 										<xeac:descriptionTermGroup/>
-									</xforms:group>
-									<xforms:group ref="eac:place">
+									</xforms:repeat>
+									<xforms:repeat nodeset="eac:place">
 										<xeac:descriptionTerm/>
-									</xforms:group>
-									<xforms:group ref="eac:places">
+									</xforms:repeat>
+									<xforms:repeat nodeset="eac:places">
 										<xeac:descriptionTermGroup/>
-									</xforms:group>
+									</xforms:repeat>
 									<!-- alert for removal of description -->
 									<fr:alert-dialog id="remove-description">
 										<fr:label>Remove Description</fr:label>
