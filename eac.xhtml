@@ -571,6 +571,7 @@
 		<xi:include href="oxf:/xbl/xeac/descriptionTerm/descriptionTerm.xbl" xi:omit-xml-base="true"/>
 		<xi:include href="oxf:/xbl/xeac/descriptionTermGroup/descriptionTermGroup.xbl" xi:omit-xml-base="true"/>
 		<xi:include href="oxf:/xbl/xeac/descriptiveNote/descriptiveNote.xbl" xi:omit-xml-base="true"/>
+		<xi:include href="oxf:/xbl/xeac/languageUsed/languageUsed.xbl" xi:omit-xml-base="true"/>
 		<xi:include href="oxf:/xbl/xeac/nameEntry/nameEntry.xbl" xi:omit-xml-base="true"/>
 		<xi:include href="oxf:/xbl/xeac/placeEntry/placeEntry.xbl" xi:omit-xml-base="true"/>
 		<xi:include href="oxf:/xbl/xeac/relation/relation.xbl" xi:omit-xml-base="true"/>
@@ -701,17 +702,7 @@
 										</div>
 									</xforms:group>
 									<xforms:group ref="eac:descriptiveNote">
-										<div>
-											<xforms:textarea ref=".">
-												<xforms:label>Descriptive Note</xforms:label>
-											</xforms:textarea>
-											<xforms:trigger appearance="minimal">
-												<xforms:delete ev:event="DOMActivate" nodeset="."/>
-												<xforms:label>
-													<xhtml:img src="{$display_path}images/remove.gif"/>
-												</xforms:label>
-											</xforms:trigger>
-										</div>
+										<xeac:descriptiveNote/>
 									</xforms:group>
 								</div>
 							</fr:tab>
@@ -891,7 +882,7 @@
 										<xeac:descriptionTermGroup/>
 									</xforms:repeat>
 									<xforms:repeat nodeset="eac:languageUsed">
-										<xeac:descriptionTerm/>
+										<xeac:languageUsed/>
 									</xforms:repeat>
 									<xforms:repeat nodeset="eac:languagesUsed">
 										<xeac:descriptionTermGroup/>

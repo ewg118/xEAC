@@ -1,0 +1,79 @@
+<xbl:xbl xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:xforms="http://www.w3.org/2002/xforms" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:xxforms="http://orbeon.org/oxf/xml/xforms"
+	xmlns:xbl="http://www.w3.org/ns/xbl" xmlns:xxbl="http://orbeon.org/oxf/xml/xbl" xmlns:xeac="https://github.com/ewg118/xEAC" xmlns:eac="urn:isbn:1-931666-33-4" xmlns="urn:isbn:1-931666-33-4">
+	<xbl:binding id="xeac-languageUsed" element="xeac|languageUsed">
+		<xbl:template>
+			<xforms:group xbl:attr="model context ref bind" xxbl:scope="outer">
+				<xbl:content includes="xforms|label,xforms|help,xforms|hint,xforms|alert"/>
+				<xforms:group xxbl:scope="inner">
+					<xxforms:variable name="binding" as="node()?">
+						<xxforms:sequence select="." xxbl:scope="outer"/>
+					</xxforms:variable>
+					<xxforms:variable name="display_path">../../</xxforms:variable>
+
+					<xforms:group ref="$binding">
+						<div style="margin-bottom:15px;">
+							<xforms:group ref=".[parent::eac:description]">
+								<h3>Language Used</h3>
+							</xforms:group>
+							<xforms:group ref=".[not(parent::eac:description)]">
+								<h4>Language Used</h4>
+							</xforms:group>
+							<xforms:trigger appearance="minimal">
+								<xforms:delete ev:event="DOMActivate" nodeset="."/>
+								<xforms:label>
+									<xhtml:img src="{$display_path}images/remove.gif"/>
+								</xforms:label>
+							</xforms:trigger>
+							<div class="trigger_container">
+								<xforms:group ref=".[count(eac:descriptiveNote) = 0]">
+									<xforms:trigger appearance="minimal">
+										<xforms:label>
+											<img src="{$display_path}images/add.gif"/>Descriptive Note</xforms:label>
+										<xforms:action ev:event="DOMActivate">
+											<xforms:insert context="." origin="instance('descriptiveNote-template')"/>
+											<xxforms:hide dialog="languageUsed-objects"/>
+										</xforms:action>
+									</xforms:trigger>
+								</xforms:group>
+							</div>
+
+
+							<div>
+								<xforms:select1 ref="eac:language">
+									<xforms:label>Language</xforms:label>
+									<xforms:item>
+										<xforms:label>Select Language...</xforms:label>
+										<xforms:value/>
+									</xforms:item>
+									<xforms:itemset nodeset="instance('language-list')//language">
+										<xforms:label ref="name"/>
+										<xforms:value ref="name"/>
+									</xforms:itemset>
+									<xforms:alert>Required</xforms:alert>
+									<xxforms:variable name="language" select="."/>
+									<xforms:setvalue ref="@languageCode" value="instance('language-list')//language[name = $language]/code" ev:event="xforms-value-changed"/>
+								</xforms:select1>
+							</div>
+
+							<xforms:group ref="eac:descriptiveNote">
+								<xeac:descriptiveNote/>
+							</xforms:group>
+						</div>
+					</xforms:group>
+
+
+
+					<!-- ********************************************************************** -->
+					<xforms:model id="languageUsed-model">
+						<xforms:instance id="descriptiveNote-template">
+							<descriptiveNote/>
+						</xforms:instance>
+						
+						<xforms:instance id="language-list" src="/apps/xeac/instances/languages.xml"/>
+					</xforms:model>
+				</xforms:group>
+			</xforms:group>
+		</xbl:template>
+	</xbl:binding>
+
+</xbl:xbl>

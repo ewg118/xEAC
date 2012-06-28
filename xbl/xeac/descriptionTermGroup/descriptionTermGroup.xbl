@@ -12,9 +12,9 @@
 
 					<xforms:group ref="$binding">
 						<div class="section">
-							<h2>
+							<h3>
 								<xforms:output value="concat(upper-case(substring(local-name(), 1, 1)), substring(local-name(), 2))"/>
-							</h2>
+							</h3>
 							<xforms:trigger appearance="minimal">
 								<xforms:delete ev:event="DOMActivate" nodeset="."/>
 								<xforms:label>
@@ -97,7 +97,7 @@
 								</xforms:repeat>
 
 								<xforms:repeat nodeset="eac:languageUsed">
-									<xeac:descriptionTerm/>
+									<xeac:languageUsed/>
 								</xforms:repeat>
 
 								<xforms:repeat nodeset="eac:legalStatus">

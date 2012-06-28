@@ -11,7 +11,7 @@
 					<xxforms:variable name="display_path">../../</xxforms:variable>
 
 					<xforms:group ref="$binding">
-						<div>
+						<div style="margin-bottom:15px;">
 							<xforms:group ref=".[parent::eac:description]">
 								<h3>
 									<xforms:output value="concat(upper-case(substring(local-name(), 1, 1)), substring(local-name(), 2))"/>
