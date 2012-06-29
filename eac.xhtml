@@ -15,7 +15,6 @@
 		<link rel="stylesheet" type="text/css" href="/apps/xeac/css/reset-fonts-grids.css"/>
 		<link rel="stylesheet" type="text/css" href="/apps/xeac/css/base-min.css"/>
 		<link rel="stylesheet" type="text/css" href="/apps/xeac/css/fonts-min.css"/>
-		<!-- xeac styling -->
 		<link rel="stylesheet" href="/apps/xeac/css/style.css"/>
 		<link rel="stylesheet" href="/apps/xeac/css/themes/smoothness.css"/>
 		<script type="text/javascript" src="/apps/xeac/javascript/jquery-1.4.2.min.js"/>
@@ -215,8 +214,24 @@
 			</xforms:instance>
 
 			<!-- description -->
+			<xforms:instance id="abstract-template">
+				<abstract/>
+			</xforms:instance>
+			
 			<xforms:instance id="biogHist-template">
 				<biogHist/>
+			</xforms:instance>
+			
+			<xforms:instance id="chronList-template">
+				<chronList>
+					<chronItem>
+						<event/>
+					</chronItem>
+				</chronList>
+			</xforms:instance>
+			
+			<xforms:instance id="citation-template">
+				<citation/>
 			</xforms:instance>
 
 			<xforms:instance id="existDates-template">
@@ -270,6 +285,12 @@
 					</legalStatus>
 				</legalStatuses>
 			</xforms:instance>
+			
+			<xforms:instance id="list-template">
+				<list>
+					<item/>
+				</list>
+			</xforms:instance>
 
 			<xforms:instance id="localDescription-template">
 				<localDescription>
@@ -311,6 +332,16 @@
 						<term/>
 					</occupation>
 				</occupations>
+			</xforms:instance>
+			
+			<xforms:instance id="outline-template">
+				<outline>
+					<level/>
+				</outline>
+			</xforms:instance>
+			
+			<xforms:instance id="p-template">
+				<p/>
 			</xforms:instance>
 
 			<xforms:instance id="place-template">
@@ -572,7 +603,9 @@
 		<xi:include href="oxf:/xbl/xeac/descriptionTermGroup/descriptionTermGroup.xbl" xi:omit-xml-base="true"/>
 		<xi:include href="oxf:/xbl/xeac/descriptiveNote/descriptiveNote.xbl" xi:omit-xml-base="true"/>
 		<xi:include href="oxf:/xbl/xeac/languageUsed/languageUsed.xbl" xi:omit-xml-base="true"/>
+		<xi:include href="oxf:/xbl/xeac/list/list.xbl" xi:omit-xml-base="true"/>
 		<xi:include href="oxf:/xbl/xeac/nameEntry/nameEntry.xbl" xi:omit-xml-base="true"/>
+		<xi:include href="oxf:/xbl/xeac/p/p.xbl" xi:omit-xml-base="true"/>
 		<xi:include href="oxf:/xbl/xeac/placeEntry/placeEntry.xbl" xi:omit-xml-base="true"/>
 		<xi:include href="oxf:/xbl/xeac/relation/relation.xbl" xi:omit-xml-base="true"/>
 		<xi:include href="oxf:/xbl/xeac/relationEntry/relationEntry.xbl" xi:omit-xml-base="true"/>
@@ -596,13 +629,13 @@
 					<div id="form">
 						<div class="submission">
 							<xforms:trigger appearance="minimal">
-								<xforms:label><img src="/apps/xeac/images/save.gif" alt="Save"/>Save</xforms:label>
+								<xforms:label><img src="{$display_path}images/save.gif" alt="Save"/>Save</xforms:label>
 								<xforms:action ev:event="DOMActivate">
 									<xforms:send submission="save-doc"/>
 								</xforms:action>
 							</xforms:trigger>
 							<xforms:submit submission="load-doc" appearance="minimal">
-								<xforms:label><img src="/apps/xeac/images/recycle-green.png" alt="Revert"/>Load</xforms:label>
+								<xforms:label><img src="{$display_path}images/recycle-green.png" alt="Revert"/>Load</xforms:label>
 							</xforms:submit>
 						</div>
 						<!--<xforms:trigger>
@@ -860,7 +893,8 @@
 												<xforms:insert context="." origin="instance('places-template')"/>
 												<xxforms:hide dialog="description-objects"/>
 											</xforms:action>
-										</xforms:trigger> <xforms:group ref=".[count(eac:structureOrGenealogy) = 0]">
+										</xforms:trigger>
+										<xforms:group ref=".[count(eac:structureOrGenealogy) = 0]">
 											<xforms:trigger appearance="minimal">
 												<xforms:label>
 													<img src="{$display_path}images/add.gif"/>Structure or Genealogy</xforms:label>
@@ -872,6 +906,122 @@
 										</xforms:group>
 									</xxforms:dialog>
 									<!-- description elements -->
+									<xforms:group ref="eac:biogHist">
+										<div class="section">
+											<h3>Biographical or Historical Note</h3>
+											<span class="add">
+												<xforms:trigger appearance="minimal">
+													<xforms:label>
+														<xhtml:img src="{$display_path}images/add.gif"/>
+													</xforms:label>
+													<xxforms:show ev:event="DOMActivate" dialog="biogHist-objects"/>
+												</xforms:trigger>
+											</span>
+											<xforms:trigger appearance="minimal">
+												<xforms:delete nodeset="." ev:event="DOMActivate"/>
+												<xforms:label>
+													<xhtml:img src="{$display_path}images/remove.gif"/>
+												</xforms:label>
+											</xforms:trigger>
+											<xxforms:dialog id="biogHist-objects" appearance="full" level="modal" close="true" draggable="true" visible="false">
+												<xforms:label>Add Elements</xforms:label>
+												<xforms:group ref=".[count(eac:abstract) = 0]">
+													<xforms:trigger appearance="minimal">
+														<xforms:label>
+															<img src="{$display_path}images/add.gif"/>Abstract</xforms:label>
+														<xforms:action ev:event="DOMActivate">
+															<xforms:insert context="." origin="instance('abstract-template')"/>
+															<xxforms:hide dialog="biogHist-objects"/>
+														</xforms:action>
+													</xforms:trigger>
+												</xforms:group>
+												<xforms:group ref=".[count(eac:chronList) = 0]">
+													<xforms:trigger appearance="minimal">
+														<xforms:label>
+															<img src="{$display_path}images/add.gif"/>Chronological List</xforms:label>
+														<xforms:action ev:event="DOMActivate">
+															<xforms:insert context="." origin="instance('chronList-template')"/>
+															<xxforms:hide dialog="biogHist-objects"/>
+														</xforms:action>
+													</xforms:trigger>
+												</xforms:group>
+												<xforms:group ref=".[count(eac:citation) = 0]">
+													<xforms:trigger appearance="minimal">
+														<xforms:label>
+															<img src="{$display_path}images/add.gif"/>Citation</xforms:label>
+														<xforms:action ev:event="DOMActivate">
+															<xforms:insert context="." origin="instance('citation-template')"/>
+															<xxforms:hide dialog="biogHist-objects"/>
+														</xforms:action>
+													</xforms:trigger>
+												</xforms:group>
+												<xforms:group ref=".[count(eac:list) = 0]">
+													<xforms:trigger appearance="minimal">
+														<xforms:label>
+															<img src="{$display_path}images/add.gif"/>List</xforms:label>
+														<xforms:action ev:event="DOMActivate">
+															<xforms:insert context="." origin="instance('list-template')"/>
+															<xxforms:hide dialog="biogHist-objects"/>
+														</xforms:action>
+													</xforms:trigger>
+												</xforms:group>
+												<xforms:group ref=".[count(eac:outline) = 0]">
+													<xforms:trigger appearance="minimal">
+														<xforms:label>
+															<img src="{$display_path}images/add.gif"/>Outline</xforms:label>
+														<xforms:action ev:event="DOMActivate">
+															<xforms:insert context="." origin="instance('outline-template')"/>
+															<xxforms:hide dialog="biogHist-objects"/>
+														</xforms:action>
+													</xforms:trigger>
+												</xforms:group>
+												<xforms:trigger appearance="minimal">
+													<xforms:label>
+														<img src="{$display_path}images/add.gif"/>Paragraph</xforms:label>
+													<xforms:action ev:event="DOMActivate">
+														<xforms:insert context="." nodeset="./child::node()[last()]" origin="instance('p-template')"/>
+														<xxforms:hide dialog="biogHist-objects"/>
+													</xforms:action>
+												</xforms:trigger>
+											</xxforms:dialog>
+										</div>
+										
+										<xforms:group ref="eac:abstract">
+											<xforms:textarea ref=".">
+												<xforms:label>Abstract</xforms:label>
+											</xforms:textarea>
+											<xforms:trigger appearance="minimal">
+												<xforms:delete ev:event="DOMActivate" nodeset="."/>
+												<xforms:label>
+													<xhtml:img src="{$display_path}images/remove.gif"/>
+												</xforms:label>
+											</xforms:trigger>
+										</xforms:group>
+										
+										<!--<xforms:group ref="eac:chronList">
+											<xeac:chronList/>
+										</xforms:group>-->
+										
+										<xforms:group ref="eac:citation">
+											<xeac:citation/>
+										</xforms:group>
+										
+										<xforms:group ref="eac:list">
+											<xeac:list/>
+										</xforms:group>
+										
+										<!--<xforms:group ref="eac:outline">
+											<h3>Outline</h3>
+											<xforms:repeat nodeset="eac:level">
+												<xeac:level/>
+											</xforms:repeat>
+										</xforms:group>-->
+										
+										<xforms:repeat nodeset="eac:p">
+											<xeac:p/>
+										</xforms:repeat>
+									</xforms:group>
+									
 									<xforms:group ref="eac:existDates">
 										<xeac:datesContainer/>
 									</xforms:group>

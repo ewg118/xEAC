@@ -1,0 +1,58 @@
+<xbl:xbl xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:xforms="http://www.w3.org/2002/xforms" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:xxforms="http://orbeon.org/oxf/xml/xforms"
+	xmlns:xbl="http://www.w3.org/ns/xbl" xmlns:xxbl="http://orbeon.org/oxf/xml/xbl" xmlns:xeac="https://github.com/ewg118/xEAC" xmlns:eac="urn:isbn:1-931666-33-4" xmlns="urn:isbn:1-931666-33-4">
+	<xbl:binding id="xeac-list" element="xeac|list">
+		<xbl:template>
+			<xforms:group xbl:attr="model context ref bind" xxbl:scope="outer">
+				<xbl:content includes="xforms|label,xforms|help,xforms|hint,xforms|alert"/>
+				<xforms:group xxbl:scope="inner">
+					<xxforms:variable name="binding" as="node()?">
+						<xxforms:sequence select="." xxbl:scope="outer"/>
+					</xxforms:variable>
+					<xxforms:variable name="display_path">../../</xxforms:variable>
+
+					<xforms:group ref="$binding">
+						<h4>List</h4>
+						<xforms:trigger appearance="minimal">
+							<xforms:delete ev:event="DOMActivate" nodeset="."/>
+							<xforms:label>
+								<xhtml:img src="{$display_path}images/remove.gif"/>
+							</xforms:label>
+						</xforms:trigger>
+						<div class="trigger_container">
+							<xforms:trigger appearance="minimal">
+								<xforms:label>
+									<img src="{$display_path}images/add.gif"/>Item</xforms:label>
+								<xforms:action ev:event="DOMActivate">
+									<xforms:insert context="." nodeset="./child::node()[last()]" origin="instance('item-template')"/>
+								</xforms:action>
+							</xforms:trigger>
+						</div>
+
+						<xforms:repeat nodeset="eac:item">
+							<div>
+								<xforms:input ref=".">
+									<xforms:label>Item</xforms:label>
+								</xforms:input>
+								<xforms:group ref=".[count($binding/eac:item) &gt; 1]">
+									<xforms:trigger appearance="minimal">
+										<xforms:delete ev:event="DOMActivate" nodeset="."/>
+										<xforms:label>
+											<xhtml:img src="{$display_path}images/remove.gif"/>
+										</xforms:label>
+									</xforms:trigger>
+								</xforms:group>
+							</div>							
+						</xforms:repeat>
+					</xforms:group>
+					<!-- ********************************************************************** -->
+					<xforms:model id="list-model">
+						<xforms:instance id="item-template">
+							<item/>
+						</xforms:instance>
+					</xforms:model>
+				</xforms:group>
+			</xforms:group>
+		</xbl:template>
+	</xbl:binding>
+
+</xbl:xbl>

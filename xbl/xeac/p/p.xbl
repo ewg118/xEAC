@@ -1,6 +1,6 @@
 <xbl:xbl xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:xforms="http://www.w3.org/2002/xforms" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:xxforms="http://orbeon.org/oxf/xml/xforms"
 	xmlns:xbl="http://www.w3.org/ns/xbl" xmlns:xxbl="http://orbeon.org/oxf/xml/xbl" xmlns:xeac="https://github.com/ewg118/xEAC" xmlns:eac="urn:isbn:1-931666-33-4" xmlns="urn:isbn:1-931666-33-4">
-	<xbl:binding id="xeac-descriptiveNote" element="xeac|descriptiveNote">
+	<xbl:binding id="xeac-p" element="xeac|p">
 		<xbl:template>
 			<xforms:group xbl:attr="model context ref bind" xxbl:scope="outer">
 				<xbl:content includes="xforms|label,xforms|help,xforms|hint,xforms|alert"/>
@@ -11,7 +11,7 @@
 					<div>
 						<xforms:textarea ref="$binding">
 							<xforms:alert>Content Required.</xforms:alert>
-							<xforms:label>Descriptive Note</xforms:label>
+							<xforms:label>Paragraph</xforms:label>
 						</xforms:textarea>
 						<xforms:trigger appearance="minimal">
 							<xforms:delete ev:event="DOMActivate" nodeset="$binding"/>
