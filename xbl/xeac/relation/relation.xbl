@@ -13,12 +13,22 @@
 						<xxforms:sequence select="." xxbl:scope="outer"/>
 					</xxforms:variable>
 					<xforms:action ev:event="xforms-enabled" ev:target="#observer">
+						<!-- load config on XBL enabled -->
 						<xforms:send submission="load-config"/>
 					</xforms:action>
 					<span class="add">
 						<xforms:trigger appearance="minimal">
 							<xforms:label>@</xforms:label>
 							<xforms:action ev:event="DOMActivate">
+								<!-- pre-set the values of instance('attributes') -->
+								<xforms:setvalue ref="instance('attributes')/attribute[@name='cpfRelationType']" value="$binding/@cpfRelationType"/>
+								<xforms:setvalue ref="instance('attributes')/attribute[@name='xlink:role']" value="$binding/@xlink:role"/>
+								<xforms:setvalue ref="instance('attributes')/attribute[@name='xlink:arcrole']" value="$binding/@xlink:arcrole"/>
+								<xforms:setvalue ref="instance('attributes')/attribute[@name='xlink:href']" value="$binding/@xlink:href"/>
+								
+								<!-- load query results -->
+								<xforms:send submission="get-solr-id" if="string-length(instance('attributes')/attribute[@name='xlink:href']) &gt; 0 and not(number(instance('response')/result/@numFound))"/>
+								
 								<xxforms:show dialog="relation-dialog"/>
 							</xforms:action>
 						</xforms:trigger>
@@ -42,7 +52,7 @@
 								<xforms:select1 ref="instance('attributes')/attribute[@name='xlink:href']" appearance="compact">
 									<xforms:label>Name</xforms:label>
 									<xforms:itemset nodeset="instance('response')//doc">
-										<xforms:label ref="concat(str[@name='name'], ': (', str[@name='id'], ')')"/>
+										<xforms:label ref="concat(str[@name='name'], ' (', str[@name='id'], ')')"/>
 										<xforms:value ref="str[@name='id']"/>
 									</xforms:itemset>
 									<xforms:action ev:event="xforms-value-changed">
@@ -195,6 +205,14 @@
 							<!--<xforms:action ev:event="xforms-submit-done">
 								
 							</xforms:action>-->
+						</xforms:submission>
+						
+						<xforms:submission id="get-solr-id" serialization="none" method="get" action="{instance('config')/solr_all}select/?q=id:&#x022;{instance('attributes')/attribute[@name='xlink:href']}&#x022;&amp;rows=100"
+							replace="instance" instance="response">
+							<xforms:message ev:event="xforms-submit-error" level="modal">Solr is inaccessible. Please check Solr configuration.</xforms:message>
+							<!--<xforms:action ev:event="xforms-submit-done">
+								
+								</xforms:action>-->
 						</xforms:submission>
 					</xforms:model>
 				</xforms:group>
