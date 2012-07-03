@@ -311,12 +311,17 @@ textarea{
 .xxforms-dialog-body>a, .xxforms-dialog-body>span {
 	width:100px;
 }
-.xbl-xeac-relation {
+.xbl-xeac-relation, .xbl-xeac-reorder {
 	display:inline;
 	width:1em;
 }
 .attr-output {
 	color:silver;
+}
+.reorder-block{
+	padding:5px;
+	border:1px solid silver;
+	margin:10px 0;
 }
 .success {
 	width:50%;

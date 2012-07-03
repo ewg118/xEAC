@@ -1,5 +1,6 @@
 <xbl:xbl xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:xforms="http://www.w3.org/2002/xforms" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:xxforms="http://orbeon.org/oxf/xml/xforms"
-	xmlns:xbl="http://www.w3.org/ns/xbl" xmlns:xxbl="http://orbeon.org/oxf/xml/xbl" xmlns:xeac="https://github.com/ewg118/xEAC" xmlns:eac="urn:isbn:1-931666-33-4" xmlns="urn:isbn:1-931666-33-4">
+	xmlns:fr="http://orbeon.org/oxf/xml/form-runner" xmlns:xbl="http://www.w3.org/ns/xbl" xmlns:xxbl="http://orbeon.org/oxf/xml/xbl" xmlns:xeac="https://github.com/ewg118/xEAC"
+	xmlns:eac="urn:isbn:1-931666-33-4" xmlns="urn:isbn:1-931666-33-4">
 	<xbl:binding id="xeac-relationEntry" element="xeac|relationEntry">
 		<xbl:template>
 			<xforms:group xbl:attr="model context ref bind" xxbl:scope="outer">
@@ -7,26 +8,171 @@
 				<xforms:group xxbl:scope="inner">
 					<xxforms:variable name="binding" as="node()?">
 						<xxforms:sequence select="." xxbl:scope="outer"/>
-					</xxforms:variable>					
+					</xxforms:variable>
 
-					<xforms:group ref="$binding[string(parent::node()/@xlink:href)]">
-						<div>
-							<xforms:output ref="$binding">
-								<xforms:label>Relation Entry</xforms:label>								
-							</xforms:output>
-						</div>
+					<xforms:group ref="$binding">
+						<xforms:group ref=".[string(parent::node()/@xlink:href)]">
+							<div>
+								<xforms:output ref=".">
+									<xforms:label>Relation Entry</xforms:label>
+								</xforms:output>
+							</div>
+						</xforms:group>
+						<xforms:group ref=".[not(string(parent::node()/@xlink:href))]">
+							<div>
+								<xforms:input ref="." incremental="true">
+									<xforms:label>Relation Entry</xforms:label>
+									<xforms:alert>Required</xforms:alert>
+								</xforms:input>
+
+								<xforms:group ref=".[string-length(.) &gt; 0]">
+									<xforms:trigger appearance="minimal">
+										<xforms:label>Create Record</xforms:label>
+										<xforms:action ev:event="DOMActivate">
+											<xxforms:show dialog="generate-dialog"/>
+										</xforms:action>
+									</xforms:trigger>
+									<xxforms:dialog id="generate-dialog" appearance="full" level="modal" close="true" draggable="true" visible="false">
+										<xforms:label>Create New EAC-CPF Record</xforms:label>
+										<xforms:group ref="instance('attributes')">
+											<div>
+												<xforms:input ref="attribute[@name='xlink:href']">
+													<xforms:label>Record ID</xforms:label>
+													<xforms:alert>Required; must be xs:ID datatype.</xforms:alert>													
+												</xforms:input>
+												<!-- allow user to generate an 8 alphanumeric character Record ID preceded by 'eac_' -->
+												<xforms:trigger appearance="minimal">
+													<xforms:label>Generate</xforms:label>
+													<xforms:setvalue ref="attribute[@name='xlink:href']" value="concat('eac_', substring(string(digest( string( random( true ) ), 'MD5', 'hex' )), 1, 8))"
+														ev:event="DOMActivate"/>
+												</xforms:trigger>
+											</div>
+											<div>
+												<xforms:select1 ref="attribute[@name='cpfRelationType']">
+													<xforms:label>CPF Relation Type</xforms:label>
+													<xforms:item>
+														<xforms:label>Select...</xforms:label>
+														<xforms:value/>
+													</xforms:item>
+													<xforms:itemset nodeset="instance('cpfRelationType-list')/item">
+														<xforms:label ref="."/>
+														<xforms:value ref="."/>
+													</xforms:itemset>													
+												</xforms:select1>
+											</div>
+											<div>
+												<xforms:select1 ref="attribute[@name='xlink:arcrole']">
+													<xforms:label>Xlink Arcrole</xforms:label>
+													<xforms:item>
+														<xforms:label>Select...</xforms:label>
+														<xforms:value/>
+													</xforms:item>
+													<xforms:itemset nodeset="instance('arcrole-list')/item">
+														<xforms:label ref="."/>
+														<xforms:value ref="."/>
+													</xforms:itemset>													
+												</xforms:select1>
+											</div>
+											<div>
+												<xforms:select1 ref="attribute[@name='xlink:role']">
+													<xforms:label>Xlink Role</xforms:label>
+													<xforms:item>
+														<xforms:label>Select...</xforms:label>
+														<xforms:value/>
+													</xforms:item>
+													<xforms:itemset nodeset="instance('role-list')/item">
+														<xforms:label ref="."/>
+														<xforms:value ref="@role"/>
+													</xforms:itemset>													
+												</xforms:select1>
+											</div>
+										</xforms:group>
+
+
+										<div style="text-align:right">
+											<xforms:trigger>
+												<xforms:action ev:event="DOMActivate">
+													<!-- edit xlink:href -->
+													<xforms:insert context="parent::node()" origin="xxforms:attribute('xlink:href', instance('attributes')/attribute[@name='xlink:href'])"
+														if="not(parent::node()/@xlink:href) and string-length(instance('attributes')/attribute[@name='xlink:href']) &gt; 0"/>
+													<xforms:delete if="string-length(instance('attributes')/attribute[@name='xlink:href']) = 0" context="parent::node()" nodeset="parent::node()/@xlink:href"/>
+													<!-- edit relationType -->
+													<xforms:insert context="parent::node()" origin="xxforms:attribute('cpfRelationType', instance('attributes')/attribute[@name='cpfRelationType'])"
+														if="not(parent::node()/@cpfRelationType) and string-length(instance('attributes')/attribute[@name='cpfRelationType']) &gt; 0"/>
+													<xforms:delete if="string-length(instance('attributes')/attribute[@name='cpfRelationType']) = 0" context="parent::node()" nodeset="parent::node()/@cpfRelationType"/>
+													<!-- edit xlink:arcrole -->
+													<xforms:insert context="parent::node()" origin="xxforms:attribute('xlink:arcrole', instance('attributes')/attribute[@name='xlink:arcrole'])"
+														if="not(parent::node()/@xlink:arcrole) and string-length(instance('attributes')/attribute[@name='xlink:arcrole']) &gt; 0"/>
+													<xforms:delete if="string-length(instance('attributes')/attribute[@name='xlink:arcrole']) = 0" context="parent::node()" nodeset="parent::node()/@xlink:arcrole"/>
+													<!-- edit xlink:role -->
+													<xforms:insert context="parent::node()" origin="xxforms:attribute('xlink:role', instance('attributes')/attribute[@name='xlink:role'])"
+														if="not(parent::node()/@xlink:role) and string-length(instance('attributes')/attribute[@name='xlink:role']) &gt; 0"/>
+													<xforms:delete if="string-length(instance('attributes')/attribute[@name='xlink:role']) = 0" context="parent::node()" nodeset="parent::node()/@xlink:role"/>
+													
+													<!-- hide dialog -->
+													<xxforms:hide dialog="generate-dialog"/>
+												</xforms:action>
+												<xforms:label>Create Record</xforms:label>
+											</xforms:trigger>
+											<xforms:trigger>
+												<xforms:action ev:event="DOMActivate">
+													<xxforms:hide dialog="generate-dialog"/>
+												</xforms:action>
+												<xforms:label>Cancel</xforms:label>
+											</xforms:trigger>
+										</div>
+									</xxforms:dialog>
+								</xforms:group>
+							</div>
+						</xforms:group>
 					</xforms:group>
-					<xforms:group ref="$binding[not(string(parent::node()/@xlink:href))]">
-						<div>
-							<xforms:input ref="$binding">
-								<xforms:label>Relation Entry</xforms:label>
-								<xforms:alert>Required</xforms:alert>
-							</xforms:input>
-						</div>
-					</xforms:group>					
+
+					<!-- ********************* MODEL ******************** -->
+					<xforms:model id="relationEntry-model" xmlns:xi="http://www.w3.org/2001/XInclude">
+						<xforms:instance id="attributes">
+							<attributes xmlns="">
+								<attribute name="cpfRelationType"/>
+								<attribute name="xlink:arcrole"/>
+								<attribute name="xlink:href"/>
+								<attribute name="xlink:role"/>
+							</attributes>
+						</xforms:instance>
+						
+						<!-- controlled vocabulary -->
+						<xforms:instance id="cpfRelationType-list">
+							<list xmlns="">
+								<item>identity</item>
+								<item>hierarchical</item>
+								<item>hierarchical-parent</item>
+								<item>hierarchical-child</item>
+								<item>temporal</item>
+								<item>temporal-earlier</item>
+								<item>temporal-later</item>
+								<item>family</item>
+								<item>associative</item>
+							</list>
+						</xforms:instance>
+						
+						<xforms:instance id="arcrole-list">
+							<list xmlns="">
+								<item>correspondedWith</item>
+								<item>associatedWith</item>
+							</list>
+						</xforms:instance>
+						
+						<xforms:instance id="role-list">
+							<list xmlns="">
+								<item role="http://RDVocab.info/uri/schema/FRBRentitiesRDA/Person">Person</item>
+								<item role="http://RDVocab.info/uri/schema/FRBRentitiesRDA/CorporateBody">Corporate Body</item>
+							</list>
+						</xforms:instance>
+						
+						<xforms:bind nodeset="instance('attributes')">
+							<xforms:bind nodeset="attribute[@name='xlink:href']" type="xs:ID"/>
+						</xforms:bind>
+					</xforms:model>
 				</xforms:group>
 			</xforms:group>
 		</xbl:template>
 	</xbl:binding>
-
 </xbl:xbl>

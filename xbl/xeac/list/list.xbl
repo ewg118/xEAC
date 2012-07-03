@@ -12,12 +12,14 @@
 
 					<xforms:group ref="$binding">
 						<h4>List</h4>
+						<xeac:reorder/>
 						<xforms:trigger appearance="minimal">
 							<xforms:delete ev:event="DOMActivate" nodeset="."/>
 							<xforms:label>
 								<xhtml:img src="{$display_path}images/remove.gif"/>
 							</xforms:label>
 						</xforms:trigger>
+
 						<div class="trigger_container">
 							<xforms:trigger appearance="minimal">
 								<xforms:label>

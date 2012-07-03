@@ -1,0 +1,87 @@
+<!-- Ethan Gruber, American Numismatic Society
+	Modification Date: June, 2012
+	Establish connection between an EAC-CPF record in xEAC to another record in xEAC -->
+<xbl:xbl xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:xforms="http://www.w3.org/2002/xforms" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:xxforms="http://orbeon.org/oxf/xml/xforms"
+	xmlns:exist="http://exist.sourceforge.net/NS/exist" xmlns:xbl="http://www.w3.org/ns/xbl" xmlns:xxbl="http://orbeon.org/oxf/xml/xbl" xmlns:xeac="https://github.com/ewg118/xEAC"
+	xmlns:fr="http://orbeon.org/oxf/xml/form-runner" xmlns:eac="urn:isbn:1-931666-33-4" xmlns="urn:isbn:1-931666-33-4">
+	<xbl:binding id="xeac-reorder" element="xeac|reorder">
+		<xbl:template>
+			<xforms:group xbl:attr="model context ref bind" xxbl:scope="outer">
+				<xbl:content includes="xforms|label,xforms|help,xforms|hint,xforms|alert"/>
+				<xforms:group xxbl:scope="inner">
+					<xxforms:variable name="binding" as="node()?">
+						<xxforms:sequence select="." xxbl:scope="outer"/>
+					</xxforms:variable>
+					<xxforms:variable name="count" select="count($binding/*)"/>
+					<xxforms:variable name="display_path">../../</xxforms:variable>
+
+					<span class="add">
+						<xforms:trigger appearance="minimal">
+							<xforms:label>⇅</xforms:label>
+							<xforms:action ev:event="DOMActivate">
+								<xxforms:show dialog="reorder-dialog"/>
+							</xforms:action>
+						</xforms:trigger>
+					</span>
+					<xxforms:dialog id="reorder-dialog" appearance="full" level="modal" close="false" draggable="true" visible="false">
+						<xforms:label>Reorder Elements</xforms:label>
+						<xforms:repeat nodeset="$binding/*">
+							<xxforms:variable name="position" select="position()"/>
+
+							<div class="reorder-block">
+								<b>
+									<xforms:output ref="local-name()"/>
+								</b>
+								<xforms:group ref=".[$position > 1]">
+									<xforms:trigger appearance="minimal">
+										<xforms:label>
+											<img alt="up" src="{$display_path}images/up.gif"/>
+										</xforms:label>
+										<xforms:action ev:event="DOMActivate">
+											<xforms:insert origin="$binding/*[$position]" context="instance('copy')"/>
+											<xforms:insert origin="instance('copy')/*" context="parent::node()" nodeset="*" at="$position - 1" position="before"/>
+											<xforms:delete context="."/>
+											<xforms:delete context="instance('copy')/*"/>
+										</xforms:action>
+									</xforms:trigger>
+								</xforms:group>
+
+								<xforms:group ref=".[$position &lt; $count]">
+									<xforms:trigger appearance="minimal">
+										<xforms:label>
+											<img alt="down" src="{$display_path}images/down.gif"/>
+										</xforms:label>
+										<xforms:action ev:event="DOMActivate">
+											<xforms:insert origin="$binding/*[$position]" context="instance('copy')"/>
+											<xforms:insert origin="instance('copy')/*" context="parent::node()" nodeset="*" at="$position + 1" position="after"/>
+											<xforms:delete context="."/>
+											<xforms:delete context="instance('copy')/*"/>
+										</xforms:action>
+									</xforms:trigger>
+								</xforms:group>
+								<div>
+									<xforms:output ref="."/>
+								</div>
+							</div>
+						</xforms:repeat>
+						<div style="text-align:right">
+							<xforms:trigger>
+								<xforms:action ev:event="DOMActivate">
+									<xxforms:hide dialog="reorder-dialog"/>
+								</xforms:action>
+								<xforms:label>Close</xforms:label>
+							</xforms:trigger>
+						</div>
+					</xxforms:dialog>
+
+					<!-- ***********************  INTERNAL MODEL *********************** -->
+					<xforms:model id="reorder-model" xmlns:xi="http://www.w3.org/2001/XInclude">
+						<xforms:instance id="copy">
+							<copy/>
+						</xforms:instance>
+					</xforms:model>
+				</xforms:group>
+			</xforms:group>
+		</xbl:template>
+	</xbl:binding>
+</xbl:xbl>
