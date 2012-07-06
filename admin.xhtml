@@ -1,0 +1,704 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Copyright (C) 2012 Ethan Gruber
+    xEAC: https://github.com/ewg118/xEAC
+    Apache License 2.0
+-->
+<xhtml:html xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:xforms="http://www.w3.org/2002/xforms" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ev="http://www.w3.org/2001/xml-events"
+	xmlns:xxforms="http://orbeon.org/oxf/xml/xforms" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:fr="http://orbeon.org/oxf/xml/form-runner" xmlns:xeac="https://github.com/ewg118/xEAC"
+	xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xxi="http://orbeon.org/oxf/xml/xinclude" xmlns:eac="urn:isbn:1-931666-33-4" xmlns="urn:isbn:1-931666-33-4"
+	xmlns:xxbl="http://orbeon.org/oxf/xml/xbl" xmlns:pipeline="java:org.orbeon.oxf.processor.pipeline.PipelineFunctionLibrary" xmlns:exf="http://www.exforms.org/exf/1-0"
+	xmlns:saxon="http://saxon.sf.net/" xmlns:oxf="http://www.orbeon.com/oxf/processors" xmlns:xbl="http://www.w3.org/ns/xbl" xmlns:exist="http://exist.sourceforge.net/NS/exist">
+	<xhtml:head>
+		<xhtml:title>xEAC Administration</xhtml:title>
+		<link rel="stylesheet" type="text/css" href="/apps/xeac/css/grids-min.css"/>
+		<link rel="stylesheet" type="text/css" href="/apps/xeac/css/reset-fonts-grids.css"/>
+		<link rel="stylesheet" type="text/css" href="/apps/xeac/css/base-min.css"/>
+		<link rel="stylesheet" type="text/css" href="/apps/xeac/css/fonts-min.css"/>
+		<link rel="stylesheet" href="/apps/xeac/css/style.css"/>
+		<link rel="stylesheet" href="/apps/xeac/css/themes/smoothness.css"/>
+		<script type="text/javascript" src="/apps/xeac/javascript/jquery-1.4.2.min.js"/>
+		<script type="text/javascript" src="/apps/xeac/javascript/menu.js"/>
+
+		<xforms:model>
+			<!-- exist URL is stored in an XML file -->
+			<xforms:instance id="exist-url">
+				<xi:include href="exist-url.xml"/>
+			</xforms:instance>
+
+			<xforms:instance id="control-instance">
+				<controls xmlns="">
+					<status/>
+					<error/>
+					<page>1</page>
+					<solr-query>*:*</solr-query>
+					<solr-core/>
+				</controls>
+			</xforms:instance>
+
+			<xforms:instance id="config">
+				<config xmlns=""/>
+			</xforms:instance>
+
+			<!--<xforms:instance id="config-template">
+				<config xmlns:xlink="http://www.w3.org/1999/xlink">
+					<firstrun/>
+					<flickr_api_key/>
+					<title>xEAC</title>
+					<banner_text>xEAC: XForms for EAC-CPF</banner_text>
+					<banner_image xlink:href=""/>
+					<lcsh-date>2011-08-01</lcsh-date>
+					<solr_published>http://localhost:8080/solr/xeac-published/</solr_published>
+					<solr_all>http://localhost:8080/solr/xeac-solr/</solr_all>
+					<url>http://localhost:8080/orbeon/xeac/</url>
+					<oai-pmh active="false"/>
+					<theme>
+						<facets>agency_facet,century_sint,corpname_facet,famname_facet,genreform_facet,geogname_facet,language_facet,persname_facet,subject_facet</facets>
+						<jquery_ui_theme>smoothness</jquery_ui_theme>
+						<layouts>
+							<index>
+								<yui_class>yui-t5</yui_class>
+							</index>
+							<results>
+								<yui_class>yui-t2</yui_class>
+								<image_location>right</image_location>
+							</results>
+						</layouts>
+					</theme>
+				</config>
+			</xforms:instance>-->
+
+			<xforms:instance id="list">
+				<list xmlns=""/>
+			</xforms:instance>
+
+			<xforms:instance id="item-template">
+				<item xmlns="">
+					<name/>
+					<id/>
+				</item>
+			</xforms:instance>
+
+			<xforms:instance id="id">
+				<id xmlns=""/>
+			</xforms:instance>
+
+			<xforms:instance id="doc">
+				<eac-cpf xmlns=""/>
+			</xforms:instance>
+
+			<xforms:instance id="create-collection">
+				<exist:query xmlns="">
+					<exist:text>xmldb:create-collection('/db/xeac', 'records')</exist:text>
+				</exist:query>
+			</xforms:instance>
+
+			<xforms:instance id="eXist-xquery">
+				<exist:query xmlns="">
+					<exist:text>&lt;report> { count(collection()) } &lt;/report></exist:text>
+				</exist:query>
+			</xforms:instance>
+
+			<xforms:instance id="collection-result">
+				<exist:result/>
+			</xforms:instance>
+
+			<!-- solr response for id query -->
+			<xforms:instance id="query-all-response">
+				<response xmlns=""/>
+			</xforms:instance>
+			<xforms:instance id="published-response">
+				<response xmlns=""/>
+			</xforms:instance>
+			<xforms:instance id="all-response">
+				<response xmlns=""/>
+			</xforms:instance>
+			<xforms:instance id="list-published-response">
+				<response xmlns=""/>
+			</xforms:instance>
+
+			<!-- send to Solr -->
+			<xforms:instance id="addIndex">
+				<add xmlns=""/>
+			</xforms:instance>
+			<!-- Instance for Solr commit-->
+			<xforms:instance id="sendCommit">
+				<commit/>
+			</xforms:instance>
+			<!-- delete from Solr -->
+			<xforms:instance id="deleteId">
+				<delete xmlns="">
+					<id/>
+				</delete>
+			</xforms:instance>
+			<xforms:instance id="deleteAll">
+				<delete xmlns="">
+					<query>id:*</query>
+				</delete>
+			</xforms:instance>
+
+			<xforms:instance id="optimizeIndex">
+				<optimize/>
+			</xforms:instance>
+
+			<!--<xforms:bind nodeset="instance('config-template')">
+				<xforms:bind nodeset="title" required="true()"/>
+				<xforms:bind nodeset="url" required="true()" type="xs:anyURI"/>
+				<xforms:bind nodeset="solr_published" required="true()" type="xs:anyURI"/>
+				<xforms:bind nodeset="solr_all" required="true()" type="xs:anyURI"/>				
+			</xforms:bind>-->
+
+
+			<!-- submissions -->
+			<xforms:submission id="load-config" serialization="none" method="get" action="{instance('exist-url')}xeac/config.xml" replace="instance" instance="config">
+				<xforms:action ev:event="xforms-submit-done">
+					<!-- get the number of docs in the eXist collection() -->
+					<xforms:send submission="xquery-collection"/>
+					<!-- query solr all core for all docs, *:* -->
+					<xforms:setvalue ref="instance('control-instance')/solr-core" value="instance('config')/solr_all"/>
+					<xforms:send submission="query-all-docs"/>
+					<!-- if there is a mismatch in documents between Solr index of all documents and the eXist collection, delete all docs from Solr and reidnex -->
+					<xforms:action if="number(instance('query-all-response')/result/@numFound) != number(instance('collection-result'))">
+						<xforms:message level="modal">Mismatch between Solr records and finding aids in eXist. Collection list flushed and reindexed.</xforms:message>
+						<xforms:send submission="delete-all"/>
+						<xforms:setvalue ref="instance('eXist-xquery')/exist:text">&lt;report xmlns:eac="urn:isbn:1-931666-33-4"> { for $foo in collection() return &lt;item> {
+							$foo/eac:eac-cpf/eac:control/eac:recordId } &lt;/item> } &lt;/report></xforms:setvalue>
+						<xforms:send submission="xquery-collection"/>
+						<xforms:action xxforms:iterate="instance('collection-result')/report/item">
+							<xforms:setvalue ref="instance('id')" value="context()/*[local-name()='recordId']"/>
+							<xforms:send submission="load-doc"/>
+							<xforms:insert nodeset="instance('addIndex')" origin="xxforms:call-xpl('oxf:/apps/xeac/xpl/eac-to-solr-all.xpl', 'data', instance('doc'), 'data')"/>
+							<xforms:send submission="post-solr-doc"/>
+						</xforms:action>
+						<!-- optimize index -->
+						<xforms:setvalue ref="instance('control-instance')/solr-core" value="instance('config')/solr_all"/>
+						<xforms:send submission="optimize"/>
+					</xforms:action>
+					<!-- reload table -->
+					<xforms:delete nodeset="instance('list')/*"/>
+					<xforms:send submission="query-solr"/>
+				</xforms:action>
+
+			</xforms:submission>
+
+			<xforms:submission id="xquery-collection" ref="instance('eXist-xquery')" action="{instance('exist-url')}xeac/records/" method="post" replace="instance" instance="collection-result">
+				<xforms:setvalue ref="instance('control-instance')/error" ev:event="xforms-submit-error">Error querying eXist database.</xforms:setvalue>
+			</xforms:submission>
+
+			<!-- get 20 search results, depending on page -->
+			<xforms:submission id="query-solr" serialization="none" method="get"
+				action="{instance('control-instance')/solr-core}select/?q={instance('control-instance')/solr-query}&amp;rows=20&amp;start={(instance('control-instance')/page - 1) * 20}"
+				replace="instance" instance="all-response">
+				<xforms:message ev:event="xforms-submit-error" level="modal">Solr is inaccessible. Please check Solr configuration.</xforms:message>
+				<xforms:action ev:event="xforms-submit-done">
+					<xforms:action xxforms:iterate="instance('all-response')//doc">
+						<xxforms:variable name="id" select="str[@name='id']"/>
+						<xforms:setvalue ref="instance('id')" value="$id"/>
+						<xforms:insert context="instance('list')" nodeset="./child::node()[last()]" origin="instance('item-template')"/>
+						<xforms:setvalue ref="instance('list')/item[last()]/name" value="context()/str[@name='name']"/>
+						<xforms:setvalue ref="instance('list')/item[last()]/id" value="$id"/>
+						<xforms:setvalue ref="instance('control-instance')/solr-core" value="instance('config')/solr_published"/>
+						<xforms:send submission="query-solr-for-publication"/>
+					</xforms:action>
+				</xforms:action>
+			</xforms:submission>
+
+			<!-- submission to query solr to see if the document is published -->
+			<xforms:submission id="query-solr-for-publication" serialization="none" method="get" action="{instance('control-instance')/solr-core}select/?q=id:{instance('id')}" replace="instance"
+				instance="published-response">
+				<!-- if the document is found in solr, get the updated solr doc -->
+				<xforms:setvalue ev:event="xforms-submit-done" if="instance('published-response')/result[@name='response']/@numFound = '1'" ref="instance('list')/item[last()]/published" value="'true'"
+				/>
+			</xforms:submission>
+			<xforms:submission id="query-all-docs" serialization="none" method="get" action="{instance('control-instance')/solr-core}select/?q=*:*&amp;rows=0" replace="instance"
+				instance="query-all-response">
+				<xforms:setvalue ref="instance('control-instance')/error" ev:event="xforms-submit-error">Solr is inaccessible. Please check Solr configuration.</xforms:setvalue>
+			</xforms:submission>
+
+			<!-- save templates and add records collection to eXist on the first run of xeac -->
+			<xforms:submission id="save-config" ref="instance('config-template')" action="{instance('exist-url')}xeac/config.xml" method="put" replace="none" xxforms:username="admin"
+				xxforms:password="">
+				<xforms:message ev:event="xforms-submit-error" level="modal">Error Saving Config.</xforms:message>
+				<!-- reload the config after it has been created -->
+				<xforms:send submission="load-config" ev:event="xforms-submit-done"/>
+			</xforms:submission>
+
+			<!-- load eac record temporarily -->
+			<xforms:submission id="load-doc" serialization="none" method="get" action="{instance('exist-url')}xeac/records/{instance('id')}.xml" replace="instance" instance="doc"
+				xxforms:username="admin" xxforms:password="">
+				<xforms:message ev:event="xforms-submit-error" level="modal">Cannot load finding aid.</xforms:message>
+			</xforms:submission>
+
+			<!-- delete finding aid -->
+			<xforms:submission id="delete-doc" action="{instance('exist-url')}xeac/records/{instance('id')}.xml" method="delete" replace="none" xxforms:username="admin" xxforms:password="">
+				<xforms:setvalue ev:event="xforms-submit-done" ref="instance('control-instance')/status">Finding aid successfully deleted.</xforms:setvalue>
+			</xforms:submission>
+
+			<!-- ************************* Solr ************************** -->			
+			<!-- access service to read in pre-transformed solr doc -->
+			<xforms:submission id="eac-to-solr" method="get" replace="instance" instance="addIndex" serialization="none" resource="/xeac/solr/{instance('id')">
+				<xforms:message ev:event="xforms-submit-error" level="modal">Error transforming EAC record to Solr document.</xforms:message>
+				<xforms:action ev:event="xforms-submit-done">					
+					<xforms:send submission="post-solr-doc"/>
+				</xforms:action>
+			</xforms:submission>
+			<!-- post instance to Solr -->
+			<xforms:submission id="post-solr-doc" action="{instance('control-instance')/solr-core}update" ref="instance('addIndex')" instance="addIndex" replace="instance" method="post">
+				<xforms:send ev:event="xforms-submit-done" submission="commit"/>
+				<xforms:message ev:event="xforms-submit-error" level="modal">Data Failed to POST to Solr. Index may be offline or URL is incorrect.</xforms:message>
+			</xforms:submission>
+			<!-- delete from Solr -->
+			<xforms:submission id="delete-solr-doc" action="{instance('control-instance')/solr-core}update" ref="instance('deleteId')" instance="deleteId" replace="none" method="post">
+				<xforms:send ev:event="xforms-submit-done" submission="commit"/>
+				<xforms:message ev:event="xforms-submit-error" level="modal">Data Failed to POST to Solr.</xforms:message>
+			</xforms:submission>
+			<xforms:submission id="delete-all" action="{instance('control-instance')/solr-core}update" ref="instance('deleteAll')" instance="deleteAll" replace="none" method="post">
+				<xforms:send ev:event="xforms-submit-done" submission="commit"/>
+				<xforms:setvalue ev:event="xforms-submit-done" ref="instance('control-instance')/status">EAC records removed from search index.</xforms:setvalue>
+			</xforms:submission>
+
+			<!-- send commit -->
+			<xforms:submission id="commit" action="{instance('control-instance')/solr-core}update" ref="instance('sendCommit')" instance="sendCommit" replace="none" method="post">
+				<xforms:message ev:event="xforms-submit-error" level="modal">Solr commit failed.</xforms:message>
+			</xforms:submission>
+
+			<!-- send optimize -->
+			<xforms:submission id="optimize" action="{instance('control-instance')/solr-core}update" ref="instance('optimizeIndex')" instance="optimizeIndex" replace="none" method="post">
+				<xforms:setvalue ev:event="xforms-submit-done" ref="instance('control-instance')/status">Index optimized.</xforms:setvalue>
+				<xforms:message ev:event="xforms-submit-error" level="modal">Solr optimize failed.</xforms:message>
+			</xforms:submission>
+
+			<!-- load xeac config file on xforms construction -->
+			<xforms:action ev:event="xforms-model-construct-done">
+				<xforms:send submission="load-config"/>
+			</xforms:action>
+		</xforms:model>
+	</xhtml:head>
+
+	<xhtml:body class="yui-skin-sam">
+		<div id="doc4" class="yui-t2">
+			<!-- header -->
+			<xxforms:variable name="display_path">../</xxforms:variable>
+			<!--<xi:include href="header-admin.xml"/>-->
+			<div id="bd">
+				<xforms:group ref="instance('status')/text()">
+					<div class="success">
+						<xforms:output ref="instance('status')"/>
+					</div>
+				</xforms:group>
+				<div id="yui-main">
+					<div id="form">
+						<h2>Object Management</h2>
+						<ul>
+							<li>
+								<a href="edit/">Create New EAC-CPF Record</a>
+							</li>							
+						</ul>
+						<h2>Publication</h2>
+						<ul>
+							<li>
+								<xforms:trigger appearance="minimal">
+									<xforms:label>Publish All Records</xforms:label>
+									<xforms:dispatch target="publish-all" name="fr-show" ev:event="DOMActivate"/>
+								</xforms:trigger>
+							</li>
+							<li>
+								<xforms:trigger appearance="minimal">
+									<xforms:label>Reindex Published Records</xforms:label>
+									<xforms:dispatch target="republish-dialog" name="fr-show" ev:event="DOMActivate"/>
+								</xforms:trigger>
+							</li>
+							<li>
+								<xforms:trigger appearance="minimal">
+									<xforms:label>Unpublish All Records</xforms:label>
+									<xforms:dispatch target="unpublish-all" name="fr-show" ev:event="DOMActivate"/>
+								</xforms:trigger>
+							</li>
+						</ul>
+						
+						<xforms:group ref="instance('list')">
+							<xforms:group ref=".[count(item) &gt; 0]">
+								<h3>List of Objects</h3>
+								<div>
+									<xforms:input ref="instance('control-instance')/solr-query"/>
+									<xforms:trigger>
+										<xforms:label>Search</xforms:label>
+										<xforms:action ev:event="DOMActivate">
+											<xforms:delete nodeset="instance('list')/*"/>
+											<xforms:setvalue ref="instance('control-instance')/page">1</xforms:setvalue>
+											<xforms:setvalue ref="instance('control-instance')/solr-core" value="instance('config')/solr_all"/>
+											<xforms:send submission="query-solr"/>
+										</xforms:action>
+									</xforms:trigger>
+									<xforms:group ref=".[instance('control-instance')/solr-query != 'fulltext:*']">
+										<xforms:trigger>
+											<xforms:label>Clear</xforms:label>
+											<xforms:action ev:event="DOMActivate">
+												<xforms:delete nodeset="instance('list')/*"/>
+												<xforms:setvalue ref="instance('control-instance')/solr-query">fulltext:*</xforms:setvalue>
+												<xforms:setvalue ref="instance('control-instance')/page">1</xforms:setvalue>
+												<xforms:setvalue ref="instance('control-instance')/solr-core" value="instance('config')/solr_all"/>
+												<xforms:send submission="query-solr"/>
+											</xforms:action>
+										</xforms:trigger>
+									</xforms:group>
+								</div>
+								<!-- pagination variables -->
+								<xxforms:variable name="numFound" select="instance('all-response')/result/@numFound"/>
+								<xxforms:variable name="page" select="number(instance('control-instance')/page)"/>
+								<xxforms:variable name="next" select="$page + 1"/>
+								<xxforms:variable name="previous" select="if ($page &gt;= 1) then $page - 1 else 1"/>
+								<xxforms:variable name="current" select="$page"/>
+								<xxforms:variable name="total" select="ceiling($numFound div 20)"/>
+								<!-- pagination -->
+								<div class="paging_div">
+									<div style="float:left;"> Displaying records <b>
+											<xforms:output value="(($page - 1) * 20) + 1"/>
+										</b> to <b>
+											<xforms:output value="if ($numFound &gt; $page * 20) then $page * 20 else $numFound"/>
+										</b> of <b>
+											<xforms:output value="$numFound"/>
+										</b> total results.</div>
+									<div style="float:right;">
+										<xforms:group ref=".[$page &gt; 1]">
+											<xforms:trigger appearance="minimal">
+												<xforms:label>«Previous</xforms:label>
+												<xforms:action ev:event="DOMActivate">
+													<xforms:delete nodeset="instance('list')/*"/>
+													<xforms:setvalue ref="instance('control-instance')/page" value="$previous"/>
+													<xforms:setvalue ref="instance('control-instance')/solr-core" value="instance('config')/solr_all"/>
+													<xforms:send submission="query-solr"/>
+												</xforms:action>
+											</xforms:trigger>
+										</xforms:group>
+										<xforms:group ref=".[$page = 1]">
+											<span class="pagingSep">«Previous</span>
+										</xforms:group>
+										<!-- always display links to the first two pages -->
+										<xforms:group ref=".[$page &gt; 3]">
+											<xforms:trigger appearance="minimal">
+												<xforms:label>1</xforms:label>
+												<xforms:action ev:event="DOMActivate">
+													<xforms:delete nodeset="instance('list')/*"/>
+													<xforms:setvalue ref="instance('control-instance')/page" value="1"/>
+													<xforms:setvalue ref="instance('control-instance')/solr-core" value="instance('config')/solr_all"/>
+													<xforms:send submission="query-solr"/>
+												</xforms:action>
+											</xforms:trigger>
+										</xforms:group>
+										<xforms:group ref=".[$page &gt; 4]">
+											<xforms:trigger appearance="minimal">
+												<xforms:label>2</xforms:label>
+												<xforms:action ev:event="DOMActivate">
+													<xforms:delete nodeset="instance('list')/*"/>
+													<xforms:setvalue ref="instance('control-instance')/page" value="2"/>
+													<xforms:setvalue ref="instance('control-instance')/solr-core" value="instance('config')/solr_all"/>
+													<xforms:send submission="query-solr"/>
+												</xforms:action>
+											</xforms:trigger>
+										</xforms:group>
+										<!-- display only if you are on page 6 or greater -->
+										<xforms:group ref=".[$page &gt; 5]">
+											<span class="pagingSep">...</span>
+										</xforms:group>
+										<!-- always display links to the previous two pages -->
+										<xforms:group ref=".[$page &gt; 2]">
+											<xforms:trigger appearance="minimal">
+												<xforms:label>
+													<xforms:output value="$page - 2"/>
+												</xforms:label>
+												<xforms:action ev:event="DOMActivate">
+													<xforms:delete nodeset="instance('list')/*"/>
+													<xforms:setvalue ref="instance('control-instance')/page" value="$page - 2"/>
+													<xforms:setvalue ref="instance('control-instance')/solr-core" value="instance('config')/solr_all"/>
+													<xforms:send submission="query-solr"/>
+												</xforms:action>
+											</xforms:trigger>
+										</xforms:group>
+										<xforms:group ref=".[$page &gt; 1]">
+											<xforms:trigger appearance="minimal">
+												<xforms:label>
+													<xforms:output value="$page - 1"/>
+												</xforms:label>
+												<xforms:action ev:event="DOMActivate">
+													<xforms:delete nodeset="instance('list')/*"/>
+													<xforms:setvalue ref="instance('control-instance')/page" value="$page - 1"/>
+													<xforms:setvalue ref="instance('control-instance')/solr-core" value="instance('config')/solr_all"/>
+													<xforms:send submission="query-solr"/>
+												</xforms:action>
+											</xforms:trigger>
+										</xforms:group>
+										<!-- current page -->
+										<span class="pagingBtn">
+											<xforms:output value="$current"/>
+										</span>
+										<!-- next two pages -->
+										<xforms:group ref=".[$page + 1 &lt;= $total]">
+											<xforms:trigger appearance="minimal">
+												<xforms:label>
+													<xforms:output value="$page + 1"/>
+												</xforms:label>
+												<xforms:action ev:event="DOMActivate">
+													<xforms:delete nodeset="instance('list')/*"/>
+													<xforms:setvalue ref="instance('control-instance')/page" value="$page + 1"/>
+													<xforms:setvalue ref="instance('control-instance')/solr-core" value="instance('config')/solr_all"/>
+													<xforms:send submission="query-solr"/>
+												</xforms:action>
+											</xforms:trigger>
+										</xforms:group>
+										<xforms:group ref=".[$page + 2 &lt;= $total]">
+											<xforms:trigger appearance="minimal">
+												<xforms:label>
+													<xforms:output value="$page + 2"/>
+												</xforms:label>
+												<xforms:action ev:event="DOMActivate">
+													<xforms:delete nodeset="instance('list')/*"/>
+													<xforms:setvalue ref="instance('control-instance')/page" value="$page + 2"/>
+													<xforms:setvalue ref="instance('control-instance')/solr-core" value="instance('config')/solr_all"/>
+													<xforms:send submission="query-solr"/>
+												</xforms:action>
+											</xforms:trigger>
+										</xforms:group>
+										<!-- separator -->
+										<xforms:group ref=".[$page &lt;= $total - 4]">
+											<span class="pagingSep">...</span>
+										</xforms:group>
+										<!-- last two pages -->
+										<xforms:group ref=".[$page &lt;= $total - 4]">
+											<xforms:trigger appearance="minimal">
+												<xforms:label>
+													<xforms:output value="$total - 1"/>
+												</xforms:label>
+												<xforms:action ev:event="DOMActivate">
+													<xforms:delete nodeset="instance('list')/*"/>
+													<xforms:setvalue ref="instance('control-instance')/page" value="$total - 1"/>
+													<xforms:setvalue ref="instance('control-instance')/solr-core" value="instance('config')/solr_all"/>
+													<xforms:send submission="query-solr"/>
+												</xforms:action>
+											</xforms:trigger>
+										</xforms:group>
+										<xforms:group ref=".[$page &lt;= $total - 3]">
+											<xforms:trigger appearance="minimal">
+												<xforms:label>
+													<xforms:output value="$total"/>
+												</xforms:label>
+												<xforms:action ev:event="DOMActivate">
+													<xforms:delete nodeset="instance('list')/*"/>
+													<xforms:setvalue ref="instance('control-instance')/page" value="$total"/>
+													<xforms:setvalue ref="instance('control-instance')/solr-core" value="instance('config')/solr_all"/>
+													<xforms:send submission="query-solr"/>
+												</xforms:action>
+											</xforms:trigger>
+										</xforms:group>
+										<!-- next page -->
+										<xforms:group ref=".[$total &gt; $current]">
+											<xforms:trigger appearance="minimal">
+												<xforms:label>Next»</xforms:label>
+												<xforms:action ev:event="DOMActivate">
+													<xforms:delete nodeset="instance('list')/*"/>
+													<xforms:setvalue ref="instance('control-instance')/page" value="$next"/>
+													<xforms:setvalue ref="instance('control-instance')/solr-core" value="instance('config')/solr_all"/>
+													<xforms:send submission="query-solr"/>
+												</xforms:action>
+											</xforms:trigger>
+										</xforms:group>
+										<xforms:group ref=".[not($total &gt; $current)]">
+											<span class="pagingSep">Next»</span>
+										</xforms:group>
+									</div>
+								</div>
+								<xhtml:table style="width:100%">
+									<xhtml:thead>
+										<xhtml:tr>
+											<xhtml:th style="width:70%">Title</xhtml:th>
+											<xhtml:th style="width:15%">Public<br/>View</xhtml:th>
+											<xhtml:th style="width:10%">Publish</xhtml:th>
+											<xhtml:th style="width:5%">Delete</xhtml:th>
+										</xhtml:tr>
+									</xhtml:thead>
+									<xhtml:tbody>
+										<xforms:repeat nodeset="instance('list')/item">
+											<xxforms:variable name="id" select="id"/>
+											<xxforms:variable name="class" select="if (position() mod 2 = 0) then 'even-row' else 'odd-row'"/>
+											<xhtml:tr>
+												<xhtml:td class="{$class}">
+													<div class="result_metadata">
+														<xhtml:h4>
+															<xhtml:a href="edit/?id={$id}">
+																<xforms:output ref="name"/>
+																<xforms:output ref="concat(' (', $id, ')')"/>
+															</xhtml:a>
+														</xhtml:h4>
+													</div>
+												</xhtml:td>
+												<xhtml:td class="{$class} center"><xhtml:a href="{instance('config')/url}record/{$id}.xml" target="_blank">xml</xhtml:a> | <xhtml:a
+														href="{instance('config')/url}record/{$id}" target="_blank">html</xhtml:a></xhtml:td>
+												<!--<xhtml:td class="{$class} center"><xhtml:a href="display/{$id}.xml" target="_blank">xml</xhtml:a> | <xhtml:a href="show/{$id}" target="_blank"
+												>html</xhtml:a></xhtml:td>-->
+												<xhtml:td class="{$class} center">
+													<xforms:group ref=".[published = 'true']">
+														<xforms:trigger appearance="minimal">
+															<xforms:label>unpublish</xforms:label>
+															<xforms:dispatch target="unpublish" name="fr-show" ev:event="DOMActivate"/>
+														</xforms:trigger>
+													</xforms:group>
+													<xforms:group ref=".[published != 'true']">
+														<xforms:trigger appearance="minimal">
+															<xforms:label>publish</xforms:label>
+															<xforms:dispatch target="publish" name="fr-show" ev:event="DOMActivate"/>
+														</xforms:trigger>
+													</xforms:group>
+												</xhtml:td>
+												<xhtml:td class="{$class} center">
+													<xforms:trigger appearance="minimal">
+														<xforms:label>
+															<xhtml:img src="{$display_path}images/remove.gif"/>
+														</xforms:label>
+														<xforms:dispatch target="delete" name="fr-show" ev:event="DOMActivate"/>
+													</xforms:trigger>
+												</xhtml:td>
+											</xhtml:tr>
+											<!-- dialogs -->
+											<fr:alert-dialog id="publish">
+												<fr:label>Publish</fr:label>
+												<fr:message>Do you want to publish this object to the search index?</fr:message>
+												<fr:negative-choice/>
+												<fr:positive-choice>
+													<xforms:action ev:event="DOMActivate">
+														<xforms:setvalue ref="instance('id')" value="$id"/>
+														<xforms:setvalue ref="instance('control-instance')/solr-core" value="instance('config')/solr_published"/>
+														<xforms:send submission="eac-to-solr"/>
+														<xforms:send submission="submit-commit"/>
+														<!-- reload table -->
+														<xforms:delete nodeset="instance('list')/*"/>
+														<xforms:setvalue ref="instance('control-instance')/solr-core" value="instance('config')/solr_all"/>
+														<xforms:send submission="query-solr"/>
+													</xforms:action>
+												</fr:positive-choice>
+											</fr:alert-dialog>
+											<fr:alert-dialog id="unpublish">
+												<fr:label>Unpublish</fr:label>
+												<fr:message>Do you want to remove this object from the search index?</fr:message>
+												<fr:negative-choice/>
+												<fr:positive-choice>
+													<xforms:action ev:event="DOMActivate">
+														<xforms:setvalue ref="instance('deleteId')/id" value="$id"/>
+														<xforms:setvalue ref="instance('control-instance')/solr-core" value="instance('config')/solr_published"/>
+														<xforms:send submission="delete-solr-doc"/>
+														<!-- reload table -->
+														<xforms:delete nodeset="instance('list')/*"/>
+														<xforms:setvalue ref="instance('control-instance')/solr-core" value="instance('config')/solr_all"/>
+														<xforms:send submission="query-solr"/>
+													</xforms:action>
+												</fr:positive-choice>
+											</fr:alert-dialog>
+											<fr:alert-dialog id="delete">
+												<fr:label>Delete</fr:label>
+												<fr:message>Are you sure you want to delete this object?</fr:message>
+												<fr:negative-choice/>
+												<fr:positive-choice>
+													<xforms:action ev:event="DOMActivate">
+														<xforms:setvalue ref="instance('deleteId')/id" value="$id"/>
+														<xforms:setvalue ref="instance('id')" value="$id"/>
+														<xforms:send submission="delete-object"/>
+														<xforms:setvalue ref="instance('control-instance')/solr-core" value="instance('config')/solr_all"/>
+														<xforms:send submission="delete-solr-doc"/>
+														<xforms:setvalue ref="instance('control-instance')/solr-core" value="instance('config')/solr_published"/>
+														<xforms:send submission="delete-solr-doc"/>
+														<!-- reload table -->
+														<xforms:delete nodeset="instance('list')/*"/>
+														<xforms:setvalue ref="instance('control-instance')/solr-core" value="instance('config')/solr_all"/>
+														<xforms:send submission="query-solr"/>
+													</xforms:action>
+												</fr:positive-choice>
+											</fr:alert-dialog>
+										</xforms:repeat>
+									</xhtml:tbody>
+								</xhtml:table>
+							</xforms:group>
+							<xforms:group ref=".[count(item)=0]">
+								<xforms:group ref=".[instance('control-instance')/solr-query = 'fulltext:*']">
+									<h1>No objects in collection.</h1>
+								</xforms:group>
+								<xforms:group ref=".[instance('control-instance')/solr-query != 'fulltext:*']">
+									<h1>No objects that match query: <xforms:output ref="instance('control-instance')/solr-query"/>-- <xforms:trigger appearance="minimal">
+											<xforms:label>clear</xforms:label>
+											<xforms:action ev:event="DOMActivate">
+												<xforms:delete nodeset="instance('list')/*"/>
+												<xforms:setvalue ref="instance('control-instance')/solr-query">fulltext:*</xforms:setvalue>
+												<xforms:setvalue ref="instance('control-instance')/page">1</xforms:setvalue>
+												<xforms:setvalue ref="instance('control-instance')/solr-core" value="instance('config')/solr_all"/>
+												<xforms:send submission="query-solr"/>
+											</xforms:action>
+										</xforms:trigger></h1>
+								</xforms:group>
+							</xforms:group>
+						</xforms:group>
+					</div>
+					
+					<!-- mass publication dialogs -->
+					<fr:alert-dialog id="publish-all">
+						<fr:label>Publish All</fr:label>
+						<fr:message>Do you want to publish all records? This may take several minutes.</fr:message>
+						<fr:negative-choice/>
+						<fr:positive-choice>
+							<xforms:action ev:event="DOMActivate">
+								<xforms:setvalue ref="instance('eXist-xquery')/exist:text">&lt;report xmlns:eac="urn:isbn:1-931666-33-4"> { for $foo in collection() return &lt;item> {
+									$foo/eac:eac-cpf/eac:control/eac:recordId } &lt;/item> } &lt;/report></xforms:setvalue>								
+								<xforms:send submission="xquery-collection"/>
+								<xforms:setvalue ref="instance('control-instance')/solr-core" value="instance('config')/solr_published"/>
+								<xforms:action xxforms:iterate="instance('collection-result')/report/item/*[local-name()='recordId']">
+									<xxforms:variable name="id" select="."/>
+									<xforms:setvalue ref="instance('id')" value="$id"/>
+									<xforms:send submission="eac-to-solr"/>
+								</xforms:action>
+								<xforms:send submission="submit"/>
+								
+								<!-- optimize index -->
+								<xforms:send submission="optimize"/>
+								<!-- reload table -->
+								<xforms:setvalue ref="instance('control-instance')/solr-core" value="instance('config')/solr_all"/>
+								<xforms:delete nodeset="instance('list')/*"/>
+								<xforms:send submission="query-solr"/>
+							</xforms:action>
+						</fr:positive-choice>
+					</fr:alert-dialog>
+					<fr:alert-dialog id="unpublish-all">
+						<fr:label>Unpublish All</fr:label>
+						<fr:message>Do you want to unpublish all records?</fr:message>
+						<fr:negative-choice/>
+						<fr:positive-choice>
+							<xforms:action ev:event="DOMActivate">
+								<xforms:setvalue ref="instance('control-instance')/solr-core" value="instance('config')/solr_published"/>
+								<xforms:send submission="delete-all" ev:event="DOMActivate"/>
+								
+								<!-- optimize index -->
+								<xforms:send submission="optimize"/>
+								<!-- reload table -->
+								<xforms:setvalue ref="instance('control-instance')/solr-core" value="instance('config')/solr_all"/>
+								<xforms:delete nodeset="instance('list')/*"/>
+								<xforms:send submission="query-solr"/>
+							</xforms:action>
+						</fr:positive-choice>
+					</fr:alert-dialog>
+					<fr:alert-dialog id="republish-dialog">
+						<fr:label>Republish</fr:label>
+						<fr:message>Do you want to reindex currently published records?</fr:message>
+						<fr:negative-choice/>
+						<fr:positive-choice>
+							<xforms:action ev:event="DOMActivate">
+								<xforms:setvalue ref="instance('control-instance')/solr-core" value="instance('config')/solr_published"/>
+								<xforms:send submission="republish"/>
+								<xforms:send submission="optimize" ev:event="xforms-submit-done"/>
+							</xforms:action>
+						</fr:positive-choice>
+					</fr:alert-dialog>
+					
+					<fr:xforms-inspector id="orbeon-xforms-inspector"/>
+				</div>
+			</div>
+			<!-- footer -->
+			<!--<xi:include href="xslt/footer.xml"/>-->
+		</div>
+	</xhtml:body>
+</xhtml:html>

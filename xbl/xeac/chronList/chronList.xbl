@@ -30,7 +30,8 @@
 						</div>
 
 						<xforms:repeat nodeset="eac:chronItem">
-							<xxforms:variable name="date" select="if(eac:date/@standardDate) then eac:date/@standardDate else if(eac:dateRange/eac:fromDate/@standardDate) then eac:dateRange/eac:fromDate/@standardDate else ''"/>
+							<xxforms:variable name="date"
+								select="if(eac:date/@standardDate) then eac:date/@standardDate else if(eac:dateRange/eac:fromDate/@standardDate) then eac:dateRange/eac:fromDate/@standardDate else ''"/>
 							<xxforms:variable name="position" select="position()"/>
 							<div class="subsection">
 								<h5>Chronological Item</h5>
@@ -40,7 +41,7 @@
 										<xhtml:img src="{$display_path}images/remove.gif"/>
 									</xforms:label>
 								</xforms:trigger>
-								<xforms:group ref=".[preceding-sibling::eac:chronItem[1]//@standardDate[1] &gt;= $date]">									
+								<xforms:group ref=".[preceding-sibling::eac:chronItem[1]//@standardDate[1] &gt;= $date]">
 									<xforms:trigger appearance="minimal">
 										<xforms:label>
 											<img alt="up" src="{$display_path}images/up.gif"/>
@@ -53,7 +54,6 @@
 										</xforms:action>
 									</xforms:trigger>
 								</xforms:group>
-								
 								<xforms:group ref=".[following-sibling::eac:chronItem[1]//@standardDate[1] &lt;= $date]">
 									<xforms:trigger appearance="minimal">
 										<xforms:label>
@@ -67,6 +67,17 @@
 										</xforms:action>
 									</xforms:trigger>
 								</xforms:group>
+
+								<xforms:group ref=".[count(eac:date) = 0 and count(eac:dateRange) = 0]">
+									<div class="ui-widget">
+										<div class="ui-state-highlight ui-corner-all">
+											<p>
+												<span class="ui-icon ui-icon-info" style="float: left; margin-right: .3em;"/>
+												<strong>Warning </strong> Date or Date Range Required</p>
+										</div>
+									</div>
+								</xforms:group>
+
 								<div class="trigger_container">
 									<xforms:group ref=".[count(eac:date) = 0 and count(eac:dateRange) = 0]">
 										<xforms:trigger appearance="minimal">
@@ -136,7 +147,7 @@
 						<xforms:instance id="placeEntry-template">
 							<placeEntry/>
 						</xforms:instance>
-						
+
 						<xforms:instance id="copy">
 							<copy/>
 						</xforms:instance>

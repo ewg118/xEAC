@@ -436,6 +436,13 @@
 							<xforms:bind nodeset="eac:part" required="true()"/>
 						</xforms:bind>
 					</xforms:bind>
+					<xforms:bind nodeset="eac:description">
+						<xforms:bind nodeset="eac:biogHist">
+							<xforms:bind nodeset="eac:chronList">
+								<xforms:bind nodeset="eac:chronItem" constraint="count(eac:date) &gt; 0 or count(eac:dateRange) &gt; 0"/>
+							</xforms:bind>								
+						</xforms:bind>
+					</xforms:bind>
 					<xforms:bind nodeset="eac:relations">
 						<xforms:bind nodeset="descendant::eac:relationEntry" required="true()"/>
 					</xforms:bind>
@@ -701,7 +708,7 @@
 					</div>
 				</xforms:group>
 				<p>
-					<a href="../../">&lt; Return</a>
+					<a href="../">&lt; Return</a>
 				</p>
 				<div id="yui-main">
 					<div id="form">
