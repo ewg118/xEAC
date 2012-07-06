@@ -2,6 +2,7 @@
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="2.0" xmlns:eac="urn:isbn:1-931666-33-4" xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:exsl="http://exslt.org/common" xmlns:xlink="http://www.w3.org/1999/xlink"
 	xmlns:xi="http://www.w3.org/2001/XInclude">
+	<xsl:include href="templates.xsl"/>
 	<xsl:output method="xhtml" encoding="utf-8"/>
 	<!--<xsl:include href="header-public.xsl"/>-->
 
@@ -45,17 +46,22 @@
 				<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.8.2r1/build/menu/assets/skins/sam/menu.css"/>
 
 				<!-- EADitor styling -->
+				<link rel="stylesheet" href="{$display_path}css/style.css"/>
 				<link rel="stylesheet" href="{$display_path}css/themes/{$ui-theme}.css"/>
-				<link rel="stylesheet" href="{$display_path}css/style.css"/>				
+								
 				<script type="text/javascript" src="{$display_path}javascript/jquery-1.4.2.min.js"/>
 				<script type="text/javascript" src="{$display_path}javascript/jquery-ui-1.8.12.custom.min.js"/>				
 				<script type="text/javascript" src="{$display_path}javascript/menu.js"/>
 			</head>
 			<body class="yui-skin-sam">
 				<div id="doc4" class="yui-t3">
+					<!-- header -->
+					<xsl:call-template name="header-public"/>
 					<div id="bd">
 						<xsl:call-template name="body"/>
 					</div>
+					<!-- footer -->
+					<xsl:call-template name="footer-public"/>
 				</div>
 				<xsl:copy-of select="exsl:node-set($config)/config/google_analytics/*"/>
 			</body>

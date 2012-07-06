@@ -531,7 +531,8 @@ button.ui-multiselect {
 	text-align:center;
 }
 .stacked_term {
-	margin:5px 0;
+	padding:2px;
+	margin-bottom:5px;
 }
 .remove_filter {
 	float:right;

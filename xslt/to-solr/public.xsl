@@ -15,6 +15,23 @@
 			<field name="id">
 				<xsl:value-of select="eac:control/eac:recordId"/>
 			</field>
+			<field name="timestamp">
+				<xsl:variable name="timestamp" select="datetime:dateTime()"/>
+				<xsl:choose>
+					<xsl:when test="contains($timestamp, 'Z')">
+						<xsl:value-of select="$timestamp"/>
+					</xsl:when>
+					<xsl:otherwise>
+						<xsl:value-of select="concat($timestamp, 'Z')"/>
+					</xsl:otherwise>
+				</xsl:choose>
+			</field>
+			<field name="entityType_facet">
+				<xsl:value-of select="eac:cpfDescription/eac:identity/eac:entityType"/>
+			</field>
+			<field name="entityType_display">
+				<xsl:value-of select="eac:cpfDescription/eac:identity/eac:entityType"/>
+			</field>
 			<xsl:for-each select="eac:cpfDescription/eac:identity/eac:nameEntry">
 				<xsl:if test="position() = 1">
 					<field name="name_display">
@@ -28,12 +45,35 @@
 					<xsl:value-of select="eac:part"/>
 				</field>
 			</xsl:for-each>
+
+			<!-- terms as facets -->
+			<xsl:for-each
+				select="descendant::eac:localDescription|descendant::eac:legalStatus|descendant::eac:function|descendant::eac:occupation|descendant::eac:mandate|descendant::eac:generalContext">
+				<xsl:if test="string(eac:term)">
+					<field name="{if (string(@localType)) then @localType else local-name()}_facet">
+						<xsl:value-of select="normalize-space(eac:term)"/>
+					</field>
+					<field name="{if (string(@localType)) then @localType else local-name()}_text">
+						<xsl:value-of select="normalize-space(eac:term)"/>
+					</field>
+				</xsl:if>
+			</xsl:for-each>
 			
-			<xsl:for-each select="descendant::eac:localDescription|descendant::eac:legalStatus|descendant::eac:function|descendant::eac:occupation|descendant::eac:mandate|descendant::eac:generalContext">
-				<field name="{if (string(@localType)) then @localType else name()}_facet">
-					<xsl:value-of select="normalize-space(term)"/>
+			<!-- placeEntry as facet -->
+			<xsl:for-each select="descendant::eac:placeEntry[string(normalize-space(.))]">
+				<field name="{if (string(@localType)) then @localType else local-name()}_facet">
+					<xsl:value-of select="normalize-space(.)"/>
+				</field>
+				<field name="{if (string(@localType)) then @localType else local-name()}_text">
+					<xsl:value-of select="normalize-space(.)"/>
 				</field>
 			</xsl:for-each>
+			<field name="fulltext">
+				<xsl:for-each select="descendant-or-self::node()">
+					<xsl:value-of select="text()"/>
+					<xsl:text> </xsl:text>					
+				</xsl:for-each>
+			</field>
 		</doc>
 	</xsl:template>
 

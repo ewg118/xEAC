@@ -42,6 +42,10 @@
 	
 	<!-- Atom feed -->
 	<page path-info="/xeac/feed/" model="exist-url.xml" view="xpl/feed.xpl"/>
+	
+	<!-- AJAX CALLS -->
+	<!-- facet results -->
+	<page path-info="/xeac/get_facets/" model="exist-url.xml" view="xpl/get_facets.xpl"/>
 
 	<epilogue url="oxf:/config/epilogue.xpl"/>
 </config>
