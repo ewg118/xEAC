@@ -18,7 +18,7 @@
 						<xforms:action if="not($binding/@vocabularySource) and string($binding/text())">
 							<xforms:setvalue ref="instance('interface-type')" value="'local'"/>
 						</xforms:action>
-						<xforms:action if="not($binding/@vocabularySource) and not(string($binding/text()))">							
+						<xforms:action if="not($binding/@vocabularySource) and not(string($binding/text()))">
 							<xforms:setvalue ref="instance('interface-type')" value="'geonames'"/>
 						</xforms:action>
 					</xforms:action>
@@ -54,14 +54,16 @@
 						</xforms:group>
 						<xforms:group ref=".[not(string(text()))]">
 							<h4>Place Entry</h4>
-							<xforms:trigger appearance="minimal">
-								<xforms:action ev:event="DOMActivate">									
-									<xforms:delete ev:event="DOMActivate" nodeset="."/>
-								</xforms:action>
-								<xforms:label>
-									<img src="{$display_path}images/remove.gif"/>
-								</xforms:label>
-							</xforms:trigger>
+							<xforms:group ref=".[not(parent::eac:place)]">
+								<xforms:trigger appearance="minimal">
+									<xforms:action ev:event="DOMActivate">
+										<xforms:delete ev:event="DOMActivate" nodeset="."/>
+									</xforms:action>
+									<xforms:label>
+										<img src="{$display_path}images/remove.gif"/>
+									</xforms:label>
+								</xforms:trigger>
+							</xforms:group>
 
 							<div style="display:table;width:100%;">
 								<radiogroup>
@@ -84,13 +86,13 @@
 												<!-- create attributes, clear $binding text when applicable -->
 												<xforms:setvalue ref="$binding"/>
 												<xforms:insert context="$binding" origin="xxforms:attribute('vocabularySource', '')" if="not($binding/@vocabularySource)"/>
-												<xforms:toggle case="geonames-search"/>												
+												<xforms:toggle case="geonames-search"/>
 											</xforms:action>
 											<xforms:action if=". = 'local'">
 												<!-- delete attributes, clear $binding text when applicable -->
 												<xforms:delete context="instance('geonames')/*"/>
 												<xforms:setvalue ref="$binding" if="not($binding/@vocabularySource)"/>
-												<xforms:delete context="$binding/@vocabularySource" if="$binding/@vocabularySource"/>												
+												<xforms:delete context="$binding/@vocabularySource" if="$binding/@vocabularySource"/>
 												<xforms:toggle case="local-input"/>
 											</xforms:action>
 										</xforms:action>

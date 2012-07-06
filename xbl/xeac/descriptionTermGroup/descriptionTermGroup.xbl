@@ -117,7 +117,7 @@
 								</xforms:repeat>
 
 								<xforms:repeat nodeset="eac:place">
-									<xeac:descriptionTerm/>
+									<xeac:place/>
 								</xforms:repeat>
 
 								<xforms:group ref="eac:citation">
@@ -172,7 +172,7 @@
 
 						<xforms:instance id="place-template">
 							<place>
-								<term/>
+								<placeEntry/>
 							</place>
 						</xforms:instance>
 

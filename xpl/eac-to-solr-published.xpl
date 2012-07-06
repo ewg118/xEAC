@@ -10,7 +10,7 @@
 	
 	<p:processor name="oxf:unsafe-xslt">
 		<p:input name="data" href="#data"/>		
-		<p:input name="config" href="../xslt/to-solr/private.xsl"/>
+		<p:input name="config" href="../xslt/to-solr/public.xsl"/>
 		<p:output name="data" ref="data"/>
 	</p:processor>
 	

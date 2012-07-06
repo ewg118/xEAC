@@ -371,7 +371,7 @@
 
 			<xforms:instance id="place-template">
 				<place>
-					<term/>
+					<placeEntry/>
 				</place>
 			</xforms:instance>
 
@@ -690,6 +690,7 @@
 		<xi:include href="oxf:/xbl/xeac/list/list.xbl" xi:omit-xml-base="true"/>
 		<xi:include href="oxf:/xbl/xeac/nameEntry/nameEntry.xbl" xi:omit-xml-base="true"/>
 		<xi:include href="oxf:/xbl/xeac/p/p.xbl" xi:omit-xml-base="true"/>
+		<xi:include href="oxf:/xbl/xeac/place/place.xbl" xi:omit-xml-base="true"/>
 		<xi:include href="oxf:/xbl/xeac/placeEntry/placeEntry.xbl" xi:omit-xml-base="true"/>
 		<xi:include href="oxf:/xbl/xeac/relation/relation.xbl" xi:omit-xml-base="true"/>
 		<xi:include href="oxf:/xbl/xeac/relationEntry/relationEntry.xbl" xi:omit-xml-base="true"/>
@@ -1148,7 +1149,7 @@
 										<xeac:descriptionTermGroup/>
 									</xforms:repeat>
 									<xforms:repeat nodeset="eac:place">
-										<xeac:descriptionTerm/>
+										<xeac:place/>
 									</xforms:repeat>
 									<xforms:repeat nodeset="eac:places">
 										<xeac:descriptionTermGroup/>

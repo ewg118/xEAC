@@ -28,10 +28,10 @@
 	<page path-info="/xeac/xml/(.*)" matcher="oxf:perl5-matcher" view="xpl/xml-public.xpl"/>
 
 	<!-- public html view -->
-	<page path-info="/xeac/show/(.*)" matcher="oxf:perl5-matcher" model="xpl/xml-public.xpl" view="xpl/display.xpl"/>
+	<page path-info="/xeac/record/(.*)" matcher="oxf:perl5-matcher" model="xpl/xml-public.xpl" view="xpl/display.xpl"/>
 
 	<!-- solr doc service -->
-	<page path-info="/xeac/solr/(.*)" matcher="oxf:perl5-matcher" model="exist-url.xml" view="xpl/ead-publish.xpl"/>
+	<page path-info="/xeac/solr/(.*)" matcher="oxf:perl5-matcher" model="xpl/xml-public.xpl" view="xpl/eac-to-solr-published.xpl"/>
 
 	<!-- index -->
 	<page path-info="/xeac/" model="exist-url.xml" view="xpl/index.xpl"/>
