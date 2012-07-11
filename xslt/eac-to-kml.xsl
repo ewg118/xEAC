@@ -36,81 +36,152 @@
 						</Icon>
 					</IconStyle>
 				</Style>-->
-				<xsl:apply-templates select="descendant::eac:placeEntry[string(@vocabularySource)]"/>
+				<xsl:apply-templates select="descendant::eac:date[string(@standardDate)]|descendant::eac:dateRange[string(eac:fromDate/@standardDate) or string(eac:toDate/@standardDate)]"/>
+				<xsl:apply-templates select="descendant::eac:placeEntry[string(@vocabularySource)][not(preceding-sibling::eac:date|preceding-sibling::eac:dateRange|following-sibling::eac:date|following-sibling::eac:dateRange)]"/>
 			</Document>
 		</kml>
 	</xsl:template>
 
-	<xsl:template match="eac:placeEntry">
-		<xsl:variable name="href" select="@vocabularySource"/>
-
-		<xsl:variable name="description">
+	<xsl:template match="eac:date|eac:dateRange">
+		<xsl:variable name="name">
 			<xsl:choose>
+				<xsl:when test="parent::eac:existDates">Dates of Existence</xsl:when>
 				<xsl:when test="parent::node()/eac:event">
 					<xsl:value-of select="parent::node()/eac:event"/>
+				</xsl:when>
+				<xsl:when test="parent::node()/eac:term">
+					<xsl:value-of select="parent::node()/eac:term"/>
+				</xsl:when>
+				<xsl:when test="parent::node()/eac:placeRole">
+					<xsl:value-of select="parent::node()/eac:placeRole"/>
+				</xsl:when>
+				<xsl:when test="parent::node()/eac:placeEntry">
+					<xsl:value-of select="parent::node()/eac:placeEntry"/>
 				</xsl:when>
 			</xsl:choose>
 		</xsl:variable>
 
+		<xsl:variable name="href" select="parent::node()/eac:placeEntry/@vocabularySource"/>
+
+		<xsl:variable name="description">
+			<xsl:choose>
+				<xsl:when test="local-name() = 'date'">
+					<xsl:value-of select="."/>
+				</xsl:when>
+				<xsl:when test="local-name()='dateRange'">
+					<xsl:value-of select="eac:fromDate"/>
+					<xsl:text>-</xsl:text>
+					<xsl:value-of select="eac:toDate"/>
+				</xsl:when>
+			</xsl:choose>		
+			<xsl:if test="string(parent::node()/eac:placeEntry)">	
+				<xsl:text>. </xsl:text>				
+				<xsl:value-of select="parent::node()/eac:placeEntry"/>
+				<xsl:text>.</xsl:text>
+			</xsl:if>
+		</xsl:variable>
 
 		<Placemark>
 			<name>
-				<xsl:value-of select="."/>
+				<xsl:value-of select="$name"/>
 			</name>
 			<xsl:if test="string($description)">
 				<description>
 					<xsl:value-of select="$description"/>
 				</description>
 			</xsl:if>
-
 			<xsl:choose>
-				<xsl:when test="parent::node()/eac:date[@standardDate]">
+				<xsl:when test="local-name() = 'date'">
 					<TimeStamp>
 						<when>
 							<xsl:value-of select="parent::node()/eac:date/@standardDate"/>
 						</when>
 					</TimeStamp>
 				</xsl:when>
-				<xsl:when test="parent::node()/eac:dateRange[eac:fromDate[@standardDate]] or parent::node()/eac:dateRange[eac:toDate[@standardDate]]">
+				<xsl:when test="local-name()='dateRange'">
 					<TimeSpan>
-						<xsl:if test="parent::node()/eac:dateRange[eac:fromDate[@standardDate]]">
+						<xsl:if test="eac:fromDate[@standardDate]">
 							<begin>
-								<xsl:value-of select="parent::node()/eac:dateRange/eac:fromDate/@standardDate"/>
+								<xsl:value-of select="eac:fromDate/@standardDate"/>
 							</begin>
 						</xsl:if>
-						<xsl:if test="parent::node()/eac:dateRange[eac:toDate[@standardDate]]">
+						<xsl:if test="eac:toDate[@standardDate]">
 							<end>
-								<xsl:value-of select="parent::node()/eac:dateRange/eac:toDate/@standardDate"/>
+								<xsl:value-of select="eac:toDate/@standardDate"/>
 							</end>
 						</xsl:if>
 					</TimeSpan>
 				</xsl:when>
 			</xsl:choose>
-			<!--<styleUrl>#place</styleUrl>-->
-			<xsl:choose>
-				<xsl:when test="contains($href, 'geonames')">
-					<xsl:variable name="geonameId" select="substring-before(substring-after($href, 'geonames.org/'), '/')"/>
-					<xsl:variable name="geonames_data" select="document(concat($geonames-url, '/get?geonameId=', $geonameId, '&amp;username=', $geonames_api_key, '&amp;style=full'))"/>
-					<xsl:variable name="coordinates" select="concat(exsl:node-set($geonames_data)//lng, ',', exsl:node-set($geonames_data)//lat)"/>
-					<Point>
-						<coordinates>
-							<xsl:value-of select="$coordinates"/>
-						</coordinates>
-					</Point>
+
+			<!-- coordinates -->
+			<xsl:call-template name="get-point">
+				<xsl:with-param name="href" select="$href"/>
+			</xsl:call-template>
+		</Placemark>
+	</xsl:template>
+
+	<xsl:template match="eac:placeEntry">
+		<xsl:variable name="href" select="@vocabularySource"/>
+		
+		<xsl:variable name="name">
+			<xsl:choose>				
+				<xsl:when test="parent::node()/eac:event">
+					<xsl:value-of select="parent::node()/eac:event"/>
 				</xsl:when>
-				<xsl:when test="contains($href, 'nomisma')">
-					<xsl:variable name="coordinates" select="exsl:node-set($rdf)/rdf:RDF/*[@rdf:about=$href]/descendant::gml:pos"/>
-					<xsl:if test="string($coordinates)">
-						<xsl:variable name="lat" select="substring-before($coordinates, ' ')"/>
-						<xsl:variable name="lon" select="substring-after($coordinates, ' ')"/>
-						<Point>
-							<coordinates>
-								<xsl:value-of select="concat($lon, ',', $lat)"/>
-							</coordinates>
-						</Point>
-					</xsl:if>
+				<xsl:when test="parent::node()/eac:term">
+					<xsl:value-of select="parent::node()/eac:term"/>
+				</xsl:when>
+				<xsl:when test="parent::node()/eac:placeRole">
+					<xsl:value-of select="parent::node()/eac:placeRole"/>
+				</xsl:when>
+				<xsl:when test="parent::node()/eac:placeEntry">
+					<xsl:value-of select="parent::node()/eac:placeEntry"/>
 				</xsl:when>
 			</xsl:choose>
+		</xsl:variable>
+		
+		<Placemark>
+			<name>
+				<xsl:value-of select="$name"/>
+			</name>
+			
+			<description>
+				<xsl:value-of select="."/>
+			</description>
+			
+			<xsl:call-template name="get-point">
+				<xsl:with-param name="href" select="$href"/>
+			</xsl:call-template>			
 		</Placemark>
+	</xsl:template>
+	
+	<xsl:template name="get-point">
+		<xsl:param name="href"/>
+		
+		<xsl:choose>
+			<xsl:when test="contains($href, 'geonames')">
+				<xsl:variable name="geonameId" select="substring-before(substring-after($href, 'geonames.org/'), '/')"/>
+				<xsl:variable name="geonames_data" select="document(concat($geonames-url, '/get?geonameId=', $geonameId, '&amp;username=', $geonames_api_key, '&amp;style=full'))"/>
+				<xsl:variable name="coordinates" select="concat(exsl:node-set($geonames_data)//lng, ',', exsl:node-set($geonames_data)//lat)"/>
+				<Point>
+					<coordinates>
+						<xsl:value-of select="$coordinates"/>
+					</coordinates>
+				</Point>
+			</xsl:when>
+			<xsl:when test="contains($href, 'nomisma')">
+				<xsl:variable name="coordinates" select="exsl:node-set($rdf)/rdf:RDF/*[@rdf:about=$href]/descendant::gml:pos"/>
+				<xsl:if test="string($coordinates)">
+					<xsl:variable name="lat" select="substring-before($coordinates, ' ')"/>
+					<xsl:variable name="lon" select="substring-after($coordinates, ' ')"/>
+					<Point>
+						<coordinates>
+							<xsl:value-of select="concat($lon, ',', $lat)"/>
+						</coordinates>
+					</Point>
+				</xsl:if>
+			</xsl:when>
+		</xsl:choose>
 	</xsl:template>
 </xsl:stylesheet>

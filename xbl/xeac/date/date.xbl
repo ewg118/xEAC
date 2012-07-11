@@ -14,8 +14,19 @@
 						<div>
 							<xforms:input ref="@standardDate">
 								<xforms:label>Date - Standard</xforms:label>
-								<xforms:alert>Required; must meet ISO specification</xforms:alert>								
+								<xforms:alert>Required; must meet ISO specification</xforms:alert>
+								<xforms:action ev:event="xforms-value-changed">
+									<xxforms:variable name="year" select="tokenize(., '-')[1]"/>
+									<xxforms:variable name="month" select="tokenize(., '-')[2]"/>
+									<xxforms:variable name="day" select="tokenize(., '-')[3]"/>
+									<xforms:setvalue ref="$binding"
+										value="concat(if (number($month)) then concat(instance('month-list')/item[@id=$month], ' ') else '', if (number($day)) then concat($day, ', ') else '', $year)"
+									/>
+								</xforms:action>
 							</xforms:input>
+							<xforms:group ref=".[not(@standardDate = .)]">
+								<xforms:output ref="."/>
+							</xforms:group>
 							<xforms:trigger appearance="minimal">
 								<xforms:delete ev:event="DOMActivate" nodeset="."/>
 								<xforms:label>
@@ -29,6 +40,25 @@
 							</xforms:output>
 						</div>-->
 					</xforms:group>
+
+					<xforms:model id="date-model">
+						<xforms:instance id="month-list">
+							<list xmlns="">
+								<item id="01">January</item>
+								<item id="02">February</item>
+								<item id="03">March</item>
+								<item id="04">April</item>
+								<item id="05">May</item>
+								<item id="06">June</item>
+								<item id="07">July</item>
+								<item id="08">August</item>
+								<item id="09">September</item>
+								<item id="10">October</item>
+								<item id="11">November</item>
+								<item id="12">December</item>
+							</list>
+						</xforms:instance>
+					</xforms:model>
 				</xforms:group>
 			</xforms:group>
 		</xbl:template>
