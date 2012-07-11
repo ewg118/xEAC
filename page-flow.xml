@@ -24,13 +24,11 @@
 	<!-- ****************
 	* PUBLIC INTERFACE *
 	***************** -->
-	<!-- public xml view (internal elements supressed) -->
+	<!-- public EAC record views -->
 	<page path-info="/xeac/xml/(.*)" matcher="oxf:perl5-matcher" view="xpl/xml-public.xpl"/>
-
-	<!-- public html view -->
-	<page path-info="/xeac/record/(.*)" matcher="oxf:perl5-matcher" model="xpl/xml-public.xpl" view="xpl/display.xpl"/>
-
-	<!-- solr doc service -->
+	<page path-info="/xeac/record/(.*).kml" matcher="oxf:perl5-matcher" model="xpl/xml-public.xpl" view="xpl/eac-to-kml.xpl"/>
+	<page path-info="/xeac/record/(.*)" matcher="oxf:perl5-matcher" model="xpl/xml-public.xpl" view="xpl/display.xpl"/>		
+	<!--<page path-info="/xeac/json/(.*)" matcher="oxf:perl5-matcher" model="xpl/xml-public.xpl" view="xpl/eac-to-json.xpl"/>-->
 	<page path-info="/xeac/solr/(.*)" matcher="oxf:perl5-matcher" model="xpl/xml-public.xpl" view="xpl/eac-to-solr-published.xpl"/>
 
 	<!-- index -->
@@ -46,6 +44,7 @@
 	<!-- AJAX CALLS -->
 	<!-- facet results -->
 	<page path-info="/xeac/get_facets/" model="exist-url.xml" view="xpl/get_facets.xpl"/>
+	
 
 	<epilogue url="oxf:/config/epilogue.xpl"/>
 </config>

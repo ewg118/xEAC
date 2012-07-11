@@ -132,17 +132,17 @@ a:hover {
   TEST PAGE
   ****************************************
  */
- .error-table{
- 	width:100%;
- }
-.error-table td{
+.error-table {
+	width:100%;
+}
+.error-table td {
 	padding:5px;
 	border:0;
 }
-.error-table th{
-	border:0;	
+.error-table th {
+	border:0;
 }
-.indicator{
+.indicator {
 	width:5%;
 	text-align:center;
 }
@@ -228,14 +228,14 @@ a:hover {
 	width: 30em;
 	margin-bottom: 2px;
 }
-textarea{
+textarea {
 	width: 30em;
 	margin-bottom: 2px;
 	height:15em;
 }
-.xxforms-dialog-body input, .xxforms-dialog-body select{
+.xxforms-dialog-body input, .xxforms-dialog-body select {
 	width: 20em;
-	margin-bottom: 2px;	
+	margin-bottom: 2px;
 }
 .xxforms-dialog-body {
 	text-align:left;
@@ -318,7 +318,7 @@ textarea{
 .attr-output {
 	color:silver;
 }
-.reorder-block{
+.reorder-block {
 	padding:5px;
 	border:1px solid silver;
 	margin:10px 0;
@@ -793,4 +793,62 @@ li.term {
 	width: 200px;
 	position: absolute;
 	z-index: 9999;
+}
+/*
+  ***************************************
+  Timemap CSS
+  ***************************************
+ */
+div#timelinecontainer {
+	height: 300px;
+	 
+}
+div#mapcontainer {
+	height: 300px;
+	 
+}
+div.olFramedCloudPopupContent {
+	width: 300px;
+	 
+}
+div#help {
+	font-size: 12px;
+	width: 45em;
+	padding: 1em;
+}
+div#timemap {
+	padding: 1em;
+}
+div#timelinecontainer {
+	width: 100%;
+	height: 200px;
+}
+div#timeline {
+	width: 100%;
+	height: 100%;
+	font-size: 12px;
+	background: #CCCCCC;
+}
+div#mapcontainer {
+	width: 100%;
+	height: 400px;
+}
+div#map {
+	width: 100%;
+	height: 100%;
+	background: #EEEEEE;
+}
+div.infotitle {
+	font-size: 14px;
+	font-weight: bold;
+}
+div.infodescription {
+	font-size: 14px;
+	font-style: italic;
+}
+div.custominfostyle {
+	font-family: Georgia, Garamond, serif;
+	font-size: 1.5em;
+	font-style: italic;
+	width: 20em;
 }

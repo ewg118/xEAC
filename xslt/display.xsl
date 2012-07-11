@@ -4,7 +4,6 @@
 	xmlns:xi="http://www.w3.org/2001/XInclude">
 	<xsl:include href="templates.xsl"/>
 	<xsl:output method="xhtml" encoding="utf-8"/>
-	<!--<xsl:include href="header-public.xsl"/>-->
 
 	<xsl:variable name="exist-url" select="//exist-url"/>
 	<xsl:variable name="config" select="document(concat($exist-url, 'xeac/config.xml'))"/>	
@@ -49,9 +48,27 @@
 				<link rel="stylesheet" href="{$display_path}css/style.css"/>
 				<link rel="stylesheet" href="{$display_path}css/themes/{$ui-theme}.css"/>
 								
-				<script type="text/javascript" src="{$display_path}javascript/jquery-1.4.2.min.js"/>
+				<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js" type="text/javascript"/>
 				<script type="text/javascript" src="{$display_path}javascript/jquery-ui-1.8.12.custom.min.js"/>				
 				<script type="text/javascript" src="{$display_path}javascript/menu.js"/>
+				
+				<!-- mapping -->				
+				<script src="http://www.openlayers.org/api/OpenLayers.js" type="text/javascript"/>
+				<!--<script src="http://maps.google.com/maps/api/js?sensor=false"/>-->
+				<!--<script src="http://maps.google.com/maps?file=api&amp;v=2&amp;key=ABQIAAAASI0kCI-azC8RgbOZzWc3VRRarOQe_TKf_51Omf6UUSOFm7EABRRhO0PO4nBAO9FCmVDuowVwROLo3w"
+      type="text/javascript"></script>-->
+				<script type="text/javascript" src="{$display_path}javascript/mxn.js"/>			
+				<script src="http://static.simile.mit.edu/timeline/api-2.2.0/timeline-api.js?bundle=true" type="text/javascript"/>
+				<script type="text/javascript" src="{$display_path}javascript/timemap_full.pack.js"/>	
+				<script type="text/javascript" src="{$display_path}javascript/param.js"/>
+				<script type="text/javascript" src="{$display_path}javascript/loaders/xml.js"/>
+				<script type="text/javascript" src="{$display_path}javascript/loaders/kml.js"/>				
+				<script type="text/javascript" src="{$display_path}javascript/display_functions.js"/>
+				<script type="text/javascript">
+					$(document).ready(function(){
+						initialize_timemap('<xsl:value-of select="//eac:recordId"/>');
+					});
+				</script>
 			</head>
 			<body class="yui-skin-sam">
 				<div id="doc4" class="yui-t3">
@@ -69,7 +86,14 @@
 	</xsl:template>
 	
 	<xsl:template name="body">
-		test
+		<div id="timemap">
+			<div id="mapcontainer">
+				<div id="map"></div>
+			</div>
+			<div id="timelinecontainer">
+				<div id="timeline"></div>
+			</div>			
+		</div>
 	</xsl:template>
 
 	<xsl:template name="icons">

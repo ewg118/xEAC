@@ -14,7 +14,17 @@
 	<xsl:variable name="exist-url" select="/exist-url"/>
 
 	<xsl:template match="/">
-		<xsl:variable name="id" select="tokenize(doc('input:request')/request/request-url, '/')[last()]"/>
+		<xsl:variable name="basename" select="tokenize(doc('input:request')/request/request-url, '/')[last()]"/>
+		<xsl:variable name="id">
+			<xsl:choose>
+				<xsl:when test="substring($basename, string-length($basename) - 3) = '.kml'">
+					<xsl:value-of select="substring-before($basename, '.kml')"/>
+				</xsl:when>
+				<xsl:otherwise>
+					<xsl:value-of select="$basename"/>
+				</xsl:otherwise>
+			</xsl:choose>
+		</xsl:variable>
 		<!--<xml><xsl:value-of select="$id"/></xml>-->
 		<xsl:copy-of select="document(concat($exist-url, 'xeac/records/', $id, '.xml'))/eac:eac-cpf"/>		
 	</xsl:template>
