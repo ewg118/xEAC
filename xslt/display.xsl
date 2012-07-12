@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="2.0" xmlns:eac="urn:isbn:1-931666-33-4" xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:exsl="http://exslt.org/common" xmlns:xlink="http://www.w3.org/1999/xlink"
-	xmlns:xi="http://www.w3.org/2001/XInclude">
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="2.0" xmlns:eac="urn:isbn:1-931666-33-4" xmlns="http://www.w3.org/1999/xhtml" xmlns:exsl="http://exslt.org/common"
+	xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xi="http://www.w3.org/2001/XInclude">
 	<xsl:include href="templates.xsl"/>
 	<xsl:output method="xhtml" encoding="utf-8"/>
 
 	<xsl:variable name="exist-url" select="//exist-url"/>
-	<xsl:variable name="config" select="document(concat($exist-url, 'xeac/config.xml'))"/>	
+	<xsl:variable name="config" select="document(concat($exist-url, 'xeac/config.xml'))"/>
 	<xsl:variable name="ui-theme" select="exsl:node-set($config)/config/theme/jquery_ui_theme"/>
 	<xsl:param name="mode">
 		<xsl:choose>
@@ -34,7 +33,8 @@
 			<head>
 				<title>
 					<xsl:value-of select="exsl:node-set($config)/config/title"/>
-					<xsl:text>: </xsl:text>					
+					<xsl:text>: </xsl:text>
+					<xsl:value-of select="eac:cpfDescription/eac:identity/eac:nameEntry[1]/eac:part"/>
 				</title>
 				<link rel="shortcut icon" href="{$display_path}images/favicon.png" type="image/png"/>
 				<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.8.2r1/build/grids/grids-min.css"/>
@@ -47,22 +47,22 @@
 				<!-- EADitor styling -->
 				<link rel="stylesheet" href="{$display_path}css/style.css"/>
 				<link rel="stylesheet" href="{$display_path}css/themes/{$ui-theme}.css"/>
-								
+
 				<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js" type="text/javascript"/>
-				<script type="text/javascript" src="{$display_path}javascript/jquery-ui-1.8.12.custom.min.js"/>				
+				<script type="text/javascript" src="{$display_path}javascript/jquery-ui-1.8.12.custom.min.js"/>
 				<script type="text/javascript" src="{$display_path}javascript/menu.js"/>
-				
-				<!-- mapping -->				
+
+				<!-- mapping -->
 				<script src="http://www.openlayers.org/api/OpenLayers.js" type="text/javascript"/>
 				<!--<script src="http://maps.google.com/maps/api/js?sensor=false"/>-->
 				<!--<script src="http://maps.google.com/maps?file=api&amp;v=2&amp;key=ABQIAAAASI0kCI-azC8RgbOZzWc3VRRarOQe_TKf_51Omf6UUSOFm7EABRRhO0PO4nBAO9FCmVDuowVwROLo3w"
       type="text/javascript"></script>-->
-				<script type="text/javascript" src="{$display_path}javascript/mxn.js"/>			
+				<script type="text/javascript" src="{$display_path}javascript/mxn.js"/>
 				<script src="http://static.simile.mit.edu/timeline/api-2.2.0/timeline-api.js?bundle=true" type="text/javascript"/>
-				<script type="text/javascript" src="{$display_path}javascript/timemap_full.pack.js"/>	
+				<script type="text/javascript" src="{$display_path}javascript/timemap_full.pack.js"/>
 				<script type="text/javascript" src="{$display_path}javascript/param.js"/>
 				<script type="text/javascript" src="{$display_path}javascript/loaders/xml.js"/>
-				<script type="text/javascript" src="{$display_path}javascript/loaders/kml.js"/>				
+				<script type="text/javascript" src="{$display_path}javascript/loaders/kml.js"/>
 				<script type="text/javascript" src="{$display_path}javascript/display_functions.js"/>
 				<script type="text/javascript">
 					$(document).ready(function(){
@@ -71,12 +71,27 @@
 				</script>
 			</head>
 			<body class="yui-skin-sam">
-				<div id="doc4" class="yui-t3">
+				<div id="doc4" class="yui-t5">
 					<!-- header -->
 					<xsl:call-template name="header-public"/>
 					<div id="bd">
-						<xsl:call-template name="body"/>
+						<xsl:call-template name="icons"/>
+						<h1>
+							<xsl:value-of select="eac:cpfDescription/eac:identity/eac:nameEntry[1]/eac:part"/>
+						</h1>
+
+						<div id="yui-main">
+							<div class="yui-b">
+								<xsl:call-template name="body"/>
+							</div>
+						</div>
+						<div class="yui-b">
+							<xsl:call-template name="sidebar"/>
+						</div>
+
 					</div>
+
+
 					<!-- footer -->
 					<xsl:call-template name="footer-public"/>
 				</div>
@@ -84,20 +99,74 @@
 			</body>
 		</html>
 	</xsl:template>
-	
+
 	<xsl:template name="body">
 		<div id="timemap">
 			<div id="mapcontainer">
-				<div id="map"></div>
+				<div id="map"/>
 			</div>
 			<div id="timelinecontainer">
-				<div id="timeline"></div>
-			</div>			
+				<div id="timeline"/>
+			</div>
+		</div>
+	</xsl:template>
+
+	<xsl:template name="sidebar">
+		<xsl:apply-templates select="eac:cpfDescription/eac:description"/>
+		<xsl:apply-templates select="eac:cpfDescription/eac:relations"/>
+	</xsl:template>
+
+	<xsl:template match="eac:description">
+		<div id="description">
+			<h2>Description</h2>
+			<xsl:apply-templates select="eac:biogHist"/>
+		</div>
+	</xsl:template>
+
+	<xsl:template match="eac:biogHist">
+		<xsl:apply-templates select="eac:chronList"/>
+	</xsl:template>
+
+	<xsl:template match="eac:chronList">
+		<ul>
+			<xsl:for-each select="eac:chronItem">
+				<li>
+					<b><xsl:for-each select="descendant::*/@standardDate">
+							<xsl:value-of select="."/>
+							<xsl:if test="not(position()=last())">
+								<xsl:text>-</xsl:text>
+							</xsl:if>
+					</xsl:for-each>: </b>
+					<xsl:value-of select="eac:event"/>
+					<xsl:if test="eac:placeEntry">
+						<xsl:text> - </xsl:text>
+						<xsl:value-of select="eac:placeEntry"/>
+					</xsl:if>
+				</li>
+			</xsl:for-each>
+		</ul>
+	</xsl:template>
+
+	<xsl:template match="eac:relations">
+		<div id="relations">
+			<h2>Relations</h2>
+			<xsl:for-each select="*">
+				<xsl:choose>
+					<xsl:when test="string(@xlink:href)">
+						<a href="{@xlink:href}">
+							<xsl:value-of select="eac:relationEntry"/>
+						</a>
+					</xsl:when>
+					<xsl:otherwise>
+						<xsl:value-of select="eac:relationEntry"/>
+					</xsl:otherwise>
+				</xsl:choose>
+			</xsl:for-each>
 		</div>
 	</xsl:template>
 
 	<xsl:template name="icons">
-		<div class="submenu">			
+		<div class="submenu">
 			<div class="icon">
 				<a href="{$display_path}xml/{//eac:eac-cpf/eac:control/eac:recordId}">
 					<img src="{$display_path}images/xml.png" title="XML" alt="XML"/>
@@ -119,7 +188,7 @@
 		</div>
 	</xsl:template>
 
-	<xsl:template name="regularize-name">
+	<!--<xsl:template name="regularize-name">
 		<xsl:param name="name"/>
 		<xsl:choose>
 			<xsl:when test="$name = 'daogrp'">
@@ -234,5 +303,5 @@
 				<xsl:text>Other Name</xsl:text>
 			</xsl:otherwise>
 		</xsl:choose>
-	</xsl:template>
+	</xsl:template>-->
 </xsl:stylesheet>
