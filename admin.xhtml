@@ -48,7 +48,7 @@
 					<banner_image xlink:href=""/>
 					<solr_published>http://localhost:8080/solr/xeac-published/</solr_published>
 					<solr_all>http://localhost:8080/solr/xeac-all/</solr_all>
-					<url>http://localhost:8080/orbeon/xeac/</url>					
+					<url>http://localhost:8080/orbeon/xeac/</url>
 					<instances>
 						<agencyName-list>
 							<item default="true"/>
@@ -110,14 +110,15 @@
 					<exist:text>&lt;report> { count(collection()) } &lt;/report></exist:text>
 				</exist:query>
 			</xforms:instance>
-			
+
 			<xforms:instance id="temp-xquery">
 				<exist:query xmlns="">
-					<exist:text>&lt;report xmlns:eac="urn:isbn:1-931666-33-4"> { for $foo in distinct-values(collection()//eac:localDescription/@localType|collection()//eac:legalStatus/@localType|collection()//eac:function/@localType|collection()//eac:occupation/@localType|collection()//eac:mandate/@localType|collection()//eac:generalContext/@localType) return &lt;item> {
-						$foo } &lt;/item> } &lt;/report></exist:text>
+					<exist:text>&lt;report xmlns:eac="urn:isbn:1-931666-33-4"> { for $foo in
+						distinct-values(collection()//eac:localDescription/@localType|collection()//eac:legalStatus/@localType|collection()//eac:function/@localType|collection()//eac:occupation/@localType|collection()//eac:mandate/@localType|collection()//eac:generalContext/@localType)
+						return &lt;item> { $foo } &lt;/item> } &lt;/report></exist:text>
 				</exist:query>
 			</xforms:instance>
-			
+
 			<xforms:instance id="temp-result">
 				<exist:result/>
 			</xforms:instance>
@@ -173,7 +174,8 @@
 
 
 			<!-- submissions -->
-			<xforms:submission id="load-config" serialization="none" method="get" action="{instance('exist-url')}xeac/config.xml" replace="instance" instance="config">
+			<xforms:submission id="load-config" serialization="none" method="get" action="{instance('exist-url')}xeac/config.xml" replace="instance" instance="config" xxforms:username="admin"
+				xxforms:password="">
 				<xforms:action ev:event="xforms-submit-done">
 					<!-- get the number of docs in the eXist collection() -->
 					<xforms:send submission="xquery-collection"/>
@@ -204,11 +206,13 @@
 
 			</xforms:submission>
 
-			<xforms:submission id="xquery-collection" ref="instance('eXist-xquery')" action="{instance('exist-url')}xeac/records/" method="post" replace="instance" instance="collection-result">
+			<xforms:submission id="xquery-collection" ref="instance('eXist-xquery')" action="{instance('exist-url')}xeac/records/" method="post" replace="instance" instance="collection-result"
+				xxforms:username="admin" xxforms:password="">
 				<xforms:setvalue ref="instance('control-instance')/error" ev:event="xforms-submit-error">Error querying eXist database.</xforms:setvalue>
 			</xforms:submission>
-			
-			<xforms:submission id="temp-query" ref="instance('temp-xquery')" action="{instance('exist-url')}xeac/records/" method="post" replace="instance" instance="temp-result">
+
+			<xforms:submission id="temp-query" ref="instance('temp-xquery')" action="{instance('exist-url')}xeac/records/" method="post" replace="instance" instance="temp-result"
+				xxforms:username="admin" xxforms:password="">
 				<xforms:setvalue ref="instance('control-instance')/error" ev:event="xforms-submit-error">Error querying eXist database.</xforms:setvalue>
 			</xforms:submission>
 
@@ -261,7 +265,7 @@
 				<xforms:setvalue ev:event="xforms-submit-done" ref="instance('control-instance')/status">Finding aid successfully deleted.</xforms:setvalue>
 			</xforms:submission>
 
-			<!-- ************************* Solr ************************** -->			
+			<!-- ************************* Solr ************************** -->
 			<!-- access service to read in pre-transformed solr doc -->
 			<xforms:submission id="eac-to-solr" method="get" replace="instance" instance="addIndex" serialization="none" resource="/xeac/solr/{instance('id')}">
 				<xforms:message ev:event="xforms-submit-error" level="modal">Error transforming EAC record to Solr document.</xforms:message>
@@ -298,7 +302,7 @@
 			<!-- load xeac config file on xforms construction -->
 			<xforms:action ev:event="xforms-model-construct-done">
 				<xforms:send submission="load-config"/>
-				<xforms:send submission="temp-query"/>
+				<!--<xforms:send submission="temp-query"/>-->
 			</xforms:action>
 		</xforms:model>
 	</xhtml:head>
@@ -320,7 +324,7 @@
 						<ul>
 							<li>
 								<a href="edit/">Create New EAC-CPF Record</a>
-							</li>							
+							</li>
 						</ul>
 						<h2>Publication</h2>
 						<ul>
@@ -343,7 +347,6 @@
 								</xforms:trigger>
 							</li>
 						</ul>
-						
 						<xforms:group ref="instance('list')">
 							<xforms:group ref=".[count(item) &gt; 0]">
 								<h3>List of Objects</h3>
@@ -570,9 +573,7 @@
 															<xforms:action ev:event="DOMActivate">
 																<xforms:dispatch target="unpublish" name="fr-show"/>
 																<xforms:setvalue ref="instance('deleteId')/id" value="$id"/>
-															</xforms:action>
-															
-														</xforms:trigger>
+															</xforms:action> </xforms:trigger>
 													</xforms:group>
 													<xforms:group ref=".[published != 'true']">
 														<xforms:trigger appearance="minimal">
@@ -580,7 +581,7 @@
 															<xforms:action ev:event="DOMActivate">
 																<xforms:dispatch target="publish" name="fr-show"/>
 																<xforms:setvalue ref="instance('id')" value="$id"/>
-															</xforms:action>															
+															</xforms:action>
 														</xforms:trigger>
 													</xforms:group>
 												</xhtml:td>
@@ -596,18 +597,17 @@
 														</xforms:action>
 													</xforms:trigger>
 												</xhtml:td>
-											</xhtml:tr>											
+											</xhtml:tr>
 										</xforms:repeat>
 									</xhtml:tbody>
-								</xhtml:table>								
-								
+								</xhtml:table>
 								<!-- dialogs -->
 								<fr:alert-dialog id="publish">
 									<fr:label>Publish</fr:label>
 									<fr:message>Do you want to publish this object to the search index?</fr:message>
 									<fr:negative-choice/>
 									<fr:positive-choice>
-										<xforms:action ev:event="DOMActivate">											
+										<xforms:action ev:event="DOMActivate">
 											<xforms:setvalue ref="instance('control-instance')/solr-core" value="instance('config')/solr_published"/>
 											<xforms:send submission="eac-to-solr"/>
 											<xforms:send submission="submit-commit"/>
@@ -623,7 +623,7 @@
 									<fr:message>Do you want to remove this object from the search index?</fr:message>
 									<fr:negative-choice/>
 									<fr:positive-choice>
-										<xforms:action ev:event="DOMActivate">														
+										<xforms:action ev:event="DOMActivate">
 											<xforms:setvalue ref="instance('control-instance')/solr-core" value="instance('config')/solr_published"/>
 											<xforms:send submission="delete-solr-doc"/>
 											<!-- reload table -->
@@ -650,9 +650,7 @@
 											<xforms:send submission="query-solr"/>
 										</xforms:action>
 									</fr:positive-choice>
-								</fr:alert-dialog>
-
-							</xforms:group>
+								</fr:alert-dialog> </xforms:group>
 							<xforms:group ref=".[count(item)=0]">
 								<xforms:group ref=".[instance('control-instance')/solr-query = 'fulltext:*']">
 									<h1>No objects in collection.</h1>
@@ -672,7 +670,6 @@
 							</xforms:group>
 						</xforms:group>
 					</div>
-					
 					<!-- mass publication dialogs -->
 					<fr:alert-dialog id="publish-all">
 						<fr:label>Publish All</fr:label>
@@ -681,7 +678,7 @@
 						<fr:positive-choice>
 							<xforms:action ev:event="DOMActivate">
 								<xforms:setvalue ref="instance('eXist-xquery')/exist:text">&lt;report xmlns:eac="urn:isbn:1-931666-33-4"> { for $foo in collection() return &lt;item> {
-									$foo/eac:eac-cpf/eac:control/eac:recordId } &lt;/item> } &lt;/report></xforms:setvalue>								
+									$foo/eac:eac-cpf/eac:control/eac:recordId } &lt;/item> } &lt;/report></xforms:setvalue>
 								<xforms:send submission="xquery-collection"/>
 								<xforms:setvalue ref="instance('control-instance')/solr-core" value="instance('config')/solr_published"/>
 								<xforms:action xxforms:iterate="instance('collection-result')/report/item/*[local-name()='recordId']">
@@ -690,7 +687,6 @@
 									<xforms:send submission="eac-to-solr"/>
 								</xforms:action>
 								<xforms:send submission="submit"/>
-								
 								<!-- optimize index -->
 								<xforms:send submission="optimize"/>
 								<!-- reload table -->
@@ -708,7 +704,6 @@
 							<xforms:action ev:event="DOMActivate">
 								<xforms:setvalue ref="instance('control-instance')/solr-core" value="instance('config')/solr_published"/>
 								<xforms:send submission="delete-all" ev:event="DOMActivate"/>
-								
 								<!-- optimize index -->
 								<xforms:send submission="optimize"/>
 								<!-- reload table -->
@@ -730,7 +725,6 @@
 							</xforms:action>
 						</fr:positive-choice>
 					</fr:alert-dialog>
-					
 					<fr:xforms-inspector id="orbeon-xforms-inspector"/>
 				</div>
 			</div>

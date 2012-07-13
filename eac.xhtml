@@ -451,7 +451,8 @@
 
 			<!-- ******************* SUBMISSIONS ****************** -->
 			<!-- load preliminary instances -->
-			<xforms:submission id="load-config" serialization="none" method="get" action="{instance('exist-url')}xeac/config.xml" replace="instance" instance="config"/>
+			<xforms:submission id="load-config" serialization="none" method="get" action="{instance('exist-url')}xeac/config.xml" replace="instance" instance="config"
+				xxforms:username="admin" xxforms:password=""/>
 
 			<!-- Submission to get the document -->
 			<xforms:submission id="load-doc" serialization="none" method="get" action="{instance('exist-url')}xeac/records/{instance('doc')/eac:control/eac:recordId}.xml" replace="instance"
