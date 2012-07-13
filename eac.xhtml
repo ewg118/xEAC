@@ -8,7 +8,8 @@
 	xmlns:xxforms="http://orbeon.org/oxf/xml/xforms" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:fr="http://orbeon.org/oxf/xml/form-runner" xmlns:xeac="https://github.com/ewg118/xEAC"
 	xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xxi="http://orbeon.org/oxf/xml/xinclude" xmlns:eac="urn:isbn:1-931666-33-4" xmlns="urn:isbn:1-931666-33-4"
 	xmlns:xxbl="http://orbeon.org/oxf/xml/xbl" xmlns:pipeline="java:org.orbeon.oxf.processor.pipeline.PipelineFunctionLibrary" xmlns:exf="http://www.exforms.org/exf/1-0"
-	xmlns:saxon="http://saxon.sf.net/" xmlns:oxf="http://www.orbeon.com/oxf/processors" xmlns:xbl="http://www.w3.org/ns/xbl">
+	xmlns:saxon="http://saxon.sf.net/" xmlns:oxf="http://www.orbeon.com/oxf/processors" xmlns:xbl="http://www.w3.org/ns/xbl" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+	xmlns:skos="http://www.w3.org/2004/02/skos/core#">
 	<xhtml:head>
 		<xhtml:title>xEAC: Edit EAC-CPF Record</xhtml:title>
 		<link rel="stylesheet" type="text/css" href="/apps/xeac/css/grids-min.css"/>
@@ -118,6 +119,23 @@
 				<status xmlns=""/>
 			</xforms:instance>
 
+			<!-- VIAF instances -->
+			<xforms:instance id="search-query">
+				<query/>
+			</xforms:instance>
+
+			<xforms:instance id="viaf-response">
+				<rss xmlns=""/>
+			</xforms:instance>
+
+			<xforms:instance id="viaf-id">
+				<identifier/>
+			</xforms:instance>
+
+			<xforms:instance id="viaf-rdf">
+				<rdf:RDF/>
+			</xforms:instance>
+
 			<!--  *** controlled vocabulary lists *** -->
 			<xforms:instance id="maintenanceStatus-list">
 				<list xmlns="">
@@ -209,6 +227,18 @@
 					<agent/>
 				</maintenanceEvent>
 			</xforms:instance>
+			
+			<xforms:instance id="otherRecordId-template">
+				<otherRecordId/>
+			</xforms:instance>
+			
+			<xforms:instance id="sources-template">
+				<sources/>
+			</xforms:instance>
+			
+			<xforms:instance id="source-template">
+				<source xlink:type="simple" xlink:href=""/>
+			</xforms:instance>
 
 			<!-- cpfDescription -->
 			<xforms:instance id="description-template">
@@ -224,6 +254,18 @@
 				<nameEntry>
 					<part/>
 				</nameEntry>
+			</xforms:instance>
+			
+			<xforms:instance id="authorizedForm-template">
+				<authorizedForm/>
+			</xforms:instance>
+			
+			<xforms:instance id="alternativeForm-template">
+				<alternativeForm/>
+			</xforms:instance>
+			
+			<xforms:instance id="preferredForm-template">
+				<preferredForm/>
 			</xforms:instance>
 
 			<xforms:instance id="nameEntryParallel-template">
@@ -440,7 +482,7 @@
 						<xforms:bind nodeset="eac:biogHist">
 							<xforms:bind nodeset="eac:chronList">
 								<xforms:bind nodeset="eac:chronItem" constraint="count(eac:date) &gt; 0 or count(eac:dateRange) &gt; 0"/>
-							</xforms:bind>								
+							</xforms:bind>
 						</xforms:bind>
 					</xforms:bind>
 					<xforms:bind nodeset="eac:relations">
@@ -451,8 +493,8 @@
 
 			<!-- ******************* SUBMISSIONS ****************** -->
 			<!-- load preliminary instances -->
-			<xforms:submission id="load-config" serialization="none" method="get" action="{instance('exist-url')}xeac/config.xml" replace="instance" instance="config"
-				xxforms:username="admin" xxforms:password=""/>
+			<xforms:submission id="load-config" serialization="none" method="get" action="{instance('exist-url')}xeac/config.xml" replace="instance" instance="config" xxforms:username="admin"
+				xxforms:password=""/>
 
 			<!-- Submission to get the document -->
 			<xforms:submission id="load-doc" serialization="none" method="get" action="{instance('exist-url')}xeac/records/{instance('doc')/eac:control/eac:recordId}.xml" replace="instance"
@@ -645,6 +687,47 @@
 			<!-- send commit -->
 			<xforms:submission id="submit-all-commit" action="{instance('config')/solr_all}update" ref="instance('sendCommit')" instance="sendCommit" replace="none" method="post"/>
 
+			<!-- ***************** QUERY VIAF *****************-->
+			<xforms:submission id="query-viaf" serialization="none" method="get"
+				action="http://viaf.org/viaf/search?query=local.names+all+%22{instance('search-query')}%22&amp;sortKeys=holdingscount&amp;maximumRecords=50&amp;httpAccept=application/rss%2bxml"
+				instance="viaf-response" replace="instance">
+				<xforms:message ev:event="xforms-submit-error" level="modal">Error querying VIAF.</xforms:message>
+			</xforms:submission>
+
+			<xforms:submission id="get-viaf-rdf" serialization="none" method="get" action="{instance('viaf-id')}/rdf.xml" instance="viaf-rdf" replace="instance">
+				<xforms:action ev:event="xforms-submit-done">
+					<!-- insert otherRecordId -->
+					<xforms:insert context="instance('doc')/eac:control" nodeset="eac:recordId" position="after" origin="instance('otherRecordId-template')"/>
+					<xforms:insert context="instance('doc')/eac:control/eac:otherRecordId[1]" origin="xxforms:attribute('localType', 'VIAFId')"/>
+					<xforms:setvalue ref="instance('doc')/eac:control/eac:otherRecordId[1]" value="instance('viaf-id')"/>
+					
+					<!-- insert source for VIAF URI -->
+					<xforms:insert context="instance('doc')/eac:control" nodeset="./child::node()[last()]" origin="instance('sources-template')" if="count(instance('doc')/eac:control/eac:sources) = 0"/>
+					<xforms:insert context="instance('doc')/eac:control/eac:sources" nodeset="./child::node()[last()]" origin="instance('source-template')"/>
+					<xforms:setvalue ref="instance('doc')/eac:control/eac:sources/eac:source/@xlink:href" value="instance('viaf-id')"/>
+					
+					<!-- create nameEntries -->
+					<xforms:action xxforms:iterate="instance('viaf-rdf')//skos:Concept">
+						<xxforms:variable name="auth" select="substring-after(context()/skos:inScheme/@rdf:resource, 'authorityScheme/')"/>
+						<!-- insert preferred forms per authority -->
+						<xforms:action xxforms:iterate="context()/skos:prefLabel">
+							<xforms:insert context="instance('doc')/eac:cpfDescription/eac:identity" nodeset="./child::node()[last()]" origin="instance('nameEntry-template')"/>
+							<xforms:setvalue ref="instance('doc')/eac:cpfDescription/eac:identity/eac:nameEntry[last()]/eac:part" value="context()"/>
+							<xforms:insert context="instance('doc')/eac:cpfDescription/eac:identity/eac:nameEntry[last()]" nodeset="./child::node()[last()]" origin="instance('preferredForm-template')"/>
+							<xforms:setvalue ref="instance('doc')/eac:cpfDescription/eac:identity/eac:nameEntry[last()]/eac:preferredForm" value="$auth"/>
+						</xforms:action>
+						<xforms:action xxforms:iterate="context()/skos:altLabel">
+							<xforms:insert context="instance('doc')/eac:cpfDescription/eac:identity" nodeset="./child::node()[last()]" origin="instance('nameEntry-template')"/>
+							<xforms:setvalue ref="instance('doc')/eac:cpfDescription/eac:identity/eac:nameEntry[last()]/eac:part" value="context()"/>
+							<xforms:insert context="instance('doc')/eac:cpfDescription/eac:identity/eac:nameEntry[last()]" nodeset="./child::node()[last()]" origin="instance('alternativeForm-template')"/>
+							<xforms:setvalue ref="instance('doc')/eac:cpfDescription/eac:identity/eac:nameEntry[last()]/eac:alternativeForm" value="$auth"/>
+						</xforms:action>
+					</xforms:action>
+				</xforms:action>
+				
+				<xforms:message ev:event="xforms-submit-error" level="modal">Error getting VIAF RDF.</xforms:message>
+			</xforms:submission>
+
 			<!-- ************************ xforms-model-construct-done ****************************** -->
 			<!-- load recordId -->
 			<xforms:action ev:event="xforms-model-construct-done">
@@ -671,9 +754,9 @@
 				</xforms:action>
 			</xforms:action>
 
-			<xforms:action ev:event="xforms-ready">
+			<!--<xforms:action ev:event="xforms-ready">
 				<xforms:dispatch targetid="temp-tab" name="fr-toggle"/>
-			</xforms:action>
+			</xforms:action>-->
 		</xforms:model>
 
 		<!-- XBL components -->
@@ -768,6 +851,13 @@
 								<fr:label>Identity</fr:label>
 								<div class="section">
 									<h1>Identity</h1>
+									<span class="add">
+										<xforms:trigger appearance="minimal">
+											<xforms:label>
+												<xhtml:img src="{$display_path}images/add.gif"/>Import VIAF Names</xforms:label>
+											<xxforms:show ev:event="DOMActivate" dialog="import-dialog"/>
+										</xforms:trigger>
+									</span>
 									<div class="trigger_container">
 										<xforms:trigger appearance="minimal">
 											<xforms:label>
@@ -825,6 +915,34 @@
 										<xeac:descriptiveNote/>
 									</xforms:group>
 								</div>
+								<xxforms:dialog id="import-dialog" appearance="full" level="modal" close="true" draggable="true" visible="false">
+									<xforms:label>Import Data from VIAF</xforms:label>
+									<div>
+										<xforms:input ref="instance('search-query')">
+											<xforms:label>Search</xforms:label>
+										</xforms:input>
+										<xforms:trigger>
+											<xforms:action ev:event="DOMActivate">
+												<xforms:send submission="query-viaf"/>
+											</xforms:action>
+											<xforms:label>Search</xforms:label>
+										</xforms:trigger>
+									</div> <xforms:group ref=".[count(instance('viaf-response')//item) &gt; 0]">
+										<xforms:select1 ref="instance('viaf-id')" appearance="compact" id="select-list" xhtml:size="10">
+											<xforms:label>Name</xforms:label>
+											<xforms:alert>Required</xforms:alert>
+											<xforms:itemset nodeset="instance('viaf-response')//item">
+												<xforms:label ref="title"/>
+												<xforms:value ref="link"/>
+											</xforms:itemset>
+										</xforms:select1>
+										<xforms:trigger>
+											<xforms:label>Select</xforms:label>										
+											<xforms:send ev:event="DOMActivate" submission="get-viaf-rdf"/>
+											<xxforms:hide ev:event="DOMActivate" dialog="import-dialog"/>
+										</xforms:trigger>
+									</xforms:group>
+								</xxforms:dialog>
 							</fr:tab>
 							<!--**************************************** DESCRIPTION **********************************-->
 							<fr:tab bind="description-tab">
@@ -1303,6 +1421,11 @@
 												</div>
 											</div>
 										</xforms:repeat>
+									</div>
+								</xforms:group>
+								<xforms:group ref="eac:sources">
+									<div class="section">
+										<h2>Sources</h2>
 									</div>
 								</xforms:group>
 							</fr:tab>
