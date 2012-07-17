@@ -227,15 +227,15 @@
 					<agent/>
 				</maintenanceEvent>
 			</xforms:instance>
-			
+
 			<xforms:instance id="otherRecordId-template">
 				<otherRecordId/>
 			</xforms:instance>
-			
+
 			<xforms:instance id="sources-template">
 				<sources/>
 			</xforms:instance>
-			
+
 			<xforms:instance id="source-template">
 				<source xlink:type="simple" xlink:href=""/>
 			</xforms:instance>
@@ -255,15 +255,15 @@
 					<part/>
 				</nameEntry>
 			</xforms:instance>
-			
+
 			<xforms:instance id="authorizedForm-template">
 				<authorizedForm/>
 			</xforms:instance>
-			
+
 			<xforms:instance id="alternativeForm-template">
 				<alternativeForm/>
 			</xforms:instance>
-			
+
 			<xforms:instance id="preferredForm-template">
 				<preferredForm/>
 			</xforms:instance>
@@ -403,7 +403,9 @@
 
 			<xforms:instance id="outline-template">
 				<outline>
-					<level/>
+					<level>
+						<item/>
+					</level>
 				</outline>
 			</xforms:instance>
 
@@ -700,12 +702,12 @@
 					<xforms:insert context="instance('doc')/eac:control" nodeset="eac:recordId" position="after" origin="instance('otherRecordId-template')"/>
 					<xforms:insert context="instance('doc')/eac:control/eac:otherRecordId[1]" origin="xxforms:attribute('localType', 'VIAFId')"/>
 					<xforms:setvalue ref="instance('doc')/eac:control/eac:otherRecordId[1]" value="instance('viaf-id')"/>
-					
+
 					<!-- insert source for VIAF URI -->
 					<xforms:insert context="instance('doc')/eac:control" nodeset="./child::node()[last()]" origin="instance('sources-template')" if="count(instance('doc')/eac:control/eac:sources) = 0"/>
 					<xforms:insert context="instance('doc')/eac:control/eac:sources" nodeset="./child::node()[last()]" origin="instance('source-template')"/>
 					<xforms:setvalue ref="instance('doc')/eac:control/eac:sources/eac:source/@xlink:href" value="instance('viaf-id')"/>
-					
+
 					<!-- create nameEntries -->
 					<xforms:action xxforms:iterate="instance('viaf-rdf')//skos:Concept">
 						<xxforms:variable name="auth" select="substring-after(context()/skos:inScheme/@rdf:resource, 'authorityScheme/')"/>
@@ -719,12 +721,13 @@
 						<xforms:action xxforms:iterate="context()/skos:altLabel">
 							<xforms:insert context="instance('doc')/eac:cpfDescription/eac:identity" nodeset="./child::node()[last()]" origin="instance('nameEntry-template')"/>
 							<xforms:setvalue ref="instance('doc')/eac:cpfDescription/eac:identity/eac:nameEntry[last()]/eac:part" value="context()"/>
-							<xforms:insert context="instance('doc')/eac:cpfDescription/eac:identity/eac:nameEntry[last()]" nodeset="./child::node()[last()]" origin="instance('alternativeForm-template')"/>
+							<xforms:insert context="instance('doc')/eac:cpfDescription/eac:identity/eac:nameEntry[last()]" nodeset="./child::node()[last()]"
+								origin="instance('alternativeForm-template')"/>
 							<xforms:setvalue ref="instance('doc')/eac:cpfDescription/eac:identity/eac:nameEntry[last()]/eac:alternativeForm" value="$auth"/>
 						</xforms:action>
 					</xforms:action>
 				</xforms:action>
-				
+
 				<xforms:message ev:event="xforms-submit-error" level="modal">Error getting VIAF RDF.</xforms:message>
 			</xforms:submission>
 
@@ -771,14 +774,17 @@
 		<xi:include href="oxf:/xbl/xeac/descriptionTermGroup/descriptionTermGroup.xbl" xi:omit-xml-base="true"/>
 		<xi:include href="oxf:/xbl/xeac/descriptiveNote/descriptiveNote.xbl" xi:omit-xml-base="true"/>
 		<xi:include href="oxf:/xbl/xeac/languageUsed/languageUsed.xbl" xi:omit-xml-base="true"/>
+		<xi:include href="oxf:/xbl/xeac/level/level.xbl" xi:omit-xml-base="true"/>
 		<xi:include href="oxf:/xbl/xeac/list/list.xbl" xi:omit-xml-base="true"/>
 		<xi:include href="oxf:/xbl/xeac/nameEntry/nameEntry.xbl" xi:omit-xml-base="true"/>
+		<xi:include href="oxf:/xbl/xeac/outline/outline.xbl" xi:omit-xml-base="true"/>
 		<xi:include href="oxf:/xbl/xeac/p/p.xbl" xi:omit-xml-base="true"/>
 		<xi:include href="oxf:/xbl/xeac/place/place.xbl" xi:omit-xml-base="true"/>
 		<xi:include href="oxf:/xbl/xeac/placeEntry/placeEntry.xbl" xi:omit-xml-base="true"/>
 		<xi:include href="oxf:/xbl/xeac/relation/relation.xbl" xi:omit-xml-base="true"/>
 		<xi:include href="oxf:/xbl/xeac/relationEntry/relationEntry.xbl" xi:omit-xml-base="true"/>
 		<xi:include href="oxf:/xbl/xeac/reorder/reorder.xbl" xi:omit-xml-base="true"/>
+		<xi:include href="oxf:/xbl/xeac/structureOrGenealogy/structureOrGenealogy.xbl" xi:omit-xml-base="true"/>
 	</xhtml:head>
 
 	<xhtml:body class="yui-skin-sam">
@@ -927,7 +933,8 @@
 											</xforms:action>
 											<xforms:label>Search</xforms:label>
 										</xforms:trigger>
-									</div> <xforms:group ref=".[count(instance('viaf-response')//item) &gt; 0]">
+									</div>
+									<xforms:group ref=".[count(instance('viaf-response')//item) &gt; 0]">
 										<xforms:select1 ref="instance('viaf-id')" appearance="compact" id="select-list" xhtml:size="10">
 											<xforms:label>Name</xforms:label>
 											<xforms:alert>Required</xforms:alert>
@@ -937,7 +944,7 @@
 											</xforms:itemset>
 										</xforms:select1>
 										<xforms:trigger>
-											<xforms:label>Select</xforms:label>										
+											<xforms:label>Select</xforms:label>
 											<xforms:send ev:event="DOMActivate" submission="get-viaf-rdf"/>
 											<xxforms:hide ev:event="DOMActivate" dialog="import-dialog"/>
 										</xforms:trigger>
@@ -1218,12 +1225,9 @@
 										<xforms:group ref="eac:list">
 											<xeac:list/>
 										</xforms:group>
-										<!--<xforms:group ref="eac:outline">
-											<h3>Outline</h3>
-											<xforms:repeat nodeset="eac:level">
-												<xeac:level/>
-											</xforms:repeat>
-										</xforms:group>-->
+										<xforms:group ref="eac:outline">
+											<xeac:outline/>
+										</xforms:group>
 										<xforms:repeat nodeset="eac:p">
 											<xeac:p/>
 										</xforms:repeat>
@@ -1272,6 +1276,9 @@
 									</xforms:repeat>
 									<xforms:repeat nodeset="eac:places">
 										<xeac:descriptionTermGroup/>
+									</xforms:repeat>
+									<xforms:repeat nodeset="eac:structureOrGenealogy">
+										<xeac:structureOrGenealogy/>
 									</xforms:repeat>
 									<!-- alert for removal of description -->
 									<fr:alert-dialog id="remove-description">

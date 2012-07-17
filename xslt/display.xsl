@@ -79,15 +79,15 @@
 						<h1>
 							<xsl:value-of select="eac:cpfDescription/eac:identity/eac:nameEntry[1]/eac:part"/>
 						</h1>
-
-						<div id="yui-main">
+						<xsl:call-template name="body"/>
+						<!--<div id="yui-main">
 							<div class="yui-b">
 								<xsl:call-template name="body"/>
 							</div>
 						</div>
 						<div class="yui-b">
 							<xsl:call-template name="sidebar"/>
-						</div>
+						</div>-->
 
 					</div>
 

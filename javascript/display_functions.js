@@ -15,7 +15,7 @@ function initialize_timemap(id) {
 			}
 		}],
 		bandIntervals:[
-		Timeline.DateTime.DECADE,
-		Timeline.DateTime.CENTURY]
+		Timeline.DateTime.YEAR,
+		Timeline.DateTime.DECADE]
 	});
 }

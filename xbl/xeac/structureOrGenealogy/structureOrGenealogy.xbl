@@ -1,0 +1,112 @@
+<xbl:xbl xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:xforms="http://www.w3.org/2002/xforms" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:xxforms="http://orbeon.org/oxf/xml/xforms"
+	xmlns:xbl="http://www.w3.org/ns/xbl" xmlns:xxbl="http://orbeon.org/oxf/xml/xbl" xmlns:xeac="https://github.com/ewg118/xEAC" xmlns:eac="urn:isbn:1-931666-33-4" xmlns="urn:isbn:1-931666-33-4">
+	<xbl:binding id="xeac-structureOrGenealogy" element="xeac|structureOrGenealogy">
+		<xbl:template>
+			<xforms:group xbl:attr="model context ref bind" xxbl:scope="outer">
+				<xbl:content includes="xforms|label,xforms|help,xforms|hint,xforms|alert"/>
+				<xforms:group xxbl:scope="inner">
+					<xxforms:variable name="binding" as="node()?">
+						<xxforms:sequence select="." xxbl:scope="outer"/>
+					</xxforms:variable>
+					<xxforms:variable name="display_path">../../</xxforms:variable>
+
+					<xforms:group ref="$binding">
+						<div class="section">
+							<h3>Structure or Genealogy</h3>
+							<xforms:trigger appearance="minimal">
+								<xforms:delete ev:event="DOMActivate" nodeset="."/>
+								<xforms:label>
+									<xhtml:img src="{$display_path}images/remove.gif"/>
+								</xforms:label>
+							</xforms:trigger>
+							<div class="trigger_container">								
+								<xforms:group ref=".[count(eac:citation) = 0]">
+									<xforms:trigger appearance="minimal">
+										<xforms:label>
+											<img src="{$display_path}images/add.gif"/>Citation</xforms:label>
+										<xforms:action ev:event="DOMActivate">
+											<xforms:insert context="." nodeset="./child::node()[last()]"  origin="instance('citation-template')"/>
+										</xforms:action>
+									</xforms:trigger>
+								</xforms:group>
+								<xforms:group ref=".[count(eac:list) = 0]">
+									<xforms:trigger appearance="minimal">
+										<xforms:label>
+											<img src="{$display_path}images/add.gif"/>List</xforms:label>
+										<xforms:action ev:event="DOMActivate">
+											<xforms:insert context="." nodeset="./child::node()[last()]" origin="instance('list-template')"/>
+										</xforms:action>
+									</xforms:trigger>
+								</xforms:group>
+								<xforms:group ref=".[count(eac:outline) = 0]">
+									<xforms:trigger appearance="minimal">
+										<xforms:label>
+											<img src="{$display_path}images/add.gif"/>Outline</xforms:label>
+										<xforms:action ev:event="DOMActivate">
+											<xforms:insert context="." nodeset="./child::node()[last()]"  origin="instance('outline-template')"/>
+										</xforms:action>
+									</xforms:trigger>
+								</xforms:group>
+								<xforms:group ref=".[count(eac:p) = 0]">
+									<xforms:trigger appearance="minimal">
+										<xforms:label>
+											<img src="{$display_path}images/add.gif"/>Paragraph</xforms:label>
+										<xforms:action ev:event="DOMActivate">
+											<xforms:insert context="." nodeset="./child::node()[last()]"  origin="instance('p-template')"/>
+										</xforms:action>
+									</xforms:trigger>
+								</xforms:group>
+							</div>
+
+							<div class="subsection">
+								<xforms:group ref="eac:citation">
+									<xeac:citation/>
+								</xforms:group>								
+								
+								<xforms:group ref="eac:list">
+									<xeac:list/>
+								</xforms:group>
+								
+								<xforms:group ref="eac:outline">
+									<xeac:outline/>
+								</xforms:group>
+								
+								<xforms:group ref="eac:p">
+									<xeac:p/>
+								</xforms:group>
+							</div>
+						</div>
+					</xforms:group>
+
+					<!-- ********************************************************************** -->
+					<xforms:model id="structureOrGenealogy-model">
+						
+
+						<!-- generic instances -->
+						<xforms:instance id="citation-template">
+							<citation/>
+						</xforms:instance>
+						
+						
+						<xforms:instance id="list-template">
+							<list/>
+						</xforms:instance>
+
+						<xforms:instance id="outline-template">
+							<outline>
+								<level>
+									<item/>
+								</level>
+							</outline>
+						</xforms:instance>
+
+						<xforms:instance id="p-template">
+							<p/>
+						</xforms:instance>
+					</xforms:model>
+				</xforms:group>
+			</xforms:group>
+		</xbl:template>
+	</xbl:binding>
+
+</xbl:xbl>

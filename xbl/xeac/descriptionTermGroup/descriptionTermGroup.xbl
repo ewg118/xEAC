@@ -76,16 +76,43 @@
 										<xforms:label>
 											<img src="{$display_path}images/add.gif"/>Citation</xforms:label>
 										<xforms:action ev:event="DOMActivate">
-											<xforms:insert context="." origin="instance('citation-template')"/>
+											<xforms:insert context="." nodeset="./child::node()[last()]"  origin="instance('citation-template')"/>
 										</xforms:action>
 									</xforms:trigger>
-								</xforms:group>
+								</xforms:group>								
 								<xforms:group ref=".[count(eac:descriptiveNote) = 0]">
 									<xforms:trigger appearance="minimal">
 										<xforms:label>
 											<img src="{$display_path}images/add.gif"/>Descriptive Note</xforms:label>
 										<xforms:action ev:event="DOMActivate">
-											<xforms:insert context="." origin="instance('descriptiveNote-template')"/>
+											<xforms:insert context="." nodeset="./child::node()[last()]"  origin="instance('descriptiveNote-template')"/>
+										</xforms:action>
+									</xforms:trigger>
+								</xforms:group>
+								<xforms:group ref=".[count(eac:list) = 0]">
+									<xforms:trigger appearance="minimal">
+										<xforms:label>
+											<img src="{$display_path}images/add.gif"/>List</xforms:label>
+										<xforms:action ev:event="DOMActivate">
+											<xforms:insert context="." nodeset="./child::node()[last()]" origin="instance('list-template')"/>
+										</xforms:action>
+									</xforms:trigger>
+								</xforms:group>
+								<xforms:group ref=".[count(eac:outline) = 0]">
+									<xforms:trigger appearance="minimal">
+										<xforms:label>
+											<img src="{$display_path}images/add.gif"/>Outline</xforms:label>
+										<xforms:action ev:event="DOMActivate">
+											<xforms:insert context="." nodeset="./child::node()[last()]"  origin="instance('outline-template')"/>
+										</xforms:action>
+									</xforms:trigger>
+								</xforms:group>
+								<xforms:group ref=".[count(eac:p) = 0]">
+									<xforms:trigger appearance="minimal">
+										<xforms:label>
+											<img src="{$display_path}images/add.gif"/>Paragraph</xforms:label>
+										<xforms:action ev:event="DOMActivate">
+											<xforms:insert context="." nodeset="./child::node()[last()]"  origin="instance('p-template')"/>
 										</xforms:action>
 									</xforms:trigger>
 								</xforms:group>
@@ -126,6 +153,18 @@
 
 								<xforms:group ref="eac:descriptiveNote">
 									<xeac:descriptiveNote/>
+								</xforms:group>
+								
+								<xforms:group ref="eac:list">
+									<xeac:list/>
+								</xforms:group>
+								
+								<xforms:group ref="eac:outline">
+									<xeac:outline/>
+								</xforms:group>
+								
+								<xforms:group ref="eac:p">
+									<xeac:p/>
 								</xforms:group>
 							</div>
 						</div>
@@ -176,12 +215,29 @@
 							</place>
 						</xforms:instance>
 
+						<!-- generic instances -->
 						<xforms:instance id="citation-template">
 							<citation/>
 						</xforms:instance>
 
 						<xforms:instance id="descriptiveNote-template">
 							<descriptiveNote/>
+						</xforms:instance>
+						
+						<xforms:instance id="list-template">
+							<list/>
+						</xforms:instance>
+
+						<xforms:instance id="outline-template">
+							<outline>
+								<level>
+									<item/>
+								</level>
+							</outline>
+						</xforms:instance>
+
+						<xforms:instance id="p-template">
+							<p/>
 						</xforms:instance>
 					</xforms:model>
 				</xforms:group>
