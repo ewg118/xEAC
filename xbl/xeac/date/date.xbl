@@ -11,29 +11,63 @@
 					<xxforms:variable name="display_path">../../</xxforms:variable>
 
 					<xforms:group ref="$binding">
-						<div>
-							<xforms:input ref="@standardDate">
-								<xforms:label>Date - Standard</xforms:label>
-								<xforms:alert>Required; must meet ISO specification</xforms:alert>
-								<xforms:action ev:event="xforms-value-changed">
-									<xxforms:variable name="year" select="tokenize(., '-')[1]"/>
-									<xxforms:variable name="month" select="tokenize(., '-')[2]"/>
-									<xxforms:variable name="day" select="tokenize(., '-')[3]"/>
-									<xforms:setvalue ref="$binding"
-										value="concat(if (number($month)) then concat(instance('month-list')/item[@id=$month], ' ') else '', if (number($day)) then concat($day, ', ') else '', $year)"
-									/>
-								</xforms:action>
-							</xforms:input>
-							<xforms:group ref=".[not(@standardDate = .)]">
-								<xforms:output ref="."/>
-							</xforms:group>
-							<xforms:trigger appearance="minimal">
-								<xforms:delete ev:event="DOMActivate" nodeset="."/>
-								<xforms:label>
-									<xhtml:img src="/apps/xeac/images/remove.gif"/>
-								</xforms:label>
-							</xforms:trigger>
-						</div>
+						<!-- edit @standardDate by default -->
+						<xforms:group ref=".[@standardDate]">
+							<div>
+								<xforms:input ref="@standardDate">
+									<xforms:label>Date - Standard</xforms:label>
+									<xforms:alert>Required; must meet ISO specification</xforms:alert>
+									<xforms:action ev:event="xforms-value-changed">
+										<xforms:action if="substring(., 1, 1) = '-'">
+											<xxforms:variable name="year" select="abs(number(tokenize(., '-')[2]))"/>
+											<xxforms:variable name="month" select="tokenize(., '-')[3]"/>
+											<xxforms:variable name="day" select="tokenize(., '-')[4]"/>
+											<xforms:setvalue ref="$binding"
+												value="concat(if (number($month)) then concat(instance('month-list')/item[@id=$month], ' ') else '', if (number($day)) then concat($day, ', ') else '', $year, ' B.C.')"
+											/>
+										</xforms:action>
+										<xforms:action if="substring(., 1, 1) != '-'">
+											<xxforms:variable name="year" select="abs(number(tokenize(., '-')[1]))"/>
+											<xxforms:variable name="month" select="tokenize(., '-')[2]"/>
+											<xxforms:variable name="day" select="tokenize(., '-')[3]"/>
+											<xforms:setvalue ref="$binding"
+												value="concat(if ($year &lt;= 300) then 'A.D. ' else '', if (number($month)) then concat(instance('month-list')/item[@id=$month], ' ') else '', if (number($day)) then concat($day, ', ') else '', $year)"
+											/>
+										</xforms:action>									
+									</xforms:action>
+								</xforms:input>
+								<xforms:group ref=".[not(@standardDate = .)]">
+									<xforms:output ref="."/>
+								</xforms:group>
+								<xforms:trigger appearance="minimal">
+									<xforms:delete ev:event="DOMActivate" nodeset="."/>
+									<xforms:label>
+										<xhtml:img src="{$display_path}images/remove.gif"/>
+									</xforms:label>
+								</xforms:trigger>
+							</div>
+						</xforms:group>
+						<xforms:group ref=".[not(@standardDate)]">
+							<div>
+								<xforms:input ref=".">
+									<xforms:label>Date - Textual</xforms:label>
+								</xforms:input>
+								<xforms:trigger appearance="minimal">
+									<xforms:insert  ev:event="DOMActivate"  context="." origin="xxforms:attribute('standardDate', '')" if="not(@standardDate)"/>
+									<xforms:label>
+										<xhtml:img src="{$display_path}images/add.gif"/>Standard Date
+									</xforms:label>
+								</xforms:trigger>
+								
+								<xforms:trigger appearance="minimal">
+									<xforms:delete ev:event="DOMActivate" nodeset="."/>
+									<xforms:label>
+										<xhtml:img src="{$display_path}images/remove.gif"/>
+									</xforms:label>
+								</xforms:trigger>
+							</div>
+						</xforms:group>
+						
 						<!--<div>
 							<xforms:output ref=".">
 								<xforms:label>Date - Textual</xforms:label>

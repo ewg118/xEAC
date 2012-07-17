@@ -1,6 +1,6 @@
 <xbl:xbl xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:xforms="http://www.w3.org/2002/xforms" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:xxforms="http://orbeon.org/oxf/xml/xforms"
 	xmlns:fr="http://orbeon.org/oxf/xml/form-runner" xmlns:xbl="http://www.w3.org/ns/xbl" xmlns:xxbl="http://orbeon.org/oxf/xml/xbl" xmlns:xeac="https://github.com/ewg118/xEAC"
-	xmlns:eac="urn:isbn:1-931666-33-4" xmlns="urn:isbn:1-931666-33-4">
+	xmlns:rss="http://purl.org/rss/1.0/" xmlns:eac="urn:isbn:1-931666-33-4" xmlns="urn:isbn:1-931666-33-4">
 	<xbl:binding id="xeac-placeEntry" element="xeac|placeEntry">
 		<xbl:template>
 			<xforms:group xbl:attr="model context ref bind" xxbl:scope="outer">
@@ -12,8 +12,14 @@
 					<xxforms:variable name="display_path">../../</xxforms:variable>
 					<xforms:action ev:event="xforms-enabled" ev:target="#observer">
 						<xforms:send submission="load-config"/>
-						<xforms:action if="string($binding/@vocabularySource)">
+						<xforms:action if="contains($binding/@vocabularySource, 'geonames.org')">
 							<xforms:setvalue ref="instance('interface-type')" value="'geonames'"/>
+						</xforms:action>
+						<xforms:action if="contains($binding/@vocabularySource, 'nomisma.org')">
+							<xforms:setvalue ref="instance('interface-type')" value="'nomisma'"/>
+						</xforms:action>
+						<xforms:action if="contains($binding/@vocabularySource, 'pleiades.stoa.org')">
+							<xforms:setvalue ref="instance('interface-type')" value="'pleiades'"/>
 						</xforms:action>
 						<xforms:action if="not($binding/@vocabularySource) and string($binding/text())">
 							<xforms:setvalue ref="instance('interface-type')" value="'local'"/>
@@ -74,6 +80,14 @@
 											<xforms:value>geonames</xforms:value>
 										</xforms:item>
 										<xforms:item>
+											<xforms:label>Nomisma</xforms:label>
+											<xforms:value>nomisma</xforms:value>
+										</xforms:item>
+										<xforms:item>
+											<xforms:label>Pleiades</xforms:label>
+											<xforms:value>pleiades</xforms:value>
+										</xforms:item>
+										<xforms:item>
 											<xforms:label>Local Vocabulary</xforms:label>
 											<xforms:value>local</xforms:value>
 										</xforms:item>
@@ -81,6 +95,7 @@
 											<xforms:action if=". = 'geonames'">
 												<!-- remove temporary values, applicable when switching back to geonames from local -->
 												<xforms:delete context="instance('geonames')/*"/>
+												<xforms:delete context="instance('feed')/*"/>
 												<xforms:setvalue ref="instance('search-query')"/>
 
 												<!-- create attributes, clear $binding text when applicable -->
@@ -88,9 +103,32 @@
 												<xforms:insert context="$binding" origin="xxforms:attribute('vocabularySource', '')" if="not($binding/@vocabularySource)"/>
 												<xforms:toggle case="geonames-search"/>
 											</xforms:action>
+											<xforms:action if=". = 'nomisma'">
+												<!-- remove temporary values, applicable when switching back to geonames from local -->
+												<xforms:delete context="instance('geonames')/*"/>
+												<xforms:delete context="instance('feed')/*"/>
+												<xforms:setvalue ref="instance('search-query')"/>
+
+												<!-- create attributes, clear $binding text when applicable -->
+												<xforms:setvalue ref="$binding"/>
+												<xforms:insert context="$binding" origin="xxforms:attribute('vocabularySource', '')" if="not($binding/@vocabularySource)"/>
+												<xforms:toggle case="nomisma-search"/>
+											</xforms:action>
+											<xforms:action if=". = 'pleiades'">
+												<!-- remove temporary values, applicable when switching back to geonames from local -->
+												<xforms:delete context="instance('geonames')/*"/>
+												<xforms:delete context="instance('feed')/*"/>
+												<xforms:setvalue ref="instance('search-query')"/>
+
+												<!-- create attributes, clear $binding text when applicable -->
+												<xforms:setvalue ref="$binding"/>
+												<xforms:insert context="$binding" origin="xxforms:attribute('vocabularySource', '')" if="not($binding/@vocabularySource)"/>
+												<xforms:toggle case="pleiades-search"/>
+											</xforms:action>
 											<xforms:action if=". = 'local'">
 												<!-- delete attributes, clear $binding text when applicable -->
 												<xforms:delete context="instance('geonames')/*"/>
+												<xforms:delete context="instance('feed')/*"/>
 												<xforms:setvalue ref="$binding" if="not($binding/@vocabularySource)"/>
 												<xforms:delete context="$binding/@vocabularySource" if="$binding/@vocabularySource"/>
 												<xforms:toggle case="local-input"/>
@@ -116,7 +154,7 @@
 									</div>
 
 									<xforms:group ref=".[count(instance('geonames')//geoname) &gt; 0]">
-										<xforms:select1 ref="instance('temp')/@vocabularySource" appearance="compact" id="geonames-list">
+										<xforms:select1 ref="instance('temp')/@vocabularySource" appearance="compact" id="geonames-list" xhtml:size="10">
 											<xforms:label>Location</xforms:label>
 											<xforms:itemset nodeset="instance('geonames')//geoname">
 												<xforms:label ref="label"/>
@@ -130,6 +168,104 @@
 												<xforms:setvalue ref="$binding" value="instance('geonames')//geoname[contains(instance('temp')/@vocabularySource, geonameId)]/label"/>
 											</xforms:action>
 										</xforms:trigger>
+									</xforms:group>
+								</xforms:case>
+								<xforms:case id="nomisma-search">
+									<div>
+										<xforms:input ref="instance('search-query')">
+											<xforms:label>Search</xforms:label>
+										</xforms:input>
+										<xforms:trigger>
+											<xforms:action ev:event="DOMActivate">
+												<xforms:delete context="instance('feed')/*"/>
+												<xforms:send submission="query-nomisma"/>
+											</xforms:action>
+											<xforms:label>Search</xforms:label>
+										</xforms:trigger>
+									</div>
+
+									<xforms:group ref=".[count(instance('feed')//*[local-name()='entry']) &gt; 0]">
+										<xforms:select1 ref="instance('temp')/@vocabularySource" appearance="compact" id="nomisma-list" xhtml:size="10">
+											<xforms:label>Location</xforms:label>
+											<xforms:itemset nodeset="instance('feed')//*[local-name()='entry']">
+												<xforms:label ref="*[local-name()='title']"/>
+												<xforms:value ref="*[local-name()='link'][1]/@href"/>
+											</xforms:itemset>
+											<xforms:action ev:event="xforms-value-changed">
+												<xforms:setvalue ref="instance('description')"
+													value="instance('feed')//*[local-name()='entry'][*[local-name()='link'][1]/@href = instance('temp')/@vocabularySource]/*[local-name()='content']"/>
+											</xforms:action>
+										</xforms:select1>
+										<xforms:trigger>
+											<xforms:label>Select</xforms:label>
+											<xforms:action ev:event="DOMActivate">
+												<xforms:setvalue ref="$binding/@vocabularySource" value="instance('temp')/@vocabularySource"/>
+												<xforms:setvalue ref="$binding"
+													value="instance('feed')//*[local-name()='entry'][*[local-name()='link'][1]/@href = instance('temp')/@vocabularySource]/*[local-name()='title']"/>
+											</xforms:action>
+										</xforms:trigger>
+									</xforms:group>
+
+									<xforms:group ref=".[string(instance('temp')/@vocabularySource)]">
+										<div>
+											<xforms:output ref="instance('description')">
+												<xforms:label>Description</xforms:label>
+											</xforms:output>
+											<xforms:trigger appearance="xxforms:link">
+												<xforms:label>
+													<img src="{$display_path}images/external.png"/>
+												</xforms:label>
+												<xforms:load ev:event="DOMActivate" show="new" ref="instance('temp')/@vocabularySource"/>
+											</xforms:trigger>
+										</div>
+									</xforms:group>
+								</xforms:case>
+								<xforms:case id="pleiades-search">
+									<div>
+										<xforms:input ref="instance('search-query')">
+											<xforms:label>Search</xforms:label>
+										</xforms:input>
+										<xforms:trigger>
+											<xforms:action ev:event="DOMActivate">
+												<xforms:delete context="instance('feed')/*"/>
+												<xforms:send submission="query-pleiades"/>
+											</xforms:action>
+											<xforms:label>Search</xforms:label>
+										</xforms:trigger>
+									</div>
+
+									<xforms:group ref=".[count(instance('feed')//rss:item) &gt; 0]">
+										<xforms:select1 ref="instance('temp')/@vocabularySource" appearance="compact" id="pleiades-list" xhtml:size="10">
+											<xforms:label>Location</xforms:label>
+											<xforms:itemset nodeset="instance('feed')//rss:item">
+												<xforms:label ref="rss:title"/>
+												<xforms:value ref="rss:link"/>
+											</xforms:itemset>
+											<xforms:action ev:event="xforms-value-changed">
+												<xforms:setvalue ref="instance('description')" value="instance('feed')//rss:item[rss:link = instance('temp')/@vocabularySource]/rss:description"/>
+											</xforms:action>
+										</xforms:select1>
+										<xforms:trigger>
+											<xforms:label>Select</xforms:label>
+											<xforms:action ev:event="DOMActivate">
+												<xforms:setvalue ref="$binding/@vocabularySource" value="instance('temp')/@vocabularySource"/>
+												<xforms:setvalue ref="$binding" value="instance('feed')//rss:item[rss:link = instance('temp')/@vocabularySource]/rss:title"/>
+											</xforms:action>
+										</xforms:trigger>
+									</xforms:group>
+
+									<xforms:group ref=".[string(instance('temp')/@vocabularySource)]">
+										<div>
+											<xforms:output ref="instance('description')">
+												<xforms:label>Description</xforms:label>
+											</xforms:output>
+											<xforms:trigger appearance="xxforms:link">
+												<xforms:label>
+													<img src="{$display_path}images/external.png"/>
+												</xforms:label>
+												<xforms:load ev:event="DOMActivate" show="new" ref="instance('temp')/@vocabularySource"/>
+											</xforms:trigger>
+										</div>
 									</xforms:group>
 								</xforms:case>
 								<xforms:case id="local-input">
@@ -277,6 +413,15 @@
 							</geoname>
 						</xforms:instance>
 
+						<!-- instances for nomisma/pleiades -->
+						<xforms:instance id="feed">
+							<feed xmlns=""/>
+						</xforms:instance>
+
+						<xforms:instance id="description">
+							<description xmlns=""/>
+						</xforms:instance>
+
 						<!-- mint type radio button -->
 						<xforms:instance id="interface-type">
 							<interface/>
@@ -306,6 +451,18 @@
 									<xforms:insert context="instance('geonames')" origin="instance('geoname-template')" nodeset="./child::node()[last()]"/>
 								</xforms:action>
 							</xforms:action>
+						</xforms:submission>
+
+						<!-- query nomisma for ancient places -->
+						<xforms:submission id="query-nomisma" serialization="none" method="get" action="http://nomisma.org/feed/?q=(typeof:mint+OR+typeof:head_1911_region)+{instance('search-query')}"
+							instance="feed" replace="instance">
+							<xforms:message ev:event="xforms-submit-error" level="modal">Unable to communicate with nomisma.org Atom feed.</xforms:message>
+						</xforms:submission>
+
+						<!-- query pleiades for ancient places -->
+						<xforms:submission id="query-pleiades" serialization="none" method="get" action="http://pleiades.stoa.org/search_rss?SearchableText={instance('search-query')}" instance="feed"
+							replace="instance">
+							<xforms:message ev:event="xforms-submit-error" level="modal">Unable to communicate with Pleiades RSS feed.</xforms:message>
 						</xforms:submission>
 					</xforms:model>
 				</xforms:group>

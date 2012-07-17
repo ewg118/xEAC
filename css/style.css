@@ -234,7 +234,7 @@ textarea {
 	height:15em;
 }
 .xxforms-dialog-body input, .xxforms-dialog-body select {
-	width: 20em;
+	width: 30em;
 	margin-bottom: 2px;
 }
 .xxforms-dialog-body {
@@ -246,7 +246,7 @@ textarea {
 }
 .xforms-select1 {
 	margin-bottom: 2px;
-	max-width:30em;
+	width:30em;
 }
 .xforms-select1 input {
 	margin-bottom: 2px
