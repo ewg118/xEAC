@@ -9,19 +9,9 @@
 	xmlns:oxf="http://www.orbeon.com/oxf/processors">
 
 	<p:param type="input" name="data"/>
-	<p:param type="output" name="data"/>
+	<p:param type="output" name="data"/>	
 	
-	<p:processor name="oxf:request">
-		<p:input name="config">
-			<config>
-				<include>/request/request-url</include>				
-			</config>
-		</p:input>
-		<p:output name="data" id="request"/>
-	</p:processor>
-	
-	<p:processor name="oxf:unsafe-xslt">
-		<p:input name="request" href="#request"/>
+	<p:processor name="oxf:unsafe-xslt">		
 		<p:input name="data" href="aggregate('content', #data, ../exist-url.xml)"/>		
 		<p:input name="config" href="../xslt/eac-to-kml.xsl"/>
 		<p:output name="data" ref="data"/>

@@ -98,6 +98,10 @@
 			<xforms:instance id="doc">
 				<eac-cpf xmlns=""/>
 			</xforms:instance>
+			
+			<xforms:instance id="kml">
+				<kml/>
+			</xforms:instance>
 
 			<xforms:instance id="create-collection">
 				<exist:query xmlns="">
@@ -192,6 +196,8 @@
 						<xforms:action xxforms:iterate="instance('collection-result')/report/item">
 							<xforms:setvalue ref="instance('id')" value="context()/*[local-name()='recordId']"/>
 							<xforms:send submission="load-doc"/>
+							<xforms:insert nodeset="instance('kml')" origin="xxforms:call-xpl('oxf:/apps/xeac/xpl/eac-to-kml.xpl', 'data', instance('doc'), 'data')"/>
+							<xforms:send submission="save-kml"/>
 							<xforms:insert nodeset="instance('addIndex')" origin="xxforms:call-xpl('oxf:/apps/xeac/xpl/eac-to-solr-all.xpl', 'data', instance('doc'), 'data')"/>
 							<xforms:send submission="post-solr-doc"/>
 						</xforms:action>
@@ -203,7 +209,6 @@
 					<xforms:delete nodeset="instance('list')/*"/>
 					<xforms:send submission="query-solr"/>
 				</xforms:action>
-
 			</xforms:submission>
 
 			<xforms:submission id="xquery-collection" ref="instance('eXist-xquery')" action="{instance('exist-url')}xeac/records/" method="post" replace="instance" instance="collection-result"
@@ -262,6 +267,16 @@
 
 			<!-- delete finding aid -->
 			<xforms:submission id="delete-doc" action="{instance('exist-url')}xeac/records/{instance('id')}.xml" method="delete" replace="none" xxforms:username="admin" xxforms:password="">
+				<xforms:setvalue ev:event="xforms-submit-done" ref="instance('control-instance')/status">Finding aid successfully deleted.</xforms:setvalue>
+			</xforms:submission>
+			
+			<!-- save KML -->
+			<xforms:submission id="save-kml" ref="instance('kml')" action="{instance('exist-url')}xeac/kml/{instance('doc')/eac:control/eac:recordId}.kml" method="put" replace="none"
+				xxforms:username="admin" xxforms:password="">
+				<xforms:message ev:event="xforms-submit-error" level="modal">Error Saving KML.</xforms:message>
+			</xforms:submission>
+			
+			<xforms:submission id="delete-kml" action="{instance('exist-url')}xeac/kml/{instance('id')}.kml" method="delete" replace="none" xxforms:username="admin" xxforms:password="">
 				<xforms:setvalue ev:event="xforms-submit-done" ref="instance('control-instance')/status">Finding aid successfully deleted.</xforms:setvalue>
 			</xforms:submission>
 
@@ -639,7 +654,8 @@
 									<fr:negative-choice/>
 									<fr:positive-choice>
 										<xforms:action ev:event="DOMActivate">
-											<xforms:send submission="delete-object"/>
+											<xforms:send submission="delete-doc"/>
+											<xforms:send submission="delete-kml"/>
 											<xforms:setvalue ref="instance('control-instance')/solr-core" value="instance('config')/solr_all"/>
 											<xforms:send submission="delete-solr-doc"/>
 											<xforms:setvalue ref="instance('control-instance')/solr-core" value="instance('config')/solr_published"/>

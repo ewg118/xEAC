@@ -13,6 +13,13 @@
 					<xforms:group ref="$binding">
 						<div class="subsection">
 							<h3>Name Entry</h3>
+							<xforms:trigger appearance="minimal">
+								<xforms:label>(set as default)</xforms:label>
+								<xforms:action ev:event="DOMActivate">
+									<xforms:insert origin="$binding" context="parent::node()"/>
+									<xforms:delete nodeset="."/>
+								</xforms:action>
+							</xforms:trigger>
 							<span class="add">
 								<xforms:trigger appearance="minimal">
 									<xforms:label>
@@ -25,7 +32,7 @@
 								<xforms:trigger appearance="minimal">
 									<xforms:delete ev:event="DOMActivate" nodeset="."/>
 									<xforms:label>
-										<xhtml:img src="/apps/xeac/images/remove.gif"/>
+										<xhtml:img src="{$display_path}images/remove.gif"/>
 									</xforms:label>
 								</xforms:trigger>
 							</xforms:group>
@@ -94,7 +101,7 @@
 										<xforms:trigger appearance="minimal">
 											<xforms:delete ev:event="DOMActivate" nodeset="."/>
 											<xforms:label>
-												<xhtml:img src="/apps/xeac/images/remove.gif"/>
+												<xhtml:img src="{$display_path}images/remove.gif"/>
 											</xforms:label>
 										</xforms:trigger>
 									</xforms:group>
@@ -110,7 +117,7 @@
 									<xforms:trigger appearance="minimal">
 										<xforms:delete ev:event="DOMActivate" nodeset="."/>
 										<xforms:label>
-											<xhtml:img src="/apps/xeac/images/remove.gif"/>
+											<xhtml:img src="{$display_path}images/remove.gif"/>
 										</xforms:label>
 									</xforms:trigger>
 								</div>
@@ -125,7 +132,7 @@
 									<xforms:trigger appearance="minimal">
 										<xforms:delete ev:event="DOMActivate" nodeset="."/>
 										<xforms:label>
-											<xhtml:img src="/apps/xeac/images/remove.gif"/>
+											<xhtml:img src="{$display_path}images/remove.gif"/>
 										</xforms:label>
 									</xforms:trigger>
 								</div>
@@ -140,7 +147,7 @@
 									<xforms:trigger appearance="minimal">
 										<xforms:delete ev:event="DOMActivate" nodeset="."/>
 										<xforms:label>
-											<xhtml:img src="/apps/xeac/images/remove.gif"/>
+											<xhtml:img src="{$display_path}images/remove.gif"/>
 										</xforms:label>
 									</xforms:trigger>
 								</div>
@@ -156,6 +163,10 @@
 
 					<!-- ********************************************************************** -->
 					<xforms:model id="nameEntry-model">
+						<xforms:instance id="duplicate">
+							<duplicate/>
+						</xforms:instance>
+						
 						<xforms:instance id="part-template">
 							<part/>
 						</xforms:instance>

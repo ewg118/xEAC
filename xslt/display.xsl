@@ -109,60 +109,114 @@
 				<div id="timeline"/>
 			</div>
 		</div>
+
+		<xsl:apply-templates select="eac:cpfDescription"/>
 	</xsl:template>
 
-	<xsl:template name="sidebar">
-		<xsl:apply-templates select="eac:cpfDescription/eac:description"/>
-		<xsl:apply-templates select="eac:cpfDescription/eac:relations"/>
-	</xsl:template>
-
-	<xsl:template match="eac:description">
-		<div id="description">
-			<h2>Description</h2>
-			<xsl:apply-templates select="eac:biogHist"/>
+	<xsl:template match="eac:cpfDescription">
+		<div id="chron">
+			<h2>Chronology</h2>
+			<ul>
+				<xsl:apply-templates select="eac:description/descendant::eac:date[@standardDate]|eac:description/descendant::eac:dateRange[eac:fromDate[@standardDate]]">
+					<xsl:sort
+						select="if(local-name()='date') then if (substring(@standardDate, 1, 1) = '-') then (number(tokenize(@standardDate, '-')[2]) * -1) else tokenize(@standardDate, '-')[1] else  if (substring(eac:fromDate/@standardDate, 1, 1) = '-') then (number(tokenize(eac:fromDate/@standardDate, '-')[2]) * -1) else tokenize(eac:fromDate/@standardDate, '-')[1]"/>
+					<xsl:sort
+						select="if(local-name()='date') then if (substring(@standardDate, 1, 1) = '-') then number(tokenize(@standardDate, '-')[3]) else tokenize(@standardDate, '-')[2] else  if (substring(eac:fromDate/@standardDate, 1, 1) = '-') then number(tokenize(eac:fromDate/@standardDate, '-')[3]) else tokenize(eac:fromDate/@standardDate, '-')[2]"/>
+					<xsl:sort
+						select="if(local-name()='date') then if (substring(@standardDate, 1, 1) = '-') then number(tokenize(@standardDate, '-')[4]) else tokenize(@standardDate, '-')[3] else  if (substring(eac:fromDate/@standardDate, 1, 1) = '-') then number(tokenize(eac:fromDate/@standardDate, '-')[4]) else tokenize(eac:fromDate/@standardDate, '-')[3]"
+					/>
+				</xsl:apply-templates>
+			</ul>
 		</div>
+
+		<xsl:apply-templates select="eac:relations"/>
 	</xsl:template>
 
-	<xsl:template match="eac:biogHist">
-		<xsl:apply-templates select="eac:chronList"/>
-	</xsl:template>
-
-	<xsl:template match="eac:chronList">
-		<ul>
-			<xsl:for-each select="eac:chronItem">
-				<li>
-					<b><xsl:for-each select="descendant::*/@standardDate">
+	<xsl:template match="eac:date|eac:dateRange">
+		<xsl:if test="not(parent::eac:existDates)">
+			<li>
+				<b><xsl:choose>
+						<xsl:when test="local-name()='date'">
 							<xsl:value-of select="."/>
-							<xsl:if test="not(position()=last())">
-								<xsl:text>-</xsl:text>
-							</xsl:if>
-					</xsl:for-each>: </b>
-					<xsl:value-of select="eac:event"/>
-					<xsl:if test="eac:placeEntry">
-						<xsl:text> - </xsl:text>
-						<xsl:value-of select="eac:placeEntry"/>
-					</xsl:if>
-				</li>
-			</xsl:for-each>
-		</ul>
+						</xsl:when>
+						<xsl:when test="local-name()='dateRange'">
+							<xsl:value-of select="eac:fromDate"/>
+							<xsl:text> - </xsl:text>
+							<xsl:value-of select="eac:toDate"/>
+						</xsl:when>
+					</xsl:choose>: </b>
+				<xsl:call-template name="chron-description"/>
+			</li>
+		</xsl:if>
+
 	</xsl:template>
+
+	<xsl:template name="chron-description">
+		<xsl:choose>
+			<xsl:when test="parent::eac:existDates">Dates of Existence</xsl:when>
+			<xsl:when test="ancestor::eac:useDates">
+				<xsl:text>Known as </xsl:text>
+				<xsl:value-of select="ancestor::eac:nameEntry/eac:part"/>
+			</xsl:when>
+			<xsl:when test="parent::node()/eac:event">
+				<xsl:value-of select="parent::node()/eac:event"/>
+			</xsl:when>
+			<xsl:when test="parent::node()/eac:term">
+				<a href="{$display_path}results/?q={if (string(@localType)) then @localType else local-name()}_facet:&#x022;{parent::node()/eac:term}&#x022;">
+					<xsl:value-of select="parent::node()/eac:term"/>
+				</a>
+			</xsl:when>
+			<xsl:when test="parent::node()/eac:placeRole">
+				<xsl:value-of select="parent::node()/eac:placeRole"/>
+			</xsl:when>
+			<xsl:when test="parent::node()/eac:placeEntry">
+				<a href="{$display_path}results/?q={if (string(@localType)) then @localType else local-name()}_facet:&#x022;{parent::node()/eac:placeEntry}&#x022;">
+					<xsl:value-of select="parent::node()/eac:placeEntry"/>
+				</a>
+			</xsl:when>
+		</xsl:choose>
+		<xsl:if test="string(parent::node()/eac:placeEntry) and not(parent::eac:place)">
+			<xsl:text>, </xsl:text>
+			<xsl:value-of select="parent::node()/eac:placeEntry"/>
+			<xsl:text>.</xsl:text>
+		</xsl:if>
+	</xsl:template>
+
 
 	<xsl:template match="eac:relations">
 		<div id="relations">
 			<h2>Relations</h2>
-			<xsl:for-each select="*">
-				<xsl:choose>
-					<xsl:when test="string(@xlink:href)">
-						<a href="{@xlink:href}">
-							<xsl:value-of select="eac:relationEntry"/>
-						</a>
-					</xsl:when>
-					<xsl:otherwise>
-						<xsl:value-of select="eac:relationEntry"/>
-					</xsl:otherwise>
-				</xsl:choose>
-			</xsl:for-each>
+			<xsl:if test="count(eac:cpfRelation) &gt; 0">
+				<h3>Related Corporate, Personal, and Family Names</h3>
+				<ul>
+					<xsl:apply-templates select="eac:cpfRelation"/>
+				</ul>
+			</xsl:if>
+			<xsl:if test="count(eac:resourceRelation) &gt; 0">
+				<h3>Related Resources</h3>
+				<ul>
+					<xsl:apply-templates select="eac:resourceRelation"/>
+				</ul>
+			</xsl:if>
 		</div>
+	</xsl:template>
+
+	<xsl:template match="eac:cpfRelation|eac:resourceRelation">
+		<li>
+			<xsl:choose>
+				<xsl:when test="string(@xlink:href)">
+					<a href="{@xlink:href}">
+						<xsl:if test="local-name()='resourceRelation'">
+							<xsl:attribute name="target">_blank</xsl:attribute>
+						</xsl:if>
+						<xsl:value-of select="eac:relationEntry"/>
+					</a>
+				</xsl:when>
+				<xsl:otherwise>
+					<xsl:value-of select="eac:relationEntry"/>
+				</xsl:otherwise>
+			</xsl:choose>
+		</li>
 	</xsl:template>
 
 	<xsl:template name="icons">

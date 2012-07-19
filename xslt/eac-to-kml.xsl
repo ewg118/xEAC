@@ -53,6 +53,10 @@
 		<xsl:variable name="name">
 			<xsl:choose>
 				<xsl:when test="parent::eac:existDates">Dates of Existence</xsl:when>
+				<xsl:when test="ancestor::eac:useDates">
+					<xsl:text>Known as </xsl:text>
+					<xsl:value-of select="ancestor::eac:nameEntry/eac:part"/>
+				</xsl:when>
 				<xsl:when test="parent::node()/eac:event">
 					<xsl:value-of select="parent::node()/eac:event"/>
 				</xsl:when>
@@ -190,14 +194,41 @@
 				</xsl:if>
 			</xsl:when>
 			<xsl:when test="contains($href, 'pleiades')">
-				<xsl:variable name="lat" select="exsl:node-set($rdf)/rdf:RDF/spatial:Feature[foaf:primaryTopicOf[@rdf:resource=$href]]/descendant::geo:lat"/>
-				<xsl:variable name="lon" select="exsl:node-set($rdf)/rdf:RDF/spatial:Feature[foaf:primaryTopicOf[@rdf:resource=$href]]/descendant::geo:long"/>
-				<xsl:if test="string($lat) and string($lon)">
-					<Point>
-						<coordinates>
-							<xsl:value-of select="concat($lon, ',', $lat)"/>
-						</coordinates>
-					</Point>
+				<xsl:variable name="coordinates">
+					<xsl:choose>
+						<xsl:when test="number(exsl:node-set($rdf)/rdf:RDF/*[@rdf:about=concat($href, '#this')]/geo:lat) and number(exsl:node-set($rdf)/rdf:RDF/*[@rdf:about=concat($href, '#this')]/geo:long)">
+							<xsl:value-of select="concat(exsl:node-set($rdf)/rdf:RDF/*[@rdf:about=concat($href, '#this')]/geo:long, ',', exsl:node-set($rdf)/rdf:RDF/*[@rdf:about=concat($href, '#this')]/geo:lat)"/>
+						</xsl:when>
+						<xsl:when test="exsl:node-set($rdf)/rdf:RDF/*[@rdf:about=concat($href, '#this')]/following-sibling::osgeo:AbstractGeometry">
+							<xsl:variable name="area" select="exsl:node-set($rdf)/rdf:RDF/*[@rdf:about=concat($href, '#this')]/following-sibling::osgeo:AbstractGeometry[1]/osgeo:asGeoJSON"/>
+							<xsl:value-of select="translate(replace(replace(substring-after($area, '['), ',\s', ','), '\],', ' '), '[]}', '')"/>
+						</xsl:when>
+					</xsl:choose>				
+				</xsl:variable>
+				
+				<xsl:if test="string($coordinates)">
+					<xsl:choose>
+						<xsl:when test="contains($coordinates, ' ')">
+							<MultiGeometry>								
+								<Polygon>
+									<outerBoundaryIs>
+										<LinearRing>
+											<coordinates>
+												<xsl:value-of select="$coordinates"/>
+											</coordinates>
+										</LinearRing>
+									</outerBoundaryIs>
+								</Polygon>
+							</MultiGeometry>
+						</xsl:when>
+						<xsl:otherwise>
+							<Point>
+								<coordinates>
+									<xsl:value-of select="$coordinates"/>
+								</coordinates>
+							</Point>
+						</xsl:otherwise>
+					</xsl:choose>					
 				</xsl:if>
 			</xsl:when>
 		</xsl:choose>

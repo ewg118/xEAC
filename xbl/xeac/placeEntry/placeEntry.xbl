@@ -460,7 +460,7 @@
 						</xforms:submission>
 
 						<!-- query pleiades for ancient places -->
-						<xforms:submission id="query-pleiades" serialization="none" method="get" action="http://pleiades.stoa.org/search_rss?SearchableText={instance('search-query')}" instance="feed"
+						<xforms:submission id="query-pleiades" serialization="none" method="get" action="http://pleiades.stoa.org/search_rss?Title={instance('search-query')}&amp;portal_type=Place" instance="feed"
 							replace="instance">
 							<xforms:message ev:event="xforms-submit-error" level="modal">Unable to communicate with Pleiades RSS feed.</xforms:message>
 						</xforms:submission>

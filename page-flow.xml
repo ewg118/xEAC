@@ -26,7 +26,7 @@
 	***************** -->
 	<!-- public EAC record views -->
 	<page path-info="/xeac/xml/(.*)" matcher="oxf:perl5-matcher" view="xpl/xml-public.xpl"/>
-	<page path-info="/xeac/record/(.*).kml" matcher="oxf:perl5-matcher" model="xpl/xml-public.xpl" view="xpl/eac-to-kml.xpl"/>
+	<page path-info="/xeac/record/(.*).kml" matcher="oxf:perl5-matcher" view="xpl/display-kml.xpl"/>
 	<page path-info="/xeac/record/(.*)" matcher="oxf:perl5-matcher" model="xpl/xml-public.xpl" view="xpl/display.xpl"/>		
 	<!--<page path-info="/xeac/json/(.*)" matcher="oxf:perl5-matcher" model="xpl/xml-public.xpl" view="xpl/eac-to-json.xpl"/>-->
 	<page path-info="/xeac/solr/(.*)" matcher="oxf:perl5-matcher" model="xpl/xml-public.xpl" view="xpl/eac-to-solr-published.xpl"/>
