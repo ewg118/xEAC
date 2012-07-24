@@ -8,19 +8,34 @@
 					<xxforms:variable name="binding" as="node()?">
 						<xxforms:sequence select="." xxbl:scope="outer"/>
 					</xxforms:variable>
-					<div>
-						<xforms:textarea ref="$binding">
-							<xforms:alert>Content Required.</xforms:alert>
-							<xforms:label>Descriptive Note</xforms:label>
-						</xforms:textarea>
+					<xxforms:variable name="display_path">../../</xxforms:variable>
+					<xforms:group ref="$binding">
+						<h4>Descriptive Note</h4>
 						<xforms:trigger appearance="minimal">
-							<xforms:delete ev:event="DOMActivate" nodeset="$binding"/>
+							<xforms:delete ev:event="DOMActivate" nodeset="."/>
 							<xforms:label>
-								<xhtml:img src="/apps/xeac/images/remove.gif"/>
+								<xhtml:img src="{$display_path}images/remove.gif"/>
 							</xforms:label>
 						</xforms:trigger>
-					</div>
+						<div class="trigger_container">
+							<xforms:trigger appearance="minimal">
+								<xforms:label>
+									<xhtml:img src="{$display_path}images/add.gif"/>Paragraph</xforms:label>
+								<xforms:insert ev:event="DOMActivate" context="." origin="instance('p-template')" nodeset="./child::node()[last()]"/>
+							</xforms:trigger>
+						</div>
+						<xforms:repeat nodeset="eac:p">
+							<xeac:p/>
+						</xforms:repeat>
+					</xforms:group>
+
 					<!-- ********************************************************************** -->
+
+					<xforms:model id="descriptiveNote-model">
+						<xforms:instance id="p-template">
+							<p/>
+						</xforms:instance>
+					</xforms:model>
 				</xforms:group>
 			</xforms:group>
 		</xbl:template>

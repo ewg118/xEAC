@@ -9,7 +9,7 @@
 	xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xxi="http://orbeon.org/oxf/xml/xinclude" xmlns:eac="urn:isbn:1-931666-33-4" xmlns="urn:isbn:1-931666-33-4"
 	xmlns:xxbl="http://orbeon.org/oxf/xml/xbl" xmlns:pipeline="java:org.orbeon.oxf.processor.pipeline.PipelineFunctionLibrary" xmlns:exf="http://www.exforms.org/exf/1-0"
 	xmlns:saxon="http://saxon.sf.net/" xmlns:oxf="http://www.orbeon.com/oxf/processors" xmlns:xbl="http://www.w3.org/ns/xbl" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-	xmlns:skos="http://www.w3.org/2004/02/skos/core#">
+	xmlns:skos="http://www.w3.org/2004/02/skos/core#" xmlns:dcterms="http://purl.org/dc/terms/">
 	<xhtml:head>
 		<xhtml:title>xEAC: Edit EAC-CPF Record</xhtml:title>
 		<link rel="stylesheet" type="text/css" href="/apps/xeac/css/grids-min.css"/>
@@ -36,8 +36,7 @@
 			<xforms:instance id="doc">
 				<eac-cpf xmlns="urn:isbn:1-931666-33-4" xmlns:xlink="http://www.w3.org/1999/xlink">
 					<control>
-						<recordId/>
-						<maintenanceAgency>
+						<recordId/>co <maintenanceAgency>
 							<agencyName/>
 						</maintenanceAgency>
 						<maintenanceHistory>
@@ -101,6 +100,16 @@
 				<kml/>
 			</xforms:instance>
 
+			<xforms:instance id="control-instance">
+				<control xmlns="">
+					<pos/>
+				</control>
+			</xforms:instance>
+
+			<xforms:instance id="status">
+				<status xmlns=""/>
+			</xforms:instance>
+
 			<xforms:instance id="temp-id">
 				<id xmlns="">
 					<identifier/>
@@ -120,10 +129,6 @@
 				<config xmlns=""/>
 			</xforms:instance>
 
-			<xforms:instance id="status">
-				<status xmlns=""/>
-			</xforms:instance>
-
 			<!-- VIAF instances -->
 			<xforms:instance id="search-query">
 				<query/>
@@ -141,7 +146,19 @@
 				<rdf:RDF/>
 			</xforms:instance>
 
+			<xforms:instance id="viaf-authority-rdf">
+				<rdf:RDF/>
+			</xforms:instance>
+
 			<!--  *** controlled vocabulary lists *** -->
+			<xforms:instance id="conventionDeclaration-list">
+				<list xmlns=""/>
+			</xforms:instance>
+
+			<xforms:instance id="item-template">
+				<item/>
+			</xforms:instance>
+
 			<xforms:instance id="maintenanceStatus-list">
 				<list xmlns="">
 					<item>cancelled</item>
@@ -233,6 +250,13 @@
 				</maintenanceEvent>
 			</xforms:instance>
 
+			<xforms:instance id="conventionDeclaration-template">
+				<conventionDeclaration>
+					<abbreviation/>
+					<citation/>
+				</conventionDeclaration>
+			</xforms:instance>
+
 			<xforms:instance id="eventDescription-template">
 				<eventDescription/>
 			</xforms:instance>
@@ -265,6 +289,10 @@
 				</nameEntry>
 			</xforms:instance>
 
+			<xforms:instance id="part-template">
+				<part/>
+			</xforms:instance>
+
 			<xforms:instance id="authorizedForm-template">
 				<authorizedForm/>
 			</xforms:instance>
@@ -286,7 +314,13 @@
 			</xforms:instance>
 
 			<xforms:instance id="descriptiveNote-template">
-				<descriptiveNote/>
+				<descriptiveNote>
+					<p/>
+				</descriptiveNote>
+			</xforms:instance>
+
+			<xforms:instance id="useDates-template">
+				<useDates/>
 			</xforms:instance>
 
 			<!-- description -->
@@ -446,7 +480,7 @@
 					<relationEntry/>
 				</cpfRelation>
 			</xforms:instance>
-			
+
 			<xforms:instance id="resourceRelation-template">
 				<resourceRelation xlink:type="simple">
 					<relationEntry/>
@@ -485,6 +519,12 @@
 							<xforms:bind nodeset="eac:agentType" required="true()"/>
 						</xforms:bind>
 					</xforms:bind>
+					<xforms:bind nodeset="eac:conventionDeclaration">
+						<!-- only allow editing of abbreviation and citation if they are unused by nameEntry -->
+						<xforms:bind nodeset="eac:abbreviation" required="true()" readonly="string-length(.) &gt; 0 and instance('doc')//eac:nameEntry/*[contains(local-name(), 'Form')] = ."/>
+						<xforms:bind nodeset="eac:citation" required="true()"
+							readonly="string-length(parent::node()/eac:abbreviation) &gt; 0 and instance('doc')//eac:nameEntry/*[contains(local-name(), 'Form')] = parent::node()/eac:abbreviation"/>
+					</xforms:bind>
 				</xforms:bind>
 				<xforms:bind nodeset="eac:cpfDescription">
 					<!-- set content for dates anywhere -->
@@ -493,6 +533,9 @@
 						<xforms:bind nodeset="eac:entityType" required="true()"/>
 						<xforms:bind nodeset="eac:nameEntry">
 							<xforms:bind nodeset="eac:part" required="true()"/>
+							<xforms:bind nodeset="eac:alternativeForm" required="true()"/>
+							<xforms:bind nodeset="eac:authorizedForm" required="true()"/>
+							<xforms:bind nodeset="eac:preferredForm" required="true()"/>
 						</xforms:bind>
 					</xforms:bind>
 					<xforms:bind nodeset="eac:description">
@@ -760,6 +803,18 @@
 					<!-- create nameEntries -->
 					<xforms:action xxforms:iterate="instance('viaf-rdf')//skos:Concept">
 						<xxforms:variable name="auth" select="substring-after(context()/skos:inScheme/@rdf:resource, 'authorityScheme/')"/>
+						<xforms:setvalue ref="instance('viaf-id')" value="context()/skos:inScheme/@rdf:resource"/>
+						
+
+						<!-- insert conventionDeclarations into control -->
+						<xforms:insert context="instance('doc')/eac:control" nodeset="./child::node()[last()]" origin="instance('conventionDeclaration-template')"/>
+						<!--<xforms:insert context="instance('doc')/eac:control/eac:conventionDeclaration[last()]" nodeset="./child::node()[last()]" origin="instance('descriptiveNote-template')"/>-->
+						<xforms:setvalue ref="instance('doc')/eac:control/eac:conventionDeclaration[last()]/eac:abbreviation" value="$auth"/>		
+						<!--<xforms:setvalue ref="instance('doc')/eac:control/eac:conventionDeclaration[last()]/eac:descriptiveNote/eac:p" value="context()/skos:inScheme/@rdf:resource"/>-->
+
+						<!-- set the citation with the dcterms:title from VIAF, if it exists, otherwise the URI for the authorityScheme -->
+						<xforms:send submission="get-viaf-authority-rdf"/>
+
 						<!-- insert preferred forms per authority -->
 						<xforms:action xxforms:iterate="context()/skos:prefLabel">
 							<xforms:insert context="instance('doc')/eac:cpfDescription/eac:identity" nodeset="./child::node()[last()]" origin="instance('nameEntry-template')"/>
@@ -776,8 +831,11 @@
 						</xforms:action>
 					</xforms:action>
 				</xforms:action>
+			</xforms:submission>
 
-				<xforms:message ev:event="xforms-submit-error" level="modal">Error getting VIAF RDF.</xforms:message>
+			<xforms:submission id="get-viaf-authority-rdf" serialization="none" method="get" action="{instance('viaf-id')}/rdf.xml" instance="viaf-authority-rdf" replace="instance">
+				<xforms:setvalue ev:event="xforms-submit-error" ref="instance('doc')/eac:control/eac:conventionDeclaration[last()]/eac:citation" value="instance('viaf-id')"/>
+				<xforms:setvalue ev:event="xforms-submit-done" ref="instance('doc')/eac:control/eac:conventionDeclaration[last()]/eac:citation" value="instance('viaf-authority-rdf')//dcterms:title"/>
 			</xforms:submission>
 
 			<!-- ************************ xforms-model-construct-done ****************************** -->
@@ -802,6 +860,12 @@
 						<xforms:insert context="instance('doc')/eac:control/eac:maintenanceHistory" nodeset="./child::node()[last()]" origin="instance('maintenanceEvent-template')"/>
 						<xforms:setvalue ref="instance('doc')/eac:control/eac:maintenanceHistory/eac:maintenanceEvent[last()]/eac:eventType">revised</xforms:setvalue>
 						<xforms:setvalue ref="instance('doc')/eac:control/eac:maintenanceHistory/eac:maintenanceEvent[last()]/eac:eventDateTime/@standardDateTime" value="current-dateTime()"/>
+
+						<!-- set conventionDeclaration-list for nameEntry forms -->
+						<!--<xforms:action xxforms:iterate="instance('doc')/eac:control/eac:conventionDeclaration">
+							<xforms:insert context="instance('conventionDeclaration-list')" nodeset="./child::node()[last()]" origin="instance('item-template')"/>
+							<xforms:setvalue ref="instance('conventionDeclaration-list')"/>
+						</xforms:action>-->
 					</xforms:action>
 				</xforms:action>
 				<xforms:action if="not(string(xxforms:get-request-parameter('recordId')))">
@@ -831,7 +895,7 @@
 		<xi:include href="oxf:/xbl/xeac/languageUsed/languageUsed.xbl" xi:omit-xml-base="true"/>
 		<xi:include href="oxf:/xbl/xeac/level/level.xbl" xi:omit-xml-base="true"/>
 		<xi:include href="oxf:/xbl/xeac/list/list.xbl" xi:omit-xml-base="true"/>
-		<xi:include href="oxf:/xbl/xeac/nameEntry/nameEntry.xbl" xi:omit-xml-base="true"/>
+		<!--<xi:include href="oxf:/xbl/xeac/nameEntry/nameEntry.xbl" xi:omit-xml-base="true"/>-->
 		<xi:include href="oxf:/xbl/xeac/outline/outline.xbl" xi:omit-xml-base="true"/>
 		<xi:include href="oxf:/xbl/xeac/p/p.xbl" xi:omit-xml-base="true"/>
 		<xi:include href="oxf:/xbl/xeac/place/place.xbl" xi:omit-xml-base="true"/>
@@ -957,7 +1021,114 @@
 										</xforms:select1>
 									</div>
 									<xforms:repeat nodeset="eac:nameEntry">
-										<xeac:nameEntry/>
+										<div class="subsection">
+											<h3>Name Entry</h3>
+											<!--<xforms:trigger appearance="minimal">
+												<xforms:label>(set as default)</xforms:label>
+												<xforms:action ev:event="DOMActivate">
+													<xforms:insert origin="$binding" context="parent::node()"/>
+													<xforms:delete nodeset="."/>
+												</xforms:action>
+												</xforms:trigger>-->
+											<xforms:group ref=".[count(parent::node()/eac:nameEntry) &gt; 1 or count(parent::node()/eac:nameEntryParallel) &gt; 1]">
+												<xforms:trigger appearance="minimal">
+													<xforms:delete ev:event="DOMActivate" nodeset="."/>
+													<xforms:label>
+														<xhtml:img src="{$display_path}images/remove.gif"/>
+													</xforms:label>
+												</xforms:trigger>
+											</xforms:group>
+											<div class="trigger_container">
+												<!-- must add part -->
+												<xforms:group ref=".[not(parent::eac:nameEntryParallel)]">
+													<xforms:group ref=".[count(eac:authorizedForm) = 0]">
+														<xforms:trigger appearance="minimal">
+															<xforms:label>
+																<img src="{$display_path}images/add.gif"/>Authorized Form</xforms:label>
+															<xforms:action ev:event="DOMActivate">
+																<xforms:insert context="." origin="instance('authorizedForm-template')" nodeset="./child::node()[last()]"/>
+																<xxforms:hide dialog="nameEntry-objects"/>
+															</xforms:action>
+														</xforms:trigger>
+													</xforms:group>
+													<xforms:group ref=".[count(eac:alternativeForm) = 0]">
+														<xforms:trigger appearance="minimal">
+															<xforms:label>
+																<img src="{$display_path}images/add.gif"/>Alternative Form</xforms:label>
+															<xforms:action ev:event="DOMActivate">
+																<xforms:insert context="." origin="instance('alternativeForm-template')" nodeset="./child::node()[last()]"/>
+																<xxforms:hide dialog="nameEntry-objects"/>
+															</xforms:action>
+														</xforms:trigger>
+													</xforms:group>
+												</xforms:group>
+												<xforms:group ref=".[count(eac:preferredForm) = 0]">
+													<xforms:trigger appearance="minimal">
+														<xforms:label>
+															<img src="{$display_path}images/add.gif"/>Preferred Form</xforms:label>
+														<xforms:action ev:event="DOMActivate">
+															<xforms:insert context="." origin="instance('preferredForm-template')" nodeset="./child::node()[last()]"/>
+															<xxforms:hide dialog="nameEntry-objects"/>
+														</xforms:action>
+													</xforms:trigger>
+												</xforms:group>
+												<xforms:group ref=".[count(eac:useDates) = 0]">
+													<xforms:trigger appearance="minimal">
+														<xforms:label>
+															<img src="{$display_path}images/add.gif"/>Use Dates</xforms:label>
+														<xforms:action ev:event="DOMActivate">
+															<xforms:insert context="." origin="instance('useDates-template')" nodeset="./child::node()[last()]"/>
+															<xxforms:hide dialog="nameEntry-objects"/>
+														</xforms:action>
+													</xforms:trigger>
+												</xforms:group>
+											</div>
+											<xforms:repeat nodeset="eac:part">
+												<div>
+													<xforms:input ref=".">
+														<xforms:label>Part</xforms:label>
+														<xforms:alert>Required</xforms:alert>
+													</xforms:input>
+													<xforms:group ref=".[count(parent::eac:nameEntry/eac:part) &gt; 1]">
+														<xforms:trigger appearance="minimal">
+															<xforms:delete ev:event="DOMActivate" nodeset="."/>
+															<xforms:label>
+																<xhtml:img src="{$display_path}images/remove.gif"/>
+															</xforms:label>
+														</xforms:trigger>
+													</xforms:group>
+												</div>
+											</xforms:repeat>
+											<xforms:group ref="eac:authorizedForm|eac:preferredForm|eac:alternativeForm">
+												<div>
+													<xforms:select1 ref=".">
+														<xforms:label>
+															<xforms:output
+																ref="concat(upper-case(substring(substring-before(local-name(), 'Form'), 1, 1)), substring(substring-before(local-name(), 'Form'), 2), ' Form')"
+															/>
+														</xforms:label>
+														<xforms:alert>Required</xforms:alert>
+														<xforms:item>
+															<xforms:label>Select...</xforms:label>
+															<xforms:value/>
+														</xforms:item>
+														<xforms:itemset nodeset="instance('doc')//eac:conventionDeclaration[string(eac:abbreviation)]">
+															<xforms:label ref="eac:citation"/>
+															<xforms:value ref="eac:abbreviation"/>
+														</xforms:itemset>
+													</xforms:select1>
+													<xforms:trigger appearance="minimal">
+														<xforms:delete ev:event="DOMActivate" nodeset="."/>
+														<xforms:label>
+															<xhtml:img src="{$display_path}images/remove.gif"/>
+														</xforms:label>
+													</xforms:trigger>
+												</div>
+											</xforms:group>
+											<xforms:group ref="eac:useDates">
+												<xeac:datesContainer/>
+											</xforms:group>
+										</div>
 									</xforms:repeat>
 									<xforms:group ref="eac:entityId">
 										<div>
@@ -1521,11 +1692,80 @@
 										</xforms:repeat>
 									</div>
 								</xforms:group>
+								<!-- conventionDeclaration -->
+								<div class="section">
+									<h2>Convention Declarations</h2>
+									<div class="trigger_container">
+										<xforms:trigger appearance="minimal">
+											<xforms:label>
+												<xhtml:img src="{$display_path}images/add.gif"/>Convention Declaration</xforms:label>
+											<xforms:insert ev:event="DOMActivate" context="." origin="instance('conventionDeclaration-template')" nodeset="./child::node()[last()]"/>
+										</xforms:trigger>
+									</div>
+									<xforms:repeat nodeset="eac:conventionDeclaration">
+										<xxforms:variable name="position" select="position()"/>
+										<div class="subsection">
+											<h3>Declaration</h3>
+											<xforms:trigger appearance="minimal">
+												<xforms:action ev:event="DOMActivate">
+													<xforms:setvalue ref="instance('control-instance')/pos" value="$position"/>
+													<xforms:dispatch target="remove-conventionDeclaration" name="fr-show"/>
+												</xforms:action>
+												<xforms:label>
+													<xhtml:img src="{$display_path}images/remove.gif"/>
+												</xforms:label>
+											</xforms:trigger>
+											<div class="trigger_container">
+												<xforms:trigger appearance="minimal">
+													<xforms:label>
+														<xhtml:img src="{$display_path}images/add.gif"/>Descriptive Note</xforms:label>
+													<xforms:insert ev:event="DOMActivate" context="." origin="instance('descriptiveNote-template')" nodeset="./child::node()[last()]"/>
+												</xforms:trigger>
+											</div>
+											<div>
+												<xforms:input ref="eac:abbreviation">
+													<xforms:label>Abbreviation</xforms:label>
+													<xforms:alert>Required</xforms:alert>
+												</xforms:input>
+											</div>
+											<div>
+												<xforms:input ref="eac:citation">
+													<xforms:label>Citation</xforms:label>
+													<xforms:alert>Required</xforms:alert>
+												</xforms:input>
+											</div>
+											<xforms:group ref="eac:descriptiveNote">
+												<xeac:descriptiveNote/>
+											</xforms:group>
+										</div>
+									</xforms:repeat>
+								</div>
+								<!-- sources -->
 								<xforms:group ref="eac:sources">
 									<div class="section">
 										<h2>Sources</h2>
 									</div>
 								</xforms:group>
+								<!-- alert for removal of conventionDeclaration -->
+								<fr:alert-dialog id="remove-conventionDeclaration">
+									<fr:label>Remove Convention Declaration</fr:label>
+									<fr:message>Are you sure you want to remove this Convention Declaration?</fr:message>
+									<fr:negative-choice>
+										<fr:label>No</fr:label>
+									</fr:negative-choice>
+									<fr:positive-choice>
+										<fr:label>Yes</fr:label>
+										<xforms:action ev:event="DOMActivate">
+											<xxforms:variable name="auth" select="eac:conventionDeclaration[position() = instance('control-instance')/pos]/eac:abbreviation"/>
+											<!-- blank the values for all nameEntry forms which are equal to the convention declaration abbreviation -->
+											<xforms:action xxforms:iterate="instance('doc')//eac:nameEntry[*[. = $auth]]">
+												<xforms:setvalue ref="context()/*[contains(local-name(), 'Form')]"/>
+											</xforms:action>
+											<!-- remove node -->
+											<xforms:delete nodeset="eac:conventionDeclaration[position() = instance('control-instance')/pos]"/>
+										</xforms:action>
+									</fr:positive-choice>
+								</fr:alert-dialog>
 							</fr:tab>
 							<!--**************************************** END CONTROL **********************************-->
 							<fr:tab id="preview">

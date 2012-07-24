@@ -66,7 +66,7 @@
 					<!-- ********************************************************************** -->
 					<xforms:model id="languageUsed-model">
 						<xforms:instance id="descriptiveNote-template">
-							<descriptiveNote/>
+							<descriptiveNote><p/></descriptiveNote>
 						</xforms:instance>
 						
 						<xforms:instance id="language-list" src="/apps/xeac/instances/languages.xml"/>

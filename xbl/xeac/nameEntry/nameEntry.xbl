@@ -1,5 +1,6 @@
 <xbl:xbl xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:xforms="http://www.w3.org/2002/xforms" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:xxforms="http://orbeon.org/oxf/xml/xforms"
-	xmlns:xbl="http://www.w3.org/ns/xbl" xmlns:xxbl="http://orbeon.org/oxf/xml/xbl" xmlns:xeac="https://github.com/ewg118/xEAC" xmlns:eac="urn:isbn:1-931666-33-4" xmlns="urn:isbn:1-931666-33-4">
+	xmlns:xbl="http://www.w3.org/ns/xbl" xmlns:fr="http://orbeon.org/oxf/xml/form-runner" xmlns:xxbl="http://orbeon.org/oxf/xml/xbl" xmlns:xeac="https://github.com/ewg118/xEAC"
+	xmlns:eac="urn:isbn:1-931666-33-4" xmlns="urn:isbn:1-931666-33-4">
 	<xbl:binding id="xeac-nameEntry" element="xeac|nameEntry">
 		<xbl:template>
 			<xforms:group xbl:attr="model context ref bind" xxbl:scope="outer">
@@ -9,6 +10,9 @@
 						<xxforms:sequence select="." xxbl:scope="outer"/>
 					</xxforms:variable>
 					<xxforms:variable name="display_path">../../</xxforms:variable>
+					<xforms:action ev:event="xforms-enabled" ev:target="#observer">
+						<xforms:setvalue ref="instance('conventionDeclaration-list')" origin="$binding/ancestor::eac:cpf/eac:control/eac:conventionDeclaration"/>
+					</xforms:action>
 
 					<xforms:group ref="$binding">
 						<div class="subsection">
@@ -55,7 +59,7 @@
 												<xforms:insert context="." origin="instance('authorizedForm-template')" nodeset="./child::node()[last()]"/>
 												<xxforms:hide dialog="nameEntry-objects"/>
 											</xforms:action>
-											
+
 										</xforms:trigger>
 									</xforms:group>
 									<xforms:group ref=".[count(eac:alternativeForm) = 0]">
@@ -65,14 +69,14 @@
 											<xforms:action ev:event="DOMActivate">
 												<xforms:insert context="." origin="instance('alternativeForm-template')" nodeset="./child::node()[last()]"/>
 												<xxforms:hide dialog="nameEntry-objects"/>
-											</xforms:action>											
+											</xforms:action>
 										</xforms:trigger>
 									</xforms:group>
 								</xforms:group>
 								<xforms:group ref=".[count(eac:preferredForm) = 0]">
 									<xforms:trigger appearance="minimal">
 										<xforms:label>
-											<img src="{$display_path}images/add.gif"/>Preferred Form</xforms:label>										
+											<img src="{$display_path}images/add.gif"/>Preferred Form</xforms:label>
 										<xforms:action ev:event="DOMActivate">
 											<xforms:insert context="." origin="instance('preferredForm-template')" nodeset="./child::node()[last()]"/>
 											<xxforms:hide dialog="nameEntry-objects"/>
@@ -86,7 +90,7 @@
 										<xforms:action ev:event="DOMActivate">
 											<xforms:insert context="." origin="instance('useDates-template')" nodeset="./child::node()[last()]"/>
 											<xxforms:hide dialog="nameEntry-objects"/>
-										</xforms:action>										
+										</xforms:action>
 									</xforms:trigger>
 								</xforms:group>
 							</xxforms:dialog>
@@ -110,10 +114,18 @@
 
 							<xforms:group ref="eac:authorizedForm">
 								<div>
-									<xforms:input ref=".">
+									<xforms:select1 ref=".">
 										<xforms:label>Authorized Form</xforms:label>
 										<xforms:alert>Required</xforms:alert>
-									</xforms:input>
+										<xforms:item>
+											<xforms:label>Select...</xforms:label>
+											<xforms:value/>
+										</xforms:item>
+										<xforms:itemset nodeset="$binding/ancestor::eac:cpf//eac:conventionDeclaration">
+											<xforms:label ref="eac:abbreviation"/>
+											<xforms:value ref="eac:abbreviation"/>
+										</xforms:itemset>
+									</xforms:select1>
 									<xforms:trigger appearance="minimal">
 										<xforms:delete ev:event="DOMActivate" nodeset="."/>
 										<xforms:label>
@@ -125,10 +137,18 @@
 
 							<xforms:group ref="eac:alternativeForm">
 								<div>
-									<xforms:input ref=".">
+									<xforms:select1 ref=".">
 										<xforms:label>Alternative Form</xforms:label>
 										<xforms:alert>Required</xforms:alert>
-									</xforms:input>
+										<xforms:item>
+											<xforms:label>Select...</xforms:label>
+											<xforms:value/>
+										</xforms:item>
+										<xforms:itemset nodeset="$binding/ancestor::eac:cpf//eac:conventionDeclaration">
+											<xforms:label ref="eac:abbreviation"/>
+											<xforms:value ref="eac:abbreviation"/>
+										</xforms:itemset>
+									</xforms:select1>
 									<xforms:trigger appearance="minimal">
 										<xforms:delete ev:event="DOMActivate" nodeset="."/>
 										<xforms:label>
@@ -140,10 +160,18 @@
 
 							<xforms:group ref="eac:preferredForm">
 								<div>
-									<xforms:input ref=".">
+									<xforms:select1 ref=".">
 										<xforms:label>Preferred Form</xforms:label>
 										<xforms:alert>Required</xforms:alert>
-									</xforms:input>
+										<xforms:item>
+											<xforms:label>Select...</xforms:label>
+											<xforms:value/>
+										</xforms:item>
+										<xforms:itemset nodeset="$binding/ancestor::eac:cpf//eac:conventionDeclaration">
+											<xforms:label ref="eac:abbreviation"/>
+											<xforms:value ref="eac:abbreviation"/>
+										</xforms:itemset>
+									</xforms:select1>
 									<xforms:trigger appearance="minimal">
 										<xforms:delete ev:event="DOMActivate" nodeset="."/>
 										<xforms:label>
@@ -152,21 +180,27 @@
 									</xforms:trigger>
 								</div>
 							</xforms:group>
-							
+
 							<xforms:group ref="eac:useDates">
 								<xeac:datesContainer/>
 							</xforms:group>
 						</div>
+
+						<fr:xforms-inspector id="orbeon-xforms-inspector"/>
 					</xforms:group>
 
 
 
 					<!-- ********************************************************************** -->
 					<xforms:model id="nameEntry-model">
+						<xforms:instance id="conventionDeclaration-list">
+							<list/>
+						</xforms:instance>
+
 						<xforms:instance id="duplicate">
 							<duplicate/>
 						</xforms:instance>
-						
+
 						<xforms:instance id="part-template">
 							<part/>
 						</xforms:instance>

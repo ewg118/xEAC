@@ -185,7 +185,7 @@
 						</xforms:instance>
 
 						<xforms:instance id="descriptiveNote-template">
-							<descriptiveNote/>
+							<descriptiveNote><p/></descriptiveNote>
 						</xforms:instance>
 
 						<xforms:instance id="placeEntry-template">

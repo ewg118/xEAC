@@ -226,8 +226,8 @@
 					<img src="{$display_path}images/xml.png" title="XML" alt="XML"/>
 				</a>
 			</div>
-			<div class="icon">
-				<!-- AddThis Button BEGIN -->
+			<!--<div class="icon">
+				<!-\- AddThis Button BEGIN -\->
 				<div class="addthis_toolbox addthis_default_style ">
 					<a class="addthis_button_preferred_1"/>
 					<a class="addthis_button_preferred_2"/>
@@ -237,8 +237,8 @@
 					<a class="addthis_counter addthis_bubble_style"/>
 				</div>
 				<script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#pubid=xa-4dd29d0e2f66557f"/>
-				<!-- AddThis Button END -->
-			</div>
+				<!-\- AddThis Button END -\->
+			</div>-->
 		</div>
 	</xsl:template>
 
