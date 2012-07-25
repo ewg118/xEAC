@@ -67,6 +67,10 @@
 				<script type="text/javascript">
 					$(document).ready(function(){
 						initialize_timemap('<xsl:value-of select="//eac:recordId"/>');
+						$('#toggle_names').click(function(){
+							$('#names').toggle('show');
+							return false;
+						});
 					});
 				</script>
 			</head>
@@ -76,9 +80,6 @@
 					<xsl:call-template name="header-public"/>
 					<div id="bd">
 						<xsl:call-template name="icons"/>
-						<h1>
-							<xsl:value-of select="eac:cpfDescription/eac:identity/eac:nameEntry[1]/eac:part"/>
-						</h1>
 						<xsl:call-template name="body"/>
 						<!--<div id="yui-main">
 							<div class="yui-b">
@@ -101,6 +102,57 @@
 	</xsl:template>
 
 	<xsl:template name="body">
+		<h1>
+			<xsl:value-of select="eac:cpfDescription/eac:identity/eac:nameEntry[1]/eac:part"/>
+		</h1>
+		<a href="#" id="toggle_names">hide/show names</a>
+		<div id="names" style="display:none">
+			<ul>
+				<xsl:for-each select="eac:cpfDescription/eac:identity/eac:nameEntry">
+					<xsl:variable name="authorizedForm" select="eac:authorizedForm"/>
+					<xsl:variable name="preferredForm" select="eac:preferredForm"/>
+					<xsl:variable name="alternativeForm" select="eac:alternativeForm"/>
+					<li>
+						<b>
+							<i>
+								<xsl:value-of select="eac:part"/>
+							</i>
+						</b>
+						<xsl:if test="eac:authorizedForm">
+							<xsl:text> : </xsl:text>
+							<xsl:value-of select="//eac:conventionDeclaration[eac:abbreviation = $authorizedForm]/eac:citation"/>
+							<xsl:text> (authorized form)</xsl:text>
+							<br/>
+						</xsl:if>
+						<xsl:if test="eac:preferredForm">
+							<xsl:text> : </xsl:text>
+							<xsl:value-of select="//eac:conventionDeclaration[eac:abbreviation = $preferredForm]/eac:citation"/>
+							<xsl:text> (preferred form)</xsl:text>
+							<br/>
+						</xsl:if>
+						<xsl:if test="eac:alternativeForm">
+							<xsl:text> : </xsl:text>
+							<xsl:value-of select="//eac:conventionDeclaration[eac:abbreviation = $alternativeForm]/eac:citation"/>
+							<xsl:text> (alternative form)</xsl:text>
+							<br/>
+						</xsl:if>
+						<xsl:if test="eac:useDates">
+							<xsl:text>Dates of Use: </xsl:text>
+							<xsl:choose>
+								<xsl:when test="eac:useDates/eac:date">
+									<xsl:value-of select="eac:useDates/eac:date"/>
+								</xsl:when>
+								<xsl:when test="eac:useDates/eac:dateRange">
+									<xsl:value-of select="eac:useDates/eac:dateRange/eac:fromDate"/>
+									<xsl:text>-</xsl:text>
+									<xsl:value-of select="eac:useDates/eac:dateRange/eac:toDate"/>
+								</xsl:when>
+							</xsl:choose>
+						</xsl:if>
+					</li>
+				</xsl:for-each>
+			</ul>
+		</div>
 		<div id="timemap">
 			<div id="mapcontainer">
 				<div id="map"/>
