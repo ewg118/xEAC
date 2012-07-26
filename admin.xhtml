@@ -43,7 +43,7 @@
 			<xforms:instance id="config-template">
 				<config xmlns:xlink="http://www.w3.org/1999/xlink">
 					<flickr_api_key/>
-					<geonames_api_key>anscoins</geonames_api_key>
+					<geonames_api_key/>
 					<title>xEAC</title>
 					<banner_text>xEAC: XForms for EAC-CPF</banner_text>
 					<banner_image xlink:href=""/>
@@ -53,7 +53,7 @@
 					<oai-pmh active="false"/>
 					<instances>
 						<agencyName-list>
-							<item default="true">American Numismatic Society</item>
+							<item default="true">Default Agency</item>
 						</agencyName-list>
 					</instances>
 					<theme>
@@ -213,6 +213,7 @@
 				</xforms:action>
 
 				<xforms:action ev:event="xforms-submit-error">
+					<xforms:send submission="add-collection"/>
 					<xforms:send submission="save-config"/>
 				</xforms:action>
 			</xforms:submission>
@@ -220,7 +221,10 @@
 			<xforms:submission id="save-config" ref="instance('config-template')" action="{instance('exist-url')}xeac/config.xml" method="put" replace="none" xxforms:username="admin"
 				xxforms:password="">
 				<xforms:message ev:event="xforms-submit-error" level="modal">Error Saving Config.</xforms:message>
+				<xforms:send submission="load-config" ev:event="xforms-submit-done"/>
 			</xforms:submission>
+			
+			<xforms:submission id="add-collection" ref="instance('create-collection')" method="post" action="{instance('exist-url')}" replace="none" xxforms:username="admin" xxforms:password=""/>
 
 			<xforms:submission id="xquery-collection" ref="instance('eXist-xquery')" action="{instance('exist-url')}xeac/records/" method="post" replace="instance" instance="collection-result"
 				xxforms:username="admin" xxforms:password="">
@@ -260,14 +264,6 @@
 			<xforms:submission id="query-all-docs" serialization="none" method="get" action="{instance('control-instance')/solr-core}select/?q=*:*&amp;rows=0" replace="instance"
 				instance="query-all-response">
 				<xforms:setvalue ref="instance('control-instance')/error" ev:event="xforms-submit-error">Solr is inaccessible. Please check Solr configuration.</xforms:setvalue>
-			</xforms:submission>
-
-			<!-- save templates and add records collection to eXist on the first run of xeac -->
-			<xforms:submission id="save-config" ref="instance('config-template')" action="{instance('exist-url')}xeac/config.xml" method="put" replace="none" xxforms:username="admin"
-				xxforms:password="">
-				<xforms:message ev:event="xforms-submit-error" level="modal">Error Saving Config.</xforms:message>
-				<!-- reload the config after it has been created -->
-				<xforms:send submission="load-config" ev:event="xforms-submit-done"/>
 			</xforms:submission>
 
 			<!-- load eac record temporarily -->
@@ -350,6 +346,9 @@
 						<ul>
 							<li>
 								<a href="edit/">Create New EAC-CPF Record</a>
+							</li>
+							<li>
+								<a href="settings/">xEAC Settings</a>
 							</li>
 						</ul>
 						<h2>Publication</h2>
@@ -754,7 +753,7 @@
 							</xforms:action>
 						</fr:positive-choice>
 					</fr:alert-dialog>
-					<fr:xforms-inspector id="orbeon-xforms-inspector"/>
+					<!--<fr:xforms-inspector id="orbeon-xforms-inspector"/>-->
 				</div>
 			</div>
 			<!-- footer -->

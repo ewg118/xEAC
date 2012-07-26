@@ -1,0 +1,233 @@
+<xhtml:html xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:xforms="http://www.w3.org/2002/xforms" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ev="http://www.w3.org/2001/xml-events"
+	xmlns:xxforms="http://orbeon.org/oxf/xml/xforms" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:fr="http://orbeon.org/oxf/xml/form-runner" xmlns:xlink="http://www.w3.org/1999/xlink"
+	xmlns:xxi="http://orbeon.org/oxf/xml/xinclude" xmlns="urn:isbn:1-931666-33-4" xmlns:xxbl="http://orbeon.org/oxf/xml/xbl"
+	xmlns:pipeline="java:org.orbeon.oxf.processor.pipeline.PipelineFunctionLibrary" xmlns:exf="http://www.exforms.org/exf/1-0" xmlns:saxon="http://saxon.sf.net/"
+	xmlns:oxf="http://www.orbeon.com/oxf/processors" xmlns:xbl="http://www.w3.org/ns/xbl" xmlns:exist="http://exist.sourceforge.net/NS/exist">
+	<xhtml:head>
+		<xhtml:title> Administration</xhtml:title>
+		<link rel="stylesheet" type="text/css" href="/apps/xeac/css/grids-min.css"/>
+		<link rel="stylesheet" type="text/css" href="/apps/xeac/css/reset-fonts-grids.css"/>
+		<link rel="stylesheet" type="text/css" href="/apps/xeac/css/base-min.css"/>
+		<link rel="stylesheet" type="text/css" href="/apps/xeac/css/fonts-min.css"/>
+		<link rel="stylesheet" href="/apps/xeac/css/style.css"/>
+		<link rel="stylesheet" href="/apps/xeac/css/themes/smoothness.css"/>
+		<script type="text/javascript" src="/apps/xeac/javascript/jquery-1.4.2.min.js"/>
+		<script type="text/javascript" src="/apps/xeac/javascript/menu.js"/>
+		<xforms:model>
+			<!-- exist URL is stored in an XML file -->
+			<xforms:instance id="exist-url">
+				<xi:include href="exist-url.xml"/>
+			</xforms:instance>
+
+			<xforms:instance id="config">
+				<config xmlns=""/>
+			</xforms:instance>
+
+			<xforms:instance id="status">
+				<status/>
+			</xforms:instance>
+
+			<xforms:instance id="flickr-response">
+				<rsp xmlns=""/>
+			</xforms:instance>
+
+			<xforms:instance id="control-instance">
+				<control xmlns="">
+					<api-key-accepted/>
+					<save-trigger/>
+					<collection-name/>
+				</control>
+			</xforms:instance>
+
+			<xforms:instance id="dump">
+				<dump/>
+			</xforms:instance>
+
+			<xforms:instance id="temp">
+				<temp/>
+			</xforms:instance>
+
+			<xforms:instance id="item-template">
+				<item xmlns=""/>
+			</xforms:instance>
+
+			<xforms:bind nodeset="instance('config')">
+				<xforms:bind nodeset="title" required="true()"/>
+				<!--<xforms:bind nodeset="banner_text" required="true()"/>-->
+				<xforms:bind nodeset="url" required="true()"/>
+				<xforms:bind nodeset="solr_published" required="true()"/>
+				<xforms:bind nodeset="instances/agencyName-list">
+					<xforms:bind nodeset="item" required="true()"/>
+				</xforms:bind>
+				<xforms:bind nodeset="images">
+					<xforms:bind nodeset="thumbnail" required="true()" type="xs:integer"/>
+					<xforms:bind nodeset="reference" required="true()" type="xs:integer"/>
+				</xforms:bind>
+			</xforms:bind>
+
+			<!-- Load File -->
+			<xforms:submission id="load-config" serialization="none" method="get" action="{instance('exist-url')}xeac/config.xml" xxforms:username="admin" xxforms:password="" replace="instance"
+				instance="config">
+				<xforms:message ev:event="xforms-submit-error" level="modal">Unable to load configuration file</xforms:message>
+			</xforms:submission>
+
+			<!-- Save File -->
+			<xforms:submission id="save-config" ref="instance('config')" xxforms:username="admin" xxforms:password="" action="{instance('exist-url')}xeac/config.xml" method="put" replace="none">
+				<xforms:setvalue ev:event="xforms-submit-done" ref="instance('status')"> configuration saved.</xforms:setvalue>
+				<xforms:message ev:event="xforms-submit-error" level="modal">Error saving configuration file.</xforms:message>
+			</xforms:submission>
+
+
+			<xforms:action ev:event="xforms-model-construct-done">
+				<xforms:send submission="load-config"/>
+			</xforms:action>
+		</xforms:model>
+	</xhtml:head>
+	<xhtml:body class="yui-skin-sam">
+		<div id="doc4" class="yui-t2">
+			<xxforms:variable name="display_path">../../</xxforms:variable>
+			<div id="bd">
+				<p>
+					<a href="../">&lt; Return</a>
+				</p>
+				<div id="form">
+					<xforms:group ref="instance('status')/text()">
+						<div class="success">
+							<xforms:output ref="instance('status')"/>
+						</div>
+					</xforms:group>
+					<div class="submission">
+						<xforms:trigger appearance="minimal">
+							<xforms:label><img src="{$display_path}images/save.gif" alt="Save"/> Save</xforms:label>
+							<xforms:send ev:event="DOMActivate" submission="save-config"/>
+						</xforms:trigger>
+					</div>
+					<h1>Edit Settings</h1>
+					<p>Edit titles, URLs, and index text.</p>
+					<fr:tabview>
+						<fr:tab id="settings">
+							<fr:label>Settings</fr:label>
+							<xforms:group ref="instance('config')">
+								<div class="section">
+									<h3>Titles and URLs</h3>
+									<div>
+										<xforms:input ref="title">
+											<xforms:label>Title</xforms:label>
+											<xforms:alert>Required</xforms:alert>
+										</xforms:input>
+										<p>The title of the site to be displayed in all web page titles and citations in PDF files.</p>
+									</div>
+									<div>
+										<xforms:input ref="banner_text">
+											<xforms:label>Banner Text</xforms:label>
+											<xforms:alert>Required</xforms:alert>
+										</xforms:input>
+										<p>Appears in the header banner. For more sophisticated control, edit header.xsl.</p>
+									</div>
+									<div>
+										<xforms:input ref="url">
+											<xforms:label>URL</xforms:label>
+											<xforms:alert>Required</xforms:alert>
+										</xforms:input>
+										<p>Public URL of the site. Used in citations of and image references in PDF printouts. Changing this to an inactive URL will <b>not</b> break 's core
+											functionality, but web forms may be style-less since the Orbeon applications point to this URL for embedding css files.</p>
+									</div>
+									<!--<div>
+										<xforms:textarea ref="google_analytics/script">
+											<xforms:label>Google Analytics</xforms:label>
+										</xforms:textarea>
+										<p>Copy and paste the javascript code between <b>&lt;script type="text/javascript"&gt;&lt;/script&gt;</b> provided by Google.</p>
+									</div>-->
+								</div>
+								<div class="section">
+									<h2>API Keys</h2>
+									<!--<h3>flickr</h3>
+									<xforms:group ref=".[instance('flickr-response')/@stat='fail' and string-length(flickr_api_key) &gt; 0]">
+										<div class="ui-widget">
+											<div class="ui-state-error ui-corner-all">
+												<p>
+													<span class="ui-icon ui-icon-alert" style="float: left; margin-right: 0.3em;"/>
+													<strong>Alert:</strong>
+													<xforms:output ref="instance('flickr-response')/err/@msg"/>
+												</p>
+											</div>
+										</div>
+									</xforms:group>
+									<div>
+										<xforms:input ref="flickr_api_key" incremental="true">
+											<xforms:label>Key</xforms:label>
+											<xforms:send submission="test-for-echo" ev:event="xforms-value-changed"/>
+										</xforms:input>
+										<p>A <a href="http://www.flickr.com/services/api/misc.api_keys.html">flickr API key</a> is required in order to take advantage of flickr image linking in
+											Numishare.</p>
+									</div>-->
+									<div class="subsection"><h3>geonames</h3>
+										<div>
+											<xforms:input ref="geonames_api_key" incremental="true">
+												<xforms:label>Key</xforms:label>
+											</xforms:input>
+											<p>A <a href="http://www.geonames.org/export/web-services.html">geonames API key</a> is required in order to link geographical places to geonames ids.</p>
+										</div>
+									</div>
+								</div>
+								<div class="section">
+									<xforms:group ref="instances/agencyName-list">
+										<h2>Agency Names</h2>
+										<xforms:trigger appearance="minimal">
+											<xforms:label>
+												<img src="{$display_path}images/add.gif"/>Agency</xforms:label>
+											<xforms:insert ev:event="DOMActivate" context="." nodeset="./child::node()[last()]" origin="instance('item-template')"/>
+										</xforms:trigger>
+										<xforms:repeat nodeset="item">
+											<div>
+												<xforms:input ref=".">
+													<xforms:label>Agency <xforms:output value="if(@default='true') then '(default)' else ''"/>
+													</xforms:label>
+													<xforms:alert>Required</xforms:alert>
+												</xforms:input>
+												<xforms:group ref=".[not(@default='true')]">
+													<xforms:trigger appearance="minimal">
+														<xforms:delete ev:event="DOMActivate" nodeset="."/>
+														<xforms:label>
+															<xhtml:img src="{$display_path}images/remove.gif"/>
+														</xforms:label>
+													</xforms:trigger>
+												</xforms:group>
+											</div>
+										</xforms:repeat>
+									</xforms:group>
+								</div>
+							</xforms:group>
+						</fr:tab>
+						<fr:tab id="advanced">
+							<fr:label>Advanced</fr:label>
+							<xforms:group ref="instance('config')">
+								<h2>Solr URLs</h2>
+								<div class="section">
+									<p>
+										<b>Only change these options if Orbeon is run on a separate server.</b>
+									</p>
+									<p>Changing these options to an inactive URL could break public coin display and web form functionality.</p>
+									<div>
+										<xforms:input ref="solr_published">
+											<xforms:label>Published Documents</xforms:label>
+											<xforms:alert>Required</xforms:alert>
+										</xforms:input>
+									</div>
+									<div>
+										<xforms:input ref="solr_all">
+											<xforms:label>All Documents</xforms:label>
+											<xforms:alert>Required</xforms:alert>
+										</xforms:input>
+									</div>
+								</div>
+							</xforms:group>
+						</fr:tab>
+					</fr:tabview>
+				</div>
+			</div>
+			<!--<widget:xforms-instance-inspector id="orbeon-xforms-inspector" xmlns:widget="http://orbeon.org/oxf/xml/widget"/>-->
+		</div>
+	</xhtml:body>
+
+</xhtml:html>
