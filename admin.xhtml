@@ -42,16 +42,18 @@
 
 			<xforms:instance id="config-template">
 				<config xmlns:xlink="http://www.w3.org/1999/xlink">
-					<geonames_api_key/>
+					<flickr_api_key/>
+					<geonames_api_key>anscoins</geonames_api_key>
 					<title>xEAC</title>
 					<banner_text>xEAC: XForms for EAC-CPF</banner_text>
 					<banner_image xlink:href=""/>
 					<solr_published>http://localhost:8080/solr/xeac-published/</solr_published>
 					<solr_all>http://localhost:8080/solr/xeac-all/</solr_all>
 					<url>http://localhost:8080/orbeon/xeac/</url>
+					<oai-pmh active="false"/>
 					<instances>
 						<agencyName-list>
-							<item default="true"/>
+							<item default="true">American Numismatic Society</item>
 						</agencyName-list>
 					</instances>
 					<theme>
@@ -98,7 +100,7 @@
 			<xforms:instance id="doc">
 				<eac-cpf xmlns=""/>
 			</xforms:instance>
-			
+
 			<xforms:instance id="kml">
 				<kml/>
 			</xforms:instance>
@@ -209,6 +211,15 @@
 					<xforms:delete nodeset="instance('list')/*"/>
 					<xforms:send submission="query-solr"/>
 				</xforms:action>
+
+				<xforms:action ev:event="xforms-submit-error">
+					<xforms:send submission="save-config"/>
+				</xforms:action>
+			</xforms:submission>
+
+			<xforms:submission id="save-config" ref="instance('config-template')" action="{instance('exist-url')}xeac/config.xml" method="put" replace="none" xxforms:username="admin"
+				xxforms:password="">
+				<xforms:message ev:event="xforms-submit-error" level="modal">Error Saving Config.</xforms:message>
 			</xforms:submission>
 
 			<xforms:submission id="xquery-collection" ref="instance('eXist-xquery')" action="{instance('exist-url')}xeac/records/" method="post" replace="instance" instance="collection-result"
@@ -269,13 +280,13 @@
 			<xforms:submission id="delete-doc" action="{instance('exist-url')}xeac/records/{instance('id')}.xml" method="delete" replace="none" xxforms:username="admin" xxforms:password="">
 				<xforms:setvalue ev:event="xforms-submit-done" ref="instance('control-instance')/status">Finding aid successfully deleted.</xforms:setvalue>
 			</xforms:submission>
-			
+
 			<!-- save KML -->
 			<xforms:submission id="save-kml" ref="instance('kml')" action="{instance('exist-url')}xeac/kml/{instance('doc')/eac:control/eac:recordId}.kml" method="put" replace="none"
 				xxforms:username="admin" xxforms:password="">
 				<xforms:message ev:event="xforms-submit-error" level="modal">Error Saving KML.</xforms:message>
 			</xforms:submission>
-			
+
 			<xforms:submission id="delete-kml" action="{instance('exist-url')}xeac/kml/{instance('id')}.kml" method="delete" replace="none" xxforms:username="admin" xxforms:password="">
 				<xforms:setvalue ev:event="xforms-submit-done" ref="instance('control-instance')/status">Finding aid successfully deleted.</xforms:setvalue>
 			</xforms:submission>
@@ -588,7 +599,8 @@
 															<xforms:action ev:event="DOMActivate">
 																<xforms:dispatch target="unpublish" name="fr-show"/>
 																<xforms:setvalue ref="instance('deleteId')/id" value="$id"/>
-															</xforms:action> </xforms:trigger>
+															</xforms:action>
+														</xforms:trigger>
 													</xforms:group>
 													<xforms:group ref=".[published != 'true']">
 														<xforms:trigger appearance="minimal">
@@ -666,7 +678,8 @@
 											<xforms:send submission="query-solr"/>
 										</xforms:action>
 									</fr:positive-choice>
-								</fr:alert-dialog> </xforms:group>
+								</fr:alert-dialog>
+							</xforms:group>
 							<xforms:group ref=".[count(item)=0]">
 								<xforms:group ref=".[instance('control-instance')/solr-query = 'fulltext:*']">
 									<h1>No objects in collection.</h1>
