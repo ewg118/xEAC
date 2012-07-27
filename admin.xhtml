@@ -221,12 +221,12 @@
 				xxforms:password="">
 				<xforms:message ev:event="xforms-submit-error" level="modal">Error Saving Config.</xforms:message>
 				<xforms:action ev:event="xforms-submit-done">
-					<xforms:send submission="create-collection"/>					
+					<xforms:send submission="create-records-collection"/>					
 				</xforms:action>
 				
 			</xforms:submission>
 			
-			<xforms:submission id="create-collection" ref="instance('create-collection')" method="post" action="{instance('exist-url')}" replace="none" xxforms:username="admin" xxforms:password="">
+			<xforms:submission id="create-records-collection" ref="instance('create-collection')" method="post" action="{instance('exist-url')}" replace="none" xxforms:username="admin" xxforms:password="">
 				<xforms:action ev:event="xforms-submit-done">					
 					<xforms:send submission="load-config"/>
 				</xforms:action>
