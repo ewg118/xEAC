@@ -212,8 +212,7 @@
 					<xforms:send submission="query-solr"/>
 				</xforms:action>
 
-				<xforms:action ev:event="xforms-submit-error">
-					<xforms:send submission="add-collection"/>
+				<xforms:action ev:event="xforms-submit-error">					
 					<xforms:send submission="save-config"/>
 				</xforms:action>
 			</xforms:submission>
@@ -221,10 +220,17 @@
 			<xforms:submission id="save-config" ref="instance('config-template')" action="{instance('exist-url')}xeac/config.xml" method="put" replace="none" xxforms:username="admin"
 				xxforms:password="">
 				<xforms:message ev:event="xforms-submit-error" level="modal">Error Saving Config.</xforms:message>
-				<xforms:send submission="load-config" ev:event="xforms-submit-done"/>
+				<xforms:action ev:event="xforms-submit-done">
+					<xforms:send submission="create-collection"/>					
+				</xforms:action>
+				
 			</xforms:submission>
 			
-			<xforms:submission id="add-collection" ref="instance('create-collection')" method="post" action="{instance('exist-url')}" replace="none" xxforms:username="admin" xxforms:password=""/>
+			<xforms:submission id="create-collection" ref="instance('create-collection')" method="post" action="{instance('exist-url')}" replace="none" xxforms:username="admin" xxforms:password="">
+				<xforms:action ev:event="xforms-submit-done">					
+					<xforms:send submission="load-config"/>
+				</xforms:action>
+			</xforms:submission>
 
 			<xforms:submission id="xquery-collection" ref="instance('eXist-xquery')" action="{instance('exist-url')}xeac/records/" method="post" replace="instance" instance="collection-result"
 				xxforms:username="admin" xxforms:password="">
