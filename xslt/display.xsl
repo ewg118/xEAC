@@ -205,7 +205,8 @@
 				<xsl:value-of select="parent::node()/eac:event"/>
 			</xsl:when>
 			<xsl:when test="parent::node()/eac:term">
-				<a href="{$display_path}results/?q={if (string(parent::node()/@localType)) then parent::node()/@localType else parent::node()/local-name()}_facet:&#x022;{parent::node()/eac:term}&#x022;">
+				<a
+					href="{$display_path}results/?q={if (string(parent::node()/@localType)) then parent::node()/@localType else parent::node()/local-name()}_facet:&#x022;{parent::node()/eac:term}&#x022;">
 					<xsl:value-of select="parent::node()/eac:term"/>
 				</a>
 			</xsl:when>
@@ -220,8 +221,9 @@
 		</xsl:choose>
 		<xsl:if test="string(parent::node()/eac:placeEntry) and not(parent::eac:place)">
 			<xsl:text>, </xsl:text>
-			<a href="{$display_path}results/?q=placeEntry_facet:{parent::node()/eac:placeEntry}"/>
-			<xsl:value-of select="parent::node()/eac:placeEntry"/>
+			<a href="{$display_path}results/?q=placeEntry_facet:&#x022;{parent::node()/eac:placeEntry}&#x022;">
+				<xsl:value-of select="parent::node()/eac:placeEntry"/>
+			</a>
 			<xsl:text>.</xsl:text>
 		</xsl:if>
 	</xsl:template>
