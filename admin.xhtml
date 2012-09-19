@@ -204,6 +204,7 @@
 						</xforms:action>
 						<!-- optimize index -->
 						<xforms:setvalue ref="instance('control-instance')/solr-core" value="instance('config')/solr_all"/>
+						<xforms:send submission="commit"/>
 						<xforms:send submission="optimize"/>
 					</xforms:action>
 					<!-- reload table -->
@@ -302,7 +303,6 @@
 			</xforms:submission>
 			<!-- post instance to Solr -->
 			<xforms:submission id="post-solr-doc" action="{instance('control-instance')/solr-core}update" ref="instance('addIndex')" instance="addIndex" replace="instance" method="post">
-				<xforms:send ev:event="xforms-submit-done" submission="commit"/>
 				<xforms:message ev:event="xforms-submit-error" level="modal">Data Failed to POST to Solr. Index may be offline or URL is incorrect.</xforms:message>
 			</xforms:submission>
 			<!-- delete from Solr -->

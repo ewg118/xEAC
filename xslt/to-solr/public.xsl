@@ -33,18 +33,28 @@
 				<xsl:value-of select="eac:cpfDescription/eac:identity/eac:entityType"/>
 			</field>
 			<xsl:for-each select="eac:cpfDescription/eac:identity/eac:nameEntry">
-				<xsl:if test="position() = 1">
-					<field name="name_display">
-						<xsl:value-of select="eac:part"/>
-					</field>
-					<field name="name_facet">
-						<xsl:value-of select="eac:part"/>
-					</field>
-				</xsl:if>
 				<field name="name_text">
 					<xsl:value-of select="eac:part"/>
 				</field>
 			</xsl:for-each>
+			<xsl:choose>
+				<xsl:when test="eac:cpfDescription/eac:identity/eac:nameEntry[eac:preferredForm='WIKIPEDIA']">
+					<field name="name_display">
+						<xsl:value-of select="eac:cpfDescription/eac:identity/eac:nameEntry[eac:preferredForm='WIKIPEDIA']/eac:part"/>
+					</field>
+					<field name="name_facet">
+						<xsl:value-of select="eac:cpfDescription/eac:identity/eac:nameEntry[eac:preferredForm='WIKIPEDIA']/eac:part"/>
+					</field>
+				</xsl:when>
+				<xsl:otherwise>
+					<field name="name_display">
+						<xsl:value-of select="eac:cpfDescription/eac:identity/eac:nameEntry[1]/eac:part"/>
+					</field>
+					<field name="name_facet">
+						<xsl:value-of select="eac:cpfDescription/eac:identity/eac:nameEntry[1]/eac:part"/>
+					</field>
+				</xsl:otherwise>
+			</xsl:choose>
 
 			<!-- terms as facets -->
 			<xsl:for-each
@@ -58,7 +68,7 @@
 					</field>
 				</xsl:if>
 			</xsl:for-each>
-			
+
 			<!-- placeEntry as facet -->
 			<xsl:for-each select="descendant::eac:placeEntry[string(normalize-space(.))]">
 				<field name="{if (string(@localType)) then @localType else local-name()}_facet">
@@ -71,7 +81,7 @@
 			<field name="fulltext">
 				<xsl:for-each select="descendant-or-self::node()">
 					<xsl:value-of select="text()"/>
-					<xsl:text> </xsl:text>					
+					<xsl:text> </xsl:text>
 				</xsl:for-each>
 			</field>
 		</doc>

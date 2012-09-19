@@ -16,15 +16,24 @@
 				<xsl:value-of select="eac:control/eac:recordId"/>
 			</field>
 			<xsl:for-each select="eac:cpfDescription/eac:identity/eac:nameEntry">
-				<xsl:if test="position() = 1">
-					<field name="name">
-						<xsl:value-of select="eac:part"/>
-					</field>
-				</xsl:if>
+				<xsl:if test="(eac:preferredForm='WIKIPEDIA') or position() = 1"> </xsl:if>
+
 				<field name="name_text">
 					<xsl:value-of select="eac:part"/>
 				</field>
 			</xsl:for-each>
+			<xsl:choose>
+				<xsl:when test="eac:cpfDescription/eac:identity/eac:nameEntry[eac:preferredForm='WIKIPEDIA']">
+					<field name="name">
+						<xsl:value-of select="eac:cpfDescription/eac:identity/eac:nameEntry[eac:preferredForm='WIKIPEDIA']/eac:part"/>
+					</field>
+				</xsl:when>
+				<xsl:otherwise>
+					<field name="name">
+						<xsl:value-of select="eac:cpfDescription/eac:identity/eac:nameEntry[1]/eac:part"/>
+					</field>
+				</xsl:otherwise>
+			</xsl:choose>
 		</doc>
 	</xsl:template>
 
