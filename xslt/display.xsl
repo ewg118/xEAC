@@ -108,8 +108,8 @@
 									</xsl:if>
 								</xsl:for-each>
 							</div>
-						</xsl:if>					
-						
+						</xsl:if>
+
 						<div id="names" style="display:none">
 							<xsl:for-each select="//eac:conventionDeclaration">
 								<xsl:variable name="abbreviation" select="eac:abbreviation"/>
@@ -153,13 +153,13 @@
 									</xsl:for-each>
 								</ul>
 							</xsl:for-each>
-						</div>						
+						</div>
 						<div id="yui-main">
 							<div class="yui-b">
 								<xsl:call-template name="body"/>
 							</div>
 						</div>
-						<div class="yui-b">							
+						<div class="yui-b">
 							<xsl:call-template name="side-bar"/>
 						</div>
 					</div>
@@ -185,12 +185,12 @@
 
 		<xsl:apply-templates select="eac:cpfDescription"/>
 	</xsl:template>
-	
+
 	<xsl:template name="side-bar">
 		<xsl:if test="descendant::eac:resourceRelation[@xlink:role='portrait']">
 			<img src="{descendant::eac:resourceRelation[@xlink:role='portrait']/@xlink:href}" alt="Portrait" style="max-width:240px;"/>
 		</xsl:if>
-		
+
 		<xsl:call-template name="xeac:getOcreCoins">
 			<xsl:with-param name="name">
 				<xsl:choose>
@@ -203,7 +203,7 @@
 				</xsl:choose>
 			</xsl:with-param>
 		</xsl:call-template>
-		
+
 	</xsl:template>
 
 	<xsl:template match="eac:cpfDescription">
@@ -286,6 +286,11 @@
 				<a href="{$display_path}results/?q={if (string(parent::node()/@localType)) then parent::node()/@localType else 'placeEntry'}_facet:&#x022;{parent::node()/eac:placeEntry}&#x022;">
 					<xsl:value-of select="parent::node()/eac:placeEntry"/>
 				</a>
+				<xsl:if test="string(parent::node()/eac:placeEntry/@vocabularySource)">
+					<a href="{parent::node()/eac:placeEntry/@vocabularySource}" style="margin-left:5px;">
+						<img src="{$display_path}images/external.png" alt="External link"/>
+					</a>
+				</xsl:if>
 			</xsl:when>
 		</xsl:choose>
 		<xsl:if test="string(parent::node()/eac:placeEntry) and not(parent::eac:place)">
@@ -293,6 +298,11 @@
 			<a href="{$display_path}results/?q=placeEntry_facet:&#x022;{parent::node()/eac:placeEntry}&#x022;">
 				<xsl:value-of select="parent::node()/eac:placeEntry"/>
 			</a>
+			<xsl:if test="string(parent::node()/eac:placeEntry/@vocabularySource)">
+				<a href="{parent::node()/eac:placeEntry/@vocabularySource}" style="margin-left:5px;">
+					<img src="{$display_path}images/external.png" alt="External link"/>
+				</a>
+			</xsl:if>
 			<xsl:text>.</xsl:text>
 		</xsl:if>
 	</xsl:template>
