@@ -33,7 +33,7 @@
 		</xsl:if>
 	</xsl:param>
 	<xsl:variable name="encoded_sort" select="encode-for-uri($sort)"/>
-	<xsl:param name="rows">50</xsl:param>
+	<xsl:param name="rows">30</xsl:param>
 	<xsl:param name="start">
 		<xsl:choose>
 			<xsl:when test="string(doc('input:params')/request/parameters/parameter[name='start']/value)">
@@ -76,7 +76,7 @@
 				<link rel="stylesheet" href="{$display_path}css/themes/{$ui-theme}.css"/>
 				<link rel="stylesheet" href="{$display_path}css/jquery.multiselect.css"/>
 				<link rel="stylesheet" href="{$display_path}css/jquery.fancybox-1.3.4.css"/>
-				
+
 				<script type="text/javascript" src="{$display_path}javascript/jquery-1.4.2.min.js"/>
 				<script type="text/javascript" src="{$display_path}javascript/jquery-ui-1.8.12.custom.min.js"/>
 				<script type="text/javascript" src="{$display_path}javascript/jquery.multiselect.min.js"/>
@@ -117,17 +117,22 @@
 							<div id="resultMap"/>
 						</div>
 					</xsl:if>
-					
+
 					<xsl:choose>
-						<xsl:when test="//result[@name='response']/@numFound &gt; 0">							
-							<!--<xsl:call-template name="sort"/>-->							
+						<xsl:when test="//result[@name='response']/@numFound &gt; 0">
+							<!--<xsl:call-template name="sort"/>-->
 							<xsl:if test="$q != '*:*'">
 								<xsl:call-template name="remove_facets"/>
 							</xsl:if>
-							<h2>Records</h2>							
-							<ul>
+							<h2>Names</h2>
+
+							<!--<table class="result-table">
 								<xsl:apply-templates select="descendant::doc"/>
-							</ul>
+								</table>-->
+							<xsl:call-template name="paging"/>
+							<div style="display:table;width:100%">
+								<xsl:apply-templates select="descendant::doc"/>
+							</div>
 							<xsl:call-template name="paging"/>
 						</xsl:when>
 						<xsl:otherwise>
@@ -158,11 +163,44 @@
 	</xsl:template>
 
 	<xsl:template match="doc">
-		<li>
-			<a href="{$display_path}record/{str[@name='id']}">
-				<xsl:value-of select="str[@name='name_display']"/>
-			</a>
-		</li>
+		<div class="ui-corner-all result-div">
+			<h3>
+				<a href="{$display_path}record/{str[@name='id']}">
+					<xsl:value-of select="str[@name='name_display']"/>
+				</a>
+			</h3>
+			<div>
+				<xsl:if test="str[@name='existDates_display']">
+					<xsl:value-of select="str[@name='existDates_display']"/>
+				</xsl:if>
+			</div>
+			<xsl:if test="count(arr[@name='thumb_image']/str) &gt; 0">
+				<div style="text-align:center">
+					<a href="{$display_path}record/{str[@name='id']}">
+						<img src="{arr[@name='thumb_image']/str[1]}" alt="Thumbnail" style="max-height:120px;max-width:180px;"/>
+					</a>
+				</div>
+			</xsl:if>
+		</div>
+		<!--<tr>
+			<td style="width:40%">
+				<xsl:if test="count(arr[@name='thumb_image']/str) &gt; 0">
+					<a href="{$display_path}record/{str[@name='id']}">
+						<img src="{arr[@name='thumb_image']/str[1]}" alt="Thumbnail" style="max-height:120px;max-width:60px;"/>
+					</a>
+				</xsl:if>
+			</td>
+			<td>
+				<h3>
+					<a href="{$display_path}record/{str[@name='id']}">
+						<xsl:value-of select="str[@name='name_display']"/>
+					</a>
+				</h3>
+				<xsl:if test="str[@name='existDates_display']">					
+					<xsl:value-of select="str[@name='existDates_display']"/>
+				</xsl:if>
+			</td>
+		</tr>-->
 	</xsl:template>
 
 	<xsl:template name="paging">
@@ -604,7 +642,7 @@
 								</xsl:otherwise>
 							</xsl:choose>
 						</xsl:variable>
-						
+
 						<div class="ui-widget ui-state-default ui-corner-all stacked_term">
 							<span>
 								<b><xsl:value-of select="$name"/>: </b>
@@ -704,7 +742,7 @@
 										<xsl:text> OR </xsl:text>
 									</xsl:if>
 								</xsl:for-each>
-							</span>							
+							</span>
 							<a class="ui-icon ui-icon-closethick remove_filter" href="{$display_path}results/?q={if (string($new_query)) then encode-for-uri($new_query) else '*:*'}">X</a>
 						</div>
 					</xsl:when>
@@ -738,7 +776,7 @@
 						<xsl:text>, </xsl:text>
 						<xsl:value-of select="$order"/>
 					</span>
-					
+
 					<a class="ui-icon ui-icon-closethick remove_filter" href="?q={$q}">X</a>
 				</div>
 			</xsl:if>

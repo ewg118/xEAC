@@ -601,8 +601,8 @@
 														<xforms:trigger appearance="minimal">
 															<xforms:label>unpublish</xforms:label>
 															<xforms:action ev:event="DOMActivate">
-																<xforms:dispatch target="unpublish" name="fr-show"/>
 																<xforms:setvalue ref="instance('deleteId')/id" value="$id"/>
+																<xforms:dispatch target="unpublish" name="fr-show"/>
 															</xforms:action>
 														</xforms:trigger>
 													</xforms:group>
@@ -610,8 +610,8 @@
 														<xforms:trigger appearance="minimal">
 															<xforms:label>publish</xforms:label>
 															<xforms:action ev:event="DOMActivate">
-																<xforms:dispatch target="publish" name="fr-show"/>
 																<xforms:setvalue ref="instance('id')" value="$id"/>
+																<xforms:dispatch target="publish" name="fr-show"/>																
 															</xforms:action>
 														</xforms:trigger>
 													</xforms:group>
@@ -622,9 +622,9 @@
 															<xhtml:img src="{$display_path}images/remove.gif"/>
 														</xforms:label>
 														<xforms:action ev:event="DOMActivate">
-															<xforms:dispatch target="delete" name="fr-show"/>
 															<xforms:setvalue ref="instance('id')" value="$id"/>
 															<xforms:setvalue ref="instance('deleteId')/id" value="$id"/>
+															<xforms:dispatch target="delete" name="fr-show"/>															
 														</xforms:action>
 													</xforms:trigger>
 												</xhtml:td>
@@ -639,9 +639,9 @@
 									<fr:negative-choice/>
 									<fr:positive-choice>
 										<xforms:action ev:event="DOMActivate">
-											<xforms:setvalue ref="instance('control-instance')/solr-core" value="instance('config')/solr_published"/>
+											<xforms:setvalue ref="instance('control-instance')/solr-core" value="instance('config')/solr_published"/>											
 											<xforms:send submission="eac-to-solr"/>
-											<xforms:send submission="submit-commit"/>
+											<xforms:send submission="commit"/>
 											<!-- reload table -->
 											<xforms:delete nodeset="instance('list')/*"/>
 											<xforms:setvalue ref="instance('control-instance')/solr-core" value="instance('config')/solr_all"/>
@@ -654,7 +654,7 @@
 									<fr:message>Do you want to remove this object from the search index?</fr:message>
 									<fr:negative-choice/>
 									<fr:positive-choice>
-										<xforms:action ev:event="DOMActivate">
+										<xforms:action ev:event="DOMActivate">											
 											<xforms:setvalue ref="instance('control-instance')/solr-core" value="instance('config')/solr_published"/>
 											<xforms:send submission="delete-solr-doc"/>
 											<!-- reload table -->
@@ -669,7 +669,7 @@
 									<fr:message>Are you sure you want to delete this object?</fr:message>
 									<fr:negative-choice/>
 									<fr:positive-choice>
-										<xforms:action ev:event="DOMActivate">
+										<xforms:action ev:event="DOMActivate">											
 											<xforms:send submission="delete-doc"/>
 											<xforms:send submission="delete-kml"/>
 											<xforms:setvalue ref="instance('control-instance')/solr-core" value="instance('config')/solr_all"/>

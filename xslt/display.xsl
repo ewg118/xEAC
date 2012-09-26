@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="2.0" xmlns:eac="urn:isbn:1-931666-33-4" xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:exsl="http://exslt.org/common" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xi="http://www.w3.org/2001/XInclude">
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="2.0" xmlns:eac="urn:isbn:1-931666-33-4" xmlns="http://www.w3.org/1999/xhtml" xmlns:exsl="http://exslt.org/common"
+	xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xeac="https://github.com/ewg118/xEAC" xmlns:xi="http://www.w3.org/2001/XInclude">
 	<xsl:include href="templates.xsl"/>
+	<xsl:include href="widgets.xsl"/>
 	<xsl:output method="xhtml" encoding="utf-8"/>
 
 	<xsl:variable name="exist-url" select="//exist-url"/>
@@ -61,8 +62,8 @@
 
 				<!-- mapping -->
 				<script src="http://www.openlayers.org/api/OpenLayers.js" type="text/javascript"/>
-				<!--<script src="http://maps.google.com/maps/api/js?sensor=false"/>-->
-				<!--<script src="http://maps.google.com/maps?file=api&amp;v=2&amp;key=ABQIAAAASI0kCI-azC8RgbOZzWc3VRRarOQe_TKf_51Omf6UUSOFm7EABRRhO0PO4nBAO9FCmVDuowVwROLo3w"
+				<!--<script src="http://maps.google.com/maps/api/js?sensor=false" type="text/javascript"/>
+				<script src="http://maps.google.com/maps?file=api&amp;v=2&amp;key=ABQIAAAASI0kCI-azC8RgbOZzWc3VRRarOQe_TKf_51Omf6UUSOFm7EABRRhO0PO4nBAO9FCmVDuowVwROLo3w"
       type="text/javascript"></script>-->
 				<script type="text/javascript" src="{$display_path}javascript/mxn.js"/>
 				<script src="http://static.simile.mit.edu/timeline/api-2.2.0/timeline-api.js?bundle=true" type="text/javascript"/>
@@ -87,7 +88,80 @@
 					<xsl:call-template name="header-public"/>
 					<div id="bd">
 						<xsl:call-template name="icons"/>
-						<xsl:call-template name="body"/>
+						<h1>
+							<xsl:choose>
+								<xsl:when test="eac:cpfDescription/eac:identity/eac:nameEntry[eac:preferredForm='WIKIPEDIA']">
+									<xsl:value-of select="eac:cpfDescription/eac:identity/eac:nameEntry[eac:preferredForm='WIKIPEDIA']/eac:part"/>
+								</xsl:when>
+								<xsl:otherwise>
+									<xsl:value-of select="eac:cpfDescription/eac:identity/eac:nameEntry[1]/eac:part"/>
+								</xsl:otherwise>
+							</xsl:choose>
+						</h1>
+						<a href="#" id="toggle_names">hide/show names</a>
+						<xsl:if test="eac:cpfDescription/eac:identity/eac:nameEntry[child::node()='WIKIPEDIA']">
+							<div id="wiki-names">
+								<xsl:for-each select="eac:cpfDescription/eac:identity/eac:nameEntry[*[local-name() != 'preferredForm']='WIKIPEDIA']">
+									<xsl:value-of select="eac:part"/>
+									<xsl:if test="not(position()=last())">
+										<xsl:text> / </xsl:text>
+									</xsl:if>
+								</xsl:for-each>
+							</div>
+						</xsl:if>					
+						
+						<div id="names" style="display:none">
+							<xsl:for-each select="//eac:conventionDeclaration">
+								<xsl:variable name="abbreviation" select="eac:abbreviation"/>
+								<h2>
+									<xsl:value-of select="eac:citation"/>
+								</h2>
+								<ul>
+									<xsl:for-each select="//eac:nameEntry[child::node()=$abbreviation]">
+										<li>
+											<xsl:value-of select="eac:part"/>
+											<xsl:if test="@xml:lang">
+												<xsl:text> (</xsl:text>
+												<xsl:value-of select="@xml:lang"/>
+												<xsl:text>)</xsl:text>
+											</xsl:if>
+											<xsl:choose>
+												<xsl:when test="eac:authorizedForm">
+													<xsl:text> (authorized form)</xsl:text>
+												</xsl:when>
+												<xsl:when test="eac:preferredForm">
+													<xsl:text> (preferred form)</xsl:text>
+												</xsl:when>
+												<xsl:when test="eac:alternativeForm">
+													<xsl:text> (alternative form)</xsl:text>
+												</xsl:when>
+											</xsl:choose>
+											<xsl:if test="eac:useDates">
+												<xsl:text>, dates of use: </xsl:text>
+												<xsl:choose>
+													<xsl:when test="eac:useDates/eac:date">
+														<xsl:value-of select="eac:useDates/eac:date"/>
+													</xsl:when>
+													<xsl:when test="eac:useDates/eac:dateRange">
+														<xsl:value-of select="eac:useDates/eac:dateRange/eac:fromDate"/>
+														<xsl:text>-</xsl:text>
+														<xsl:value-of select="eac:useDates/eac:dateRange/eac:toDate"/>
+													</xsl:when>
+												</xsl:choose>
+											</xsl:if>
+										</li>
+									</xsl:for-each>
+								</ul>
+							</xsl:for-each>
+						</div>						
+						<div id="yui-main">
+							<div class="yui-b">
+								<xsl:call-template name="body"/>
+							</div>
+						</div>
+						<div class="yui-b">							
+							<xsl:call-template name="side-bar"/>
+						</div>
 					</div>
 
 
@@ -100,73 +174,6 @@
 	</xsl:template>
 
 	<xsl:template name="body">
-		<h1>
-			<xsl:choose>
-				<xsl:when test="eac:cpfDescription/eac:identity/eac:nameEntry[eac:preferredForm='WIKIPEDIA']">
-					<xsl:value-of select="eac:cpfDescription/eac:identity/eac:nameEntry[eac:preferredForm='WIKIPEDIA']/eac:part"/>
-				</xsl:when>
-				<xsl:otherwise>
-					<xsl:value-of select="eac:cpfDescription/eac:identity/eac:nameEntry[1]/eac:part"/>
-				</xsl:otherwise>
-			</xsl:choose>
-		</h1>
-		<xsl:if test="eac:cpfDescription/eac:identity/eac:nameEntry[child::node()='WIKIPEDIA']">
-			<div>
-				<xsl:for-each select="eac:cpfDescription/eac:identity/eac:nameEntry[*[local-name() != 'preferredForm']='WIKIPEDIA']">
-					<xsl:value-of select="eac:part"/>
-					<xsl:if test="not(position()=last())">
-						<xsl:text> / </xsl:text>
-					</xsl:if>
-				</xsl:for-each>
-			</div>
-		</xsl:if>
-
-		<a href="#" id="toggle_names">hide/show names</a>
-		<div id="names" style="display:none">
-			<xsl:for-each select="//eac:conventionDeclaration">
-				<xsl:variable name="abbreviation" select="eac:abbreviation"/>
-				<h2>
-					<xsl:value-of select="eac:citation"/>
-				</h2>
-				<ul>
-					<xsl:for-each select="//eac:nameEntry[child::node()=$abbreviation]">
-						<li>
-							<xsl:value-of select="eac:part"/>
-							<xsl:if test="@xml:lang">
-								<xsl:text> (</xsl:text>
-								<xsl:value-of select="@xml:lang"/>
-								<xsl:text>)</xsl:text>
-							</xsl:if>
-							<xsl:choose>
-								<xsl:when test="eac:authorizedForm">
-									<xsl:text> (authorized form)</xsl:text>
-								</xsl:when>
-								<xsl:when test="eac:preferredForm">
-									<xsl:text> (preferred form)</xsl:text>
-								</xsl:when>
-								<xsl:when test="eac:alternativeForm">
-									<xsl:text> (alternative form)</xsl:text>
-								</xsl:when>
-							</xsl:choose>
-							<xsl:if test="eac:useDates">
-								<xsl:text>, dates of use: </xsl:text>
-								<xsl:choose>
-									<xsl:when test="eac:useDates/eac:date">
-										<xsl:value-of select="eac:useDates/eac:date"/>
-									</xsl:when>
-									<xsl:when test="eac:useDates/eac:dateRange">
-										<xsl:value-of select="eac:useDates/eac:dateRange/eac:fromDate"/>
-										<xsl:text>-</xsl:text>
-										<xsl:value-of select="eac:useDates/eac:dateRange/eac:toDate"/>
-									</xsl:when>
-								</xsl:choose>
-							</xsl:if>
-						</li>
-					</xsl:for-each>
-				</ul>
-			</xsl:for-each>
-
-		</div>
 		<div id="timemap">
 			<div id="mapcontainer">
 				<div id="map"/>
@@ -177,6 +184,26 @@
 		</div>
 
 		<xsl:apply-templates select="eac:cpfDescription"/>
+	</xsl:template>
+	
+	<xsl:template name="side-bar">
+		<xsl:if test="descendant::eac:resourceRelation[@xlink:role='portrait']">
+			<img src="{descendant::eac:resourceRelation[@xlink:role='portrait']/@xlink:href}" alt="Portrait" style="max-width:240px;"/>
+		</xsl:if>
+		
+		<xsl:call-template name="xeac:getOcreCoins">
+			<xsl:with-param name="name">
+				<xsl:choose>
+					<xsl:when test="eac:cpfDescription/eac:identity/eac:nameEntry[eac:preferredForm='WIKIPEDIA']">
+						<xsl:value-of select="eac:cpfDescription/eac:identity/eac:nameEntry[eac:preferredForm='WIKIPEDIA']/eac:part"/>
+					</xsl:when>
+					<xsl:otherwise>
+						<xsl:value-of select="eac:cpfDescription/eac:identity/eac:nameEntry[1]/eac:part"/>
+					</xsl:otherwise>
+				</xsl:choose>
+			</xsl:with-param>
+		</xsl:call-template>
+		
 	</xsl:template>
 
 	<xsl:template match="eac:cpfDescription">
@@ -256,8 +283,7 @@
 				<xsl:value-of select="parent::node()/eac:placeRole"/>
 			</xsl:when>
 			<xsl:when test="parent::node()/eac:placeEntry">
-				<a
-					href="{$display_path}results/?q={if (string(parent::node()/@localType)) then parent::node()/@localType else 'placeEntry'}_facet:&#x022;{parent::node()/eac:placeEntry}&#x022;">
+				<a href="{$display_path}results/?q={if (string(parent::node()/@localType)) then parent::node()/@localType else 'placeEntry'}_facet:&#x022;{parent::node()/eac:placeEntry}&#x022;">
 					<xsl:value-of select="parent::node()/eac:placeEntry"/>
 				</a>
 			</xsl:when>
@@ -286,7 +312,7 @@
 			<xsl:if test="count(eac:resourceRelation) &gt; 0">
 				<h3>Related Resources</h3>
 				<ul>
-					<xsl:apply-templates select="eac:resourceRelation"/>
+					<xsl:apply-templates select="eac:resourceRelation[not(@xlink:role='portrait')]"/>
 				</ul>
 			</xsl:if>
 		</div>
@@ -311,7 +337,7 @@
 					<xsl:value-of select="eac:relationEntry"/>
 				</xsl:otherwise>
 			</xsl:choose>
-			
+
 		</li>
 	</xsl:template>
 
