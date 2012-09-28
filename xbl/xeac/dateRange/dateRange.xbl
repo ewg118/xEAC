@@ -26,6 +26,7 @@
 										<xforms:label>From - Standard</xforms:label>
 										<xforms:alert>Required; must meet ISO specification</xforms:alert>
 										<xforms:action ev:event="xforms-value-changed">
+											<!-- BC dates -->
 											<xforms:action if="substring(., 1, 1) = '-'">
 												<xxforms:variable name="year" select="abs(number(tokenize(., '-')[2]))"/>
 												<xxforms:variable name="month" select="tokenize(., '-')[3]"/>
@@ -34,6 +35,7 @@
 													value="concat(if (number($month)) then concat(instance('month-list')/item[@id=$month], ' ') else '', if (number($day)) then concat($day, ', ') else '', $year, ' B.C.')"
 												/>
 											</xforms:action>
+											<!-- AD dates -->
 											<xforms:action if="substring(., 1, 1) != '-'">
 												<xxforms:variable name="year" select="abs(number(tokenize(., '-')[1]))"/>
 												<xxforms:variable name="month" select="tokenize(., '-')[2]"/>

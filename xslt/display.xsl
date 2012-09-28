@@ -331,23 +331,38 @@
 	<xsl:template match="eac:cpfRelation|eac:resourceRelation">
 		<li>
 			<xsl:if test="@xlink:arcrole">
-				<xsl:value-of select="@xlink:arcrole"/>
-				<xsl:text> </xsl:text>
+				<i>
+					<xsl:value-of select="@xlink:arcrole"/>
+					<xsl:text> </xsl:text>
+				</i>
 			</xsl:if>
 			<xsl:choose>
-				<xsl:when test="string(@xlink:href)">
-					<a href="{@xlink:href}">
-						<xsl:if test="local-name()='resourceRelation'">
-							<xsl:attribute name="target">_blank</xsl:attribute>
-						</xsl:if>
+				<xsl:when test="local-name()='cpfRelation'">
+					<xsl:choose>
+						<!-- create clickable links to internal documents -->
+						<xsl:when test="string(@xlink:href) and not(contains(@xlink:href, 'http://'))">
+							<a href="{@xlink:href}">
+								<xsl:if test="local-name()='resourceRelation'">
+									<xsl:attribute name="target">_blank</xsl:attribute>
+								</xsl:if>
+								<xsl:value-of select="eac:relationEntry"/>
+							</a>
+						</xsl:when>
+						<xsl:when test="contains(@xlink:href, 'http://')">
+							<xsl:value-of select="eac:relationEntry"/>
+							<!-- create external link to resources outside of xEAC -->
+							<a href="{@xlink:href}" style="margin-left:5px;">
+								<img src="{$display_path}images/external.png" alt="External link"/>
+							</a>
+						</xsl:when>
+					</xsl:choose>
+				</xsl:when>
+				<xsl:when test="local-name()='resourceRelation'">
+					<a href="{@xlink:href}" target="_blank">
 						<xsl:value-of select="eac:relationEntry"/>
 					</a>
 				</xsl:when>
-				<xsl:otherwise>
-					<xsl:value-of select="eac:relationEntry"/>
-				</xsl:otherwise>
 			</xsl:choose>
-
 		</li>
 	</xsl:template>
 

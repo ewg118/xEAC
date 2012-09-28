@@ -96,7 +96,7 @@
 							</xforms:select1>
 						</div>
 						<div>
-							<xforms:select1 ref="instance('attributes')/attribute[@name='xlink:arcrole']">
+							<!--<xforms:select1 ref="instance('attributes')/attribute[@name='xlink:arcrole']">
 								<xforms:label>Xlink Arcrole</xforms:label>
 								<xforms:item>
 									<xforms:label>Select...</xforms:label>
@@ -111,7 +111,16 @@
 										if="not(@xlink:arcrole) and string-length(instance('attributes')/attribute[@name='xlink:arcrole']) &gt; 0"/>
 									<xforms:delete if="string-length(instance('attributes')/attribute[@name='xlink:arcrole']) = 0" context="$binding" nodeset="@xlink:arcrole"/>
 								</xforms:action>
-							</xforms:select1>
+								</xforms:select1>-->
+							<xforms:input ref="instance('attributes')/attribute[@name='xlink:arcrole']">
+								<xforms:label>Xlink Arcrole</xforms:label>		
+								<xforms:hint>Reminder: the relationship is from source record to remote record.</xforms:hint>								
+								<xforms:action ev:event="xforms-value-changed">
+									<xforms:insert context="$binding" origin="xxforms:attribute('xlink:arcrole', instance('attributes')/attribute[@name='xlink:arcrole'])"
+										if="not(@xlink:arcrole) and string-length(instance('attributes')/attribute[@name='xlink:arcrole']) &gt; 0"/>
+									<xforms:delete if="string-length(instance('attributes')/attribute[@name='xlink:arcrole']) = 0" context="$binding" nodeset="@xlink:arcrole"/>
+								</xforms:action>
+							</xforms:input>
 						</div>
 						<div>
 							<xforms:select1 ref="instance('attributes')/attribute[@name='xlink:role']">
@@ -173,17 +182,18 @@
 							</list>
 						</xforms:instance>
 
-						<xforms:instance id="arcrole-list">
+						<!--<xforms:instance id="arcrole-list">
 							<list xmlns="">
 								<item>correspondedWith</item>
 								<item>associatedWith</item>
 							</list>
-						</xforms:instance>
+						</xforms:instance>-->
 
 						<xforms:instance id="role-list">
 							<list xmlns="">
-								<item role="http://RDVocab.info/uri/schema/FRBRentitiesRDA/Person">Person</item>
 								<item role="http://RDVocab.info/uri/schema/FRBRentitiesRDA/CorporateBody">Corporate Body</item>
+								<item role="http://RDVocab.info/uri/schema/FRBRentitiesRDA/Person">Person</item>
+								<item role="http://RDVocab.info/uri/schema/FRBRentitiesRDA/Family">Family</item>
 							</list>
 						</xforms:instance>
 
