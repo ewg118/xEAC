@@ -1200,6 +1200,10 @@
 													<!-- set recordId if it is blank -->
 													<xforms:setvalue ref="instance('doc')/eac:control/eac:recordId" value="lower-case(substring-after(instance('dbpedia-id'), 'resource/'))" if="not(string(instance('doc')/eac:control/eac:recordId))"/>
 													
+													<!-- set entityType if wikipedia says it's a person -->
+													<xforms:setvalue ref="instance('doc')/eac:cpfDescription/eac:identity/eac:entityType" value="'person'" if="instance('dbpedia-rdf')/rdf:Description[@rdf:about=$resource]/rdf:type[@rdf:resource='http://schema.org/Person'] and not(string(instance('doc')/eac:cpfDescription/eac:identity/eac:entityType))"/>
+													
+													
 													<!--insert otherRecordId -->
 													<xforms:insert context="instance('doc')/eac:control" nodeset="eac:recordId" position="after" origin="instance('otherRecordId-template')"/>
 													<xforms:setvalue ref="instance('doc')/eac:control/eac:otherRecordId[1]" value="$resource"/>
