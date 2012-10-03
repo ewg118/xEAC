@@ -118,8 +118,8 @@ function generate_eac($resource, $end, $lang, $options){
 		}
 	}
 	
-	$xml .= '<maintenanceAgency><agencyName>American Numismatic Society</agencyName></maintenanceAgency>';
-	$xml .= '<maintenanceHistory><maintenanceEvent><eventType>created</eventType><eventDateTime standardDateTime="' . date(DATE_W3C) . '"/><agentType>machine</agentType><agent>Ancient Persons PHP</agent></maintenanceEvent></maintenanceHistory>';
+	$xml .= '<maintenanceAgency><agencyName>Agency Name</agencyName></maintenanceAgency>';
+	$xml .= '<maintenanceHistory><maintenanceEvent><eventType>created</eventType><eventDateTime standardDateTime="' . date(DATE_W3C) . '"/><agentType>machine</agentType><agent>xEAC dbpedia PHP</agent></maintenanceEvent></maintenanceHistory>';
 	$xml .= '<conventionDeclaration><abbreviation>WIKIPEDIA</abbreviation><citation>Wikipedia/DBpedia</citation></conventionDeclaration>';
 	$xml .= '<sources><source xlink:type="simple" xlink:href="' . $resource . '"/>';
 	if (strlen($viafId) > 0){
