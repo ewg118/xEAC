@@ -902,7 +902,7 @@
 						</xforms:trigger>-->
 						<div class="section">
 							<h1>Edit EAC-CPF Record</h1>
-							<xforms:group ref=".[count(eac:control/eac:otherRecordId[contains(., 'viaf.org')]) &gt; 0]">
+							<xforms:group ref=".[count(eac:control/eac:otherRecordId[contains(., 'viaf.org')]) = 0]">
 								<span class="add">
 									<xforms:trigger appearance="minimal">
 										<xforms:label>
@@ -911,7 +911,7 @@
 									</xforms:trigger>
 								</span>
 							</xforms:group>
-							<xforms:group ref=".[count(eac:control/eac:otherRecordId[contains(., 'dbpedia.org')]) &gt; 0]">
+							<xforms:group ref=".[count(eac:control/eac:otherRecordId[contains(., 'dbpedia.org')]) = 0]">
 								<span class="add">
 									<xforms:trigger appearance="minimal">
 										<xforms:label>
