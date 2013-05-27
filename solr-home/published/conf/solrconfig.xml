@@ -704,8 +704,9 @@
          will be overridden by parameters in the request
       -->
 		<lst name="defaults">
+			<str name="sort">name_display asc</str>
 			<str name="echoParams">explicit</str>
-			<int name="rows">50</int>
+			<int name="rows">30</int>
 			<str name="facet">true</str>
 			<int name="facet.mincount">1</int>
 		</lst>

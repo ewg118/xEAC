@@ -480,6 +480,9 @@
 		<dynamicField name="*_max" type="string" indexed="true" stored="true"/>
 		<dynamicField name="*_min" type="string" indexed="true" stored="true"/>
 		
+		<!-- thumbnail -->
+		<field name="thumb_image" type="string" indexed="false" stored="true" multiValued="true"/>
+		
 		<!-- fulltext -->
 		<field name="fulltext" type="text_general" indexed="true" stored="false" multiValued="true"/>
 	</fields>
