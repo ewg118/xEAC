@@ -26,35 +26,7 @@
 					</xsl:otherwise>
 				</xsl:choose>
 			</field>
-			<field name="entityType_facet">
-				<xsl:value-of select="eac:cpfDescription/eac:identity/eac:entityType"/>
-			</field>
-			<field name="entityType_display">
-				<xsl:value-of select="eac:cpfDescription/eac:identity/eac:entityType"/>
-			</field>
-			<xsl:for-each select="eac:cpfDescription/eac:identity/eac:nameEntry">
-				<field name="name_text">
-					<xsl:value-of select="eac:part"/>
-				</field>
-			</xsl:for-each>
-			<xsl:choose>
-				<xsl:when test="eac:cpfDescription/eac:identity/eac:nameEntry[eac:preferredForm='WIKIPEDIA']">
-					<field name="name_display">
-						<xsl:value-of select="eac:cpfDescription/eac:identity/eac:nameEntry[eac:preferredForm='WIKIPEDIA']/eac:part"/>
-					</field>
-					<field name="name_facet">
-						<xsl:value-of select="eac:cpfDescription/eac:identity/eac:nameEntry[eac:preferredForm='WIKIPEDIA']/eac:part"/>
-					</field>
-				</xsl:when>
-				<xsl:otherwise>
-					<field name="name_display">
-						<xsl:value-of select="eac:cpfDescription/eac:identity/eac:nameEntry[1]/eac:part"/>
-					</field>
-					<field name="name_facet">
-						<xsl:value-of select="eac:cpfDescription/eac:identity/eac:nameEntry[1]/eac:part"/>
-					</field>
-				</xsl:otherwise>
-			</xsl:choose>
+			<xsl:apply-templates select="eac:cpfDescription"/>
 
 			<!-- terms as facets -->
 			<xsl:for-each
@@ -78,6 +50,11 @@
 					<xsl:value-of select="normalize-space(.)"/>
 				</field>
 			</xsl:for-each>
+			<xsl:for-each select="descendant::eac:resourceRelation[@xlink:role='portrait']">
+				<field name="thumb_image">
+					<xsl:value-of select="@xlink:href"/>
+				</field>
+			</xsl:for-each>
 			<field name="fulltext">
 				<xsl:for-each select="descendant-or-self::node()">
 					<xsl:value-of select="text()"/>
@@ -85,6 +62,68 @@
 				</xsl:for-each>
 			</field>
 		</doc>
+	</xsl:template>
+	
+	<xsl:template match="eac:cpfDescription">
+		<xsl:apply-templates select="eac:identity"/>
+		<xsl:apply-templates select="eac:relations"/>
+		<xsl:apply-templates select="eac:description"/>
+	</xsl:template>
+	
+	<xsl:template match="eac:description">
+		<xsl:apply-templates select="eac:existDates/*"/>		
+	</xsl:template>
+	
+	<xsl:template match="eac:identity">
+		<field name="entityType_facet">
+			<xsl:value-of select="eac:entityType"/>
+		</field>
+		<field name="entityType_display">
+			<xsl:value-of select="eac:entityType"/>
+		</field>
+		
+		<xsl:for-each select="eac:nameEntry">
+			<field name="name_text">
+				<xsl:value-of select="eac:part"/>
+			</field>
+		</xsl:for-each>
+		<xsl:choose>
+			<xsl:when test="eac:nameEntry[eac:preferredForm='WIKIPEDIA']">
+				<field name="name_display">
+					<xsl:value-of select="eac:nameEntry[eac:preferredForm='WIKIPEDIA']/eac:part"/>
+				</field>
+				<field name="name_facet">
+					<xsl:value-of select="eac:nameEntry[eac:preferredForm='WIKIPEDIA']/eac:part"/>
+				</field>
+			</xsl:when>
+			<xsl:otherwise>
+				<field name="name_display">
+					<xsl:value-of select="eac:nameEntry[1]/eac:part"/>
+				</field>
+				<field name="name_facet">
+					<xsl:value-of select="eac:nameEntry[1]/eac:part"/>
+				</field>
+			</xsl:otherwise>
+		</xsl:choose>
+	</xsl:template>
+	
+	<xsl:template match="eac:relations">
+				
+	</xsl:template>
+	
+	<xsl:template match="eac:existDates/*">
+		<field name="existDates_display">
+			<xsl:choose>
+				<xsl:when test="local-name() = 'date'">
+					<xsl:value-of select="."/>
+				</xsl:when>
+				<xsl:when test="local-name()='dateRange'">
+					<xsl:value-of select="eac:fromDate"/>
+					<xsl:text> - </xsl:text>
+					<xsl:value-of select="eac:toDate"/>
+				</xsl:when>
+			</xsl:choose>
+		</field>
 	</xsl:template>
 
 
