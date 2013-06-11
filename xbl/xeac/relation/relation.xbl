@@ -1,9 +1,9 @@
 <!-- Ethan Gruber, American Numismatic Society
 	Modification Date: June, 2012
 	Establish connection between an EAC-CPF record in xEAC to another record in xEAC -->
-<xbl:xbl xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:xforms="http://www.w3.org/2002/xforms" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:xxforms="http://orbeon.org/oxf/xml/xforms"
+<xbl:xbl xmlns="http://www.w3.org/1999/xhtml" xmlns:xforms="http://www.w3.org/2002/xforms" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:xxforms="http://orbeon.org/oxf/xml/xforms"
 	xmlns:exist="http://exist.sourceforge.net/NS/exist" xmlns:xbl="http://www.w3.org/ns/xbl" xmlns:xxbl="http://orbeon.org/oxf/xml/xbl" xmlns:xeac="https://github.com/ewg118/xEAC"
-	xmlns:fr="http://orbeon.org/oxf/xml/form-runner" xmlns:eac="urn:isbn:1-931666-33-4" xmlns="urn:isbn:1-931666-33-4">
+	xmlns:fr="http://orbeon.org/oxf/xml/form-runner" xmlns:eac="urn:isbn:1-931666-33-4">
 	<xbl:binding id="xeac-relation" element="xeac|relation">
 		<xbl:template>
 			<xforms:group xbl:attr="model context ref bind" xxbl:scope="outer">
@@ -25,10 +25,11 @@
 								<xforms:setvalue ref="instance('attributes')/attribute[@name='xlink:role']" value="$binding/@xlink:role"/>
 								<xforms:setvalue ref="instance('attributes')/attribute[@name='xlink:arcrole']" value="$binding/@xlink:arcrole"/>
 								<xforms:setvalue ref="instance('attributes')/attribute[@name='xlink:href']" value="$binding/@xlink:href"/>
-								
+
 								<!-- load query results -->
-								<xforms:send submission="get-solr-id" if="string-length(instance('attributes')/attribute[@name='xlink:href']) &gt; 0 and not(number(instance('response')/result/@numFound))"/>
-								
+								<xforms:send submission="get-solr-id"
+									if="string-length(instance('attributes')/attribute[@name='xlink:href']) &gt; 0 and not(number(instance('response')/result/@numFound))"/>
+
 								<xxforms:show dialog="relation-dialog"/>
 							</xforms:action>
 						</xforms:trigger>
@@ -113,8 +114,8 @@
 								</xforms:action>
 								</xforms:select1>-->
 							<xforms:input ref="instance('attributes')/attribute[@name='xlink:arcrole']">
-								<xforms:label>Xlink Arcrole</xforms:label>		
-								<xforms:hint>Reminder: the relationship is from source record to remote record.</xforms:hint>								
+								<xforms:label>Xlink Arcrole</xforms:label>
+								<xforms:hint>Reminder: the relationship is from source record to remote record.</xforms:hint>
 								<xforms:action ev:event="xforms-value-changed">
 									<xforms:insert context="$binding" origin="xxforms:attribute('xlink:arcrole', instance('attributes')/attribute[@name='xlink:arcrole'])"
 										if="not(@xlink:arcrole) and string-length(instance('attributes')/attribute[@name='xlink:arcrole']) &gt; 0"/>
@@ -216,9 +217,9 @@
 								
 							</xforms:action>-->
 						</xforms:submission>
-						
-						<xforms:submission id="get-solr-id" serialization="none" method="get" action="{instance('config')/solr_all}select/?q=id:&#x022;{instance('attributes')/attribute[@name='xlink:href']}&#x022;&amp;rows=100"
-							replace="instance" instance="response">
+
+						<xforms:submission id="get-solr-id" serialization="none" method="get"
+							action="{instance('config')/solr_all}select/?q=id:&#x022;{instance('attributes')/attribute[@name='xlink:href']}&#x022;&amp;rows=100" replace="instance" instance="response">
 							<xforms:message ev:event="xforms-submit-error" level="modal">Solr is inaccessible. Please check Solr configuration.</xforms:message>
 							<!--<xforms:action ev:event="xforms-submit-done">
 								

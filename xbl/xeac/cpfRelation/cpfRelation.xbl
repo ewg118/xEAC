@@ -1,5 +1,5 @@
-<xbl:xbl xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:xforms="http://www.w3.org/2002/xforms" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:xxforms="http://orbeon.org/oxf/xml/xforms"
-	xmlns:xbl="http://www.w3.org/ns/xbl" xmlns:xxbl="http://orbeon.org/oxf/xml/xbl" xmlns:xeac="https://github.com/ewg118/xEAC" xmlns:eac="urn:isbn:1-931666-33-4" xmlns="urn:isbn:1-931666-33-4">
+<xbl:xbl xmlns="http://www.w3.org/1999/xhtml" xmlns:xforms="http://www.w3.org/2002/xforms" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:xxforms="http://orbeon.org/oxf/xml/xforms"
+	xmlns:xbl="http://www.w3.org/ns/xbl" xmlns:xxbl="http://orbeon.org/oxf/xml/xbl" xmlns:xeac="https://github.com/ewg118/xEAC" xmlns:eac="urn:isbn:1-931666-33-4">
 	<xbl:binding id="xeac-cpfRelation" element="xeac|cpfRelation">
 		<xbl:template>
 			<xforms:group xbl:attr="model context ref bind" xxbl:scope="outer">
@@ -17,7 +17,7 @@
 							<span class="add">
 								<xforms:trigger appearance="minimal">
 									<xforms:label>
-										<xhtml:img src="{$display_path}images/add.gif"/>
+										<img src="{$display_path}images/add.gif"/>
 									</xforms:label>
 									<xxforms:show ev:event="DOMActivate" dialog="cpfRelation-objects"/>
 								</xforms:trigger>
@@ -25,10 +25,10 @@
 							<xforms:trigger appearance="minimal">
 								<xforms:delete ev:event="DOMActivate" nodeset="."/>
 								<xforms:label>
-									<xhtml:img src="{$display_path}images/remove.gif"/>
+									<img src="{$display_path}images/remove.gif"/>
 								</xforms:label>
 							</xforms:trigger>
-							
+
 							<xxforms:dialog id="cpfRelation-objects" appearance="full" level="modal" close="true" draggable="true" visible="false">
 								<xforms:label>CPF Relation Objects</xforms:label>
 								<xforms:group ref=".[count(eac:date) = 0 and count(eac:dateRange) = 0 and count(eac:dateSet) = 0]">
@@ -77,7 +77,7 @@
 							</xxforms:dialog>
 
 
-							<!-- relationEntry: only required element -->							
+							<!-- relationEntry: only required element -->
 							<xforms:group ref="eac:relationEntry">
 								<xeac:relationEntry/>
 							</xforms:group>
@@ -103,7 +103,7 @@
 
 
 					<!-- ********************************************************************** -->
-					<xforms:model id="cpfRelation-model">
+					<xforms:model id="cpfRelation-model" xmlns="urn:isbn:1-931666-33-4">
 						<xforms:instance id="date-template">
 							<date standardDate=""/>
 						</xforms:instance>
@@ -120,7 +120,9 @@
 						</xforms:instance>
 
 						<xforms:instance id="descriptiveNote-template">
-							<descriptiveNote><p/></descriptiveNote>
+							<descriptiveNote>
+								<p/>
+							</descriptiveNote>
 						</xforms:instance>
 
 						<xforms:instance id="placeEntry-template">

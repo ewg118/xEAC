@@ -1,5 +1,5 @@
-<xbl:xbl xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:xforms="http://www.w3.org/2002/xforms" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:xxforms="http://orbeon.org/oxf/xml/xforms"
-	xmlns:xbl="http://www.w3.org/ns/xbl" xmlns:xxbl="http://orbeon.org/oxf/xml/xbl" xmlns:xeac="https://github.com/ewg118/xEAC" xmlns:eac="urn:isbn:1-931666-33-4" xmlns="urn:isbn:1-931666-33-4">
+<xbl:xbl xmlns="http://www.w3.org/1999/xhtml" xmlns:xforms="http://www.w3.org/2002/xforms" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:xxforms="http://orbeon.org/oxf/xml/xforms"
+	xmlns:xbl="http://www.w3.org/ns/xbl" xmlns:xxbl="http://orbeon.org/oxf/xml/xbl" xmlns:xeac="https://github.com/ewg118/xEAC" xmlns:eac="urn:isbn:1-931666-33-4">
 	<xbl:binding id="xeac-list" element="xeac|list">
 		<xbl:template>
 			<xforms:group xbl:attr="model context ref bind" xxbl:scope="outer">
@@ -16,7 +16,7 @@
 						<xforms:trigger appearance="minimal">
 							<xforms:delete ev:event="DOMActivate" nodeset="."/>
 							<xforms:label>
-								<xhtml:img src="{$display_path}images/remove.gif"/>
+								<img src="{$display_path}images/remove.gif"/>
 							</xforms:label>
 						</xforms:trigger>
 
@@ -39,7 +39,7 @@
 									<xforms:trigger appearance="minimal">
 										<xforms:delete ev:event="DOMActivate" nodeset="."/>
 										<xforms:label>
-											<xhtml:img src="{$display_path}images/remove.gif"/>
+											<img src="{$display_path}images/remove.gif"/>
 										</xforms:label>
 									</xforms:trigger>
 								</xforms:group>
@@ -47,7 +47,7 @@
 						</xforms:repeat>
 					</xforms:group>
 					<!-- ********************************************************************** -->
-					<xforms:model id="list-model">
+					<xforms:model id="list-model" xmlns="urn:isbn:1-931666-33-4">
 						<xforms:instance id="item-template">
 							<item/>
 						</xforms:instance>

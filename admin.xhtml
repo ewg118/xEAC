@@ -4,21 +4,20 @@
     xEAC: https://github.com/ewg118/xEAC
     Apache License 2.0
 -->
-<xhtml:html xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:xforms="http://www.w3.org/2002/xforms" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ev="http://www.w3.org/2001/xml-events"
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:xforms="http://www.w3.org/2002/xforms" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ev="http://www.w3.org/2001/xml-events"
 	xmlns:xxforms="http://orbeon.org/oxf/xml/xforms" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:fr="http://orbeon.org/oxf/xml/form-runner" xmlns:xeac="https://github.com/ewg118/xEAC"
-	xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xxi="http://orbeon.org/oxf/xml/xinclude" xmlns:eac="urn:isbn:1-931666-33-4" xmlns="urn:isbn:1-931666-33-4"
-	xmlns:xxbl="http://orbeon.org/oxf/xml/xbl" xmlns:pipeline="java:org.orbeon.oxf.processor.pipeline.PipelineFunctionLibrary" xmlns:exf="http://www.exforms.org/exf/1-0"
-	xmlns:saxon="http://saxon.sf.net/" xmlns:oxf="http://www.orbeon.com/oxf/processors" xmlns:xbl="http://www.w3.org/ns/xbl" xmlns:exist="http://exist.sourceforge.net/NS/exist">
-	<xhtml:head>
-		<xhtml:title>xEAC Administration</xhtml:title>
-		<link rel="stylesheet" type="text/css" href="/apps/xeac/css/grids-min.css"/>
-		<link rel="stylesheet" type="text/css" href="/apps/xeac/css/reset-fonts-grids.css"/>
-		<link rel="stylesheet" type="text/css" href="/apps/xeac/css/base-min.css"/>
-		<link rel="stylesheet" type="text/css" href="/apps/xeac/css/fonts-min.css"/>
-		<link rel="stylesheet" href="/apps/xeac/css/style.css"/>
-		<link rel="stylesheet" href="/apps/xeac/css/themes/smoothness.css"/>
-		<script type="text/javascript" src="/apps/xeac/javascript/jquery-1.4.2.min.js"/>
-		<script type="text/javascript" src="/apps/xeac/javascript/menu.js"/>
+	xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xxi="http://orbeon.org/oxf/xml/xinclude" xmlns:eac="urn:isbn:1-931666-33-4" xmlns:xxbl="http://orbeon.org/oxf/xml/xbl"
+	xmlns:pipeline="java:org.orbeon.oxf.processor.pipeline.PipelineFunctionLibrary" xmlns:exf="http://www.exforms.org/exf/1-0" xmlns:saxon="http://saxon.sf.net/"
+	xmlns:oxf="http://www.orbeon.com/oxf/processors" xmlns:xbl="http://www.w3.org/ns/xbl" xmlns:exist="http://exist.sourceforge.net/NS/exist">
+	<head>
+		<title>xEAC Administration</title>
+		<link rel="stylesheet" href="/fr/style/bootstrap/css/bootstrap.css" type="text/css"/>
+		<link rel="stylesheet" href="/fr/style/form-runner-bootstrap-override.css" type="text/css"/>
+		<link rel="stylesheet" href="/config/theme/examples.css" type="text/css" media="all"/>
+		<link rel="shortcut icon" href="/ops/images/orbeon-icon-16.ico"/>
+		<link rel="icon" href="/ops/images/orbeon-icon-16.png" type="image/png"/>
+		<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/3.8.0/build/cssgrids/grids-min.css"/>
+		<link rel="stylesheet" type="text/css" href="/apps/xeac/css/style.css"/>
 
 		<xforms:model>
 			<!-- exist URL is stored in an XML file -->
@@ -213,7 +212,7 @@
 					<xforms:send submission="query-solr"/>
 				</xforms:action>
 
-				<xforms:action ev:event="xforms-submit-error">					
+				<xforms:action ev:event="xforms-submit-error">
 					<xforms:send submission="save-config"/>
 				</xforms:action>
 			</xforms:submission>
@@ -222,13 +221,14 @@
 				xxforms:password="">
 				<xforms:message ev:event="xforms-submit-error" level="modal">Error Saving Config.</xforms:message>
 				<xforms:action ev:event="xforms-submit-done">
-					<xforms:send submission="create-records-collection"/>					
+					<xforms:send submission="create-records-collection"/>
 				</xforms:action>
-				
+
 			</xforms:submission>
-			
-			<xforms:submission id="create-records-collection" ref="instance('create-collection')" method="post" action="{instance('exist-url')}" replace="none" xxforms:username="admin" xxforms:password="">
-				<xforms:action ev:event="xforms-submit-done">					
+
+			<xforms:submission id="create-records-collection" ref="instance('create-collection')" method="post" action="{instance('exist-url')}" replace="none" xxforms:username="admin"
+				xxforms:password="">
+				<xforms:action ev:event="xforms-submit-done">
 					<xforms:send submission="load-config"/>
 				</xforms:action>
 			</xforms:submission>
@@ -333,21 +333,19 @@
 				<!--<xforms:send submission="temp-query"/>-->
 			</xforms:action>
 		</xforms:model>
-	</xhtml:head>
+	</head>
 
-	<xhtml:body class="yui-skin-sam">
-		<div id="doc4" class="yui-t2">
-			<!-- header -->
-			<xxforms:variable name="display_path">../</xxforms:variable>
-			<!--<xi:include href="header-admin.xml"/>-->
-			<div id="bd">
-				<xforms:group ref="instance('status')/text()">
-					<div class="success">
-						<xforms:output ref="instance('status')"/>
-					</div>
-				</xforms:group>
-				<div id="yui-main">
+	<body>
+		<xxforms:variable name="display_path">../</xxforms:variable>
+		<div class="yui3-g">
+			<div class="yui3-u-1">
+				<div class="content">
 					<div id="form">
+						<xforms:group ref="instance('status')/text()">
+							<div class="success">
+								<xforms:output ref="instance('status')"/>
+							</div>
+						</xforms:group>
 						<h2>Object Management</h2>
 						<ul>
 							<li>
@@ -569,35 +567,35 @@
 										</xforms:group>
 									</div>
 								</div>
-								<xhtml:table style="width:100%">
-									<xhtml:thead>
-										<xhtml:tr>
-											<xhtml:th style="width:70%">Title</xhtml:th>
-											<xhtml:th style="width:15%">Public<br/>View</xhtml:th>
-											<xhtml:th style="width:10%">Publish</xhtml:th>
-											<xhtml:th style="width:5%">Delete</xhtml:th>
-										</xhtml:tr>
-									</xhtml:thead>
-									<xhtml:tbody>
+								<table style="width:100%">
+									<thead>
+										<tr>
+											<th style="width:70%">Title</th>
+											<th style="width:15%">Public<br/>View</th>
+											<th style="width:10%">Publish</th>
+											<th style="width:5%">Delete</th>
+										</tr>
+									</thead>
+									<tbody>
 										<xforms:repeat nodeset="instance('list')/item">
 											<xxforms:variable name="id" select="id"/>
 											<xxforms:variable name="class" select="if (position() mod 2 = 0) then 'even-row' else 'odd-row'"/>
-											<xhtml:tr>
-												<xhtml:td class="{$class}">
+											<tr>
+												<td class="{$class}">
 													<div class="result_metadata">
-														<xhtml:h4>
-															<xhtml:a href="edit/?recordId={$id}">
+														<h4>
+															<a href="edit/?recordId={$id}">
 																<xforms:output ref="name"/>
 																<xforms:output ref="concat(' (', $id, ')')"/>
-															</xhtml:a>
-														</xhtml:h4>
+															</a>
+														</h4>
 													</div>
-												</xhtml:td>
-												<xhtml:td class="{$class} center"><xhtml:a href="{instance('config')/url}xml/{$id}" target="_blank">xml</xhtml:a> | <xhtml:a
-														href="{instance('config')/url}record/{$id}" target="_blank">html</xhtml:a></xhtml:td>
-												<!--<xhtml:td class="{$class} center"><xhtml:a href="display/{$id}.xml" target="_blank">xml</xhtml:a> | <xhtml:a href="show/{$id}" target="_blank"
-												>html</xhtml:a></xhtml:td>-->
-												<xhtml:td class="{$class} center">
+												</td>
+												<td class="{$class} center"><a href="{instance('config')/url}xml/{$id}" target="_blank">xml</a> | <a href="{instance('config')/url}record/{$id}"
+														target="_blank">html</a></td>
+												<!--<td class="{$class} center"><a href="display/{$id}.xml" target="_blank">xml</a> | <a href="show/{$id}" target="_blank"
+												>html</a></td>-->
+												<td class="{$class} center">
 													<xforms:group ref=".[published = 'true']">
 														<xforms:trigger appearance="minimal">
 															<xforms:label>unpublish</xforms:label>
@@ -612,78 +610,27 @@
 															<xforms:label>publish</xforms:label>
 															<xforms:action ev:event="DOMActivate">
 																<xforms:setvalue ref="instance('id')" value="$id"/>
-																<xforms:dispatch target="publish" name="fr-show"/>																
+																<xforms:dispatch target="publish" name="fr-show"/>
 															</xforms:action>
 														</xforms:trigger>
 													</xforms:group>
-												</xhtml:td>
-												<xhtml:td class="{$class} center">
+												</td>
+												<td class="{$class} center">
 													<xforms:trigger appearance="minimal">
 														<xforms:label>
-															<xhtml:img src="{$display_path}images/remove.gif"/>
+															<img src="{$display_path}images/remove.gif"/>
 														</xforms:label>
 														<xforms:action ev:event="DOMActivate">
 															<xforms:setvalue ref="instance('id')" value="$id"/>
 															<xforms:setvalue ref="instance('deleteId')/id" value="$id"/>
-															<xforms:dispatch target="delete" name="fr-show"/>															
+															<xforms:dispatch target="delete" name="fr-show"/>
 														</xforms:action>
 													</xforms:trigger>
-												</xhtml:td>
-											</xhtml:tr>
+												</td>
+											</tr>
 										</xforms:repeat>
-									</xhtml:tbody>
-								</xhtml:table>
-								<!-- dialogs -->
-								<fr:alert-dialog id="publish">
-									<fr:label>Publish</fr:label>
-									<fr:message>Do you want to publish this object to the search index?</fr:message>
-									<fr:negative-choice/>
-									<fr:positive-choice>
-										<xforms:action ev:event="DOMActivate">
-											<xforms:setvalue ref="instance('control-instance')/solr-core" value="instance('config')/solr_published"/>											
-											<xforms:send submission="eac-to-solr"/>
-											<xforms:send submission="commit"/>
-											<!-- reload table -->
-											<xforms:delete nodeset="instance('list')/*"/>
-											<xforms:setvalue ref="instance('control-instance')/solr-core" value="instance('config')/solr_all"/>
-											<xforms:send submission="query-solr"/>
-										</xforms:action>
-									</fr:positive-choice>
-								</fr:alert-dialog>
-								<fr:alert-dialog id="unpublish">
-									<fr:label>Unpublish</fr:label>
-									<fr:message>Do you want to remove this object from the search index?</fr:message>
-									<fr:negative-choice/>
-									<fr:positive-choice>
-										<xforms:action ev:event="DOMActivate">											
-											<xforms:setvalue ref="instance('control-instance')/solr-core" value="instance('config')/solr_published"/>
-											<xforms:send submission="delete-solr-doc"/>
-											<!-- reload table -->
-											<xforms:delete nodeset="instance('list')/*"/>
-											<xforms:setvalue ref="instance('control-instance')/solr-core" value="instance('config')/solr_all"/>
-											<xforms:send submission="query-solr"/>
-										</xforms:action>
-									</fr:positive-choice>
-								</fr:alert-dialog>
-								<fr:alert-dialog id="delete">
-									<fr:label>Delete</fr:label>
-									<fr:message>Are you sure you want to delete this object?</fr:message>
-									<fr:negative-choice/>
-									<fr:positive-choice>
-										<xforms:action ev:event="DOMActivate">											
-											<xforms:send submission="delete-doc"/>
-											<xforms:send submission="delete-kml"/>
-											<xforms:setvalue ref="instance('control-instance')/solr-core" value="instance('config')/solr_all"/>
-											<xforms:send submission="delete-solr-doc"/>
-											<xforms:setvalue ref="instance('control-instance')/solr-core" value="instance('config')/solr_published"/>
-											<xforms:send submission="delete-solr-doc"/>
-											<!-- reload table -->
-											<xforms:delete nodeset="instance('list')/*"/>
-											<xforms:setvalue ref="instance('control-instance')/solr-core" value="instance('config')/solr_all"/>
-											<xforms:send submission="query-solr"/>
-										</xforms:action>
-									</fr:positive-choice>
-								</fr:alert-dialog>
+									</tbody>
+								</table>								
 							</xforms:group>
 							<xforms:group ref=".[count(item)=0]">
 								<xforms:group ref=".[instance('control-instance')/solr-query = 'fulltext:*']">
@@ -704,6 +651,59 @@
 							</xforms:group>
 						</xforms:group>
 					</div>
+					
+					<!-- dialogs -->
+					<fr:alert-dialog id="publish">
+						<fr:label>Publish</fr:label>
+						<fr:message>Do you want to publish this object to the search index?</fr:message>
+						<fr:negative-choice/>
+						<fr:positive-choice>
+							<xforms:action ev:event="DOMActivate">
+								<xforms:setvalue ref="instance('control-instance')/solr-core" value="instance('config')/solr_published"/>
+								<xforms:send submission="eac-to-solr"/>
+								<xforms:send submission="commit"/>
+								<!-- reload table -->
+								<xforms:delete nodeset="instance('list')/*"/>
+								<xforms:setvalue ref="instance('control-instance')/solr-core" value="instance('config')/solr_all"/>
+								<xforms:send submission="query-solr"/>
+							</xforms:action>
+						</fr:positive-choice>
+					</fr:alert-dialog>
+					<fr:alert-dialog id="unpublish">
+						<fr:label>Unpublish</fr:label>
+						<fr:message>Do you want to remove this object from the search index?</fr:message>
+						<fr:negative-choice/>
+						<fr:positive-choice>
+							<xforms:action ev:event="DOMActivate">
+								<xforms:setvalue ref="instance('control-instance')/solr-core" value="instance('config')/solr_published"/>
+								<xforms:send submission="delete-solr-doc"/>
+								<!-- reload table -->
+								<xforms:delete nodeset="instance('list')/*"/>
+								<xforms:setvalue ref="instance('control-instance')/solr-core" value="instance('config')/solr_all"/>
+								<xforms:send submission="query-solr"/>
+							</xforms:action>
+						</fr:positive-choice>
+					</fr:alert-dialog>
+					<fr:alert-dialog id="delete">
+						<fr:label>Delete</fr:label>
+						<fr:message>Are you sure you want to delete this object?</fr:message>
+						<fr:negative-choice/>
+						<fr:positive-choice>
+							<xforms:action ev:event="DOMActivate">
+								<xforms:send submission="delete-doc"/>
+								<xforms:send submission="delete-kml"/>
+								<xforms:setvalue ref="instance('control-instance')/solr-core" value="instance('config')/solr_all"/>
+								<xforms:send submission="delete-solr-doc"/>
+								<xforms:setvalue ref="instance('control-instance')/solr-core" value="instance('config')/solr_published"/>
+								<xforms:send submission="delete-solr-doc"/>
+								<!-- reload table -->
+								<xforms:delete nodeset="instance('list')/*"/>
+								<xforms:setvalue ref="instance('control-instance')/solr-core" value="instance('config')/solr_all"/>
+								<xforms:send submission="query-solr"/>
+							</xforms:action>
+						</fr:positive-choice>
+					</fr:alert-dialog>
+					
 					<!-- mass publication dialogs -->
 					<fr:alert-dialog id="publish-all">
 						<fr:label>Publish All</fr:label>
@@ -762,8 +762,6 @@
 					<!--<fr:xforms-inspector id="orbeon-xforms-inspector"/>-->
 				</div>
 			</div>
-			<!-- footer -->
-			<!--<xi:include href="xslt/footer.xml"/>-->
 		</div>
-	</xhtml:body>
-</xhtml:html>
+	</body>
+</html>

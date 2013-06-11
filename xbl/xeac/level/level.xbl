@@ -1,5 +1,5 @@
-<xbl:xbl xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:xforms="http://www.w3.org/2002/xforms" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:xxforms="http://orbeon.org/oxf/xml/xforms"
-	xmlns:xbl="http://www.w3.org/ns/xbl" xmlns:xxbl="http://orbeon.org/oxf/xml/xbl" xmlns:xeac="https://github.com/ewg118/xEAC" xmlns:eac="urn:isbn:1-931666-33-4" xmlns="urn:isbn:1-931666-33-4">
+<xbl:xbl xmlns="http://www.w3.org/1999/xhtml" xmlns:xforms="http://www.w3.org/2002/xforms" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:xxforms="http://orbeon.org/oxf/xml/xforms"
+	xmlns:xbl="http://www.w3.org/ns/xbl" xmlns:xxbl="http://orbeon.org/oxf/xml/xbl" xmlns:xeac="https://github.com/ewg118/xEAC" xmlns:eac="urn:isbn:1-931666-33-4">
 	<xbl:binding id="xeac-level" element="xeac|level">
 		<xbl:template>
 			<xforms:group xbl:attr="model context ref bind" xxbl:scope="outer">
@@ -12,8 +12,8 @@
 
 					<xforms:group ref="$binding">
 						<div class="subsection">
-							<h5>Level</h5>							
-							<xforms:group ref="eac:item">	
+							<h5>Level</h5>
+							<xforms:group ref="eac:item">
 								<div>
 									<xforms:input ref=".">
 										<xforms:label>Item</xforms:label>
@@ -27,7 +27,7 @@
 									</xforms:trigger>
 								</div>
 							</xforms:group>
-							
+
 							<!--<xforms:repeat nodeset="eac:level">
 								<xeac:level/>
 							</xforms:repeat>-->
@@ -38,7 +38,7 @@
 
 					<!-- ******************************* MODEL *************************************** -->
 
-					<xforms:model id="level-model">
+					<xforms:model id="level-model" xmlns="urn:isbn:1-931666-33-4">
 						<xforms:instance id="level-template">
 							<level>
 								<item/>

@@ -1,5 +1,5 @@
-<xbl:xbl xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:xforms="http://www.w3.org/2002/xforms" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:xxforms="http://orbeon.org/oxf/xml/xforms"
-	xmlns:xbl="http://www.w3.org/ns/xbl" xmlns:xxbl="http://orbeon.org/oxf/xml/xbl" xmlns:xeac="https://github.com/ewg118/xEAC" xmlns:eac="urn:isbn:1-931666-33-4" xmlns="urn:isbn:1-931666-33-4">
+<xbl:xbl xmlns="http://www.w3.org/1999/xhtml" xmlns:xforms="http://www.w3.org/2002/xforms" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:xxforms="http://orbeon.org/oxf/xml/xforms"
+	xmlns:xbl="http://www.w3.org/ns/xbl" xmlns:xxbl="http://orbeon.org/oxf/xml/xbl" xmlns:xeac="https://github.com/ewg118/xEAC" xmlns:eac="urn:isbn:1-931666-33-4">
 	<xbl:binding id="xeac-descriptionTerm" element="xeac|descriptionTerm">
 		<xbl:template>
 			<xforms:group xbl:attr="model context ref bind" xxbl:scope="outer">
@@ -25,7 +25,7 @@
 							<span class="add">
 								<xforms:trigger appearance="minimal">
 									<xforms:label>
-										<xhtml:img src="{$display_path}images/add.gif"/>
+										<img src="{$display_path}images/add.gif"/>
 									</xforms:label>
 									<xxforms:show ev:event="DOMActivate" dialog="descriptionTerm-objects"/>
 								</xforms:trigger>
@@ -33,7 +33,7 @@
 							<xforms:trigger appearance="minimal">
 								<xforms:delete ev:event="DOMActivate" nodeset="."/>
 								<xforms:label>
-									<xhtml:img src="{$display_path}images/remove.gif"/>
+									<img src="{$display_path}images/remove.gif"/>
 								</xforms:label>
 							</xforms:trigger>
 							<xxforms:dialog id="descriptionTerm-objects" appearance="full" level="modal" close="true" draggable="true" visible="false">
@@ -133,7 +133,7 @@
 
 
 					<!-- ********************************************************************** -->
-					<xforms:model id="descriptionTerm-model">
+					<xforms:model id="descriptionTerm-model" xmlns="urn:isbn:1-931666-33-4">
 						<xforms:instance id="citation-template">
 							<citation/>
 						</xforms:instance>

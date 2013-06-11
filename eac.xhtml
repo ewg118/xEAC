@@ -4,24 +4,24 @@
     xEAC: https://github.com/ewg118/xEAC
     Apache License 2.0
 -->
-<xhtml:html xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:xforms="http://www.w3.org/2002/xforms" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ev="http://www.w3.org/2001/xml-events"
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:xforms="http://www.w3.org/2002/xforms" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ev="http://www.w3.org/2001/xml-events"
 	xmlns:xxforms="http://orbeon.org/oxf/xml/xforms" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:fr="http://orbeon.org/oxf/xml/form-runner" xmlns:xeac="https://github.com/ewg118/xEAC"
-	xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xxi="http://orbeon.org/oxf/xml/xinclude" xmlns:eac="urn:isbn:1-931666-33-4" xmlns="urn:isbn:1-931666-33-4"
-	xmlns:xxbl="http://orbeon.org/oxf/xml/xbl" xmlns:pipeline="java:org.orbeon.oxf.processor.pipeline.PipelineFunctionLibrary" xmlns:exf="http://www.exforms.org/exf/1-0"
-	xmlns:saxon="http://saxon.sf.net/" xmlns:oxf="http://www.orbeon.com/oxf/processors" xmlns:xbl="http://www.w3.org/ns/xbl" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-	xmlns:skos="http://www.w3.org/2004/02/skos/core#" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:dbpedia-owl="http://dbpedia.org/ontology/" xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
-	xmlns:dbpprop="http://dbpedia.org/property/">
+	xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xxi="http://orbeon.org/oxf/xml/xinclude" xmlns:eac="urn:isbn:1-931666-33-4" xmlns:xxbl="http://orbeon.org/oxf/xml/xbl"
+	xmlns:exf="http://www.exforms.org/exf/1-0" xmlns:saxon="http://saxon.sf.net/" xmlns:oxf="http://www.orbeon.com/oxf/processors" xmlns:xbl="http://www.w3.org/ns/xbl"
+	xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:skos="http://www.w3.org/2004/02/skos/core#" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:dbpedia-owl="http://dbpedia.org/ontology/"
+	xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#" xmlns:dbpprop="http://dbpedia.org/property/">
 
-	<xhtml:head>
-		<xhtml:title>xEAC: Edit EAC-CPF Record</xhtml:title>
-		<link rel="stylesheet" type="text/css" href="/apps/xeac/css/grids-min.css"/>
-		<link rel="stylesheet" type="text/css" href="/apps/xeac/css/reset-fonts-grids.css"/>
-		<link rel="stylesheet" type="text/css" href="/apps/xeac/css/base-min.css"/>
-		<link rel="stylesheet" type="text/css" href="/apps/xeac/css/fonts-min.css"/>
-		<link rel="stylesheet" href="/apps/xeac/css/style.css"/>
-		<link rel="stylesheet" href="/apps/xeac/css/themes/smoothness.css"/>
-		<script type="text/javascript" src="/apps/xeac/javascript/jquery-1.4.2.min.js"/>
-		<script type="text/javascript" src="/apps/xeac/javascript/menu.js"/>d <xforms:model>
+	<head>
+		<title>xEAC: Edit EAC-CPF Record</title>
+		<link rel="stylesheet" href="/fr/style/bootstrap/css/bootstrap.css" type="text/css"/>
+		<link rel="stylesheet" href="/fr/style/form-runner-bootstrap-override.css" type="text/css"/>
+		<link rel="stylesheet" href="/config/theme/examples.css" type="text/css" media="all"/>
+		<link rel="shortcut icon" href="/ops/images/orbeon-icon-16.ico"/>
+		<link rel="icon" href="/ops/images/orbeon-icon-16.png" type="image/png"/>
+		<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/3.8.0/build/cssgrids/grids-min.css"/>
+		<link rel="stylesheet" type="text/css" href="/apps/xeac/css/style.css"/>
+
+		<xforms:model xmlns="urn:isbn:1-931666-33-4">
 			<xs:schema elementFormDefault="qualified" attributeFormDefault="unqualified">
 				<xs:simpleType name="iso8601date">
 					<xs:restriction base="xs:string">
@@ -62,7 +62,7 @@
 				</eac-cpf>
 			</xforms:instance>
 			<xforms:instance id="eac-template">
-				<eac-cpf xmlns="urn:isbn:1-931666-33-4" xmlns:owl="http://www.w3.org/2002/07/owl#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:xlink="http://www.w3.org/1999/xlink">
+				<eac-cpf xmlns="urn:isbn:1-931666-33-4" xmlns:xlink="http://www.w3.org/1999/xlink">
 					<control>
 						<recordId/>
 						<maintenanceAgency>
@@ -249,7 +249,7 @@
 			</xforms:instance>
 			<!-- ******************* EAC ELEMENTS ****************** -->
 			<!-- control -->
-			<xforms:instance id="maintenanceEvent-template">
+			<xforms:instance id="maintenanceEvent-template" xxforms:exclude-result-prefixes="#all">
 				<maintenanceEvent>
 					<eventType/>
 					<eventDateTime standardDateTime=""/>
@@ -257,111 +257,111 @@
 					<agent/>
 				</maintenanceEvent>
 			</xforms:instance>
-			<xforms:instance id="conventionDeclaration-template">
+			<xforms:instance id="conventionDeclaration-template" xxforms:exclude-result-prefixes="#all">
 				<conventionDeclaration>
 					<abbreviation/>
 					<citation/>
 				</conventionDeclaration>
 			</xforms:instance>
-			<xforms:instance id="eventDescription-template">
+			<xforms:instance id="eventDescription-template" xxforms:exclude-result-prefixes="#all">
 				<eventDescription/>
 			</xforms:instance>
-			<xforms:instance id="otherRecordId-template">
+			<xforms:instance id="otherRecordId-template" xxforms:exclude-result-prefixes="#all">
 				<otherRecordId/>
 			</xforms:instance>
-			<xforms:instance id="sources-template">
+			<xforms:instance id="sources-template" xxforms:exclude-result-prefixes="#all">
 				<sources/>
 			</xforms:instance>
-			<xforms:instance id="source-template">
+			<xforms:instance id="source-template" xxforms:exclude-result-prefixes="#all">
 				<source xlink:type="simple" xlink:href=""/>
 			</xforms:instance>
 			<!-- cpfDescription -->
-			<xforms:instance id="description-template">
+			<xforms:instance id="description-template" xxforms:exclude-result-prefixes="#all">
 				<description/>
 			</xforms:instance>
-			<xforms:instance id="relations-template">
+			<xforms:instance id="relations-template" xxforms:exclude-result-prefixes="#all">
 				<relations/>
 			</xforms:instance>
 			<!-- identity -->
-			<xforms:instance id="nameEntry-template">
+			<xforms:instance id="nameEntry-template" xxforms:exclude-result-prefixes="#all">
 				<nameEntry>
 					<part/>
 				</nameEntry>
 			</xforms:instance>
-			<xforms:instance id="part-template">
+			<xforms:instance id="part-template" xxforms:exclude-result-prefixes="#all">
 				<part/>
 			</xforms:instance>
-			<xforms:instance id="authorizedForm-template">
+			<xforms:instance id="authorizedForm-template" xxforms:exclude-result-prefixes="#all">
 				<authorizedForm/>
 			</xforms:instance>
-			<xforms:instance id="alternativeForm-template">
+			<xforms:instance id="alternativeForm-template" xxforms:exclude-result-prefixes="#all">
 				<alternativeForm/>
 			</xforms:instance>
-			<xforms:instance id="preferredForm-template">
+			<xforms:instance id="preferredForm-template" xxforms:exclude-result-prefixes="#all">
 				<preferredForm/>
 			</xforms:instance>
-			<xforms:instance id="nameEntryParallel-template">
+			<xforms:instance id="nameEntryParallel-template" xxforms:exclude-result-prefixes="#all">
 				<nameEntryParallel/>
 			</xforms:instance>
-			<xforms:instance id="entityId-template">
+			<xforms:instance id="entityId-template" xxforms:exclude-result-prefixes="#all">
 				<entityId/>
 			</xforms:instance>
-			<xforms:instance id="descriptiveNote-template">
+			<xforms:instance id="descriptiveNote-template" xxforms:exclude-result-prefixes="#all">
 				<descriptiveNote>
 					<p/>
 				</descriptiveNote>
 			</xforms:instance>
-			<xforms:instance id="useDates-template">
+			<xforms:instance id="useDates-template" xxforms:exclude-result-prefixes="#all">
 				<useDates/>
 			</xforms:instance>
 			<!-- description -->
-			<xforms:instance id="abstract-template">
+			<xforms:instance id="abstract-template" xxforms:exclude-result-prefixes="#all">
 				<abstract/>
 			</xforms:instance>
-			<xforms:instance id="biogHist-template">
+			<xforms:instance id="biogHist-template" xxforms:exclude-result-prefixes="#all">
 				<biogHist/>
 			</xforms:instance>
-			<xforms:instance id="chronList-template">
+			<xforms:instance id="chronList-template" xxforms:exclude-result-prefixes="#all">
 				<chronList>
 					<chronItem>
 						<event/>
 					</chronItem>
 				</chronList>
 			</xforms:instance>
-			<xforms:instance id="citation-template">
+			<xforms:instance id="citation-template" xxforms:exclude-result-prefixes="#all">
 				<citation/>
 			</xforms:instance>
-			<xforms:instance id="existDates-template">
+			<xforms:instance id="existDates-template" xxforms:exclude-result-prefixes="#all">
 				<existDates/>
 			</xforms:instance>
-			<xforms:instance id="dateRange-template">
+			<xforms:instance id="dateRange-template" xxforms:exclude-result-prefixes="#all">
 				<dateRange>
 					<fromDate standardDate=""/>
 					<toDate standardDate=""/>
 				</dateRange>
 			</xforms:instance>
-			<xforms:instance id="function-template">
+			<xforms:instance id="function-template" xxforms:exclude-result-prefixes="#all">
 				<function>
 					<term/>
 				</function>
 			</xforms:instance>
-			<xforms:instance id="functions-template">
+			<xforms:instance id="functions-template" xxforms:exclude-result-prefixes="#all">
 				<functions>
 					<function>
 						<term/>
 					</function>
 				</functions>
 			</xforms:instance>
-			<xforms:instance id="generalContext-template">
+			<xforms:instance id="generalContext-template" xxforms:exclude-result-prefixes="#all">
 				<generalContext/>
 			</xforms:instance>
-			<xforms:instance id="languageUsed-template">
+			<xforms:instance id="languageUsed-template" xxforms:exclude-result-prefixes="#all">
 				<languageUsed>
 					<language languageCode=""/>
 					<script scriptCode=""/>
 				</languageUsed>
 			</xforms:instance>
-			<xforms:instance id="languagesUsed-template">
+			<xforms:instance id="languagesUsed-template" xxforms:exclude-result-prefixes="#all">
 				<languagesUsed>
 					<languageUsed>
 						<language languageCode=""/>
@@ -369,91 +369,91 @@
 					</languageUsed>
 				</languagesUsed>
 			</xforms:instance>
-			<xforms:instance id="legalStatus-template">
+			<xforms:instance id="legalStatus-template" xxforms:exclude-result-prefixes="#all">
 				<legalStatus>
 					<term/>
 				</legalStatus>
 			</xforms:instance>
-			<xforms:instance id="legalStatuses-template">
+			<xforms:instance id="legalStatuses-template" xxforms:exclude-result-prefixes="#all">
 				<legalStatuses>
 					<legalStatus>
 						<term/>
 					</legalStatus>
 				</legalStatuses>
 			</xforms:instance>
-			<xforms:instance id="list-template">
+			<xforms:instance id="list-template" xxforms:exclude-result-prefixes="#all">
 				<list>
 					<item/>
 				</list>
 			</xforms:instance>
-			<xforms:instance id="localDescription-template">
+			<xforms:instance id="localDescription-template" xxforms:exclude-result-prefixes="#all">
 				<localDescription>
 					<term/>
 				</localDescription>
 			</xforms:instance>
-			<xforms:instance id="localDescriptions-template">
+			<xforms:instance id="localDescriptions-template" xxforms:exclude-result-prefixes="#all">
 				<localDescriptions>
 					<localDescription>
 						<term/>
 					</localDescription>
 				</localDescriptions>
 			</xforms:instance>
-			<xforms:instance id="mandate-template">
+			<xforms:instance id="mandate-template" xxforms:exclude-result-prefixes="#all">
 				<mandate>
 					<term/>
 				</mandate>
 			</xforms:instance>
-			<xforms:instance id="mandates-template">
+			<xforms:instance id="mandates-template" xxforms:exclude-result-prefixes="#all">
 				<mandates>
 					<mandate>
 						<term/>
 					</mandate>
 				</mandates>
 			</xforms:instance>
-			<xforms:instance id="occupation-template">
+			<xforms:instance id="occupation-template" xxforms:exclude-result-prefixes="#all">
 				<occupation>
 					<term/>
 				</occupation>
 			</xforms:instance>
-			<xforms:instance id="occupations-template">
+			<xforms:instance id="occupations-template" xxforms:exclude-result-prefixes="#all">
 				<occupations>
 					<occupation>
 						<term/>
 					</occupation>
 				</occupations>
 			</xforms:instance>
-			<xforms:instance id="outline-template">
+			<xforms:instance id="outline-template" xxforms:exclude-result-prefixes="#all">
 				<outline>
 					<level>
 						<item/>
 					</level>
 				</outline>
 			</xforms:instance>
-			<xforms:instance id="p-template">
+			<xforms:instance id="p-template" xxforms:exclude-result-prefixes="#all">
 				<p/>
 			</xforms:instance>
-			<xforms:instance id="place-template">
+			<xforms:instance id="place-template" xxforms:exclude-result-prefixes="#all">
 				<place>
 					<placeEntry/>
 				</place>
 			</xforms:instance>
-			<xforms:instance id="places-template">
+			<xforms:instance id="places-template" xxforms:exclude-result-prefixes="#all">
 				<places>
 					<place>
 						<term/>
 					</place>
 				</places>
 			</xforms:instance>
-			<xforms:instance id="structureOrGenealogy-template">
+			<xforms:instance id="structureOrGenealogy-template" xxforms:exclude-result-prefixes="#all">
 				<structureOrGenealogy/>
 			</xforms:instance>
 			<!-- relations -->
-			<xforms:instance id="cpfRelation-template">
+			<xforms:instance id="cpfRelation-template" xxforms:exclude-result-prefixes="#all">
 				<cpfRelation xlink:type="simple">
 					<relationEntry/>
 				</cpfRelation>
 			</xforms:instance>
-			<xforms:instance id="resourceRelation-template">
+			<xforms:instance id="resourceRelation-template" xxforms:exclude-result-prefixes="#all">
 				<resourceRelation xlink:type="simple">
 					<relationEntry/>
 				</resourceRelation>
@@ -861,22 +861,20 @@
 		<xi:include href="oxf:/xbl/xeac/reorder/reorder.xbl" xi:omit-xml-base="true"/>
 		<xi:include href="oxf:/xbl/xeac/resourceRelation/resourceRelation.xbl" xi:omit-xml-base="true"/>
 		<xi:include href="oxf:/xbl/xeac/structureOrGenealogy/structureOrGenealogy.xbl" xi:omit-xml-base="true"/>
-	</xhtml:head>
-	<xhtml:body class="yui-skin-sam">
-		<div id="doc4" class="yui-t2">
-			<!-- header -->
-			<xxforms:variable name="display_path">../../</xxforms:variable>
-			<!--<xi:include href="header-admin.xml"/>-->
-			<div id="bd">
-				<xforms:group ref="instance('status')/text()">
-					<div class="success">
-						<xforms:output ref="instance('status')"/>
-					</div>
-				</xforms:group>
-				<p>
-					<a href="../">&lt; Return</a>
-				</p>
-				<div id="yui-main">
+	</head>
+	<body>
+		<xxforms:variable name="display_path">../../</xxforms:variable>
+		<div class="yui3-g">
+			<div class="yui3-u-1">
+				<div class="content">
+					<xforms:group ref="instance('status')/text()">
+						<div class="success">
+							<xforms:output ref="instance('status')"/>
+						</div>
+					</xforms:group>
+					<p>
+						<a href="../">&lt; Return</a>
+					</p>
 					<div id="form">
 						<div class="submission">
 							<xforms:trigger appearance="minimal">
@@ -906,7 +904,7 @@
 								<span class="add">
 									<xforms:trigger appearance="minimal">
 										<xforms:label>
-											<xhtml:img src="{$display_path}images/add.gif"/>Import VIAF Data</xforms:label>
+											<img src="{$display_path}images/add.gif"/>Import VIAF Data</xforms:label>
 										<xxforms:show ev:event="DOMActivate" dialog="import-viaf-dialog"/>
 									</xforms:trigger>
 								</span>
@@ -915,7 +913,7 @@
 								<span class="add">
 									<xforms:trigger appearance="minimal">
 										<xforms:label>
-											<xhtml:img src="{$display_path}images/add.gif"/>Import DBpedia Data</xforms:label>
+											<img src="{$display_path}images/add.gif"/>Import DBpedia Data</xforms:label>
 										<xxforms:show ev:event="DOMActivate" dialog="import-dbpedia-dialog"/>
 									</xforms:trigger>
 								</span>
@@ -1000,7 +998,7 @@
 												<xforms:trigger appearance="minimal">
 													<xforms:delete ev:event="DOMActivate" nodeset="."/>
 													<xforms:label>
-														<xhtml:img src="{$display_path}images/remove.gif"/>
+														<img src="{$display_path}images/remove.gif"/>
 													</xforms:label>
 												</xforms:trigger>
 											</xforms:group>
@@ -1059,13 +1057,13 @@
 														<xforms:trigger appearance="minimal">
 															<xforms:delete ev:event="DOMActivate" nodeset="."/>
 															<xforms:label>
-																<xhtml:img src="{$display_path}images/remove.gif"/>
+																<img src="{$display_path}images/remove.gif"/>
 															</xforms:label>
 														</xforms:trigger>
 													</xforms:group>
 												</div>
 											</xforms:repeat>
-											<xforms:group ref="eac:authorizedForm|eac:preferredForm|eac:alternativeForm">
+											<xforms:repeat nodeset="eac:authorizedForm|eac:preferredForm|eac:alternativeForm">
 												<div>
 													<xforms:select1 ref=".">
 														<xforms:label>
@@ -1086,11 +1084,11 @@
 													<xforms:trigger appearance="minimal">
 														<xforms:delete ev:event="DOMActivate" nodeset="."/>
 														<xforms:label>
-															<xhtml:img src="{$display_path}images/remove.gif"/>
+															<img src="{$display_path}images/remove.gif"/>
 														</xforms:label>
 													</xforms:trigger>
 												</div>
-											</xforms:group>
+											</xforms:repeat>
 											<xforms:group ref="eac:useDates">
 												<xeac:datesContainer/>
 											</xforms:group>
@@ -1105,7 +1103,7 @@
 											<xforms:trigger appearance="minimal">
 												<xforms:delete ev:event="DOMActivate" nodeset="."/>
 												<xforms:label>
-													<xhtml:img src="{$display_path}images/remove.gif"/>
+													<img src="{$display_path}images/remove.gif"/>
 												</xforms:label>
 											</xforms:trigger>
 										</div>
@@ -1128,7 +1126,7 @@
 										</xforms:trigger>
 									</div>
 									<xforms:group ref=".[count(instance('viaf-response')//item) &gt; 0]">
-										<xforms:select1 ref="instance('viaf-id')" appearance="compact" id="select-list" xhtml:size="10">
+										<xforms:select1 ref="instance('viaf-id')" appearance="compact" id="select-list" size="10">
 											<xforms:label>Name</xforms:label>
 											<xforms:alert>Required</xforms:alert>
 											<xforms:itemset nodeset="instance('viaf-response')//item">
@@ -1196,14 +1194,12 @@
 												<xforms:action ev:event="DOMActivate">
 													<xxforms:variable name="resource" select="concat('http://dbpedia.org/resource/', substring-after(instance('dbpedia-id'), 'resource/'))"/>
 													<xxforms:variable name="lang" select="instance('config')/lang"/>
-													
 													<!-- set recordId if it is blank -->
-													<xforms:setvalue ref="instance('doc')/eac:control/eac:recordId" value="lower-case(substring-after(instance('dbpedia-id'), 'resource/'))" if="not(string(instance('doc')/eac:control/eac:recordId))"/>
-													
+													<xforms:setvalue ref="instance('doc')/eac:control/eac:recordId" value="lower-case(substring-after(instance('dbpedia-id'), 'resource/'))"
+														if="not(string(instance('doc')/eac:control/eac:recordId))"/>
 													<!-- set entityType if wikipedia says it's a person -->
-													<xforms:setvalue ref="instance('doc')/eac:cpfDescription/eac:identity/eac:entityType" value="'person'" if="instance('dbpedia-rdf')/rdf:Description[@rdf:about=$resource]/rdf:type[@rdf:resource='http://schema.org/Person'] and not(string(instance('doc')/eac:cpfDescription/eac:identity/eac:entityType))"/>
-													
-													
+													<xforms:setvalue ref="instance('doc')/eac:cpfDescription/eac:identity/eac:entityType" value="'person'"
+														if="instance('dbpedia-rdf')/rdf:Description[@rdf:about=$resource]/rdf:type[@rdf:resource='http://schema.org/Person'] and not(string(instance('doc')/eac:cpfDescription/eac:identity/eac:entityType))"/>
 													<!--insert otherRecordId -->
 													<xforms:insert context="instance('doc')/eac:control" nodeset="eac:recordId" position="after" origin="instance('otherRecordId-template')"/>
 													<xforms:setvalue ref="instance('doc')/eac:control/eac:otherRecordId[1]" value="$resource"/>
@@ -1212,7 +1208,6 @@
 														if="count(instance('doc')/eac:control/eac:sources) = 0"/>
 													<xforms:insert context="instance('doc')/eac:control/eac:sources" nodeset="./child::node()[last()]" origin="instance('source-template')"/>
 													<xforms:setvalue ref="instance('doc')/eac:control/eac:sources/eac:source[last()]/@xlink:href" value="$resource"/>
-													
 													<!-- import names -->
 													<xforms:action if="names = 'true'">
 														<!-- insert conventionDeclaration -->
@@ -1450,7 +1445,7 @@
 									<span class="add">
 										<xforms:trigger appearance="minimal">
 											<xforms:label>
-												<xhtml:img src="{$display_path}images/add.gif"/>
+												<img src="{$display_path}images/add.gif"/>
 											</xforms:label>
 											<xxforms:show ev:event="DOMActivate" dialog="description-objects"/>
 										</xforms:trigger>
@@ -1458,7 +1453,7 @@
 									<xforms:trigger appearance="minimal">
 										<xforms:dispatch target="remove-description" name="fr-show" ev:event="DOMActivate"/>
 										<xforms:label>
-											<xhtml:img src="{$display_path}images/remove.gif"/>
+											<img src="{$display_path}images/remove.gif"/>
 										</xforms:label>
 									</xforms:trigger>
 									<xxforms:dialog id="description-objects" appearance="full" level="modal" close="true" draggable="true" visible="false">
@@ -1623,7 +1618,7 @@
 											<span class="add">
 												<xforms:trigger appearance="minimal">
 													<xforms:label>
-														<xhtml:img src="{$display_path}images/add.gif"/>
+														<img src="{$display_path}images/add.gif"/>
 													</xforms:label>
 													<xxforms:show ev:event="DOMActivate" dialog="biogHist-objects"/>
 												</xforms:trigger>
@@ -1631,7 +1626,7 @@
 											<xforms:trigger appearance="minimal">
 												<xforms:delete nodeset="." ev:event="DOMActivate"/>
 												<xforms:label>
-													<xhtml:img src="{$display_path}images/remove.gif"/>
+													<img src="{$display_path}images/remove.gif"/>
 												</xforms:label>
 											</xforms:trigger>
 											<xxforms:dialog id="biogHist-objects" appearance="full" level="modal" close="true" draggable="true" visible="false">
@@ -1703,7 +1698,7 @@
 												<xforms:trigger appearance="minimal">
 													<xforms:delete ev:event="DOMActivate" nodeset="."/>
 													<xforms:label>
-														<xhtml:img src="{$display_path}images/remove.gif"/>
+														<img src="{$display_path}images/remove.gif"/>
 													</xforms:label>
 												</xforms:trigger></div>
 										</xforms:group>
@@ -1796,7 +1791,7 @@
 									<xforms:trigger appearance="minimal">
 										<xforms:dispatch target="remove-relations" name="fr-show" ev:event="DOMActivate"/>
 										<xforms:label>
-											<xhtml:img src="{$display_path}images/remove.gif"/>
+											<img src="{$display_path}images/remove.gif"/>
 										</xforms:label>
 									</xforms:trigger>
 									<fr:alert-dialog id="remove-relations">
@@ -1825,22 +1820,24 @@
 											<xforms:insert ev:event="DOMActivate" context="." nodeset="./child::node()[last()]" origin="instance('resourceRelation-template')"/>
 										</xforms:trigger>
 									</div>
-									<xforms:group ref=".[count(eac:cpfRelation) &gt; 0]">
-										<div class="subsection">
-											<h2>CPF Relations</h2>
-											<xforms:repeat nodeset="eac:cpfRelation">
-												<xeac:cpfRelation/>
-											</xforms:repeat>
+									<div class="yui3-g">
+										<div class="yui3-u-1-2">
+											<xforms:group ref=".[count(eac:cpfRelation) &gt; 0]">
+												<h2>CPF Relations</h2>
+												<xforms:repeat nodeset="eac:cpfRelation">
+													<xeac:cpfRelation/>
+												</xforms:repeat>
+											</xforms:group>
 										</div>
-									</xforms:group>
-									<xforms:group ref=".[count(eac:resourceRelation) &gt; 0]">
-										<div class="subsection">
-											<h2>Resource Relations</h2>
-											<xforms:repeat nodeset="eac:resourceRelation">
-												<xeac:resourceRelation/>
-											</xforms:repeat>
+										<div class="yui3-u-1-2">
+											<xforms:group ref=".[count(eac:resourceRelation) &gt; 0]">
+												<h2>Resource Relations</h2>
+												<xforms:repeat nodeset="eac:resourceRelation">
+													<xeac:resourceRelation/>
+												</xforms:repeat>
+											</xforms:group>
 										</div>
-									</xforms:group>
+									</div>
 								</div>
 							</fr:tab>
 							<!--**************************************** CONTROL **********************************-->
@@ -1875,141 +1872,146 @@
 										</xforms:itemset>
 									</xforms:select1>
 								</div>
-								<xforms:group ref="eac:maintenanceHistory">
-									<div class="section">
-										<h2>Maintenance History</h2>
-										<div class="trigger_container">
-											<xforms:trigger appearance="minimal">
-												<xforms:label>
-													<xhtml:img src="{$display_path}images/add.gif"/>Maintenance Event</xforms:label>
-												<xforms:action ev:event="DOMActivate">
-													<xforms:insert context="." origin="instance('maintenanceEvent-template')" nodeset="./child::node()[last()]"/>
-												</xforms:action>
-											</xforms:trigger>
-										</div>
-										<xforms:repeat nodeset="eac:maintenanceEvent">
-											<div class="subsection">
-												<h3>Maintenance Event</h3>
+								<div class="yui3-g">
+									<div class="yui3-u-1-2">
+										<xforms:group ref="eac:maintenanceHistory">
+											<div class="section">
+												<h2>Maintenance History</h2>
 												<div class="trigger_container">
-													<xforms:group ref=".[count(eac:eventDescription) = 0]">
-														<xforms:trigger appearance="minimal">
-															<xforms:label>
-																<xhtml:img src="{$display_path}images/add.gif"/>Event Description</xforms:label>
-															<xforms:insert ev:event="DOMActivate" context="." origin="instance('eventDescription-template')" nodeset="./child::node()[last()]"/>
-														</xforms:trigger>
-													</xforms:group>
+													<xforms:trigger appearance="minimal">
+														<xforms:label>
+															<img src="{$display_path}images/add.gif"/>Maintenance Event</xforms:label>
+														<xforms:action ev:event="DOMActivate">
+															<xforms:insert context="." origin="instance('maintenanceEvent-template')" nodeset="./child::node()[last()]"/>
+														</xforms:action>
+													</xforms:trigger>
 												</div>
-												<div>
-													<xforms:select1 ref="eac:eventType">
-														<xforms:label>Event Type</xforms:label>
-														<xforms:alert>Required</xforms:alert>
-														<xforms:item>
-															<xforms:label>Select...</xforms:label>
-															<xforms:value/>
-														</xforms:item>
-														<xforms:itemset nodeset="instance('eventType-list')/item">
-															<xforms:label ref="."/>
-															<xforms:value ref="."/>
-														</xforms:itemset>
-													</xforms:select1>
-												</div>
-												<div>
-													<xforms:input ref="eac:eventDateTime/@standardDateTime">
-														<xforms:label>Event Date/Time</xforms:label>
-														<xforms:alert>Required</xforms:alert>
-													</xforms:input>
-												</div>
-												<div>
-													<xforms:select1 ref="eac:agentType">
-														<xforms:label>Agent Type</xforms:label>
-														<xforms:alert>Required</xforms:alert>
-														<xforms:item>
-															<xforms:label>Select...</xforms:label>
-															<xforms:value/>
-														</xforms:item>
-														<xforms:itemset nodeset="instance('agentType-list')/item">
-															<xforms:label ref="."/>
-															<xforms:value ref="."/>
-														</xforms:itemset>
-													</xforms:select1>
-												</div>
-												<div>
-													<xforms:input ref="eac:agent">
-														<xforms:label>Agent</xforms:label>
-														<xforms:alert>Required</xforms:alert>
-													</xforms:input>
-												</div>
-												<xforms:group ref="eac:eventDescription">
-													<div>
-														<xforms:input ref=".">
-															<xforms:label>Event Description</xforms:label>
-														</xforms:input>
-														<xforms:trigger appearance="minimal">
-															<xforms:delete ev:event="DOMActivate" nodeset="."/>
-															<xforms:label>
-																<xhtml:img src="{$display_path}images/remove.gif"/>
-															</xforms:label>
-														</xforms:trigger>
+												<xforms:repeat nodeset="eac:maintenanceEvent">
+													<div class="subsection">
+														<h3>Maintenance Event</h3>
+														<div class="trigger_container">
+															<xforms:group ref=".[count(eac:eventDescription) = 0]">
+																<xforms:trigger appearance="minimal">
+																	<xforms:label>
+																		<img src="{$display_path}images/add.gif"/>Event Description</xforms:label>
+																	<xforms:insert ev:event="DOMActivate" context="." origin="instance('eventDescription-template')" nodeset="./child::node()[last()]"/>
+																</xforms:trigger>
+															</xforms:group>
+														</div>
+														<div>
+															<xforms:select1 ref="eac:eventType">
+																<xforms:label>Event Type</xforms:label>
+																<xforms:alert>Required</xforms:alert>
+																<xforms:item>
+																	<xforms:label>Select...</xforms:label>
+																	<xforms:value/>
+																</xforms:item>
+																<xforms:itemset nodeset="instance('eventType-list')/item">
+																	<xforms:label ref="."/>
+																	<xforms:value ref="."/>
+																</xforms:itemset>
+															</xforms:select1>
+														</div>
+														<div>
+															<xforms:input ref="eac:eventDateTime/@standardDateTime">
+																<xforms:label>Event Date/Time</xforms:label>
+																<xforms:alert>Required</xforms:alert>
+															</xforms:input>
+														</div>
+														<div>
+															<xforms:select1 ref="eac:agentType">
+																<xforms:label>Agent Type</xforms:label>
+																<xforms:alert>Required</xforms:alert>
+																<xforms:item>
+																	<xforms:label>Select...</xforms:label>
+																	<xforms:value/>
+																</xforms:item>
+																<xforms:itemset nodeset="instance('agentType-list')/item">
+																	<xforms:label ref="."/>
+																	<xforms:value ref="."/>
+																</xforms:itemset>
+															</xforms:select1>
+														</div>
+														<div>
+															<xforms:input ref="eac:agent">
+																<xforms:label>Agent</xforms:label>
+																<xforms:alert>Required</xforms:alert>
+															</xforms:input>
+														</div>
+														<xforms:group ref="eac:eventDescription">
+															<div>
+																<xforms:input ref=".">
+																	<xforms:label>Event Description</xforms:label>
+																</xforms:input>
+																<xforms:trigger appearance="minimal">
+																	<xforms:delete ev:event="DOMActivate" nodeset="."/>
+																	<xforms:label>
+																		<img src="{$display_path}images/remove.gif"/>
+																	</xforms:label>
+																</xforms:trigger>
+															</div>
+														</xforms:group>
 													</div>
-												</xforms:group>
+												</xforms:repeat>
 											</div>
-										</xforms:repeat>
+										</xforms:group>
 									</div>
-								</xforms:group>
-								<!-- conventionDeclaration -->
-								<div class="section">
-									<h2>Convention Declarations</h2>
-									<div class="trigger_container">
-										<xforms:trigger appearance="minimal">
-											<xforms:label>
-												<xhtml:img src="{$display_path}images/add.gif"/>Convention Declaration</xforms:label>
-											<xforms:insert ev:event="DOMActivate" context="." origin="instance('conventionDeclaration-template')" nodeset="./child::node()[last()]"/>
-										</xforms:trigger>
-									</div>
-									<xforms:repeat nodeset="eac:conventionDeclaration">
-										<xxforms:variable name="position" select="position()"/>
-										<div class="subsection">
-											<h3>Declaration</h3>
-											<xforms:trigger appearance="minimal">
-												<xforms:action ev:event="DOMActivate">
-													<xforms:setvalue ref="instance('control-instance')/pos" value="$position"/>
-													<xforms:dispatch target="remove-conventionDeclaration" name="fr-show"/>
-												</xforms:action>
-												<xforms:label>
-													<xhtml:img src="{$display_path}images/remove.gif"/>
-												</xforms:label>
-											</xforms:trigger>
+									<div class="yui3-u-1-2">
+										<div class="section">
+											<h2>Convention Declarations</h2>
 											<div class="trigger_container">
 												<xforms:trigger appearance="minimal">
 													<xforms:label>
-														<xhtml:img src="{$display_path}images/add.gif"/>Descriptive Note</xforms:label>
-													<xforms:insert ev:event="DOMActivate" context="." origin="instance('descriptiveNote-template')" nodeset="./child::node()[last()]"/>
+														<img src="{$display_path}images/add.gif"/>Convention Declaration</xforms:label>
+													<xforms:insert ev:event="DOMActivate" context="." origin="instance('conventionDeclaration-template')" nodeset="./child::node()[last()]"/>
 												</xforms:trigger>
 											</div>
-											<div>
-												<xforms:input ref="eac:abbreviation">
-													<xforms:label>Abbreviation</xforms:label>
-													<xforms:alert>Required</xforms:alert>
-												</xforms:input>
-											</div>
-											<div>
-												<xforms:input ref="eac:citation">
-													<xforms:label>Citation</xforms:label>
-													<xforms:alert>Required</xforms:alert>
-												</xforms:input>
-											</div>
-											<xforms:group ref="eac:descriptiveNote">
-												<xeac:descriptiveNote/>
-											</xforms:group>
+											<xforms:repeat nodeset="eac:conventionDeclaration">
+												<xxforms:variable name="position" select="position()"/>
+												<div class="subsection">
+													<h3>Declaration</h3>
+													<xforms:trigger appearance="minimal">
+														<xforms:action ev:event="DOMActivate">
+															<xforms:setvalue ref="instance('control-instance')/pos" value="$position"/>
+															<xforms:dispatch target="remove-conventionDeclaration" name="fr-show"/>
+														</xforms:action>
+														<xforms:label>
+															<img src="{$display_path}images/remove.gif"/>
+														</xforms:label>
+													</xforms:trigger>
+													<div class="trigger_container">
+														<xforms:trigger appearance="minimal">
+															<xforms:label>
+																<img src="{$display_path}images/add.gif"/>Descriptive Note</xforms:label>
+															<xforms:insert ev:event="DOMActivate" context="." origin="instance('descriptiveNote-template')" nodeset="./child::node()[last()]"/>
+														</xforms:trigger>
+													</div>
+													<div>
+														<xforms:input ref="eac:abbreviation">
+															<xforms:label>Abbreviation</xforms:label>
+															<xforms:alert>Required</xforms:alert>
+														</xforms:input>
+													</div>
+													<div>
+														<xforms:input ref="eac:citation">
+															<xforms:label>Citation</xforms:label>
+															<xforms:alert>Required</xforms:alert>
+														</xforms:input>
+													</div>
+													<xforms:group ref="eac:descriptiveNote">
+														<xeac:descriptiveNote/>
+													</xforms:group>
+												</div>
+											</xforms:repeat>
 										</div>
-									</xforms:repeat>
-								</div>
-								<!-- sources -->
-								<xforms:group ref="eac:sources">
-									<div class="section">
-										<h2>Sources</h2>
+										<xforms:group ref="eac:sources">
+											<div class="section">
+												<h2>Sources</h2>
+											</div>
+										</xforms:group>
 									</div>
-								</xforms:group>
+								</div>
+								
 								<!-- alert for removal of conventionDeclaration -->
 								<fr:alert-dialog id="remove-conventionDeclaration">
 									<fr:label>Remove Convention Declaration</fr:label>
@@ -2041,8 +2043,6 @@
 					</div>
 				</div>
 			</div>
-			<!-- footer -->
-			<!--<xi:include href="xslt/footer.xml"/>-->
 		</div>
-	</xhtml:body>
-</xhtml:html>
+	</body>
+</html>

@@ -3,17 +3,13 @@
   GLOBAL
   ****************************************
  */
-html {
-	font-size:13px;
-	font-family:arial, helvetica, sans-serif;
-	background-color:silver;
+.yui3-g {
+	margin:20px auto;
+	min-width:960px;
+	max-width:90%;
 }
-#bd {
+.content {
 	padding:5px;
-	background-color:white;
-}
-#doc4 {
-	border:1px solid gray;
 }
 h1 {
 	margin:0
@@ -54,15 +50,6 @@ a:hover {
  */
 #banner {
 	background-color: #ebebeb;
-}
-#hd .align-left {
-	text-align:left;
-}
-#hd .align-right {
-	text-align:right;
-}
-#hd .align-center {
-	text-align:center;
 }
 .banner_text {
 	padding:20px;
@@ -106,26 +93,6 @@ a:hover {
 }
 .center {
 	text-align:center;
-}
-.expand {
-	margin-left:25px;
-	font-size:12px;
-	color:#8BADCF;
-	cursor:pointer;
-	text-decoration:underline;
-}
-.reorder {
-	margin-left:25px;
-	font-size:12px;
-	color:#8BADCF;
-	text-decoration:underline;
-}
-.content {
-	width:75%;
-	float:left;
-}
-.content ul {
-	list-style-type:none;
 }
 /*
   ****************************************
@@ -216,49 +183,32 @@ a:hover {
   ORBEON XFORM SPECIFIC STYLE
   ****************************************
  */
-.xforms-label {
-	float:left;
-	width:10em;
+.orbeon .xforms-control {
+	margin-bottom: 10px;
 }
-.xforms-textarea-appearance-xxforms-autosize {
-	width: 30em;
+.orbeon .xforms-label {
+	font-weight: bold;
+	display: inline-block;
+	min-width: 9em
+}
+.orbeon .xforms-select1-appearance-full .xforms-label {
+	vertical-align: top
+}
+.orbeon .xforms-input input, .orbeon .xforms-textarea textarea, .orbeon .xforms-select1 select {
+	width: 20em;
 	margin-bottom: 2px;
 }
-.xforms-input input, .fr-autocomplete-search input {
-	width: 30em;
-	margin-bottom: 2px;
+.orbeon .xforms-repeat-selected-item-1 .form-td {
+	background-color: #f5f5f5
 }
-textarea {
-	width: 30em;
-	margin-bottom: 2px;
-	height:15em;
+.orbeon .xforms-items {
+	display: inline-block
 }
-.xxforms-dialog-body input, .xxforms-dialog-body select {
-	width: 30em;
-	margin-bottom: 2px;
-}
-.xxforms-dialog-body {
-	text-align:left;
-}
-.xbl-fr-autocomplete .yui-ac {
-	position:relative;
-	float:left;
-}
-.xforms-select1 {
-	margin-bottom: 2px;
-	width:30em;
-}
-.xforms-select1 input {
-	margin-bottom: 2px
-}
-.xforms-submit img {
-	vertical-align: middle
+.trigger_container {
+	margin-bottom:20px;
 }
 .xforms-trigger-appearance-minimal img {
 	vertical-align: middle
-}
-.xforms-control {
-	margin-right: 10px;
 }
 .xforms-output {
 	margin:0;
@@ -269,73 +219,14 @@ textarea {
 .xforms-repeat-selected-item-1, .xforms-repeat-selected-item-2, .xforms-repeat-selected-item-3, .xforms-repeat-selected-item-4 {
 	background:inherit;
 }
-.widget-tab-panel {
-	padding-top: 1em;
-}
-.widget-tabs-panel {
-	border:0;
-	padding:20px;
-}
-.fr-autocomplete-container .yui-ac-content {
-	overflow-x: hidden;
-	overflow-y: auto;
-	*height:expression(this.scrollHeight>100?"100px":"auto");
-	width:30em;
-}
-.yui-skin-sam .yui-ac-container {
-	position:relative;
-	top:0;
-	width:30em;
-	margin-right:1em;
-}
-.xbl-fr-autocomplete {
-	width:35em;
-}
-.xbl-fr-autocomplete .yui-ac {
-	position:relative;
-	float:left;
-}
-.xbl-fr-autocomplete .xforms-input-input {
-	width:30em;
-	margin-bottom:2px;
-}
-.yui-editor-editable-container {
-	height:100px;
-}
 .xforms-repeat-selected-item-2 {
 	background:none;
-}
-.yui-dialog {
-	width:600px;
 }
 .xxforms-dialog-body>a, .xxforms-dialog-body>span {
 	width:100px;
 }
-.xbl-xeac-relation, .xbl-xeac-reorder {
-	display:inline;
-	width:1em;
-}
-.attr-output {
-	color:silver;
-}
-.reorder-block {
-	padding:5px;
-	border:1px solid silver;
-	margin:10px 0;
-}
-.success {
-	width:50%;
-	padding:10px;
-	border:1px solid #3c803c;
-	margin:0 auto;
-	background-color:#47e547;
-	color:#3c803c;
-}
-.warning {
-	padding:25px;
-	margin:10px;
-	background-color:#ef8700;
-	border:2px solid #b76e0e;
+.xbl-component {
+	margin:5px 0;
 }
 .ui-state-error, .ui-state-highlight {
 	padding: 0pt 0.7em;

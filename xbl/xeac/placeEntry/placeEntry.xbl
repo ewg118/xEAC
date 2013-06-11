@@ -1,6 +1,6 @@
-<xbl:xbl xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:xforms="http://www.w3.org/2002/xforms" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:xxforms="http://orbeon.org/oxf/xml/xforms"
+<xbl:xbl xmlns="http://www.w3.org/1999/xhtml" xmlns:xforms="http://www.w3.org/2002/xforms" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:xxforms="http://orbeon.org/oxf/xml/xforms"
 	xmlns:fr="http://orbeon.org/oxf/xml/form-runner" xmlns:xbl="http://www.w3.org/ns/xbl" xmlns:xxbl="http://orbeon.org/oxf/xml/xbl" xmlns:xeac="https://github.com/ewg118/xEAC"
-	xmlns:rss="http://purl.org/rss/1.0/" xmlns:eac="urn:isbn:1-931666-33-4" xmlns="urn:isbn:1-931666-33-4">
+	xmlns:rss="http://purl.org/rss/1.0/" xmlns:eac="urn:isbn:1-931666-33-4">
 	<xbl:binding id="xeac-placeEntry" element="xeac|placeEntry">
 		<xbl:template>
 			<xforms:group xbl:attr="model context ref bind" xxbl:scope="outer">
@@ -30,12 +30,12 @@
 					</xforms:action>
 					<xforms:group ref="$binding">
 						<xforms:group ref=".[string(text())]">
-							<xhtml:div>
+							<div>
 								<xforms:output ref=".">
 									<xforms:label>Location</xforms:label>
 								</xforms:output>
 								<xforms:group ref=".[string(@vocabularySource)]">
-									<xforms:trigger appearance="xxforms:link">
+									<xforms:trigger appearance="minimal">
 										<xforms:label>
 											<img src="{$display_path}images/external.png"/>
 										</xforms:label>
@@ -53,10 +53,10 @@
 										<xforms:delete nodeset="."/>
 									</xforms:action>
 									<xforms:label>
-										<xhtml:img src="{$display_path}images/remove.gif"/>
+										<img src="{$display_path}images/remove.gif"/>
 									</xforms:label>
 								</xforms:trigger>
-							</xhtml:div>
+							</div>
 						</xforms:group>
 						<xforms:group ref=".[not(string(text()))]">
 							<h4>Place Entry</h4>
@@ -154,7 +154,7 @@
 									</div>
 
 									<xforms:group ref=".[count(instance('geonames')//geoname) &gt; 0]">
-										<xforms:select1 ref="instance('temp')/@vocabularySource" appearance="compact" id="geonames-list" xhtml:size="10">
+										<xforms:select1 ref="instance('temp')/@vocabularySource" appearance="compact" id="geonames-list" size="10">
 											<xforms:label>Location</xforms:label>
 											<xforms:itemset nodeset="instance('geonames')//geoname">
 												<xforms:label ref="label"/>
@@ -185,7 +185,7 @@
 									</div>
 
 									<xforms:group ref=".[count(instance('feed')//*[local-name()='entry']) &gt; 0]">
-										<xforms:select1 ref="instance('temp')/@vocabularySource" appearance="compact" id="nomisma-list" xhtml:size="10">
+										<xforms:select1 ref="instance('temp')/@vocabularySource" appearance="compact" id="nomisma-list" size="10">
 											<xforms:label>Location</xforms:label>
 											<xforms:itemset nodeset="instance('feed')//*[local-name()='entry']">
 												<xforms:label ref="*[local-name()='title']"/>
@@ -235,7 +235,7 @@
 									</div>
 
 									<xforms:group ref=".[count(instance('feed')//rss:item) &gt; 0]">
-										<xforms:select1 ref="instance('temp')/@vocabularySource" appearance="compact" id="pleiades-list" xhtml:size="10">
+										<xforms:select1 ref="instance('temp')/@vocabularySource" appearance="compact" id="pleiades-list" size="10">
 											<xforms:label>Location</xforms:label>
 											<xforms:itemset nodeset="instance('feed')//rss:item">
 												<xforms:label ref="rss:title"/>
