@@ -21,16 +21,7 @@
 		<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/3.8.0/build/cssgrids/grids-min.css"/>
 		<link rel="stylesheet" type="text/css" href="/apps/xeac/css/style.css"/>
 
-		<xforms:model xmlns="urn:isbn:1-931666-33-4">
-			<xs:schema elementFormDefault="qualified" attributeFormDefault="unqualified">
-				<xs:simpleType name="iso8601date">
-					<xs:restriction base="xs:string">
-						<xs:pattern
-							value="(\-?(0|1|2)([0-9]{3})(((01|02|03|04|05|06|07|08|09|10|11|12)((0[1-9])|((1|2)[0-9])|(3[0-1])))|\-((01|02|03|04|05|06|07|08|09|10|11|12)(\-((0[1-9])|((1|2)[0-9])|(3[0-1])))?))?)"
-						/>
-					</xs:restriction>
-				</xs:simpleType>
-			</xs:schema>
+		<xforms:model xmlns="urn:isbn:1-931666-33-4">			
 			<!-- ******************* INSTANCES ****************** -->
 			<xforms:instance id="doc">
 				<eac-cpf xmlns="urn:isbn:1-931666-33-4" xmlns:xlink="http://www.w3.org/1999/xlink">
@@ -48,6 +39,7 @@
 							</maintenanceEvent>
 						</maintenanceHistory>
 						<maintenanceStatus>new</maintenanceStatus>
+						<publicationStatus>inProcess</publicationStatus>
 					</control>
 					<cpfDescription>
 						<identity>
@@ -78,6 +70,7 @@
 							</maintenanceEvent>
 						</maintenanceHistory>
 						<maintenanceStatus>new</maintenanceStatus>
+						<publicationStatus>inProcess</publicationStatus>
 					</control>
 					<cpfDescription>
 						<identity>
@@ -502,7 +495,6 @@
 				</xforms:bind>
 				<xforms:bind nodeset="eac:cpfDescription">
 					<!-- set content for dates anywhere -->
-					<xforms:bind nodeset="descendant::*/@standardDate" type="iso8601date" required="true()"/>
 					<xforms:bind nodeset="eac:identity">
 						<xforms:bind nodeset="eac:entityType" required="true()"/>
 						<xforms:bind nodeset="eac:nameEntry">
@@ -606,10 +598,7 @@
 				<xforms:action ev:event="xforms-submit-done">
 					<xforms:setvalue ref="instance('status')">EAC record saved.</xforms:setvalue>
 					<!-- update dateTime of last maintenanceEvent -->
-					<xforms:setvalue ref="instance('doc')/eac:control/eac:maintenanceHistory/eac:maintenanceEvent[last()]/eac:eventDateTime/@standardDateTime" value="current-dateTime()"/>
-					<!-- post to Solr unpublished core -->
-					<xforms:insert nodeset="instance('addIndex')" origin="xxforms:call-xpl('oxf:/apps/xeac/xpl/eac-to-solr-all.xpl', 'data', instance('doc'), 'data')"/>
-					<xforms:send submission="post-to-all"/>
+					<xforms:setvalue ref="instance('doc')/eac:control/eac:maintenanceHistory/eac:maintenanceEvent[last()]/eac:eventDateTime/@standardDateTime" value="current-dateTime()"/>					
 					<!-- generate KML -->
 					<xforms:insert nodeset="instance('kml')" origin="xxforms:call-xpl('oxf:/apps/xeac/xpl/eac-to-kml.xpl', 'data', instance('doc'), 'data')"/>
 					<xforms:send submission="save-kml"/>
@@ -691,10 +680,7 @@
 					<xforms:output value="concat('Unable to update relational document: ', instance('temp-doc')/eac:control/eac:recordId)"/>
 				</xforms:message>
 				<xforms:action ev:event="xforms-submit-done">
-					<xforms:setvalue ref="instance('status')">EAC record saved.</xforms:setvalue>
-					<!-- post to Solr unpublished core -->
-					<xforms:insert nodeset="instance('addIndex')" origin="xxforms:call-xpl('oxf:/apps/xeac/xpl/eac-to-solr-all.xpl', 'data', instance('temp-doc'), 'data')"/>
-					<xforms:send submission="post-to-all"/>
+					<xforms:setvalue ref="instance('status')">EAC record saved.</xforms:setvalue>					
 				</xforms:action>
 			</xforms:submission>
 			<xforms:submission id="save-eac-template" ref="instance('eac-template')" action="{instance('exist-url')}xeac/records/{instance('eac-template')/eac:control/eac:recordId}.xml" method="put"
@@ -703,10 +689,7 @@
 					<xforms:output value="concat('Unable generate new document: ', instance('eac-template')/eac:control/eac:recordId)"/>
 				</xforms:message>
 				<xforms:action ev:event="xforms-submit-done">
-					<xforms:setvalue ref="instance('status')">EAC record saved.</xforms:setvalue>
-					<!-- post to Solr unpublished core -->
-					<xforms:insert nodeset="instance('addIndex')" origin="xxforms:call-xpl('oxf:/apps/xeac/xpl/eac-to-solr-all.xpl', 'data', instance('eac-template'), 'data')"/>
-					<xforms:send submission="post-to-all"/>
+					<xforms:setvalue ref="instance('status')">EAC record saved.</xforms:setvalue>	
 				</xforms:action>
 			</xforms:submission>
 			<!-- submission to query solr to see if the document is published -->
@@ -726,15 +709,10 @@
 				<xforms:setvalue ev:event="xforms-submit-done" ref="instance('status')">EAC record saved and updated to search index.</xforms:setvalue>
 				<xforms:message ev:event="xforms-submit-error" level="modal">Data Failed to POST to Solr. Index may be offline or URL is incorrect.</xforms:message>
 			</xforms:submission>
+			
 			<!-- send commit -->
 			<xforms:submission id="submit-commit" action="{instance('config')/solr_published}update" ref="instance('sendCommit')" instance="sendCommit" replace="none" method="post"/>
-			<!-- for unpublished documents, always save to unpublished core -->
-			<!-- post instance to Solr -->
-			<xforms:submission id="post-to-all" action="{instance('config')/solr_all}update" ref="instance('addIndex')" instance="addIndex" replace="instance" method="post">
-				<xforms:send ev:event="xforms-submit-done" submission="submit-all-commit"/>
-				<xforms:setvalue ev:event="xforms-submit-done" ref="instance('status')">EAC record saved.</xforms:setvalue>
-				<xforms:message ev:event="xforms-submit-error" level="modal">Data Failed to POST to Solr. Index may be offline or URL is incorrect.</xforms:message>
-			</xforms:submission>
+			
 			<!-- send commit -->
 			<xforms:submission id="submit-all-commit" action="{instance('config')/solr_all}update" ref="instance('sendCommit')" instance="sendCommit" replace="none" method="post"/>
 			<!-- ***************** QUERY VIAF *****************-->
