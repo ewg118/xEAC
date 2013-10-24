@@ -66,6 +66,7 @@
 				<script type="text/javascript" src="{$display_path}javascript/mxn.js"/>
 				<script src="http://static.simile.mit.edu/timeline/api-2.2.0/timeline-api.js?bundle=true" type="text/javascript"/>
 				<script type="text/javascript" src="{$display_path}javascript/timemap_full.pack.js"/>
+				<link type="text/css" href="{$display_path}ui/css/timeline-2.3.0.css" rel="stylesheet"/>
 				<script type="text/javascript" src="{$display_path}javascript/param.js"/>
 				<script type="text/javascript" src="{$display_path}javascript/loaders/xml.js"/>
 				<script type="text/javascript" src="{$display_path}javascript/loaders/kml.js"/>

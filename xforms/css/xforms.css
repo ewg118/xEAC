@@ -1,0 +1,204 @@
+/*
+  ****************************************
+  GLOBAL
+  ****************************************
+ */
+.content {
+	padding:5px;
+}
+.center {
+	text-align:center;
+}
+table {
+	margin-left:auto;
+	margin-right:auto;
+	width:90%;
+}
+td {
+	border:1px solid silver;
+	padding:2px;
+}
+th {
+	border: 1px solid silver;
+	background-color:#DDDDDD;
+	padding:2px;
+	font-weight:bold;
+}
+dt {
+	width:125px;
+	float:left;
+}
+.result_metadata {
+	border:0;
+	float:left;
+}
+#form h1, #form h2, #form h3, #form h4, #form h5, #form h6 {
+	display:inline;
+}
+.section {
+	margin-bottom:25px;
+	width:100%;
+	display:table;
+}
+.section>h2 {
+	display:inline;
+}
+.subsection {
+	padding:10px 0 10px 25px;
+	width:95%;
+}
+.success {
+	width:50%;
+	padding:10px;
+	border:1px solid #3c803c;
+	margin:0 auto;
+	background-color:#47e547;
+	color:#3c803c;
+}
+.warning {
+	padding:5px;
+	color:#ef8700;
+	font-weight:bold;
+}
+.error {
+	padding:25px;
+	margin:10px;
+	background-color:red;
+	border:2px solid #8d0000;
+}
+.pair_div {
+	width:75%;
+	display:table;
+	border:1px solid silver;
+	padding:5px;
+	margin:2px 0;
+}
+.ui-menubar-item {
+	list-style-type:none;
+}
+/*
+  ****************************************
+  ORBEON XFORM SPECIFIC STYLE
+  ****************************************
+ */
+.orbeon .xforms-control {
+	margin-bottom: 10px;
+}
+.orbeon .xforms-label {
+	font-weight: bold;
+	display: inline-block;
+	min-width: 9em
+}
+.orbeon .xforms-select1-appearance-full .xforms-label {
+	vertical-align: top
+}
+.orbeon .xforms-input input, .orbeon .xforms-textarea textarea, .orbeon .xforms-select1 select {
+	width: 20em;
+	margin-bottom: 2px;
+}
+.orbeon .xforms-repeat-selected-item-1 .form-td {
+	background-color: #f5f5f5
+}
+.orbeon .xforms-items {
+	display: inline-block
+}
+.trigger_container {
+	margin-bottom:20px;
+}
+.xforms-trigger-appearance-minimal img {
+	vertical-align: middle
+}
+.xforms-output {
+	margin:0;
+}
+.xforms-trigger {
+	text-decoration:none;
+}
+.xforms-repeat-selected-item-1, .xforms-repeat-selected-item-2, .xforms-repeat-selected-item-3, .xforms-repeat-selected-item-4 {
+	background:inherit;
+}
+.xforms-repeat-selected-item-2 {
+	background:none;
+}
+.xxforms-dialog-body>a, .xxforms-dialog-body>span {
+	width:100px;
+}
+.xbl-component {
+	margin:5px 0;
+}
+.ui-state-error, .ui-state-highlight {
+	padding: 0pt 0.7em;
+	margin:20px auto;
+	width:400px;
+	font-size:12px;
+}
+/*
+  ****************************************
+  PAGINATION
+  ****************************************
+ */
+.paging_div {
+	width:100%;
+	display:table;
+	padding-top:10px;
+	padding-bottom:10px;
+}
+.pagingBtn, .pagingSep {
+	padding:2px;
+	text-decoration:none;
+}
+.pagingBtn {
+	font-weight:bold;
+}
+.pagingBtn:hover {
+	background-color:#DDDDDD;
+	text-decoration:underline;
+}
+/*
+  * jQuery UI Menubar @VERSION
+  *
+  * Copyright 2011, AUTHORS.txt (http://jqueryui.com/about)
+  * Dual licensed under the MIT or GPL Version 2 licenses.
+  * http://jquery.org/license
+ */
+.ui-menubar {
+	list-style: none;
+	margin: 0;
+	padding-left: 0;
+	border-left:0px;
+	border-right:0px;
+}
+.ui-menubar-item {
+	float: left;
+}
+.ui-menubar .ui-button {
+	float: left;
+	font-weight: normal;
+	border-top-width: 0 !important;
+	border-bottom-width: 0 !important;
+	margin: 0;
+	outline: none;
+}
+.ui-menubar .ui-menubar-link {
+	border-right: 1px dashed transparent;
+	border-left: 1px dashed transparent;
+}
+.ui-menubar .ui-menu {
+	width: 200px;
+	position: absolute;
+	z-index: 9999;
+}
+/*
+  ****************************************
+  LAYOUT FORM
+  ****************************************
+ */
+.layout-image-container {
+	margin:80px;
+	text-align:center;
+}
+.layout-image {
+	background-color:silver;
+	border:1px solid gray;
+	padding:10px 0;
+}
