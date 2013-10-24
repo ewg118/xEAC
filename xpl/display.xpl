@@ -20,10 +20,25 @@
 		<p:output name="data" id="request"/>
 	</p:processor>
 	
+	<p:processor name="oxf:request">
+		<p:input name="config">
+			<config>
+				<include>/request/parameters</include>
+			</config>
+		</p:input>
+		<p:output name="data" id="params"/>
+	</p:processor>
+	
+	<p:processor name="oxf:pipeline">
+		<p:input name="config" href="config.xpl"/>		
+		<p:output name="data" id="config"/>
+	</p:processor>
+	
 	<p:processor name="oxf:unsafe-xslt">
 		<p:input name="request" href="#request"/>
-		<p:input name="data" href="aggregate('content', #data, ../exist-url.xml)"/>		
-		<p:input name="config" href="../xslt/display.xsl"/>
+		<p:input name="params" href="#params"/>
+		<p:input name="data" href="aggregate('content', #data, #config)"/>
+		<p:input name="config" href="../ui/xslt/display.xsl"/>
 		<p:output name="data" ref="data"/>
 	</p:processor>
 </p:config>

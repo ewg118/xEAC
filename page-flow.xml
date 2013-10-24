@@ -19,8 +19,7 @@
 	***************** -->
 	<page path-info="/xeac/admin/edit/" view="xforms/eac.xhtml"/>
 	<page path-info="/xeac/admin/settings/" view="xforms/settings.xhtml"/>
-	<page path-info="/xeac/admin/" view="xforms/admin.xhtml"/>	
-
+	<page path-info="/xeac/admin/" view="xforms/admin.xhtml"/>
 
 	<!-- ****************
 	* PUBLIC INTERFACE *
@@ -31,6 +30,7 @@
 	<page path-info="/xeac/id/(.*)\.solr" matcher="oxf:perl5-matcher" model="xpl/xml-public.xpl" view="xpl/eac-to-solr-published.xpl"/>
 	<page path-info="/xeac/id/(.*)" matcher="oxf:perl5-matcher" model="xpl/xml-public.xpl" view="xpl/display.xpl"/>		
 	<!--<page path-info="/xeac/json/(.*)" matcher="oxf:perl5-matcher" model="xpl/xml-public.xpl" view="xpl/eac-to-json.xpl"/>-->
+	
 	<!-- index -->
 	<page path-info="/xeac/" model="exist-url.xml" view="xpl/index.xpl"/>
 

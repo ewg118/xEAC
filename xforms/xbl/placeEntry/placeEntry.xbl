@@ -289,7 +289,7 @@
 					<!-- ********************************************************************** -->
 					<xforms:model id="placeEntry-model" xmlns:xi="http://www.w3.org/2001/XInclude">
 						<xforms:instance id="exist-url">
-							<xi:include href="../../../apps/xeac/exist-url.xml"/>
+							<xi:include href="../../../exist-url.xml"/>
 						</xforms:instance>
 						<xforms:instance id="config">
 							<config xmlns=""/>

@@ -19,11 +19,56 @@
 		<link rel="shortcut icon" href="/ops/images/orbeon-icon-16.ico"/>
 		<link rel="icon" href="/ops/images/orbeon-icon-16.png" type="image/png"/>
 		<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/3.8.0/build/cssgrids/grids-min.css"/>
-		<link rel="stylesheet" type="text/css" href="/apps/xeac/css/style.css"/>
+		<link rel="stylesheet" type="text/css" href="/apps/xeac/xforms/css/xforms.css"/>
 
-		<xforms:model xmlns="urn:isbn:1-931666-33-4">			
+		<xforms:model xmlns="urn:isbn:1-931666-33-4">		
+			<xs:schema elementFormDefault="qualified" attributeFormDefault="unqualified">
+				<xs:simpleType name="m.data.standardDateTime">
+					<xs:union>
+						<xs:simpleType>
+							<xs:restriction base="xs:date">
+								<xs:maxInclusive value="2099-12-31"/>
+							</xs:restriction>
+						</xs:simpleType>
+						<xs:simpleType>
+							<xs:restriction base="xs:gYear">
+								<xs:maxInclusive value="2099"/>
+							</xs:restriction>
+						</xs:simpleType>
+						<xs:simpleType>
+							<xs:restriction base="xs:gYearMonth">
+								<xs:maxInclusive value="2099-12"/>
+							</xs:restriction>
+						</xs:simpleType>
+						<xs:simpleType>
+							<xs:restriction base="xs:dateTime">
+								<xs:maxInclusive value="2099-12-31T23:59:59"/>
+							</xs:restriction>
+						</xs:simpleType>
+					</xs:union>
+				</xs:simpleType>
+				<xs:simpleType name="m.data.standardDate">
+					<xs:union>
+						<xs:simpleType>
+							<xs:restriction base="xs:date">
+								<xs:maxInclusive value="2099-12-31"/>
+							</xs:restriction>
+						</xs:simpleType>
+						<xs:simpleType>
+							<xs:restriction base="xs:gYear">
+								<xs:maxInclusive value="2099"/>
+							</xs:restriction>
+						</xs:simpleType>
+						<xs:simpleType>
+							<xs:restriction base="xs:gYearMonth">
+								<xs:maxInclusive value="2099-12"/>
+							</xs:restriction>
+						</xs:simpleType>
+					</xs:union>
+				</xs:simpleType>
+			</xs:schema>			
 			<!-- ******************* INSTANCES ****************** -->
-			<xforms:instance id="doc">
+			<xforms:instance id="doc" xxforms:exclude-result-prefixes="#all">
 				<eac-cpf xmlns="urn:isbn:1-931666-33-4" xmlns:xlink="http://www.w3.org/1999/xlink">
 					<control>
 						<recordId/>
@@ -53,7 +98,7 @@
 					</cpfDescription>
 				</eac-cpf>
 			</xforms:instance>
-			<xforms:instance id="eac-template">
+			<xforms:instance id="eac-template" xxforms:exclude-result-prefixes="#all">
 				<eac-cpf xmlns="urn:isbn:1-931666-33-4" xmlns:xlink="http://www.w3.org/1999/xlink">
 					<control>
 						<recordId/>
@@ -93,6 +138,8 @@
 			<xforms:instance id="control-instance">
 				<control xmlns="">
 					<pos/>
+					<id/>
+					<publicationStatus/>
 				</control>
 			</xforms:instance>
 			<xforms:instance id="status">
@@ -124,7 +171,7 @@
 			</xforms:instance>
 			<!-- exist URL is stored in an XML file -->
 			<xforms:instance id="exist-url">
-				<xi:include href="exist-url.xml"/>
+				<xi:include href="../exist-url.xml"/>
 			</xforms:instance>
 			<xforms:instance id="config">
 				<config xmlns=""/>
@@ -456,6 +503,12 @@
 			<xforms:instance id="addIndex">
 				<add xmlns=""/>
 			</xforms:instance>
+			<!-- delete from Solr -->
+			<xforms:instance id="deleteId">
+				<delete xmlns="">
+					<query/>
+				</delete>
+			</xforms:instance>
 			<!-- Instance for Solr commit-->
 			<xforms:instance id="sendCommit">
 				<commit/>
@@ -520,11 +573,35 @@
 			<!-- load preliminary instances -->
 			<xforms:submission id="load-config" serialization="none" method="get" action="{instance('exist-url')}xeac/config.xml" replace="instance" instance="config" xxforms:username="admin"
 				xxforms:password=""/>
+			
 			<!-- Submission to get the document -->
 			<xforms:submission id="load-doc" serialization="none" method="get" action="{instance('exist-url')}xeac/records/{instance('doc')/eac:control/eac:recordId}.xml" replace="instance"
 				instance="doc" xxforms:username="admin" xxforms:password="">
 				<xforms:message ev:event="xforms-submit-error" level="modal">Unable to load EAC record</xforms:message>
+				<xforms:action ev:event="xforms-submit-done">
+					<!-- set publicationStatus in control-instance -->
+					<xforms:setvalue ref="instance('control-instance')/publicationStatus" value="instance('doc')/eac:control/eac:publicationStatus"/>
+					<!-- create relations list for diff -->
+					<xforms:action xxforms:iterate="instance('doc')/eac:cpfDescription/eac:relations/eac:cpfRelation">
+						<!-- only set the pre-edited relations @xlink:href if it is an internal link -->
+						<xforms:setvalue ref="instance('rel-template')/@xlink:href" value="context()/@xlink:href"
+							if="string(context()/@xlink:href) and not(contains(context()/@xlink:href, 'http://'))"/>
+						<xforms:setvalue ref="instance('rel-template')/@xlink:arcrole" value="context()/@xlink:arcrole"/>
+						<xforms:insert context="instance('relations-pre')" nodeset="./child::node()[last()]" origin="instance('rel-template')"/>
+					</xforms:action>
+					<!-- insert maintenanceEvent, set values -->
+					<xforms:insert context="instance('doc')/eac:control/eac:maintenanceHistory" nodeset="./child::node()[last()]" origin="instance('maintenanceEvent-template')"/>
+					<xforms:setvalue ref="instance('doc')/eac:control/eac:maintenanceHistory/eac:maintenanceEvent[last()]/eac:eventType">revised</xforms:setvalue>
+					<xforms:setvalue ref="instance('doc')/eac:control/eac:maintenanceHistory/eac:maintenanceEvent[last()]/eac:eventDateTime/@standardDateTime" value="current-dateTime()"/>
+					
+					<!-- set conventionDeclaration-list for nameEntry forms -->
+					<!--<xforms:action xxforms:iterate="instance('doc')/eac:control/eac:conventionDeclaration">
+						<xforms:insert context="instance('conventionDeclaration-list')" nodeset="./child::node()[last()]" origin="instance('item-template')"/>
+						<xforms:setvalue ref="instance('conventionDeclaration-list')"/>
+						</xforms:action>-->
+				</xforms:action>
 			</xforms:submission>
+			
 			<xforms:submission id="load-temp-doc" serialization="none" method="get" action="{instance('exist-url')}xeac/records/{instance('temp-id')/identifier}.xml" replace="instance"
 				instance="temp-doc" xxforms:username="admin" xxforms:password="">
 				<!-- only initiate the following functions for an 'add' -->
@@ -666,14 +743,29 @@
 					<!-- remove relations from post-list -->
 					<xforms:delete nodeset="instance('relations-post')/*"/>
 					<xforms:delete nodeset="instance('action-list')/*"/>
-					<!-- check to see if the document is already published to Solr -->
-					<!--<xforms:send submission="query-solr-for-publication"/>-->
+					
+					<!-- handle solr publication -->
+					<xforms:setvalue ref="instance('control-instance')/id" value="instance('doc')/eac:control/eac:recordId"/>
+					<xforms:setvalue ref="instance('status')">Coin saved.</xforms:setvalue>
+					
+					<!-- publish coin if the publicationStatus is approved -->
+					<xforms:send submission="to-solr" if="instance('doc')/eac:control/eac:publicationStatus = 'approved'"/>
+					<!-- remove coin from Solr if the publicationStatus is inProcess on save but was approved on load.-->
+					<xforms:action
+						if="instance('control-instance')/publicationStatus = 'approved' and instance('doc')/eac:control/eac:publicationStatus = 'inProcess'">
+						<xforms:setvalue ref="instance('deleteId')/query"
+							value="concat('recordId:&#x022;', instance('doc')/eac:control/eac:recordId, '&#x022;')"/>
+						<xforms:send submission="delete-solr-doc"/>
+						<xforms:setvalue ref="instance('control-instance')/publicationStatus">inProcess</xforms:setvalue>
+					</xforms:action>
 				</xforms:action>
 			</xforms:submission>
+			
 			<xforms:submission id="save-kml" ref="instance('kml')" action="{instance('exist-url')}xeac/kml/{instance('doc')/eac:control/eac:recordId}.kml" method="put" replace="none"
 				xxforms:username="admin" xxforms:password="">
 				<xforms:message ev:event="xforms-submit-error" level="modal">Error Saving KML.</xforms:message>
 			</xforms:submission>
+			
 			<xforms:submission id="save-temp-doc" ref="instance('temp-doc')" action="{instance('exist-url')}xeac/records/{instance('temp-doc')/eac:control/eac:recordId}.xml" method="put"
 				replace="none" xxforms:username="admin" xxforms:password="">
 				<xforms:message ev:event="xforms-submit-error" level="modal">
@@ -683,6 +775,7 @@
 					<xforms:setvalue ref="instance('status')">EAC record saved.</xforms:setvalue>					
 				</xforms:action>
 			</xforms:submission>
+			
 			<xforms:submission id="save-eac-template" ref="instance('eac-template')" action="{instance('exist-url')}xeac/records/{instance('eac-template')/eac:control/eac:recordId}.xml" method="put"
 				replace="none" xxforms:username="admin" xxforms:password="">
 				<xforms:message ev:event="xforms-submit-error" level="modal">
@@ -692,17 +785,23 @@
 					<xforms:setvalue ref="instance('status')">EAC record saved.</xforms:setvalue>	
 				</xforms:action>
 			</xforms:submission>
-			<!-- submission to query solr to see if the document is published -->
-			<xforms:submission id="query-solr-for-publication" serialization="none" method="get" action="{instance('config')/solr_published}select/?q=id:{instance('doc')/eac:control/eac:recordId}"
-				replace="instance" instance="is-published">
-				<!-- if the document is found in solr, get the updated solr doc -->
-				<xforms:send ev:event="xforms-submit-done" if="instance('is-published')/result[@name='response']/@numFound = '1'" submission="ead-publish"/>
-			</xforms:submission>
+			<!-- ********************* SOLR SUBMISSIONS ********************** -->
 			<!-- access service to read in pre-transformed solr doc -->
-			<xforms:submission id="eac-publish" method="get" replace="instance" instance="addIndex" serialization="none" resource="/xeac/solr/{instance('doc')/eac:control/eac:recordId}">
+			<xforms:submission id="to-solr" method="get" replace="instance" instance="addIndex" serialization="none" resource="{instance('config')/url}id/{instance('doc')/eac:control/eac:recordId}.solr">
 				<xforms:message ev:event="xforms-submit-error" level="modal">Error transforming EAC record to Solr document.</xforms:message>
 				<xforms:send ev:event="xforms-submit-done" submission="publish-submission"/>
 			</xforms:submission>
+			
+			<xforms:submission id="delete-solr-doc" action="{instance('config')/solr_published}update" ref="instance('deleteId')" instance="deleteId"
+				replace="none" method="post">
+				<xforms:action ev:event="xforms-submit-done">
+					<xforms:send submission="submit-commit"/>
+					<xforms:setvalue ref="instance('status')">Object saved, but removed from Solr index (publicationStatus set to
+						'inProcess').</xforms:setvalue>
+				</xforms:action>
+				<xforms:message ev:event="xforms-submit-error" level="modal">Data Failed to POST to Solr.</xforms:message>
+			</xforms:submission>
+			
 			<!-- post instance to Solr -->
 			<xforms:submission id="publish-submission" action="{instance('config')/solr_published}update" ref="instance('addIndex')" instance="addIndex" replace="instance" method="post">
 				<xforms:send ev:event="xforms-submit-done" submission="submit-commit"/>
@@ -713,8 +812,6 @@
 			<!-- send commit -->
 			<xforms:submission id="submit-commit" action="{instance('config')/solr_published}update" ref="instance('sendCommit')" instance="sendCommit" replace="none" method="post"/>
 			
-			<!-- send commit -->
-			<xforms:submission id="submit-all-commit" action="{instance('config')/solr_all}update" ref="instance('sendCommit')" instance="sendCommit" replace="none" method="post"/>
 			<!-- ***************** QUERY VIAF *****************-->
 			<xforms:submission id="query-viaf" serialization="none" method="get"
 				action="http://viaf.org/viaf/search?query=local.names+all+%22{instance('search-query')}%22&amp;sortKeys=holdingscount&amp;maximumRecords=50&amp;httpAccept=application/rss%2bxml"
@@ -783,26 +880,7 @@
 				<!-- if there is a recordId parameter, load existing EAC record -->
 				<xforms:action if="string(xxforms:get-request-parameter('recordId'))">
 					<xforms:setvalue ref="instance('doc')/eac:control/eac:recordId" value="xxforms:get-request-parameter('recordId')"/>
-					<xforms:send submission="load-doc"/>
-					<xforms:action ev:event="xforms-submit-done">
-						<!-- create relations list for diff -->
-						<xforms:action xxforms:iterate="instance('doc')/eac:cpfDescription/eac:relations/eac:cpfRelation">
-							<!-- only set the pre-edited relations @xlink:href if it is an internal link -->
-							<xforms:setvalue ref="instance('rel-template')/@xlink:href" value="context()/@xlink:href"
-								if="string(context()/@xlink:href) and not(contains(context()/@xlink:href, 'http://'))"/>
-							<xforms:setvalue ref="instance('rel-template')/@xlink:arcrole" value="context()/@xlink:arcrole"/>
-							<xforms:insert context="instance('relations-pre')" nodeset="./child::node()[last()]" origin="instance('rel-template')"/>
-						</xforms:action>
-						<!-- insert maintenanceEvent, set values -->
-						<xforms:insert context="instance('doc')/eac:control/eac:maintenanceHistory" nodeset="./child::node()[last()]" origin="instance('maintenanceEvent-template')"/>
-						<xforms:setvalue ref="instance('doc')/eac:control/eac:maintenanceHistory/eac:maintenanceEvent[last()]/eac:eventType">revised</xforms:setvalue>
-						<xforms:setvalue ref="instance('doc')/eac:control/eac:maintenanceHistory/eac:maintenanceEvent[last()]/eac:eventDateTime/@standardDateTime" value="current-dateTime()"/>
-						<!-- set conventionDeclaration-list for nameEntry forms -->
-						<!--<xforms:action xxforms:iterate="instance('doc')/eac:control/eac:conventionDeclaration">
-							<xforms:insert context="instance('conventionDeclaration-list')" nodeset="./child::node()[last()]" origin="instance('item-template')"/>
-							<xforms:setvalue ref="instance('conventionDeclaration-list')"/>
-						</xforms:action>-->
-					</xforms:action>
+					<xforms:send submission="load-doc"/>					
 				</xforms:action>
 				<xforms:action if="not(string(xxforms:get-request-parameter('recordId')))">
 					<!-- set current dateTime and boilerplate information on creation of new record -->
@@ -816,29 +894,29 @@
 			</xforms:action>-->
 		</xforms:model>
 		<!-- XBL components -->
-		<xi:include href="oxf:/xbl/xeac/chronList/chronList.xbl" xi:omit-xml-base="true"/>
-		<xi:include href="oxf:/xbl/xeac/citation/citation.xbl" xi:omit-xml-base="true"/>
-		<xi:include href="oxf:/xbl/xeac/cpfRelation/cpfRelation.xbl" xi:omit-xml-base="true"/>
-		<xi:include href="oxf:/xbl/xeac/datesContainer/datesContainer.xbl" xi:omit-xml-base="true"/>
-		<xi:include href="oxf:/xbl/xeac/date/date.xbl" xi:omit-xml-base="true"/>
-		<xi:include href="oxf:/xbl/xeac/dateRange/dateRange.xbl" xi:omit-xml-base="true"/>
-		<xi:include href="oxf:/xbl/xeac/dateSet/dateSet.xbl" xi:omit-xml-base="true"/>
-		<xi:include href="oxf:/xbl/xeac/descriptionTerm/descriptionTerm.xbl" xi:omit-xml-base="true"/>
-		<xi:include href="oxf:/xbl/xeac/descriptionTermGroup/descriptionTermGroup.xbl" xi:omit-xml-base="true"/>
-		<xi:include href="oxf:/xbl/xeac/descriptiveNote/descriptiveNote.xbl" xi:omit-xml-base="true"/>
-		<xi:include href="oxf:/xbl/xeac/languageUsed/languageUsed.xbl" xi:omit-xml-base="true"/>
-		<xi:include href="oxf:/xbl/xeac/level/level.xbl" xi:omit-xml-base="true"/>
-		<xi:include href="oxf:/xbl/xeac/list/list.xbl" xi:omit-xml-base="true"/>
-		<!--<xi:include href="oxf:/xbl/xeac/nameEntry/nameEntry.xbl" xi:omit-xml-base="true"/>-->
-		<xi:include href="oxf:/xbl/xeac/outline/outline.xbl" xi:omit-xml-base="true"/>
-		<xi:include href="oxf:/xbl/xeac/p/p.xbl" xi:omit-xml-base="true"/>
-		<xi:include href="oxf:/xbl/xeac/place/place.xbl" xi:omit-xml-base="true"/>
-		<xi:include href="oxf:/xbl/xeac/placeEntry/placeEntry.xbl" xi:omit-xml-base="true"/>
-		<xi:include href="oxf:/xbl/xeac/relation/relation.xbl" xi:omit-xml-base="true"/>
-		<xi:include href="oxf:/xbl/xeac/relationEntry/relationEntry.xbl" xi:omit-xml-base="true"/>
-		<xi:include href="oxf:/xbl/xeac/reorder/reorder.xbl" xi:omit-xml-base="true"/>
-		<xi:include href="oxf:/xbl/xeac/resourceRelation/resourceRelation.xbl" xi:omit-xml-base="true"/>
-		<xi:include href="oxf:/xbl/xeac/structureOrGenealogy/structureOrGenealogy.xbl" xi:omit-xml-base="true"/>
+		<xi:include href="xbl/chronList/chronList.xbl" xi:omit-xml-base="true"/>
+		<xi:include href="xbl/citation/citation.xbl" xi:omit-xml-base="true"/>
+		<xi:include href="xbl/cpfRelation/cpfRelation.xbl" xi:omit-xml-base="true"/>
+		<xi:include href="xbl/datesContainer/datesContainer.xbl" xi:omit-xml-base="true"/>
+		<xi:include href="xbl/date/date.xbl" xi:omit-xml-base="true"/>
+		<xi:include href="xbl/dateRange/dateRange.xbl" xi:omit-xml-base="true"/>
+		<xi:include href="xbl/dateSet/dateSet.xbl" xi:omit-xml-base="true"/>
+		<xi:include href="xbl/descriptionTerm/descriptionTerm.xbl" xi:omit-xml-base="true"/>
+		<xi:include href="xbl/descriptionTermGroup/descriptionTermGroup.xbl" xi:omit-xml-base="true"/>
+		<xi:include href="xbl/descriptiveNote/descriptiveNote.xbl" xi:omit-xml-base="true"/>
+		<xi:include href="xbl/languageUsed/languageUsed.xbl" xi:omit-xml-base="true"/>
+		<xi:include href="xbl/level/level.xbl" xi:omit-xml-base="true"/>
+		<xi:include href="xbl/list/list.xbl" xi:omit-xml-base="true"/>
+		<!--<xi:include href="xbl/nameEntry/nameEntry.xbl" xi:omit-xml-base="true"/>-->
+		<xi:include href="xbl/outline/outline.xbl" xi:omit-xml-base="true"/>
+		<xi:include href="xbl/p/p.xbl" xi:omit-xml-base="true"/>
+		<xi:include href="xbl/place/place.xbl" xi:omit-xml-base="true"/>
+		<xi:include href="xbl/placeEntry/placeEntry.xbl" xi:omit-xml-base="true"/>
+		<xi:include href="xbl/relation/relation.xbl" xi:omit-xml-base="true"/>
+		<xi:include href="xbl/relationEntry/relationEntry.xbl" xi:omit-xml-base="true"/>
+		<xi:include href="xbl/reorder/reorder.xbl" xi:omit-xml-base="true"/>
+		<xi:include href="xbl/resourceRelation/resourceRelation.xbl" xi:omit-xml-base="true"/>
+		<xi:include href="xbl/structureOrGenealogy/structureOrGenealogy.xbl" xi:omit-xml-base="true"/>
 	</head>
 	<body>
 		<xxforms:variable name="display_path">../../</xxforms:variable>
@@ -855,14 +933,11 @@
 					</p>
 					<div id="form">
 						<div class="submission">
-							<xforms:trigger appearance="minimal">
-								<xforms:label><img src="{$display_path}images/save.gif" alt="Save"/>Save</xforms:label>
-								<xforms:action ev:event="DOMActivate">
-									<xforms:send submission="save-doc"/>
-								</xforms:action>
-							</xforms:trigger>
-							<xforms:submit submission="load-doc" appearance="minimal">
-								<xforms:label><img src="{$display_path}images/recycle-green.png" alt="Revert"/>Load</xforms:label>
+							<xforms:submit submission="save-doc">
+								<xforms:label><img src="/xeac/xforms/images/save.gif" alt="Save"/>Save</xforms:label>
+							</xforms:submit>							
+							<xforms:submit submission="load-doc">
+								<xforms:label><img src="/xeac/xforms/images/recycle-green.png" alt="Revert"/>Load</xforms:label>
 							</xforms:submit>
 						</div>
 						<!--<xforms:trigger>
@@ -882,7 +957,7 @@
 								<span class="add">
 									<xforms:trigger appearance="minimal">
 										<xforms:label>
-											<img src="{$display_path}images/add.gif"/>Import VIAF Data</xforms:label>
+											<img src="/xeac/xforms/images/add.gif"/>Import VIAF Data</xforms:label>
 										<xxforms:show ev:event="DOMActivate" dialog="import-viaf-dialog"/>
 									</xforms:trigger>
 								</span>
@@ -891,7 +966,7 @@
 								<span class="add">
 									<xforms:trigger appearance="minimal">
 										<xforms:label>
-											<img src="{$display_path}images/add.gif"/>Import DBpedia Data</xforms:label>
+											<img src="/xeac/xforms/images/add.gif"/>Import DBpedia Data</xforms:label>
 										<xxforms:show ev:event="DOMActivate" dialog="import-dbpedia-dialog"/>
 									</xforms:trigger>
 								</span>
@@ -900,7 +975,7 @@
 								<xforms:group ref="instance('doc')[count(eac:cpfDescription/eac:description) = 0]">
 									<xforms:trigger appearance="minimal">
 										<xforms:label>
-											<img src="{$display_path}images/add.gif"/>Description</xforms:label>
+											<img src="/xeac/xforms/images/add.gif"/>Description</xforms:label>
 										<xforms:insert ev:event="DOMActivate" context="instance('doc')/eac:cpfDescription" origin="instance('description-template')" nodeset="eac:identity"
 											position="after"/>
 									</xforms:trigger>
@@ -908,7 +983,7 @@
 								<xforms:group ref="instance('doc')[count(eac:cpfDescription/eac:relations) = 0]">
 									<xforms:trigger appearance="minimal">
 										<xforms:label>
-											<img src="{$display_path}images/add.gif"/>Relations</xforms:label>
+											<img src="/xeac/xforms/images/add.gif"/>Relations</xforms:label>
 										<xforms:insert ev:event="DOMActivate" context="instance('doc')/eac:cpfDescription" origin="instance('relations-template')" nodeset="./child::node()[last()]"/>
 									</xforms:trigger>
 								</xforms:group>
@@ -918,6 +993,19 @@
 									<xforms:label>Record ID</xforms:label>
 									<xforms:alert>The id is required</xforms:alert>
 								</xforms:input>
+							</div>
+							<div>
+								<xforms:select1 ref="eac:control/eac:publicationStatus">
+									<xforms:label>Publication Status</xforms:label>
+									<xforms:item>
+										<xforms:label>inProcess</xforms:label>
+										<xforms:value>inProcess</xforms:value>
+									</xforms:item>
+									<xforms:item>
+										<xforms:label>approved</xforms:label>
+										<xforms:value>approved</xforms:value>
+									</xforms:item>
+								</xforms:select1>
 							</div>
 						</div>
 						<fr:tabview>
@@ -929,21 +1017,21 @@
 									<div class="trigger_container">
 										<xforms:trigger appearance="minimal">
 											<xforms:label>
-												<img src="{$display_path}images/add.gif"/>Name Entry</xforms:label>
+												<img src="/xeac/xforms/images/add.gif"/>Name Entry</xforms:label>
 											<xforms:insert ev:event="DOMActivate" context="." origin="instance('nameEntry-template')"
 												nodeset="if (count(eac:nameEntry) &gt; 0) then eac:nameEntry[last()] else eac:entityType" position="after"/>
 										</xforms:trigger>
 										<xforms:group ref=".[count(eac:entityId) = 0]">
 											<xforms:trigger appearance="minimal">
 												<xforms:label>
-													<img src="{$display_path}images/add.gif"/>Entity Id</xforms:label>
+													<img src="/xeac/xforms/images/add.gif"/>Entity Id</xforms:label>
 												<xforms:insert ev:event="DOMActivate" context="." origin="instance('entityId-template')" nodeset="./child::node()[last()]"/>
 											</xforms:trigger>
 										</xforms:group>
 										<xforms:group ref=".[count(eac:descriptiveNote) = 0]">
 											<xforms:trigger appearance="minimal">
 												<xforms:label>
-													<img src="{$display_path}images/add.gif"/>Descriptive Note</xforms:label>
+													<img src="/xeac/xforms/images/add.gif"/>Descriptive Note</xforms:label>
 												<xforms:insert ev:event="DOMActivate" context="." origin="instance('descriptiveNote-template')" nodeset="./child::node()[last()]"/>
 											</xforms:trigger>
 										</xforms:group>
@@ -976,7 +1064,7 @@
 												<xforms:trigger appearance="minimal">
 													<xforms:delete ev:event="DOMActivate" nodeset="."/>
 													<xforms:label>
-														<img src="{$display_path}images/remove.gif"/>
+														<img src="/xeac/xforms/images/remove.gif"/>
 													</xforms:label>
 												</xforms:trigger>
 											</xforms:group>
@@ -986,7 +1074,7 @@
 													<xforms:group ref=".[count(eac:authorizedForm) = 0]">
 														<xforms:trigger appearance="minimal">
 															<xforms:label>
-																<img src="{$display_path}images/add.gif"/>Authorized Form</xforms:label>
+																<img src="/xeac/xforms/images/add.gif"/>Authorized Form</xforms:label>
 															<xforms:action ev:event="DOMActivate">
 																<xforms:insert context="." origin="instance('authorizedForm-template')" nodeset="./child::node()[last()]"/>
 																<xxforms:hide dialog="nameEntry-objects"/>
@@ -996,7 +1084,7 @@
 													<xforms:group ref=".[count(eac:alternativeForm) = 0]">
 														<xforms:trigger appearance="minimal">
 															<xforms:label>
-																<img src="{$display_path}images/add.gif"/>Alternative Form</xforms:label>
+																<img src="/xeac/xforms/images/add.gif"/>Alternative Form</xforms:label>
 															<xforms:action ev:event="DOMActivate">
 																<xforms:insert context="." origin="instance('alternativeForm-template')" nodeset="./child::node()[last()]"/>
 																<xxforms:hide dialog="nameEntry-objects"/>
@@ -1007,7 +1095,7 @@
 												<xforms:group ref=".[count(eac:preferredForm) = 0]">
 													<xforms:trigger appearance="minimal">
 														<xforms:label>
-															<img src="{$display_path}images/add.gif"/>Preferred Form</xforms:label>
+															<img src="/xeac/xforms/images/add.gif"/>Preferred Form</xforms:label>
 														<xforms:action ev:event="DOMActivate">
 															<xforms:insert context="." origin="instance('preferredForm-template')" nodeset="./child::node()[last()]"/>
 															<xxforms:hide dialog="nameEntry-objects"/>
@@ -1017,7 +1105,7 @@
 												<xforms:group ref=".[count(eac:useDates) = 0]">
 													<xforms:trigger appearance="minimal">
 														<xforms:label>
-															<img src="{$display_path}images/add.gif"/>Use Dates</xforms:label>
+															<img src="/xeac/xforms/images/add.gif"/>Use Dates</xforms:label>
 														<xforms:action ev:event="DOMActivate">
 															<xforms:insert context="." origin="instance('useDates-template')" nodeset="./child::node()[last()]"/>
 															<xxforms:hide dialog="nameEntry-objects"/>
@@ -1035,7 +1123,7 @@
 														<xforms:trigger appearance="minimal">
 															<xforms:delete ev:event="DOMActivate" nodeset="."/>
 															<xforms:label>
-																<img src="{$display_path}images/remove.gif"/>
+																<img src="/xeac/xforms/images/remove.gif"/>
 															</xforms:label>
 														</xforms:trigger>
 													</xforms:group>
@@ -1062,7 +1150,7 @@
 													<xforms:trigger appearance="minimal">
 														<xforms:delete ev:event="DOMActivate" nodeset="."/>
 														<xforms:label>
-															<img src="{$display_path}images/remove.gif"/>
+															<img src="/xeac/xforms/images/remove.gif"/>
 														</xforms:label>
 													</xforms:trigger>
 												</div>
@@ -1081,7 +1169,7 @@
 											<xforms:trigger appearance="minimal">
 												<xforms:delete ev:event="DOMActivate" nodeset="."/>
 												<xforms:label>
-													<img src="{$display_path}images/remove.gif"/>
+													<img src="/xeac/xforms/images/remove.gif"/>
 												</xforms:label>
 											</xforms:trigger>
 										</div>
@@ -1423,7 +1511,7 @@
 									<span class="add">
 										<xforms:trigger appearance="minimal">
 											<xforms:label>
-												<img src="{$display_path}images/add.gif"/>
+												<img src="/xeac/xforms/images/add.gif"/>
 											</xforms:label>
 											<xxforms:show ev:event="DOMActivate" dialog="description-objects"/>
 										</xforms:trigger>
@@ -1431,7 +1519,7 @@
 									<xforms:trigger appearance="minimal">
 										<xforms:dispatch target="remove-description" name="fr-show" ev:event="DOMActivate"/>
 										<xforms:label>
-											<img src="{$display_path}images/remove.gif"/>
+											<img src="/xeac/xforms/images/remove.gif"/>
 										</xforms:label>
 									</xforms:trigger>
 									<xxforms:dialog id="description-objects" appearance="full" level="modal" close="true" draggable="true" visible="false">
@@ -1439,7 +1527,7 @@
 										<xforms:group ref=".[count(eac:biogHist) = 0]">
 											<xforms:trigger appearance="minimal">
 												<xforms:label>
-													<img src="{$display_path}images/add.gif"/>Biog/Hist</xforms:label>
+													<img src="/xeac/xforms/images/add.gif"/>Biog/Hist</xforms:label>
 												<xforms:action ev:event="DOMActivate">
 													<xforms:insert context="." origin="instance('biogHist-template')"/>
 													<xxforms:hide dialog="description-objects"/>
@@ -1449,7 +1537,7 @@
 										<xforms:group ref=".[count(eac:existDates) = 0]">
 											<xforms:trigger appearance="minimal">
 												<xforms:label>
-													<img src="{$display_path}images/add.gif"/>Dates of Existence</xforms:label>
+													<img src="/xeac/xforms/images/add.gif"/>Dates of Existence</xforms:label>
 												<xforms:action ev:event="DOMActivate">
 													<xforms:insert context="." origin="instance('existDates-template')"/>
 													<xxforms:hide dialog="description-objects"/>
@@ -1458,7 +1546,7 @@
 										</xforms:group>
 										<xforms:trigger appearance="minimal">
 											<xforms:label>
-												<img src="{$display_path}images/add.gif"/>Function</xforms:label>
+												<img src="/xeac/xforms/images/add.gif"/>Function</xforms:label>
 											<xforms:action ev:event="DOMActivate">
 												<xforms:insert context="." origin="instance('function-template')"/>
 												<xxforms:hide dialog="description-objects"/>
@@ -1466,7 +1554,7 @@
 										</xforms:trigger>
 										<xforms:trigger appearance="minimal">
 											<xforms:label>
-												<img src="{$display_path}images/add.gif"/>Functions</xforms:label>
+												<img src="/xeac/xforms/images/add.gif"/>Functions</xforms:label>
 											<xforms:action ev:event="DOMActivate">
 												<xforms:insert context="." origin="instance('functions-template')"/>
 												<xxforms:hide dialog="description-objects"/>
@@ -1475,7 +1563,7 @@
 										<xforms:group ref=".[count(eac:generalContext) = 0]">
 											<xforms:trigger appearance="minimal">
 												<xforms:label>
-													<img src="{$display_path}images/add.gif"/>General Context</xforms:label>
+													<img src="/xeac/xforms/images/add.gif"/>General Context</xforms:label>
 												<xforms:action ev:event="DOMActivate">
 													<xforms:insert context="." origin="instance('generalContext-template')"/>
 													<xxforms:hide dialog="description-objects"/>
@@ -1484,7 +1572,7 @@
 										</xforms:group>
 										<xforms:trigger appearance="minimal">
 											<xforms:label>
-												<img src="{$display_path}images/add.gif"/>Language Used</xforms:label>
+												<img src="/xeac/xforms/images/add.gif"/>Language Used</xforms:label>
 											<xforms:action ev:event="DOMActivate">
 												<xforms:insert context="." origin="instance('languageUsed-template')"/>
 												<xxforms:hide dialog="description-objects"/>
@@ -1492,7 +1580,7 @@
 										</xforms:trigger>
 										<xforms:trigger appearance="minimal">
 											<xforms:label>
-												<img src="{$display_path}images/add.gif"/>Languages Used</xforms:label>
+												<img src="/xeac/xforms/images/add.gif"/>Languages Used</xforms:label>
 											<xforms:action ev:event="DOMActivate">
 												<xforms:insert context="." origin="instance('languagesUsed-template')"/>
 												<xxforms:hide dialog="description-objects"/>
@@ -1500,7 +1588,7 @@
 										</xforms:trigger>
 										<xforms:trigger appearance="minimal">
 											<xforms:label>
-												<img src="{$display_path}images/add.gif"/>Legal Status</xforms:label>
+												<img src="/xeac/xforms/images/add.gif"/>Legal Status</xforms:label>
 											<xforms:action ev:event="DOMActivate">
 												<xforms:insert context="." origin="instance('legalStatus-template')"/>
 												<xxforms:hide dialog="description-objects"/>
@@ -1508,7 +1596,7 @@
 										</xforms:trigger>
 										<xforms:trigger appearance="minimal">
 											<xforms:label>
-												<img src="{$display_path}images/add.gif"/>Legal Statuses</xforms:label>
+												<img src="/xeac/xforms/images/add.gif"/>Legal Statuses</xforms:label>
 											<xforms:action ev:event="DOMActivate">
 												<xforms:insert context="." origin="instance('legalStatuses-template')"/>
 												<xxforms:hide dialog="description-objects"/>
@@ -1516,7 +1604,7 @@
 										</xforms:trigger>
 										<xforms:trigger appearance="minimal">
 											<xforms:label>
-												<img src="{$display_path}images/add.gif"/>Local Description</xforms:label>
+												<img src="/xeac/xforms/images/add.gif"/>Local Description</xforms:label>
 											<xforms:action ev:event="DOMActivate">
 												<xforms:insert context="." origin="instance('localDescription-template')"/>
 												<xxforms:hide dialog="description-objects"/>
@@ -1524,7 +1612,7 @@
 										</xforms:trigger>
 										<xforms:trigger appearance="minimal">
 											<xforms:label>
-												<img src="{$display_path}images/add.gif"/>Local Descriptions</xforms:label>
+												<img src="/xeac/xforms/images/add.gif"/>Local Descriptions</xforms:label>
 											<xforms:action ev:event="DOMActivate">
 												<xforms:insert context="." origin="instance('localDescriptions-template')"/>
 												<xxforms:hide dialog="description-objects"/>
@@ -1532,7 +1620,7 @@
 										</xforms:trigger>
 										<xforms:trigger appearance="minimal">
 											<xforms:label>
-												<img src="{$display_path}images/add.gif"/>Mandate</xforms:label>
+												<img src="/xeac/xforms/images/add.gif"/>Mandate</xforms:label>
 											<xforms:action ev:event="DOMActivate">
 												<xforms:insert context="." origin="instance('mandate-template')"/>
 												<xxforms:hide dialog="description-objects"/>
@@ -1540,7 +1628,7 @@
 										</xforms:trigger>
 										<xforms:trigger appearance="minimal">
 											<xforms:label>
-												<img src="{$display_path}images/add.gif"/>Mandates</xforms:label>
+												<img src="/xeac/xforms/images/add.gif"/>Mandates</xforms:label>
 											<xforms:action ev:event="DOMActivate">
 												<xforms:insert context="." origin="instance('mandates-template')"/>
 												<xxforms:hide dialog="description-objects"/>
@@ -1548,7 +1636,7 @@
 										</xforms:trigger>
 										<xforms:trigger appearance="minimal">
 											<xforms:label>
-												<img src="{$display_path}images/add.gif"/>Occupation</xforms:label>
+												<img src="/xeac/xforms/images/add.gif"/>Occupation</xforms:label>
 											<xforms:action ev:event="DOMActivate">
 												<xforms:insert context="." origin="instance('occupation-template')"/>
 												<xxforms:hide dialog="description-objects"/>
@@ -1556,7 +1644,7 @@
 										</xforms:trigger>
 										<xforms:trigger appearance="minimal">
 											<xforms:label>
-												<img src="{$display_path}images/add.gif"/>Occupations</xforms:label>
+												<img src="/xeac/xforms/images/add.gif"/>Occupations</xforms:label>
 											<xforms:action ev:event="DOMActivate">
 												<xforms:insert context="." origin="instance('occupations-template')"/>
 												<xxforms:hide dialog="description-objects"/>
@@ -1564,7 +1652,7 @@
 										</xforms:trigger>
 										<xforms:trigger appearance="minimal">
 											<xforms:label>
-												<img src="{$display_path}images/add.gif"/>Place</xforms:label>
+												<img src="/xeac/xforms/images/add.gif"/>Place</xforms:label>
 											<xforms:action ev:event="DOMActivate">
 												<xforms:insert context="." origin="instance('place-template')"/>
 												<xxforms:hide dialog="description-objects"/>
@@ -1572,7 +1660,7 @@
 										</xforms:trigger>
 										<xforms:trigger appearance="minimal">
 											<xforms:label>
-												<img src="{$display_path}images/add.gif"/>Places</xforms:label>
+												<img src="/xeac/xforms/images/add.gif"/>Places</xforms:label>
 											<xforms:action ev:event="DOMActivate">
 												<xforms:insert context="." origin="instance('places-template')"/>
 												<xxforms:hide dialog="description-objects"/>
@@ -1581,7 +1669,7 @@
 										<xforms:group ref=".[count(eac:structureOrGenealogy) = 0]">
 											<xforms:trigger appearance="minimal">
 												<xforms:label>
-													<img src="{$display_path}images/add.gif"/>Structure or Genealogy</xforms:label>
+													<img src="/xeac/xforms/images/add.gif"/>Structure or Genealogy</xforms:label>
 												<xforms:action ev:event="DOMActivate">
 													<xforms:insert context="." origin="instance('structureOrGenealogy-template')"/>
 													<xxforms:hide dialog="description-objects"/>
@@ -1596,7 +1684,7 @@
 											<span class="add">
 												<xforms:trigger appearance="minimal">
 													<xforms:label>
-														<img src="{$display_path}images/add.gif"/>
+														<img src="/xeac/xforms/images/add.gif"/>
 													</xforms:label>
 													<xxforms:show ev:event="DOMActivate" dialog="biogHist-objects"/>
 												</xforms:trigger>
@@ -1604,7 +1692,7 @@
 											<xforms:trigger appearance="minimal">
 												<xforms:delete nodeset="." ev:event="DOMActivate"/>
 												<xforms:label>
-													<img src="{$display_path}images/remove.gif"/>
+													<img src="/xeac/xforms/images/remove.gif"/>
 												</xforms:label>
 											</xforms:trigger>
 											<xxforms:dialog id="biogHist-objects" appearance="full" level="modal" close="true" draggable="true" visible="false">
@@ -1612,7 +1700,7 @@
 												<xforms:group ref=".[count(eac:abstract) = 0]">
 													<xforms:trigger appearance="minimal">
 														<xforms:label>
-															<img src="{$display_path}images/add.gif"/>Abstract</xforms:label>
+															<img src="/xeac/xforms/images/add.gif"/>Abstract</xforms:label>
 														<xforms:action ev:event="DOMActivate">
 															<xforms:insert context="." origin="instance('abstract-template')"/>
 															<xxforms:hide dialog="biogHist-objects"/>
@@ -1622,7 +1710,7 @@
 												<xforms:group ref=".[count(eac:chronList) = 0]">
 													<xforms:trigger appearance="minimal">
 														<xforms:label>
-															<img src="{$display_path}images/add.gif"/>Chronological List</xforms:label>
+															<img src="/xeac/xforms/images/add.gif"/>Chronological List</xforms:label>
 														<xforms:action ev:event="DOMActivate">
 															<xforms:insert context="." origin="instance('chronList-template')"/>
 															<xxforms:hide dialog="biogHist-objects"/>
@@ -1632,7 +1720,7 @@
 												<xforms:group ref=".[count(eac:citation) = 0]">
 													<xforms:trigger appearance="minimal">
 														<xforms:label>
-															<img src="{$display_path}images/add.gif"/>Citation</xforms:label>
+															<img src="/xeac/xforms/images/add.gif"/>Citation</xforms:label>
 														<xforms:action ev:event="DOMActivate">
 															<xforms:insert context="." origin="instance('citation-template')"/>
 															<xxforms:hide dialog="biogHist-objects"/>
@@ -1642,7 +1730,7 @@
 												<xforms:group ref=".[count(eac:list) = 0]">
 													<xforms:trigger appearance="minimal">
 														<xforms:label>
-															<img src="{$display_path}images/add.gif"/>List</xforms:label>
+															<img src="/xeac/xforms/images/add.gif"/>List</xforms:label>
 														<xforms:action ev:event="DOMActivate">
 															<xforms:insert context="." origin="instance('list-template')"/>
 															<xxforms:hide dialog="biogHist-objects"/>
@@ -1652,7 +1740,7 @@
 												<xforms:group ref=".[count(eac:outline) = 0]">
 													<xforms:trigger appearance="minimal">
 														<xforms:label>
-															<img src="{$display_path}images/add.gif"/>Outline</xforms:label>
+															<img src="/xeac/xforms/images/add.gif"/>Outline</xforms:label>
 														<xforms:action ev:event="DOMActivate">
 															<xforms:insert context="." origin="instance('outline-template')"/>
 															<xxforms:hide dialog="biogHist-objects"/>
@@ -1661,7 +1749,7 @@
 												</xforms:group>
 												<xforms:trigger appearance="minimal">
 													<xforms:label>
-														<img src="{$display_path}images/add.gif"/>Paragraph</xforms:label>
+														<img src="/xeac/xforms/images/add.gif"/>Paragraph</xforms:label>
 													<xforms:action ev:event="DOMActivate">
 														<xforms:insert context="." nodeset="./child::node()[last()]" origin="instance('p-template')"/>
 														<xxforms:hide dialog="biogHist-objects"/>
@@ -1676,7 +1764,7 @@
 												<xforms:trigger appearance="minimal">
 													<xforms:delete ev:event="DOMActivate" nodeset="."/>
 													<xforms:label>
-														<img src="{$display_path}images/remove.gif"/>
+														<img src="/xeac/xforms/images/remove.gif"/>
 													</xforms:label>
 												</xforms:trigger></div>
 										</xforms:group>
@@ -1769,7 +1857,7 @@
 									<xforms:trigger appearance="minimal">
 										<xforms:dispatch target="remove-relations" name="fr-show" ev:event="DOMActivate"/>
 										<xforms:label>
-											<img src="{$display_path}images/remove.gif"/>
+											<img src="/xeac/xforms/images/remove.gif"/>
 										</xforms:label>
 									</xforms:trigger>
 									<fr:alert-dialog id="remove-relations">
@@ -1789,12 +1877,12 @@
 									<div class="trigger_container">
 										<xforms:trigger appearance="minimal">
 											<xforms:label>
-												<img src="{$display_path}images/add.gif"/>CPF Relation</xforms:label>
+												<img src="/xeac/xforms/images/add.gif"/>CPF Relation</xforms:label>
 											<xforms:insert ev:event="DOMActivate" context="." nodeset="./child::node()[last()]" origin="instance('cpfRelation-template')"/>
 										</xforms:trigger>
 										<xforms:trigger appearance="minimal">
 											<xforms:label>
-												<img src="{$display_path}images/add.gif"/>Resource Relation</xforms:label>
+												<img src="/xeac/xforms/images/add.gif"/>Resource Relation</xforms:label>
 											<xforms:insert ev:event="DOMActivate" context="." nodeset="./child::node()[last()]" origin="instance('resourceRelation-template')"/>
 										</xforms:trigger>
 									</div>
@@ -1858,7 +1946,7 @@
 												<div class="trigger_container">
 													<xforms:trigger appearance="minimal">
 														<xforms:label>
-															<img src="{$display_path}images/add.gif"/>Maintenance Event</xforms:label>
+															<img src="/xeac/xforms/images/add.gif"/>Maintenance Event</xforms:label>
 														<xforms:action ev:event="DOMActivate">
 															<xforms:insert context="." origin="instance('maintenanceEvent-template')" nodeset="./child::node()[last()]"/>
 														</xforms:action>
@@ -1871,7 +1959,7 @@
 															<xforms:group ref=".[count(eac:eventDescription) = 0]">
 																<xforms:trigger appearance="minimal">
 																	<xforms:label>
-																		<img src="{$display_path}images/add.gif"/>Event Description</xforms:label>
+																		<img src="/xeac/xforms/images/add.gif"/>Event Description</xforms:label>
 																	<xforms:insert ev:event="DOMActivate" context="." origin="instance('eventDescription-template')" nodeset="./child::node()[last()]"/>
 																</xforms:trigger>
 															</xforms:group>
@@ -1924,7 +2012,7 @@
 																<xforms:trigger appearance="minimal">
 																	<xforms:delete ev:event="DOMActivate" nodeset="."/>
 																	<xforms:label>
-																		<img src="{$display_path}images/remove.gif"/>
+																		<img src="/xeac/xforms/images/remove.gif"/>
 																	</xforms:label>
 																</xforms:trigger>
 															</div>
@@ -1940,7 +2028,7 @@
 											<div class="trigger_container">
 												<xforms:trigger appearance="minimal">
 													<xforms:label>
-														<img src="{$display_path}images/add.gif"/>Convention Declaration</xforms:label>
+														<img src="/xeac/xforms/images/add.gif"/>Convention Declaration</xforms:label>
 													<xforms:insert ev:event="DOMActivate" context="." origin="instance('conventionDeclaration-template')" nodeset="./child::node()[last()]"/>
 												</xforms:trigger>
 											</div>
@@ -1954,13 +2042,13 @@
 															<xforms:dispatch target="remove-conventionDeclaration" name="fr-show"/>
 														</xforms:action>
 														<xforms:label>
-															<img src="{$display_path}images/remove.gif"/>
+															<img src="/xeac/xforms/images/remove.gif"/>
 														</xforms:label>
 													</xforms:trigger>
 													<div class="trigger_container">
 														<xforms:trigger appearance="minimal">
 															<xforms:label>
-																<img src="{$display_path}images/add.gif"/>Descriptive Note</xforms:label>
+																<img src="/xeac/xforms/images/add.gif"/>Descriptive Note</xforms:label>
 															<xforms:insert ev:event="DOMActivate" context="." origin="instance('descriptiveNote-template')" nodeset="./child::node()[last()]"/>
 														</xforms:trigger>
 													</div>

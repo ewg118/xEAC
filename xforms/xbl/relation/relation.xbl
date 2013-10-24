@@ -9,9 +9,9 @@
 			<xforms:group xbl:attr="model context ref bind" xxbl:scope="outer">
 				<xbl:content includes="xforms|label,xforms|help,xforms|hint,xforms|alert"/>
 				<xforms:group xxbl:scope="inner">
-					<xxforms:variable name="binding" as="node()?">
+					<xforms:var name="binding" as="node()?">
 						<xxforms:sequence select="." xxbl:scope="outer"/>
-					</xxforms:variable>
+					</xforms:var>
 					<xforms:action ev:event="xforms-enabled" ev:target="#observer">
 						<!-- load config on XBL enabled -->
 						<xforms:send submission="load-config"/>
@@ -25,11 +25,6 @@
 								<xforms:setvalue ref="instance('attributes')/attribute[@name='xlink:role']" value="$binding/@xlink:role"/>
 								<xforms:setvalue ref="instance('attributes')/attribute[@name='xlink:arcrole']" value="$binding/@xlink:arcrole"/>
 								<xforms:setvalue ref="instance('attributes')/attribute[@name='xlink:href']" value="$binding/@xlink:href"/>
-
-								<!-- load query results -->
-								<xforms:send submission="get-solr-id"
-									if="string-length(instance('attributes')/attribute[@name='xlink:href']) &gt; 0 and not(number(instance('response')/result/@numFound))"/>
-
 								<xxforms:show dialog="relation-dialog"/>
 							</xforms:action>
 						</xforms:trigger>
@@ -37,29 +32,30 @@
 					<xxforms:dialog id="relation-dialog" appearance="full" level="modal" close="false" draggable="true" visible="false">
 						<xforms:label>Establish Relationship</xforms:label>
 						<div>
-							<xforms:input ref="instance('solr-query')">
+							<xforms:input ref="instance('query')">
 								<xforms:label>Search</xforms:label>
 							</xforms:input>
 							<xforms:trigger>
 								<xforms:action ev:event="DOMActivate">
 									<!--<xforms:delete context="instance('eXist-result')/*"/>-->
-									<xforms:send submission="query-solr"/>
+									<xforms:setvalue ref="instance('eXist-xquery')/exist:text" value="replace(instance('xquery'), 'QUERY', lower-case(instance('query')))"/>
+									<xforms:send submission="xquery-collection"/>
 								</xforms:action>
 								<xforms:label>Search</xforms:label>
 							</xforms:trigger>
 						</div>
-						<xforms:group ref=".[number(instance('response')//result[@name='response']/@numFound) &gt; 0]">
+						<xforms:group ref=".[count(instance('xquery-result')//record) &gt; 0]">
 							<div>
 								<xforms:select1 ref="instance('attributes')/attribute[@name='xlink:href']" appearance="compact">
 									<xforms:label>Name</xforms:label>
-									<xforms:itemset nodeset="instance('response')//doc">
-										<xforms:label ref="concat(str[@name='name'], ' (', str[@name='id'], ')')"/>
-										<xforms:value ref="str[@name='id']"/>
+									<xforms:itemset nodeset="instance('xquery-result')//record">
+										<xforms:label ref="concat(title, ' (', id, ')')"/>
+										<xforms:value ref="id"/>
 									</xforms:itemset>
 									<xforms:action ev:event="xforms-value-changed">
 										<xforms:insert context="$binding" origin="xxforms:attribute('xlink:href', instance('attributes')/attribute[@name='xlink:href'])"
 											if="not(@xlink:href) and string-length(instance('attributes')/attribute[@name='xlink:href']) &gt; 0"/>
-										<xforms:setvalue ref="$binding/eac:relationEntry" value="instance('response')//doc[str[@name='id'] = $binding/@xlink:href]/str[@name='name']"/>
+										<xforms:setvalue ref="$binding/eac:relationEntry" value="instance('xquery-result')//record[id = $binding/@xlink:href]/title"/>
 									</xforms:action>
 								</xforms:select1>
 								<xforms:group ref=".[string-length(instance('attributes')/attribute[@name='xlink:href']) &gt; 0]">
@@ -73,7 +69,7 @@
 								</xforms:group>
 							</div>
 						</xforms:group>
-						<xforms:group ref=".[number(instance('response')//result[@name='response']/@numFound) = 0]">
+						<xforms:group ref=".[count(instance('xquery-result')//record) = 0]">
 							<div style="padding:10px 30px">
 								<i>No results found.</i>
 							</div>
@@ -113,6 +109,7 @@
 									<xforms:delete if="string-length(instance('attributes')/attribute[@name='xlink:arcrole']) = 0" context="$binding" nodeset="@xlink:arcrole"/>
 								</xforms:action>
 								</xforms:select1>-->
+
 							<xforms:input ref="instance('attributes')/attribute[@name='xlink:arcrole']">
 								<xforms:label>Xlink Arcrole</xforms:label>
 								<xforms:hint>Reminder: the relationship is from source record to remote record.</xforms:hint>
@@ -151,21 +148,16 @@
 						</div>
 					</xxforms:dialog>
 
+					<fr:xforms-inspector id="orbeon-xforms-inspector"/>
+
 					<!-- ***********************  INTERNAL MODEL *********************** -->
-					<xforms:model id="relation-model" xmlns:xi="http://www.w3.org/2001/XInclude">
-						<xforms:instance id="exist-url">
-							<xi:include href="../../../apps/xeac/exist-url.xml"/>
-						</xforms:instance>
+					<xforms:model id="relation-model" xmlns:xi="http://www.w3.org/2001/XInclude">						
 						<xforms:instance id="config">
 							<config xmlns=""/>
 						</xforms:instance>
-
-						<xforms:instance id="solr-query">
-							<query/>
-						</xforms:instance>
-
-						<xforms:instance id="response">
-							<response xmlns=""/>
+						
+						<xforms:instance id="exist-url">
+							<xi:include href="../../../exist-url.xml"/>
 						</xforms:instance>
 
 						<!-- controlled vocabulary -->
@@ -183,6 +175,15 @@
 							</list>
 						</xforms:instance>
 
+						<xforms:instance id="attributes">
+							<attributes xmlns="">
+								<attribute name="cpfRelationType"/>
+								<attribute name="xlink:arcrole"/>
+								<attribute name="xlink:href"/>
+								<attribute name="xlink:role"/>
+							</attributes>
+						</xforms:instance>
+
 						<!--<xforms:instance id="arcrole-list">
 							<list xmlns="">
 								<item>correspondedWith</item>
@@ -198,32 +199,35 @@
 							</list>
 						</xforms:instance>
 
-						<xforms:instance id="attributes">
-							<attributes xmlns="">
-								<attribute name="cpfRelationType"/>
-								<attribute name="xlink:arcrole"/>
-								<attribute name="xlink:href"/>
-								<attribute name="xlink:role"/>
-							</attributes>
+						<!-- xquery -->
+						<xforms:instance id="query">
+							<query/>
+						</xforms:instance>
+
+						<xforms:instance id="eXist-xquery">
+							<exist:query xmlns="">
+								<exist:text/>
+							</exist:query>
+						</xforms:instance>
+
+						<xforms:instance id="xquery">
+							<xquery> declare namespace eac="urn:isbn:1-931666-33-4"; &lt;report> { for $record in collection()[contains(descendant::*[local-name()='nameEntry']/*[local-name()='part'], 'QUERY')] return &lt;record> &lt;id>{ $record//eac:recordId/text() }&lt;/id> &lt;title>{
+								$record//eac:nameEntry[@xml:lang='en'][string(eac:preferredForm)][1]/eac:part/text() }&lt;/title> &lt;/record> } &lt;/report> </xquery>
+						</xforms:instance>
+
+						<xforms:instance id="xquery-result">
+							<exist:result/>
 						</xforms:instance>
 
 						<!-- ***** SUBMISSIONS ***** -->
-						<xforms:submission id="load-config" serialization="none" method="get" action="{instance('exist-url')}xeac/config.xml" replace="instance" instance="config"/>
-
-						<xforms:submission id="query-solr" serialization="none" method="get" action="{instance('config')/solr_all}select/?q=name_text:{instance('solr-query')}&amp;rows=100"
-							replace="instance" instance="response">
-							<xforms:message ev:event="xforms-submit-error" level="modal">Solr is inaccessible. Please check Solr configuration.</xforms:message>
-							<!--<xforms:action ev:event="xforms-submit-done">
-								
-							</xforms:action>-->
+						<xforms:submission id="load-config" serialization="none" method="get" action="{instance('exist-url')}xeac/config.xml" replace="instance" instance="config"
+							xxforms:username="admin" xxforms:password="">
+							<xforms:message ev:event="xforms-submit-error" level="modal">Unable to load config.</xforms:message>
 						</xforms:submission>
 
-						<xforms:submission id="get-solr-id" serialization="none" method="get"
-							action="{instance('config')/solr_all}select/?q=id:&#x022;{instance('attributes')/attribute[@name='xlink:href']}&#x022;&amp;rows=100" replace="instance" instance="response">
-							<xforms:message ev:event="xforms-submit-error" level="modal">Solr is inaccessible. Please check Solr configuration.</xforms:message>
-							<!--<xforms:action ev:event="xforms-submit-done">
-								
-								</xforms:action>-->
+						<xforms:submission id="xquery-collection" ref="instance('eXist-xquery')" action="{instance('exist-url')}xeac/records" method="post" replace="instance" instance="xquery-result"
+							xxforms:username="admin" xxforms:password="">
+							<xforms:message ev:event="xforms-submit-error" level="modal">Errory querying eXist database.</xforms:message>
 						</xforms:submission>
 					</xforms:model>
 				</xforms:group>

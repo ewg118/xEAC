@@ -3,11 +3,9 @@
 	xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xeac="https://github.com/ewg118/xEAC" xmlns:xi="http://www.w3.org/2001/XInclude">
 	<xsl:include href="templates.xsl"/>
 	<xsl:include href="widgets.xsl"/>
-	<xsl:output method="xhtml" encoding="utf-8"/>
 
-	<xsl:variable name="exist-url" select="//exist-url"/>
-	<xsl:variable name="config" select="document(concat($exist-url, 'xeac/config.xml'))"/>
-	<xsl:variable name="ui-theme" select="exsl:node-set($config)/config/theme/jquery_ui_theme"/>
+	<!-- config variables -->
+	<xsl:variable name="ui-theme" select="/content/config/theme/jquery_ui_theme"/>
 	<xsl:param name="mode">
 		<xsl:choose>
 			<xsl:when test="contains(doc('input:request')/request/request-url, 'admin/')">private</xsl:when>
@@ -30,10 +28,10 @@
 	</xsl:template>
 
 	<xsl:template match="eac:eac-cpf">
-		<html xml:lang="en" lang="en">
+		<html xml:lang="en">
 			<head>
 				<title>
-					<xsl:value-of select="exsl:node-set($config)/config/title"/>
+					<xsl:value-of select="/content/config/title"/>
 					<xsl:text>: </xsl:text>
 					<xsl:choose>
 						<xsl:when test="eac:cpfDescription/eac:identity/eac:nameEntry[eac:preferredForm='WIKIPEDIA']">
@@ -44,33 +42,33 @@
 						</xsl:otherwise>
 					</xsl:choose>
 				</title>
-				<link rel="shortcut icon" href="{$display_path}images/favicon.png" type="image/png"/>
+				<link rel="shortcut icon" href="{$display_path}ui/images/favicon.png" type="image/png"/>
 				<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.8.2r1/build/grids/grids-min.css"/>
 				<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.8.2r1/build/reset-fonts-grids/reset-fonts-grids.css"/>
 				<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.8.2r1/build/base/base-min.css"/>
 				<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.8.2r1/build/fonts/fonts-min.css"/>
 
 				<!-- EADitor styling -->
-				<link rel="stylesheet" href="{$display_path}css/style.css"/>
-				<link rel="stylesheet" href="{$display_path}css/themes/{$ui-theme}.css"/>
+				<link rel="stylesheet" href="{$display_path}ui/css/style.css"/>
+				<link rel="stylesheet" href="{$display_path}ui/css/themes/{$ui-theme}.css"/>
 
 				<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js" type="text/javascript"/>
-				<script type="text/javascript" src="{$display_path}javascript/jquery-ui-1.8.12.custom.min.js"/>
-				<script type="text/javascript" src="{$display_path}javascript/menu.js"/>
+				<script type="text/javascript" src="{$display_path}ui/javascript/jquery-ui-1.8.12.custom.min.js"/>
+				<script type="text/javascript" src="{$display_path}ui/javascript/menu.js"/>
 
 				<!-- mapping -->
 				<script src="http://www.openlayers.org/api/OpenLayers.js" type="text/javascript"/>
 				<!--<script src="http://maps.google.com/maps/api/js?sensor=false" type="text/javascript"/>
 				<script src="http://maps.google.com/maps?file=api&amp;v=2&amp;key=ABQIAAAASI0kCI-azC8RgbOZzWc3VRRarOQe_TKf_51Omf6UUSOFm7EABRRhO0PO4nBAO9FCmVDuowVwROLo3w"
       type="text/javascript"></script>-->
-				<script type="text/javascript" src="{$display_path}javascript/mxn.js"/>
+				<script type="text/javascript" src="{$display_path}ui/javascript/mxn.js"/>
 				<script src="http://static.simile.mit.edu/timeline/api-2.2.0/timeline-api.js?bundle=true" type="text/javascript"/>
-				<script type="text/javascript" src="{$display_path}javascript/timemap_full.pack.js"/>
-				<link type="text/css" href="{$display_path}ui/css/timeline-2.3.0.css" rel="stylesheet"/>
-				<script type="text/javascript" src="{$display_path}javascript/param.js"/>
-				<script type="text/javascript" src="{$display_path}javascript/loaders/xml.js"/>
-				<script type="text/javascript" src="{$display_path}javascript/loaders/kml.js"/>
-				<script type="text/javascript" src="{$display_path}javascript/display_functions.js"/>
+				<script type="text/javascript" src="{$display_path}ui/javascript/timemap_full.pack.js"/>
+				<link type="text/css" href="{$display_path}ui/ui/css/timeline-2.3.0.css" rel="stylesheet"/>
+				<script type="text/javascript" src="{$display_path}ui/javascript/param.js"/>
+				<script type="text/javascript" src="{$display_path}ui/javascript/loaders/xml.js"/>
+				<script type="text/javascript" src="{$display_path}ui/javascript/loaders/kml.js"/>
+				<script type="text/javascript" src="{$display_path}ui/javascript/display_functions.js"/>
 				<script type="text/javascript">
 					$(document).ready(function(){
 						initialize_timemap('<xsl:value-of select="//eac:recordId"/>');
@@ -167,7 +165,7 @@
 					<!-- footer -->
 					<xsl:call-template name="footer-public"/>
 				</div>
-				<xsl:copy-of select="exsl:node-set($config)/config/google_analytics/*"/>
+				<xsl:copy-of select="/content/config/google_analytics/*"/>
 			</body>
 		</html>
 	</xsl:template>

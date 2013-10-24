@@ -104,28 +104,28 @@
 
 					<!-- ********************************************************************** -->
 					<xforms:model id="cpfRelation-model" xmlns="urn:isbn:1-931666-33-4">
-						<xforms:instance id="date-template">
+						<xforms:instance id="date-template" xxforms:exclude-result-prefixes="#all">
 							<date standardDate=""/>
 						</xforms:instance>
 
-						<xforms:instance id="dateRange-template">
+						<xforms:instance id="dateRange-template" xxforms:exclude-result-prefixes="#all">
 							<dateRange>
 								<fromDate standardDate=""/>
 								<toDate standardDate=""/>
 							</dateRange>
 						</xforms:instance>
 
-						<xforms:instance id="dateSet-template">
+						<xforms:instance id="dateSet-template" xxforms:exclude-result-prefixes="#all">
 							<dateSet/>
 						</xforms:instance>
 
-						<xforms:instance id="descriptiveNote-template">
+						<xforms:instance id="descriptiveNote-template" xxforms:exclude-result-prefixes="#all">
 							<descriptiveNote>
 								<p/>
 							</descriptiveNote>
 						</xforms:instance>
 
-						<xforms:instance id="placeEntry-template">
+						<xforms:instance id="placeEntry-template" xxforms:exclude-result-prefixes="#all">
 							<placeEntry/>
 						</xforms:instance>
 					</xforms:model>

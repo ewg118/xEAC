@@ -4,13 +4,13 @@
 	<xsl:template name="header-public">
 		<div id="hd">
 			<div id="banner">
-				<xsl:if test="string(exsl:node-set($config)/config/banner_text)">
+				<xsl:if test="string(/content/config/banner_text)">
 					<div class="banner_text">
-						<xsl:value-of select="exsl:node-set($config)/config/banner_text"/>
+						<xsl:value-of select="/content/config/banner_text"/>
 					</div>
 				</xsl:if>
-				<!--<xsl:if test="string(exsl:node-set($config)/config/banner_image/@xlink:href)">
-					<img src="{$display_path}images/{exsl:node-set($config)/config/banner_image/@xlink:href}" alt="banner image"/>
+				<!--<xsl:if test="string(/content/config/banner_image/@xlink:href)">
+					<img src="{$display_path}images/{/content/config/banner_image/@xlink:href}" alt="banner image"/>
 				</xsl:if>-->
 			</div>
 			<ul role="menubar" id="menu" class="menubar ui-menubar ui-widget-header ui-helper-clearfix">

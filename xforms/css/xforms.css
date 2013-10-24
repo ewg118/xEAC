@@ -43,6 +43,11 @@ dt {
 .section>h2 {
 	display:inline;
 }
+.submission {
+	width:50%;
+	text-align:center;
+	margin:10px auto;
+}
 .subsection {
 	padding:10px 0 10px 25px;
 	width:95%;
