@@ -151,12 +151,12 @@
 					<fr:xforms-inspector id="orbeon-xforms-inspector"/>
 
 					<!-- ***********************  INTERNAL MODEL *********************** -->
-					<xforms:model id="relation-model" xmlns:xi="http://www.w3.org/2001/XInclude">						
+					<xforms:model id="relation-model">						
 						<xforms:instance id="config">
 							<config xmlns=""/>
 						</xforms:instance>
 						
-						<xforms:instance id="exist-url">
+						<xforms:instance id="exist-url" xmlns:xi="http://www.w3.org/2001/XInclude">
 							<xi:include href="../../../exist-url.xml"/>
 						</xforms:instance>
 
@@ -205,14 +205,14 @@
 						</xforms:instance>
 
 						<xforms:instance id="eXist-xquery">
-							<exist:query xmlns="">
+							<exist:query>
 								<exist:text/>
 							</exist:query>
 						</xforms:instance>
 
 						<xforms:instance id="xquery">
-							<xquery> declare namespace eac="urn:isbn:1-931666-33-4"; &lt;report> { for $record in collection()[contains(descendant::*[local-name()='nameEntry']/*[local-name()='part'], 'QUERY')] return &lt;record> &lt;id>{ $record//eac:recordId/text() }&lt;/id> &lt;title>{
-								$record//eac:nameEntry[@xml:lang='en'][string(eac:preferredForm)][1]/eac:part/text() }&lt;/title> &lt;/record> } &lt;/report> </xquery>
+							<xquery> &lt;report> { for $record in collection() return if ($record//*:recordId[contains(., 'QUERY')] or $record//*:nameEntry/*:part[matches(., 'QUERY', 'i')]) then &lt;record> &lt;id>{ $record//*:recordId/text() }&lt;/id> &lt;title>{
+								$record//*:nameEntry[@xml:lang='en'][string(*:preferredForm)][1]/*:part/text() }&lt;/title> &lt;/record> else '' } &lt;/report> </xquery>
 						</xforms:instance>
 
 						<xforms:instance id="xquery-result">

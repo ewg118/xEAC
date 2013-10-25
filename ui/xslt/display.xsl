@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="2.0" xmlns:eac="urn:isbn:1-931666-33-4" xmlns="http://www.w3.org/1999/xhtml" xmlns:exsl="http://exslt.org/common"
-	xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xeac="https://github.com/ewg118/xEAC" xmlns:xi="http://www.w3.org/2001/XInclude">
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:eac="urn:isbn:1-931666-33-4" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xeac="https://github.com/ewg118/xEAC"
+	exclude-result-prefixes="#all" version="2.0">
 	<xsl:include href="templates.xsl"/>
 	<xsl:include href="widgets.xsl"/>
 
@@ -42,18 +42,21 @@
 						</xsl:otherwise>
 					</xsl:choose>
 				</title>
-				<link rel="shortcut icon" href="{$display_path}ui/images/favicon.png" type="image/png"/>
-				<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.8.2r1/build/grids/grids-min.css"/>
-				<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.8.2r1/build/reset-fonts-grids/reset-fonts-grids.css"/>
-				<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.8.2r1/build/base/base-min.css"/>
-				<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.8.2r1/build/fonts/fonts-min.css"/>
-
+				<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/3.8.0/build/cssgrids/grids-min.css"/>
 				<!-- EADitor styling -->
 				<link rel="stylesheet" href="{$display_path}ui/css/style.css"/>
 				<link rel="stylesheet" href="{$display_path}ui/css/themes/{$ui-theme}.css"/>
 
-				<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js" type="text/javascript"/>
-				<script type="text/javascript" src="{$display_path}ui/javascript/jquery-ui-1.8.12.custom.min.js"/>
+				<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"/>
+				<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.23/jquery-ui.min.js"/>
+
+				<!-- menu -->
+				<script type="text/javascript" src="{$display_path}ui/javascript/ui/jquery.ui.core.js"/>
+				<script type="text/javascript" src="{$display_path}ui/javascript/ui/jquery.ui.widget.js"/>
+				<script type="text/javascript" src="{$display_path}ui/javascript/ui/jquery.ui.position.js"/>
+				<script type="text/javascript" src="{$display_path}ui/javascript/ui/jquery.ui.button.js"/>
+				<script type="text/javascript" src="{$display_path}ui/javascript/ui/jquery.ui.menu.js"/>
+				<script type="text/javascript" src="{$display_path}ui/javascript/ui/jquery.ui.menubar.js"/>
 				<script type="text/javascript" src="{$display_path}ui/javascript/menu.js"/>
 
 				<!-- mapping -->
@@ -78,96 +81,101 @@
 						});
 					});
 				</script>
-			</head>
-			<body class="yui-skin-sam">
-				<div id="doc4" class="yui-t5">
-					<!-- header -->
-					<xsl:call-template name="header-public"/>
-					<div id="bd">
-						<xsl:call-template name="icons"/>
-						<h1>
-							<xsl:choose>
-								<xsl:when test="eac:cpfDescription/eac:identity/eac:nameEntry[eac:preferredForm='WIKIPEDIA']">
-									<xsl:value-of select="eac:cpfDescription/eac:identity/eac:nameEntry[eac:preferredForm='WIKIPEDIA']/eac:part"/>
-								</xsl:when>
-								<xsl:otherwise>
-									<xsl:value-of select="eac:cpfDescription/eac:identity/eac:nameEntry[1]/eac:part"/>
-								</xsl:otherwise>
-							</xsl:choose>
-						</h1>
-						<a href="#" id="toggle_names">hide/show names</a>
-						<xsl:if test="eac:cpfDescription/eac:identity/eac:nameEntry[child::node()='WIKIPEDIA']">
-							<div id="wiki-names">
-								<xsl:for-each select="eac:cpfDescription/eac:identity/eac:nameEntry[*[local-name() != 'preferredForm']='WIKIPEDIA']">
-									<xsl:value-of select="eac:part"/>
-									<xsl:if test="not(position()=last())">
-										<xsl:text> / </xsl:text>
-									</xsl:if>
-								</xsl:for-each>
-							</div>
-						</xsl:if>
-
-						<div id="names" style="display:none">
-							<xsl:for-each select="//eac:conventionDeclaration">
-								<xsl:variable name="abbreviation" select="eac:abbreviation"/>
-								<h2>
-									<xsl:value-of select="eac:citation"/>
-								</h2>
-								<ul>
-									<xsl:for-each select="//eac:nameEntry[child::node()=$abbreviation]">
-										<li>
-											<xsl:value-of select="eac:part"/>
-											<xsl:if test="@xml:lang">
-												<xsl:text> (</xsl:text>
-												<xsl:value-of select="@xml:lang"/>
-												<xsl:text>)</xsl:text>
-											</xsl:if>
-											<xsl:choose>
-												<xsl:when test="eac:authorizedForm">
-													<xsl:text> (authorized form)</xsl:text>
-												</xsl:when>
-												<xsl:when test="eac:preferredForm">
-													<xsl:text> (preferred form)</xsl:text>
-												</xsl:when>
-												<xsl:when test="eac:alternativeForm">
-													<xsl:text> (alternative form)</xsl:text>
-												</xsl:when>
-											</xsl:choose>
-											<xsl:if test="eac:useDates">
-												<xsl:text>, dates of use: </xsl:text>
-												<xsl:choose>
-													<xsl:when test="eac:useDates/eac:date">
-														<xsl:value-of select="eac:useDates/eac:date"/>
-													</xsl:when>
-													<xsl:when test="eac:useDates/eac:dateRange">
-														<xsl:value-of select="eac:useDates/eac:dateRange/eac:fromDate"/>
-														<xsl:text>-</xsl:text>
-														<xsl:value-of select="eac:useDates/eac:dateRange/eac:toDate"/>
-													</xsl:when>
-												</xsl:choose>
-											</xsl:if>
-										</li>
-									</xsl:for-each>
-								</ul>
-							</xsl:for-each>
-						</div>
-						<div id="yui-main">
-							<div class="yui-b">
-								<xsl:call-template name="body"/>
-							</div>
-						</div>
-						<div class="yui-b">
-							<xsl:call-template name="side-bar"/>
-						</div>
-					</div>
-
-
-					<!-- footer -->
-					<xsl:call-template name="footer-public"/>
-				</div>
 				<xsl:copy-of select="/content/config/google_analytics/*"/>
+			</head>
+			<body>
+				<xsl:call-template name="header"/>
+				<xsl:call-template name="display"/>
+				<xsl:call-template name="footer"/>
 			</body>
 		</html>
+	</xsl:template>
+
+	<xsl:template name="display">
+		<div class="yui3-g">
+			<div class="yui3-u-1">
+				<div class="content">
+					<xsl:call-template name="icons"/>
+
+					<h1>
+						<xsl:choose>
+							<xsl:when test="eac:cpfDescription/eac:identity/eac:nameEntry[eac:preferredForm='WIKIPEDIA']">
+								<xsl:value-of select="eac:cpfDescription/eac:identity/eac:nameEntry[eac:preferredForm='WIKIPEDIA']/eac:part"/>
+							</xsl:when>
+							<xsl:otherwise>
+								<xsl:value-of select="eac:cpfDescription/eac:identity/eac:nameEntry[1]/eac:part"/>
+							</xsl:otherwise>
+						</xsl:choose>
+					</h1>
+					<a href="#" id="toggle_names">hide/show names</a>
+					<xsl:if test="eac:cpfDescription/eac:identity/eac:nameEntry[child::node()='WIKIPEDIA']">
+						<div id="wiki-names">
+							<xsl:for-each select="eac:cpfDescription/eac:identity/eac:nameEntry[*[local-name() != 'preferredForm']='WIKIPEDIA']">
+								<xsl:value-of select="eac:part"/>
+								<xsl:if test="not(position()=last())">
+									<xsl:text> / </xsl:text>
+								</xsl:if>
+							</xsl:for-each>
+						</div>
+					</xsl:if>
+
+					<div id="names" style="display:none">
+						<xsl:for-each select="//eac:conventionDeclaration">
+							<xsl:variable name="abbreviation" select="eac:abbreviation"/>
+							<h2>
+								<xsl:value-of select="eac:citation"/>
+							</h2>
+							<ul>
+								<xsl:for-each select="//eac:nameEntry[child::node()=$abbreviation]">
+									<li>
+										<xsl:value-of select="eac:part"/>
+										<xsl:if test="@xml:lang">
+											<xsl:text> (</xsl:text>
+											<xsl:value-of select="@xml:lang"/>
+											<xsl:text>)</xsl:text>
+										</xsl:if>
+										<xsl:choose>
+											<xsl:when test="eac:authorizedForm">
+												<xsl:text> (authorized form)</xsl:text>
+											</xsl:when>
+											<xsl:when test="eac:preferredForm">
+												<xsl:text> (preferred form)</xsl:text>
+											</xsl:when>
+											<xsl:when test="eac:alternativeForm">
+												<xsl:text> (alternative form)</xsl:text>
+											</xsl:when>
+										</xsl:choose>
+										<xsl:if test="eac:useDates">
+											<xsl:text>, dates of use: </xsl:text>
+											<xsl:choose>
+												<xsl:when test="eac:useDates/eac:date">
+													<xsl:value-of select="eac:useDates/eac:date"/>
+												</xsl:when>
+												<xsl:when test="eac:useDates/eac:dateRange">
+													<xsl:value-of select="eac:useDates/eac:dateRange/eac:fromDate"/>
+													<xsl:text>-</xsl:text>
+													<xsl:value-of select="eac:useDates/eac:dateRange/eac:toDate"/>
+												</xsl:when>
+											</xsl:choose>
+										</xsl:if>
+									</li>
+								</xsl:for-each>
+							</ul>
+						</xsl:for-each>
+					</div>
+				</div>
+			</div>
+			<div class="yui3-u-4-5">
+				<div class="content">
+					<xsl:call-template name="body"/>
+				</div>
+			</div>
+			<div class="yui3-u-1-5">
+				<div class="content">
+					<xsl:call-template name="side-bar"/>
+				</div>
+			</div>
+		</div>
 	</xsl:template>
 
 	<xsl:template name="body">
@@ -366,12 +374,10 @@
 	<xsl:template name="icons">
 		<div class="submenu">
 			<div class="icon">
-				<a href="{$display_path}xml/{//eac:eac-cpf/eac:control/eac:recordId}">
-					<img src="{$display_path}images/xml.png" title="XML" alt="XML"/>
-				</a>
+				<a href="id/{//eac:eac-cpf/eac:control/eac:recordId}.xml">EAC-CPF/XML</a>
 			</div>
-			<!--<div class="icon">
-				<!-\- AddThis Button BEGIN -\->
+			<div class="icon">
+				<!-- AddThis Button BEGIN -->
 				<div class="addthis_toolbox addthis_default_style ">
 					<a class="addthis_button_preferred_1"/>
 					<a class="addthis_button_preferred_2"/>
@@ -381,8 +387,8 @@
 					<a class="addthis_counter addthis_bubble_style"/>
 				</div>
 				<script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#pubid=xa-4dd29d0e2f66557f"/>
-				<!-\- AddThis Button END -\->
-			</div>-->
+				<!-- AddThis Button END -->
+			</div>
 		</div>
 	</xsl:template>
 

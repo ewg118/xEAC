@@ -3,7 +3,11 @@
   GLOBAL
   ****************************************
  */
-.yui3-g {
+ html{
+ 	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 13px;	
+ }
+ body {
 	margin:20px auto;
 	min-width:960px;
 	max-width:90%;
@@ -20,20 +24,11 @@ h1 {
 #form ul li {
 	list-style-type:none;
 }
-.ui-multiselect-menu ul li {
-	list-style-type:none;
-}
-.ui-widget {
-	font-size:12px;
-}
-.ui-selectmenu {
-	float:left;
-}
-a:link {
+a:link, .ui-widget a:link {
 	color:#8BADCF;
 	text-decoration:none;
 }
-a:visited {
+a:visited, .ui-widget a:visited {
 	color:#8BADCF;
 	text-decoration:none;
 }
@@ -51,6 +46,15 @@ a:hover {
 #banner {
 	background-color: #ebebeb;
 }
+#hd .align-left {
+	text-align:left;
+}
+#hd .align-right {
+	text-align:right;
+}
+#hd .align-center {
+	text-align:center;
+}
 .banner_text {
 	padding:20px;
 	font-size:24px;
@@ -67,57 +71,6 @@ a:hover {
 	text-align:center;
 	background-color:#ebebeb;
 	width:100%;
-}
-/*
-  ****************************************
-  ADMIN PAGE
-  ****************************************
- */
-.page_toc {
-	font-size:12px;
-}
-.browse_table {
-	width:100%;
-}
-.odd-row {
-	background-color:white;
-	margin:10px 0;
-	padding:10px 0;
-	vertical-align:top;
-}
-.even-row {
-	background-color:#EFEFEF;
-	margin:10px 0;
-	padding:10px 0px;
-	vertical-align:top;
-}
-.center {
-	text-align:center;
-}
-/*
-  ****************************************
-  TEST PAGE
-  ****************************************
- */
-.error-table {
-	width:100%;
-}
-.error-table td {
-	padding:5px;
-	border:0;
-}
-.error-table th {
-	border:0;
-}
-.indicator {
-	width:5%;
-	text-align:center;
-}
-.test-success {
-	background-color:#47e547;
-}
-.test-fail {
-	background-color:red;
 }
 /*
   ****************************************
@@ -330,42 +283,6 @@ button.ui-multiselect {
 }
 /*
   ***************************************
-  jQuery UI Menubar @VERSION
-  ***************************************
-  * Copyright 2011, AUTHORS.txt (http://jqueryui.com/about)
-  * Dual licensed under the MIT or GPL Version 2 licenses.
-  * http://jquery.org/license
- */
-.ui-menubar {
-	list-style: none;
-	margin: 0;
-	padding-left: 0;
-	border-left:0px;
-	border-right:0px;
-}
-.ui-menubar-item {
-	float: left;
-	list-style-type:none;
-}
-.ui-menubar .ui-button {
-	float: left;
-	font-weight: normal;
-	border-top-width: 0 !important;
-	border-bottom-width: 0 !important;
-	margin: 0;
-	outline: none;
-}
-.ui-menubar .ui-menubar-link {
-	border-right: 1px dashed transparent;
-	border-left: 1px dashed transparent;
-}
-.ui-menubar .ui-menu {
-	width: 200px;
-	position: absolute;
-	z-index: 9999;
-}
-/*
-  ***************************************
   Timemap CSS
   ***************************************
  */
@@ -420,4 +337,40 @@ div.custominfostyle {
 	font-size: 1.5em;
 	font-style: italic;
 	width: 20em;
+}
+/*
+  ***************************************
+  jQuery UI Menubar @VERSION
+  ***************************************
+  * Copyright 2011, AUTHORS.txt (http://jqueryui.com/about)
+  * Dual licensed under the MIT or GPL Version 2 licenses.
+  * http://jquery.org/license
+ */
+.ui-menubar {
+	list-style: none;
+	margin: 0;
+	padding-left: 0;
+	border-left:0px;
+	border-right:0px;
+}
+.ui-menubar-item {
+	float: left;
+	list-style-type:none;
+}
+.ui-menubar .ui-button {
+	float: left;
+	font-weight: normal;
+	border-top-width: 0 !important;
+	border-bottom-width: 0 !important;
+	margin: 0;
+	outline: none;
+}
+.ui-menubar .ui-menubar-link {
+	border-right: 1px dashed transparent;
+	border-left: 1px dashed transparent;
+}
+.ui-menubar .ui-menu {
+	width: 200px;
+	position: absolute;
+	z-index: 9999;
 }
