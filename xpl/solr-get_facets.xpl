@@ -44,7 +44,7 @@
 						<xsl:when test="$pipeline='results'">
 							<xsl:value-of select="concat($solr-url, '?q=', encode-for-uri($q), '&amp;facet.field=', $category, '&amp;facet.sort=', $sort, '&amp;rows=0')"/>
 						</xsl:when>
-						<xsl:when test="$pipeline='maps'">
+						<xsl:when test="$pipeline='maps' or $pipeline='maps_fullscreen'">
 							<xsl:value-of select="concat($solr-url, '?q=', encode-for-uri(concat($q, ' AND georef:*')), '&amp;facet.field=', $category, '&amp;facet.sort=', $sort, '&amp;rows=0')"/>
 						</xsl:when>			
 					</xsl:choose>

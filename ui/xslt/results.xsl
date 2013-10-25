@@ -62,6 +62,7 @@
 				<script type="text/javascript" src="{$display_path}ui/javascript/jquery.fancybox-1.3.4.min.js"/>
 				<script type="text/javascript" src="{$display_path}ui/javascript/jquery.livequery.js"/>
 				<script type="text/javascript" src="{$display_path}ui/javascript/get_facets.js"/>
+				<script type="text/javascript" src="{$display_path}ui/javascript/facet_functions.js"/>
 				<script type="text/javascript" src="{$display_path}ui/javascript/quick_search.js"/>
 				<xsl:copy-of select="/content/config/google_analytics/*"/>
 			</head>
@@ -132,6 +133,10 @@
 				</div>
 			</div>
 		</div>
+		<span id="pipeline" style="display:none">
+			<xsl:value-of select="$pipeline"/>
+		</span>
+		<select id="ajax-temp" style="display:none"/>
 	</xsl:template>
 
 	<xsl:template match="doc">
