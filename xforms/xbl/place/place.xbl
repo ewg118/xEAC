@@ -131,10 +131,18 @@
 									</xforms:trigger>
 								</div>
 								<xforms:repeat nodeset="eac:addressLine">
-									<xforms:input ref=".">
-										<xforms:label>Address Line</xforms:label>
-										<xforms:alert>Required</xforms:alert>
-									</xforms:input>									
+									<div>
+										<xforms:input ref=".">
+											<xforms:label>Address Line</xforms:label>
+											<xforms:alert>Required</xforms:alert>
+										</xforms:input>
+										<xforms:group ref=".[count(parent::node()/eac:addressLine) &gt; 1]">
+											<xforms:trigger appearance="minimal">
+												<xforms:delete ev:event="DOMActivate" nodeset="."/>
+												<xforms:label><img src="/xeac/xforms/images/remove.gif"/></xforms:label>
+											</xforms:trigger>
+										</xforms:group>										
+									</div>																		
 								</xforms:repeat>
 							</xforms:group>
 

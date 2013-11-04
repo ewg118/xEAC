@@ -478,7 +478,7 @@
 			</xforms:instance>
 			<xforms:instance id="place-template" xxforms:exclude-result-prefixes="#all">
 				<place>
-					<placeEntry/>
+					<placeEntry vocabularySource=""/>
 				</place>
 			</xforms:instance>
 			<xforms:instance id="places-template" xxforms:exclude-result-prefixes="#all">
@@ -537,9 +537,6 @@
 					<xforms:bind nodeset="eac:maintenanceHistory">
 						<xforms:bind nodeset="eac:maintenanceEvent">
 							<xforms:bind nodeset="eac:eventType" required="true()"/>
-							<xforms:bind nodeset="eac:eventDateTime">
-								<xforms:bind nodeset="@standardDateTime" type="xs:dateTime" required="true()"/>
-							</xforms:bind>
 							<xforms:bind nodeset="eac:agentType" required="true()"/>
 							<xforms:bind nodeset="eac:agent" required="true()"/>
 						</xforms:bind>
@@ -573,6 +570,9 @@
 						<xforms:bind nodeset="descendant::eac:relationEntry" required="true()"/>
 					</xforms:bind>
 				</xforms:bind>
+				<!-- bind standardDate and standardDateTime anywhere -->
+				<xforms:bind nodeset="//@standardDate" type="m.data.standardDate"/>
+				<xforms:bind nodeset="//@standardDateTime" type="m.data.standardDateTime"/>
 			</xforms:bind>
 			<!-- ******************* SUBMISSIONS ****************** -->
 			<!-- load preliminary instances -->
@@ -1914,7 +1914,14 @@
 							<!--**************************************** CONTROL **********************************-->
 							<fr:tab bind="control-tab">
 								<fr:label>Control</fr:label>
-								<h1>Control</h1>
+								<h1>Control</h1>	
+								<div class="trigger_container">
+									<xforms:trigger appearance="minimal">
+										<xforms:label>
+											<img src="/xeac/xforms/images/add.gif"/>Other Record ID</xforms:label>
+										<xforms:insert ev:event="DOMActivate" context="." nodeset="eac:recordId" position="after" origin="instance('otherRecordId-template')"/>
+									</xforms:trigger>									
+								</div>								
 								<div>
 									<xforms:select1 ref="eac:maintenanceAgency/eac:agencyName">
 										<xforms:label>Agency Name</xforms:label>
@@ -1943,6 +1950,18 @@
 										</xforms:itemset>
 									</xforms:select1>
 								</div>
+								<xforms:repeat nodeset="eac:otherRecordId">
+									<div>
+										<xforms:input ref=".">
+											<xforms:label>Other Record ID</xforms:label>
+											<xforms:alert>Must conform to xs:anyURI</xforms:alert>
+										</xforms:input>
+										<xforms:trigger appearance="minimal">
+											<xforms:delete ev:event="DOMActivate" nodeset="."/>
+											<xforms:label><img src="/xeac/xforms/images/remove.gif"/></xforms:label>
+										</xforms:trigger>
+									</div>
+								</xforms:repeat>
 								<div class="yui3-g">
 									<div class="yui3-u-1-2">
 										<xforms:group ref="eac:maintenanceHistory">

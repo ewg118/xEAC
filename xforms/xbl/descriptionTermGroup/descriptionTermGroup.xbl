@@ -211,7 +211,7 @@
 
 						<xforms:instance id="place-template" xxforms:exclude-result-prefixes="#all">
 							<place>
-								<placeEntry/>
+								<placeEntry vocabularySource=""/>
 							</place>
 						</xforms:instance>
 
