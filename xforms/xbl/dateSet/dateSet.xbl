@@ -21,14 +21,14 @@
 						<div class="trigger_container">
 							<xforms:trigger appearance="minimal">
 								<xforms:label>
-									<img src="{$display_path}images/add.gif"/>Date</xforms:label>
+									<img src="/xeac/xforms/images/add.gif"/>Date</xforms:label>
 								<xforms:action ev:event="DOMActivate">
 									<xforms:insert context="." origin="instance('date-template')" nodeset="./child::node()[last()]"/>
 								</xforms:action>
 							</xforms:trigger>
 							<xforms:trigger appearance="minimal">
 								<xforms:label>
-									<img src="{$display_path}images/add.gif"/>Date Range</xforms:label>
+									<img src="/xeac/xforms/images/add.gif"/>Date Range</xforms:label>
 								<xforms:action ev:event="DOMActivate">
 									<xforms:insert context="." origin="instance('dateRange-template')" nodeset="./child::node()[last()]"/>
 								</xforms:action>
@@ -46,11 +46,11 @@
 					</xforms:group>
 
 					<xforms:model id="dateSet-model" xmlns="urn:isbn:1-931666-33-4">
-						<xforms:instance id="date-template">
+						<xforms:instance id="date-template" xxforms:exclude-result-prefixes="#all">
 							<date standardDate=""/>
 						</xforms:instance>
 
-						<xforms:instance id="dateRange-template">
+						<xforms:instance id="dateRange-template" xxforms:exclude-result-prefixes="#all">
 							<dateRange>
 								<fromDate standardDate=""/>
 								<toDate standardDate=""/>

@@ -12,14 +12,12 @@
 					<xforms:var name="binding" as="node()?">
 						<xxforms:sequence select="." xxbl:scope="outer"/>
 					</xforms:var>
-					<xforms:action ev:event="xforms-enabled" ev:target="#observer">
-						<!-- load config on XBL enabled -->
-						<xforms:send submission="load-config"/>
-					</xforms:action>
-					<span class="add">
+					<span class="add">						
 						<xforms:trigger appearance="minimal">
 							<xforms:label>@</xforms:label>
 							<xforms:action ev:event="DOMActivate">
+								<!-- load config on trigger click enabled -->
+								<xforms:send submission="load-config" if="not(string(instance('config')/url))"/>
 								<!-- pre-set the values of instance('attributes') -->
 								<xforms:setvalue ref="instance('attributes')/attribute[@name='cpfRelationType']" value="$binding/@cpfRelationType"/>
 								<xforms:setvalue ref="instance('attributes')/attribute[@name='xlink:role']" value="$binding/@xlink:role"/>
@@ -31,50 +29,53 @@
 					</span>
 					<xxforms:dialog id="relation-dialog" appearance="full" level="modal" close="false" draggable="true" visible="false">
 						<xforms:label>Establish Relationship</xforms:label>
-						<div>
-							<xforms:input ref="instance('query')">
-								<xforms:label>Search</xforms:label>
+						<!-- handle xlink:href -->
+						<xforms:group ref="$binding/@xlink:href[string-length(.) &gt; 0]">
+							<xforms:input ref=".">
+								<xforms:label>Xlink Href</xforms:label>
 							</xforms:input>
-							<xforms:trigger>
-								<xforms:action ev:event="DOMActivate">
-									<!--<xforms:delete context="instance('eXist-result')/*"/>-->
-									<xforms:setvalue ref="instance('eXist-xquery')/exist:text" value="replace(instance('xquery'), 'QUERY', lower-case(instance('query')))"/>
-									<xforms:send submission="xquery-collection"/>
-								</xforms:action>
-								<xforms:label>Search</xforms:label>
-							</xforms:trigger>
-						</div>
-						<xforms:group ref=".[count(instance('xquery-result')//record) &gt; 0]">
+						</xforms:group>
+						<xforms:group ref=".[not(string($binding/@xlink:href))]">
 							<div>
-								<xforms:select1 ref="instance('attributes')/attribute[@name='xlink:href']" appearance="compact">
-									<xforms:label>Name</xforms:label>
-									<xforms:itemset nodeset="instance('xquery-result')//record">
-										<xforms:label ref="concat(title, ' (', id, ')')"/>
-										<xforms:value ref="id"/>
-									</xforms:itemset>
-									<xforms:action ev:event="xforms-value-changed">
-										<xforms:insert context="$binding" origin="xxforms:attribute('xlink:href', instance('attributes')/attribute[@name='xlink:href'])"
-											if="not(@xlink:href) and string-length(instance('attributes')/attribute[@name='xlink:href']) &gt; 0"/>
-										<xforms:setvalue ref="$binding/eac:relationEntry" value="instance('xquery-result')//record[id = $binding/@xlink:href]/title"/>
+								<xforms:input ref="instance('query')">
+									<xforms:label>Search</xforms:label>
+								</xforms:input>
+								<xforms:trigger>
+									<xforms:action ev:event="DOMActivate">
+										<!--<xforms:delete context="instance('eXist-result')/*"/>-->
+										<xforms:setvalue ref="instance('eXist-xquery')/exist:text" value="replace(instance('xquery'), 'QUERY', lower-case(instance('query')))"/>
+										<xforms:send submission="xquery-collection"/>
 									</xforms:action>
-								</xforms:select1>
-								<xforms:group ref=".[string-length(instance('attributes')/attribute[@name='xlink:href']) &gt; 0]">
+									<xforms:label>Search</xforms:label>
+								</xforms:trigger>
+							</div>
+							<xforms:group ref=".[count(instance('xquery-result')//*:record) &gt; 0]">
+								<div>
+									<xforms:select1 ref="instance('attributes')/attribute[@name='xlink:href']" appearance="compact">
+										<xforms:label>Name</xforms:label>
+										<xforms:itemset nodeset="instance('xquery-result')//*:record">
+											<xforms:label ref="concat(*:title, ' (', *:id, ')')"/>
+											<xforms:value ref="*:id"/>
+										</xforms:itemset>
+									</xforms:select1>
 									<xforms:trigger>
+										<xforms:label>Select</xforms:label>
 										<xforms:action ev:event="DOMActivate">
-											<xforms:delete context="$binding" nodeset="@xlink:href"/>
-											<xforms:setvalue ref="instance('attributes')/attribute[@name='xlink:href']"/>
+											<xforms:insert context="$binding" origin="xxforms:attribute('xlink:href', instance('attributes')/attribute[@name='xlink:href'])"
+												if="not(@xlink:href) and string-length(instance('attributes')/attribute[@name='xlink:href']) &gt; 0"/>
+											<xforms:setvalue ref="$binding/eac:relationEntry" value="instance('xquery-result')//*:record[*:id = $binding/@xlink:href]/*:title"/>
 										</xforms:action>
-										<xforms:label>Clear Selection</xforms:label>
 									</xforms:trigger>
-								</xforms:group>
-							</div>
+								</div>
+							</xforms:group>
+							<!--<xforms:group ref=".[count(instance('xquery-result')//record) = 0]">
+								<div style="padding:10px 30px">
+									<i>No results found.</i>
+								</div>
+							</xforms:group>-->
 						</xforms:group>
-						<xforms:group ref=".[count(instance('xquery-result')//record) = 0]">
-							<div style="padding:10px 30px">
-								<i>No results found.</i>
-							</div>
-						</xforms:group>
-						<div>
+
+						<!--<div>
 							<xforms:select1 ref="instance('attributes')/attribute[@name='cpfRelationType']">
 								<xforms:label>CPF Relation Type</xforms:label>
 								<xforms:item>
@@ -91,34 +92,24 @@
 									<xforms:delete if="string-length(instance('attributes')/attribute[@name='cpfRelationType']) = 0" context="$binding" nodeset="@cpfRelationType"/>
 								</xforms:action>
 							</xforms:select1>
-						</div>
+						</div>-->
 						<div>
-							<!--<xforms:select1 ref="instance('attributes')/attribute[@name='xlink:arcrole']">
+							<xforms:select1 ref="instance('attributes')/attribute[@name='xlink:arcrole']">
 								<xforms:label>Xlink Arcrole</xforms:label>
 								<xforms:item>
 									<xforms:label>Select...</xforms:label>
 									<xforms:value/>
 								</xforms:item>
-								<xforms:itemset nodeset="instance('arcrole-list')/item">
-									<xforms:label ref="."/>
-									<xforms:value ref="."/>
+								<xforms:itemset nodeset="instance('config')/relationSemantics/relation">
+									<xforms:label ref="@from"/>
+									<xforms:value ref="@from"/>
 								</xforms:itemset>
 								<xforms:action ev:event="xforms-value-changed">
 									<xforms:insert context="$binding" origin="xxforms:attribute('xlink:arcrole', instance('attributes')/attribute[@name='xlink:arcrole'])"
 										if="not(@xlink:arcrole) and string-length(instance('attributes')/attribute[@name='xlink:arcrole']) &gt; 0"/>
 									<xforms:delete if="string-length(instance('attributes')/attribute[@name='xlink:arcrole']) = 0" context="$binding" nodeset="@xlink:arcrole"/>
 								</xforms:action>
-								</xforms:select1>-->
-
-							<xforms:input ref="instance('attributes')/attribute[@name='xlink:arcrole']">
-								<xforms:label>Xlink Arcrole</xforms:label>
-								<xforms:hint>Reminder: the relationship is from source record to remote record.</xforms:hint>
-								<xforms:action ev:event="xforms-value-changed">
-									<xforms:insert context="$binding" origin="xxforms:attribute('xlink:arcrole', instance('attributes')/attribute[@name='xlink:arcrole'])"
-										if="not(@xlink:arcrole) and string-length(instance('attributes')/attribute[@name='xlink:arcrole']) &gt; 0"/>
-									<xforms:delete if="string-length(instance('attributes')/attribute[@name='xlink:arcrole']) = 0" context="$binding" nodeset="@xlink:arcrole"/>
-								</xforms:action>
-							</xforms:input>
+							</xforms:select1>
 						</div>
 						<div>
 							<xforms:select1 ref="instance('attributes')/attribute[@name='xlink:role']">
@@ -148,20 +139,20 @@
 						</div>
 					</xxforms:dialog>
 
-					<fr:xforms-inspector id="orbeon-xforms-inspector"/>
+					<!--<fr:xforms-inspector id="orbeon-xforms-inspector"/>-->
 
 					<!-- ***********************  INTERNAL MODEL *********************** -->
-					<xforms:model id="relation-model">						
+					<xforms:model id="relation-model">
 						<xforms:instance id="config">
 							<config xmlns=""/>
 						</xforms:instance>
-						
+
 						<xforms:instance id="exist-url" xmlns:xi="http://www.w3.org/2001/XInclude">
 							<xi:include href="../../../exist-url.xml"/>
 						</xforms:instance>
 
 						<!-- controlled vocabulary -->
-						<xforms:instance id="cpfRelationType-list">
+						<!--<xforms:instance id="cpfRelationType-list">
 							<list xmlns="">
 								<item>identity</item>
 								<item>hierarchical</item>
@@ -173,7 +164,7 @@
 								<item>family</item>
 								<item>associative</item>
 							</list>
-						</xforms:instance>
+						</xforms:instance>-->
 
 						<xforms:instance id="attributes">
 							<attributes xmlns="">
@@ -184,13 +175,6 @@
 							</attributes>
 						</xforms:instance>
 
-						<!--<xforms:instance id="arcrole-list">
-							<list xmlns="">
-								<item>correspondedWith</item>
-								<item>associatedWith</item>
-							</list>
-						</xforms:instance>-->
-
 						<xforms:instance id="role-list">
 							<list xmlns="">
 								<item role="http://RDVocab.info/uri/schema/FRBRentitiesRDA/CorporateBody">Corporate Body</item>
@@ -200,22 +184,23 @@
 						</xforms:instance>
 
 						<!-- xquery -->
-						<xforms:instance id="query">
+						<xforms:instance id="query" xxforms:exclude-result-prefixes="#all">
 							<query/>
 						</xforms:instance>
 
-						<xforms:instance id="eXist-xquery">
+						<xforms:instance id="eXist-xquery" xxforms:exclude-result-prefixes="#all">
 							<exist:query>
 								<exist:text/>
 							</exist:query>
 						</xforms:instance>
 
-						<xforms:instance id="xquery">
-							<xquery> &lt;report> { for $record in collection() return if ($record//*:recordId[contains(., 'QUERY')] or $record//*:nameEntry/*:part[matches(., 'QUERY', 'i')]) then &lt;record> &lt;id>{ $record//*:recordId/text() }&lt;/id> &lt;title>{
-								$record//*:nameEntry[@xml:lang='en'][string(*:preferredForm)][1]/*:part/text() }&lt;/title> &lt;/record> else '' } &lt;/report> </xquery>
+						<xforms:instance id="xquery" xxforms:exclude-result-prefixes="#all">
+							<xquery> &lt;report> { for $record in collection() return if ($record//*:recordId[contains(., 'QUERY')] or $record//*:nameEntry/*:part[matches(., 'QUERY', 'i')]) then
+								&lt;record> &lt;id>{ $record//*:recordId/text() }&lt;/id> &lt;title>{ $record//*:nameEntry[@xml:lang='en'][string(*:preferredForm)][1]/*:part/text() }&lt;/title>
+								&lt;/record> else '' } &lt;/report> </xquery>
 						</xforms:instance>
 
-						<xforms:instance id="xquery-result">
+						<xforms:instance id="xquery-result" xxforms:exclude-result-prefixes="#all">
 							<exist:result/>
 						</xforms:instance>
 

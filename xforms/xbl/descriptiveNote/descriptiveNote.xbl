@@ -14,13 +14,13 @@
 						<xforms:trigger appearance="minimal">
 							<xforms:delete ev:event="DOMActivate" nodeset="."/>
 							<xforms:label>
-								<img src="{$display_path}images/remove.gif"/>
+								<img src="/xeac/xforms/images/remove.gif"/>
 							</xforms:label>
 						</xforms:trigger>
 						<div class="trigger_container">
 							<xforms:trigger appearance="minimal">
 								<xforms:label>
-									<img src="{$display_path}images/add.gif"/>Paragraph</xforms:label>
+									<img src="/xeac/xforms/images/add.gif"/>Paragraph</xforms:label>
 								<xforms:insert ev:event="DOMActivate" context="." origin="instance('p-template')" nodeset="./child::node()[last()]"/>
 							</xforms:trigger>
 						</div>
@@ -32,7 +32,7 @@
 					<!-- ********************************************************************** -->
 
 					<xforms:model id="descriptiveNote-model" xmlns="urn:isbn:1-931666-33-4">
-						<xforms:instance id="p-template">
+						<xforms:instance id="p-template" xxforms:exclude-result-prefixes="#all">
 							<p/>
 						</xforms:instance>
 					</xforms:model>

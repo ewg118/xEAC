@@ -132,9 +132,20 @@
 					</cpfDescription>
 				</eac-cpf>
 			</xforms:instance>
+			
+			<!-- exist URL is stored in an XML file -->
+			<xforms:instance id="exist-url">
+				<xi:include href="../exist-url.xml"/>
+			</xforms:instance>
+			
+			<xforms:instance id="config">
+				<config xmlns=""/>
+			</xforms:instance>
+			
 			<xforms:instance id="kml">
 				<kml/>
 			</xforms:instance>
+			
 			<xforms:instance id="control-instance">
 				<control xmlns="">
 					<pos/>
@@ -168,14 +179,7 @@
 					<item id="11">November</item>
 					<item id="12">December</item>
 				</list>
-			</xforms:instance>
-			<!-- exist URL is stored in an XML file -->
-			<xforms:instance id="exist-url">
-				<xi:include href="../exist-url.xml"/>
-			</xforms:instance>
-			<xforms:instance id="config">
-				<config xmlns=""/>
-			</xforms:instance>
+			</xforms:instance>			
 			<!-- VIAF instances -->
 			<xforms:instance id="search-query">
 				<query/>
@@ -537,6 +541,7 @@
 								<xforms:bind nodeset="@standardDateTime" type="xs:dateTime" required="true()"/>
 							</xforms:bind>
 							<xforms:bind nodeset="eac:agentType" required="true()"/>
+							<xforms:bind nodeset="eac:agent" required="true()"/>
 						</xforms:bind>
 					</xforms:bind>
 					<xforms:bind nodeset="eac:conventionDeclaration">
@@ -643,8 +648,8 @@
 				</xforms:action>
 				<!-- If temp-doc does not exist, create new EAC-CPF record from eac-template -->
 				<xforms:action ev:event="xforms-submit-error">
-					<xxforms:variable name="id" select="instance('temp-id')/identifier"/>
-					<xxforms:variable name="role" select="instance('doc')//eac:cpfRelation[@xlink:href=$id]/@xlink:role"/>
+					<xforms:var name="id" select="instance('temp-id')/identifier"/>
+					<xforms:var name="role" select="instance('doc')//eac:cpfRelation[@xlink:href=$id]/@xlink:role"/>
 					<!-- set template metadata -->
 					<xforms:setvalue ref="instance('eac-template')/eac:control/eac:recordId" value="$id"/>
 					<xforms:setvalue ref="instance('eac-template')/eac:control/eac:maintenanceAgency/eac:agencyName" value="instance('doc')/eac:control/eac:maintenanceAgency/eac:agencyName"/>
@@ -652,7 +657,7 @@
 					<xforms:setvalue ref="instance('eac-template')/eac:cpfDescription/eac:identity/eac:entityType"
 						value="if ($role='http://RDVocab.info/uri/schema/FRBRentitiesRDA/Person') then 'person' else 'corporateBody'"/>
 					<!-- set cpfRelation with current doc info -->
-					<xxforms:variable name="entityType" select="instance('doc')/eac:cpfDescription/eac:identity/eac:entityType"/>
+					<xforms:var name="entityType" select="instance('doc')/eac:cpfDescription/eac:identity/eac:entityType"/>
 					<xforms:setvalue ref="instance('eac-template')/eac:cpfDescription/eac:relations/eac:cpfRelation/eac:relationEntry"
 						value="instance('doc')/eac:cpfDescription/eac:identity/eac:nameEntry[1]/eac:part"/>
 					<xforms:setvalue ref="instance('eac-template')/eac:cpfDescription/eac:relations/eac:cpfRelation/@xlink:href" value="instance('doc')/eac:control/eac:recordId"/>
@@ -691,7 +696,7 @@
 					<!-- ***** GENERATE ACTION LIST ***** -->
 					<xforms:action xxforms:iterate="instance('relations-post')/eac:relation[@xlink:href]">
 						<!-- create new relations -->
-						<xxforms:variable name="href" select="@xlink:href"/>
+						<xforms:var name="href" select="@xlink:href"/>
 						<xforms:action if="not(instance('relations-pre')/eac:relation[@xlink:href=$href])">
 							<xforms:insert context="instance('action-list')" nodeset="./child::node()[last()]" origin="instance('action-template')"/>
 							<xforms:setvalue ref="instance('action-list')/eac:action[last()]/@source" value="instance('doc')/eac:control/eac:recordId"/>
@@ -709,7 +714,7 @@
 					<!-- add removals to action list: cpfRelations with xlink:hrefs that do not appear in post -->
 					<xforms:action xxforms:iterate="instance('relations-pre')/eac:relation[@xlink:href]">
 						<!-- create new relations -->
-						<xxforms:variable name="href" select="@xlink:href"/>
+						<xforms:var name="href" select="@xlink:href"/>
 						<xforms:action if="not(instance('relations-post')/eac:relation[@xlink:href=$href])">
 							<xforms:insert context="instance('action-list')" nodeset="./child::node()[last()]" origin="instance('action-template')"/>
 							<xforms:setvalue ref="instance('action-list')/eac:action[last()]/@source" value="instance('doc')/eac:control/eac:recordId"/>
@@ -830,7 +835,7 @@
 					<xforms:setvalue ref="instance('doc')/eac:control/eac:sources/eac:source[last()]/@xlink:href" value="instance('viaf-id')"/>
 					<!-- create nameEntries -->
 					<xforms:action xxforms:iterate="instance('viaf-rdf')//skos:Concept">
-						<xxforms:variable name="auth" select="substring-after(context()/skos:inScheme/@rdf:resource, 'authorityScheme/')"/>
+						<xforms:var name="auth" select="substring-after(context()/skos:inScheme/@rdf:resource, 'authorityScheme/')"/>
 						<xforms:setvalue ref="instance('viaf-id')" value="context()/skos:inScheme/@rdf:resource"/>
 						<!-- insert conventionDeclarations into control -->
 						<xforms:insert context="instance('doc')/eac:control" nodeset="./child::node()[last()]" origin="instance('conventionDeclaration-template')"/>
@@ -919,7 +924,7 @@
 		<xi:include href="xbl/structureOrGenealogy/structureOrGenealogy.xbl" xi:omit-xml-base="true"/>
 	</head>
 	<body>
-		<xxforms:variable name="display_path">../../</xxforms:variable>
+		<xforms:var name="display_path">../../</xforms:var>
 		<div class="yui3-g">
 			<div class="yui3-u-1">
 				<div class="content">
@@ -943,8 +948,8 @@
 						<!--<xforms:trigger>
 							<xforms:label>Test</xforms:label>
 							<xforms:action ev:event="DOMActivate">
-								<xxforms:variable name="temp1" select="xxforms:serialize(instance('temp1'), 'text')"/>
-								<xxforms:variable name="temp2" select="instance('temp2')"/>
+								<xforms:var name="temp1" select="xxforms:serialize(instance('temp1'), 'text')"/>
+								<xforms:var name="temp2" select="instance('temp2')"/>
 								
 								<xforms:message level="modal">
 									<xforms:output value="$temp1"/>
@@ -1258,8 +1263,8 @@
 											<xforms:trigger>
 												<xforms:label>Import</xforms:label>
 												<xforms:action ev:event="DOMActivate">
-													<xxforms:variable name="resource" select="concat('http://dbpedia.org/resource/', substring-after(instance('dbpedia-id'), 'resource/'))"/>
-													<xxforms:variable name="lang" select="instance('config')/lang"/>
+													<xforms:var name="resource" select="concat('http://dbpedia.org/resource/', substring-after(instance('dbpedia-id'), 'resource/'))"/>
+													<xforms:var name="lang" select="instance('config')/lang"/>
 													<!-- set recordId if it is blank -->
 													<xforms:setvalue ref="instance('doc')/eac:control/eac:recordId" value="lower-case(substring-after(instance('dbpedia-id'), 'resource/'))"
 														if="not(string(instance('doc')/eac:control/eac:recordId))"/>
@@ -1282,7 +1287,7 @@
 														<xforms:setvalue ref="instance('doc')/eac:control/eac:conventionDeclaration[last()]/eac:citation">Wikipedia/DBpedia</xforms:setvalue>
 														<!-- insert nameEntries -->
 														<xforms:action xxforms:iterate="instance('dbpedia-rdf')/rdf:Description[@rdf:about=$resource]/descendant::rdfs:label">
-															<xxforms:variable name="lang" select="@xml:lang"/>
+															<xforms:var name="lang" select="@xml:lang"/>
 															<xforms:insert context="instance('doc')/eac:cpfDescription/eac:identity" nodeset="./child::node()[last()]"
 																origin="instance('nameEntry-template')"/>
 															<xforms:setvalue ref="instance('doc')/eac:cpfDescription/eac:identity/eac:nameEntry[last()]/eac:part" value="context()"/>
@@ -1303,7 +1308,7 @@
 													</xforms:action>
 													<!-- import abstract in xEAC system language (or default english) -->
 													<xforms:action if="abstract = 'true'">
-														<xxforms:variable name="comment-lang" select="if (instance('dbpedia-rdf')//rdfs:comment[@xml:lang=$lang]) then $lang else 'en'"/>
+														<xforms:var name="comment-lang" select="if (instance('dbpedia-rdf')//rdfs:comment[@xml:lang=$lang]) then $lang else 'en'"/>
 														<xforms:insert context="instance('doc')/eac:cpfDescription" nodeset="./child::node()[last()]" origin="instance('description-template')"
 															if="not(instance('doc')/eac:cpfDescription/eac:description)"/>
 														<xforms:insert context="instance('doc')/eac:cpfDescription/eac:description" origin="instance('biogHist-template')"
@@ -1317,8 +1322,8 @@
 													</xforms:action>
 													<!-- import existDates, if possible -->
 													<xforms:action if="existDates = 'true'">
-														<xxforms:variable name="fromDate" select="instance('dbpedia-rdf')//dbpprop:birthDate[@rdf:datatype='http://www.w3.org/2001/XMLSchema#date'][1]"/>
-														<xxforms:variable name="toDate" select="instance('dbpedia-rdf')//dbpprop:deathDate[@rdf:datatype='http://www.w3.org/2001/XMLSchema#date'][1]"/>
+														<xforms:var name="fromDate" select="instance('dbpedia-rdf')//dbpprop:birthDate[@rdf:datatype='http://www.w3.org/2001/XMLSchema#date'][1]"/>
+														<xforms:var name="toDate" select="instance('dbpedia-rdf')//dbpprop:deathDate[@rdf:datatype='http://www.w3.org/2001/XMLSchema#date'][1]"/>
 														<xforms:action if="string($fromDate) and string($toDate)">
 															<xforms:insert context="instance('doc')/eac:cpfDescription" nodeset="./child::node()[last()]" origin="instance('description-template')"
 																if="not(instance('doc')/eac:cpfDescription/eac:description)"/>
@@ -1335,18 +1340,18 @@
 															<!-- fromDate -->
 															<!-- BC dates -->
 															<xforms:action if="substring($fromDate, 1, 1) = '-'">
-																<xxforms:variable name="from-year" select="abs(number(tokenize($fromDate, '-')[2]))"/>
-																<xxforms:variable name="from-month" select="tokenize($fromDate, '-')[3]"/>
-																<xxforms:variable name="from-day" select="tokenize($fromDate, '-')[4]"/>
+																<xforms:var name="from-year" select="abs(number(tokenize($fromDate, '-')[2]))"/>
+																<xforms:var name="from-month" select="tokenize($fromDate, '-')[3]"/>
+																<xforms:var name="from-day" select="tokenize($fromDate, '-')[4]"/>
 																<xforms:setvalue ref="instance('doc')/eac:cpfDescription/eac:description/eac:existDates/eac:dateRange/eac:fromDate"
 																	value="concat(if (number($from-month)) then concat(instance('month-list')/item[@id=$from-month], ' ') else '', if (number($from-day)) then concat($from-day, ', ') else '', $from-year, ' B.C.')"
 																/>
 															</xforms:action>
 															<!-- AD dates -->
 															<xforms:action if="substring($fromDate, 1, 1) != '-'">
-																<xxforms:variable name="from-year" select="abs(number(tokenize($fromDate, '-')[1]))"/>
-																<xxforms:variable name="from-month" select="tokenize($fromDate, '-')[2]"/>
-																<xxforms:variable name="from-day" select="tokenize($fromDate, '-')[3]"/>
+																<xforms:var name="from-year" select="abs(number(tokenize($fromDate, '-')[1]))"/>
+																<xforms:var name="from-month" select="tokenize($fromDate, '-')[2]"/>
+																<xforms:var name="from-day" select="tokenize($fromDate, '-')[3]"/>
 																<xforms:setvalue ref="instance('doc')/eac:cpfDescription/eac:description/eac:existDates/eac:dateRange/eac:fromDate"
 																	value="concat(if ($from-year &lt;= 300) then 'A.D. ' else '', if (number($from-month)) then concat(instance('month-list')/item[@id=$from-month], ' ') else '', if (number($from-day)) then concat($from-day, ', ') else '', $from-year)"
 																/>
@@ -1354,18 +1359,18 @@
 															<!--toDate -->
 															<!-- BC dates -->
 															<xforms:action if="substring($toDate, 1, 1) = '-'">
-																<xxforms:variable name="to-year" select="abs(number(tokenize($toDate, '-')[2]))"/>
-																<xxforms:variable name="to-month" select="tokenize($toDate, '-')[3]"/>
-																<xxforms:variable name="to-day" select="tokenize($toDate, '-')[4]"/>
+																<xforms:var name="to-year" select="abs(number(tokenize($toDate, '-')[2]))"/>
+																<xforms:var name="to-month" select="tokenize($toDate, '-')[3]"/>
+																<xforms:var name="to-day" select="tokenize($toDate, '-')[4]"/>
 																<xforms:setvalue ref="instance('doc')/eac:cpfDescription/eac:description/eac:existDates/eac:dateRange/eac:toDate"
 																	value="concat(if (number($to-month)) then concat(instance('month-list')/item[@id=$to-month], ' ') else '', if (number($to-day)) then concat($to-day, ', ') else '', $to-year, ' B.C.')"
 																/>
 															</xforms:action>
 															<!-- AD dates -->
 															<xforms:action if="substring($toDate, 1, 1) != '-'">
-																<xxforms:variable name="to-year" select="abs(number(tokenize($toDate, '-')[1]))"/>
-																<xxforms:variable name="to-month" select="tokenize($toDate, '-')[2]"/>
-																<xxforms:variable name="to-day" select="tokenize($toDate, '-')[3]"/>
+																<xforms:var name="to-year" select="abs(number(tokenize($toDate, '-')[1]))"/>
+																<xforms:var name="to-month" select="tokenize($toDate, '-')[2]"/>
+																<xforms:var name="to-day" select="tokenize($toDate, '-')[3]"/>
 																<xforms:setvalue ref="instance('doc')/eac:cpfDescription/eac:description/eac:existDates/eac:dateRange/eac:toDate"
 																	value="concat(if ($to-year &lt;= 300) then 'A.D. ' else '', if (number($to-month)) then concat(instance('month-list')/item[@id=$to-month], ' ') else '', if (number($to-day)) then concat($to-day, ', ') else '', $to-year)"
 																/>
@@ -1374,7 +1379,7 @@
 													</xforms:action>
 													<!-- import thumbnail -->
 													<xforms:action if="thumbnail = 'true'">
-														<xxforms:variable name="href" select="instance('dbpedia-rdf')//*[local-name()='thumbnail'][1]/@rdf:resource"/>
+														<xforms:var name="href" select="instance('dbpedia-rdf')//*[local-name()='thumbnail'][1]/@rdf:resource"/>
 														<xforms:action if="string-length($href) &gt; 0">
 															<xforms:insert context="instance('doc')/eac:cpfDescription" nodeset="./child::node()[last()]" origin="instance('relations-template')"
 																if="not(instance('doc')/eac:cpfDescription/eac:relations)"/>
@@ -1400,8 +1405,8 @@
 														* predecessorOf: dbpprop:successor-->
 														<xforms:action
 															xxforms:iterate="instance('dbpedia-rdf')//rdf:Description[@rdf:about != $resource and (count(dbpedia-owl:parent) &gt; 0 or count(dbpprop:house) &gt; 0 or count(dbpprop:dynasty) &gt; 0)]">
-															<xxforms:variable name="about" select="@rdf:about"/>
-															<xxforms:variable name="arcrole" select="if (count(dbpedia-owl:parent) &gt; 0) then 'parentOf' else 'dynastyOf'"/>
+															<xforms:var name="about" select="@rdf:about"/>
+															<xforms:var name="arcrole" select="if (count(dbpedia-owl:parent) &gt; 0) then 'parentOf' else 'dynastyOf'"/>
 															<!-- insert cpfRelation element -->
 															<xforms:insert context="instance('doc')/eac:cpfDescription" nodeset="./child::node()[last()]" origin="instance('relations-template')"
 																if="not(instance('doc')/eac:cpfDescription/eac:relations)"/>
@@ -1431,10 +1436,10 @@
 														</xforms:action>
 														<xforms:action
 															xxforms:iterate="instance('dbpedia-rdf')//rdf:Description[@rdf:about=$resource]/dbpedia-owl:parent|instance('dbpedia-rdf')//rdf:Description[@rdf:about=$resource]/dbpprop:spouse|instance('dbpedia-rdf')//rdf:Description[@rdf:about=$resource]/dbpprop:successor|instance('dbpedia-rdf')//rdf:Description[@rdf:about=$resource]/dbpprop:predecessor|instance('dbpedia-rdf')//rdf:Description[@rdf:about=$resource]/dbpprop:house|instance('dbpedia-rdf')//rdf:Description[@rdf:about=$resource]/dbpprop:dynasty">
-															<xxforms:variable name="href" select="@rdf:resource"/>
-															<xxforms:variable name="arcrole"
+															<xforms:var name="href" select="@rdf:resource"/>
+															<xforms:var name="arcrole"
 																select="if (local-name()='parent') then 'childOf' else if (local-name()='successor') then 'predecessorOf' else if (local-name()='predecessor') then 'successorOf' else if (local-name()='spouse') then 'spouseOf' else 'belongsToDynasty'"/>
-															<xxforms:variable name="role"
+															<xforms:var name="role"
 																select="if (local-name() = 'house' or local-name() = 'dynasty') then 'http://rdvocab.info/uri/schema/FRBRentitiesRDA/Family' else 'http://rdvocab.info/uri/schema/FRBRentitiesRDA/Person'"/>
 															<!-- insert cpfRelation element -->
 															<xforms:insert context="instance('doc')/eac:cpfDescription" nodeset="./child::node()[last()]" origin="instance('relations-template')"
@@ -1472,7 +1477,7 @@
 													<!-- import cpfRelations -->
 													<xforms:action if="resourceRelations = 'true'">
 														<xforms:action xxforms:iterate="instance('dbpedia-rdf')//rdf:Description[@rdf:about=$resource]/dbpedia-owl:wikiPageExternalLink">
-															<xxforms:variable name="href" select="@rdf:resource"/>
+															<xforms:var name="href" select="@rdf:resource"/>
 															<!-- insert resourceRelation element -->
 															<xforms:insert context="instance('doc')/eac:cpfDescription" nodeset="./child::node()[last()]" origin="instance('relations-template')"
 																if="not(instance('doc')/eac:cpfDescription/eac:relations)"/>
@@ -2033,7 +2038,7 @@
 												</xforms:trigger>
 											</div>
 											<xforms:repeat nodeset="eac:conventionDeclaration">
-												<xxforms:variable name="position" select="position()"/>
+												<xforms:var name="position" select="position()"/>
 												<div class="subsection">
 													<h3>Declaration</h3>
 													<xforms:trigger appearance="minimal">
@@ -2088,7 +2093,7 @@
 									<fr:positive-choice>
 										<fr:label>Yes</fr:label>
 										<xforms:action ev:event="DOMActivate">
-											<xxforms:variable name="auth" select="eac:conventionDeclaration[position() = instance('control-instance')/pos]/eac:abbreviation"/>
+											<xforms:var name="auth" select="eac:conventionDeclaration[position() = instance('control-instance')/pos]/eac:abbreviation"/>
 											<!-- blank the values for all nameEntry forms which are equal to the convention declaration abbreviation -->
 											<xforms:action xxforms:iterate="instance('doc')//eac:nameEntry[*[. = $auth]]">
 												<xforms:setvalue ref="context()/*[contains(local-name(), 'Form')]"/>

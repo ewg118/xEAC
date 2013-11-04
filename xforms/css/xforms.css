@@ -81,6 +81,10 @@ dt {
 .ui-menubar-item {
 	list-style-type:none;
 }
+.add {
+	display:inline;
+	margin-right:10px;	
+}
 /*
   ****************************************
   ORBEON XFORM SPECIFIC STYLE

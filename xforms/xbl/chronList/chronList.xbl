@@ -15,14 +15,14 @@
 						<xforms:trigger appearance="minimal">
 							<xforms:delete ev:event="DOMActivate" nodeset="."/>
 							<xforms:label>
-								<img src="{$display_path}images/remove.gif"/>
+								<img src="/xeac/xforms/images/remove.gif"/>
 							</xforms:label>
 						</xforms:trigger>
 
 						<div class="trigger_container">
 							<xforms:trigger appearance="minimal">
 								<xforms:label>
-									<img src="{$display_path}images/add.gif"/>Chronological Item</xforms:label>
+									<img src="/xeac/xforms/images/add.gif"/>Chronological Item</xforms:label>
 								<xforms:action ev:event="DOMActivate">
 									<xforms:insert context="." nodeset="./child::node()[last()]" origin="instance('chronItem-template')"/>
 								</xforms:action>
@@ -38,13 +38,13 @@
 								<xforms:trigger appearance="minimal">
 									<xforms:delete ev:event="DOMActivate" nodeset="."/>
 									<xforms:label>
-										<img src="{$display_path}images/remove.gif"/>
+										<img src="/xeac/xforms/images/remove.gif"/>
 									</xforms:label>
 								</xforms:trigger>
 								<xforms:group ref=".[preceding-sibling::eac:chronItem[1]//@standardDate[1] &gt;= $date]">
 									<xforms:trigger appearance="minimal">
 										<xforms:label>
-											<img alt="up" src="{$display_path}images/up.gif"/>
+											<img alt="up" src="/xeac/xforms/images/up.gif"/>
 										</xforms:label>
 										<xforms:action ev:event="DOMActivate">
 											<xforms:insert origin="$binding/*[$position]" context="instance('copy')"/>
@@ -57,7 +57,7 @@
 								<xforms:group ref=".[following-sibling::eac:chronItem[1]//@standardDate[1] &lt;= $date]">
 									<xforms:trigger appearance="minimal">
 										<xforms:label>
-											<img alt="down" src="{$display_path}images/down.gif"/>
+											<img alt="down" src="/xeac/xforms/images/down.gif"/>
 										</xforms:label>
 										<xforms:action ev:event="DOMActivate">
 											<xforms:insert origin="$binding/*[$position]" context="instance('copy')"/>
@@ -82,14 +82,14 @@
 									<xforms:group ref=".[count(eac:date) = 0 and count(eac:dateRange) = 0]">
 										<xforms:trigger appearance="minimal">
 											<xforms:label>
-												<img src="{$display_path}images/add.gif"/>Date</xforms:label>
+												<img src="/xeac/xforms/images/add.gif"/>Date</xforms:label>
 											<xforms:action ev:event="DOMActivate">
 												<xforms:insert context="." nodeset="eac:event" position="after" origin="instance('date-template')"/>
 											</xforms:action>
 										</xforms:trigger>
 										<xforms:trigger appearance="minimal">
 											<xforms:label>
-												<img src="{$display_path}images/add.gif"/>Date Range</xforms:label>
+												<img src="/xeac/xforms/images/add.gif"/>Date Range</xforms:label>
 											<xforms:action ev:event="DOMActivate">
 												<xforms:insert context="." nodeset="eac:event" position="after" origin="instance('dateRange-template')"/>
 											</xforms:action>
@@ -98,7 +98,7 @@
 									<xforms:group ref=".[count(eac:placeEntry) = 0]">
 										<xforms:trigger appearance="minimal">
 											<xforms:label>
-												<img src="{$display_path}images/add.gif"/>Place Entry</xforms:label>
+												<img src="/xeac/xforms/images/add.gif"/>Place Entry</xforms:label>
 											<xforms:action ev:event="DOMActivate">
 												<xforms:insert context="." nodeset="./child::node()[last()]" origin="instance('placeEntry-template')"/>
 											</xforms:action>
@@ -127,25 +127,25 @@
 					</xforms:group>
 					<!-- ********************************************************************** -->
 					<xforms:model id="chronList-model" xmlns="urn:isbn:1-931666-33-4">
-						<xforms:instance id="chronItem-template">
+						<xforms:instance id="chronItem-template" xxforms:exclude-result-prefixes="#all">
 							<chronItem>
 								<event/>
 							</chronItem>
 						</xforms:instance>
 
-						<xforms:instance id="date-template">
+						<xforms:instance id="date-template" xxforms:exclude-result-prefixes="#all">
 							<date standardDate=""/>
 						</xforms:instance>
 
-						<xforms:instance id="dateRange-template">
+						<xforms:instance id="dateRange-template" xxforms:exclude-result-prefixes="#all">
 							<dateRange>
 								<fromDate standardDate=""/>
 								<toDate standardDate=""/>
 							</dateRange>
 						</xforms:instance>
 
-						<xforms:instance id="placeEntry-template">
-							<placeEntry/>
+						<xforms:instance id="placeEntry-template" xxforms:exclude-result-prefixes="#all">
+							<placeEntry vocabularySource=""/>
 						</xforms:instance>
 
 						<xforms:instance id="copy">

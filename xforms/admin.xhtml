@@ -21,7 +21,7 @@
 
 		<xforms:model>
 			<!-- exist URL is stored in an XML file -->
-			<xforms:instance id="exist-url">
+			<xforms:instance id="exist-url" xxforms:exclude-result-prefixes="#all">
 				<xi:include href="../exist-url.xml"/>
 			</xforms:instance>
 
@@ -41,11 +41,11 @@
 				</controls>
 			</xforms:instance>
 
-			<xforms:instance id="config">
+			<xforms:instance id="config" xxforms:exclude-result-prefixes="#all">
 				<config xmlns=""/>
 			</xforms:instance>
 
-			<xforms:instance id="config-template">
+			<xforms:instance id="config-template" xxforms:exclude-result-prefixes="#all">
 				<config version="0.1">
 					<flickr_api_key/>
 					<geonames_api_key/>
@@ -71,17 +71,11 @@
 							<facet>legalStatus</facet>
 							<facet>localDescription</facet>
 						</facets>
-						<jquery_ui_theme>smoothness</jquery_ui_theme>
-						<layouts>
-							<index>
-								<yui_class>yui-t5</yui_class>
-							</index>
-							<results>
-								<yui_class>yui-t2</yui_class>
-								<image_location>right</image_location>
-							</results>
-						</layouts>
+						<jquery_ui_theme>smoothness</jquery_ui_theme>						
 					</theme>
+					<relationSemantics>
+						<relation from="correspondedWith" to="correspondedWith"/>
+					</relationSemantics>
 				</config>
 			</xforms:instance>
 
@@ -191,7 +185,7 @@
 					<xforms:setvalue ref="instance('control-instance')/numFound" value="number(instance('xquery-result'))"/>
 					<!-- set value in control instance -->
 
-					<xxforms:variable name="end" select="if(instance('control-instance')/numFound &gt; 20) then 20 else instance('control-instance')/numFound"/>
+					<xforms:var name="end" select="if(instance('control-instance')/numFound &gt; 20) then 20 else instance('control-instance')/numFound"/>
 					<!-- get list of files for page 1, replacing START and END -->
 
 					<xforms:setvalue ref="instance('eXist-xquery')/exist:text" value="replace(instance('xqueries')/query[@id='get-objects'], 'START', '1')"/>
@@ -315,7 +309,7 @@
 	</head>
 
 	<body>
-		<xxforms:variable name="display_path">../</xxforms:variable>
+		<xforms:var name="display_path">../</xforms:var>
 		<div class="yui3-g">
 			<div class="yui3-u-1">
 				<div class="content">
@@ -705,7 +699,7 @@
 								<xforms:send submission="xquery-collection"/>
 								<xforms:setvalue ref="instance('control-instance')/solr-core" value="instance('config')/solr_published"/>
 								<xforms:action xxforms:iterate="instance('xquery-result')/report/item">
-									<xxforms:variable name="id" select="@id"/>
+									<xforms:var name="id" select="@id"/>
 									<xforms:setvalue ref="instance('control-instance')/id" value="$id"/>
 									<xforms:send submission="eac-to-solr"/>
 								</xforms:action>
@@ -724,7 +718,7 @@
 						<fr:positive-choice>
 							<xforms:action ev:event="DOMActivate">
 								<xforms:setvalue ref="instance('control-instance')/solr-core" value="instance('config')/solr_published"/>
-								<xforms:setvalue ref="instance('deleteAll')/query" value="concat('collection-name:', instance('control-instance')/collection-name)"/>
+								<xforms:setvalue ref="instance('deleteAll')/query">*:*</xforms:setvalue>
 								<xforms:send submission="delete-all" ev:event="DOMActivate"/>
 								
 								<!-- optimize index -->

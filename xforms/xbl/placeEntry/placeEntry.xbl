@@ -9,25 +9,6 @@
 					<xxforms:variable name="binding" as="node()?">
 						<xxforms:sequence select="." xxbl:scope="outer"/>
 					</xxforms:variable>
-					<xxforms:variable name="display_path">../../</xxforms:variable>
-					<xforms:action ev:event="xforms-enabled" ev:target="#observer">
-						<xforms:send submission="load-config"/>
-						<xforms:action if="contains($binding/@vocabularySource, 'geonames.org')">
-							<xforms:setvalue ref="instance('interface-type')" value="'geonames'"/>
-						</xforms:action>
-						<xforms:action if="contains($binding/@vocabularySource, 'nomisma.org')">
-							<xforms:setvalue ref="instance('interface-type')" value="'nomisma'"/>
-						</xforms:action>
-						<xforms:action if="contains($binding/@vocabularySource, 'pleiades.stoa.org')">
-							<xforms:setvalue ref="instance('interface-type')" value="'pleiades'"/>
-						</xforms:action>
-						<xforms:action if="not($binding/@vocabularySource) and string($binding/text())">
-							<xforms:setvalue ref="instance('interface-type')" value="'local'"/>
-						</xforms:action>
-						<xforms:action if="not($binding/@vocabularySource) and not(string($binding/text()))">
-							<xforms:setvalue ref="instance('interface-type')" value="'geonames'"/>
-						</xforms:action>
-					</xforms:action>
 					<xforms:group ref="$binding">
 						<xforms:group ref=".[string(text())]">
 							<div>
@@ -36,9 +17,7 @@
 								</xforms:output>
 								<xforms:group ref=".[string(@vocabularySource)]">
 									<xforms:trigger appearance="minimal">
-										<xforms:label>
-											<img src="{$display_path}images/external.png"/>
-										</xforms:label>
+										<xforms:label><img src="/xeac/xforms/images/external.png"/></xforms:label>
 										<xforms:load ev:event="DOMActivate" show="new" ref="@vocabularySource"/>
 									</xforms:trigger>
 								</xforms:group>
@@ -52,9 +31,7 @@
 										<xforms:setvalue ref="instance('search-query')"/>
 										<xforms:delete nodeset="."/>
 									</xforms:action>
-									<xforms:label>
-										<img src="{$display_path}images/remove.gif"/>
-									</xforms:label>
+									<xforms:label><img src="/xeac/xforms/images/remove.gif"/></xforms:label>
 								</xforms:trigger>
 							</div>
 						</xforms:group>
@@ -66,7 +43,7 @@
 										<xforms:delete ev:event="DOMActivate" nodeset="."/>
 									</xforms:action>
 									<xforms:label>
-										<img src="{$display_path}images/remove.gif"/>
+										<img src="/xeac/xforms/images/remove.gif"/>
 									</xforms:label>
 								</xforms:trigger>
 							</xforms:group>
@@ -100,7 +77,7 @@
 
 												<!-- create attributes, clear $binding text when applicable -->
 												<xforms:setvalue ref="$binding"/>
-												<xforms:insert context="$binding" origin="xxforms:attribute('vocabularySource', '')" if="not($binding/@vocabularySource)"/>
+												<xforms:insert context="$binding" origin="xxforms:attribute('vocabularySource', '')" if="not($binding/@vocabularySource)"/>												
 												<xforms:toggle case="geonames-search"/>
 											</xforms:action>
 											<xforms:action if=". = 'nomisma'">
@@ -146,6 +123,9 @@
 										</xforms:input>
 										<xforms:trigger>
 											<xforms:action ev:event="DOMActivate">
+												<!-- first, load config if it hasn't been loaded -->
+												<xforms:send submission="load-config" if="not(string(instance('config')/url))"/>
+												<!-- clear result instance and submit query -->
 												<xforms:delete context="instance('geonames')/*"/>
 												<xforms:send submission="query-geonames"/>
 											</xforms:action>
@@ -213,7 +193,7 @@
 											</xforms:output>
 											<xforms:trigger appearance="xxforms:link">
 												<xforms:label>
-													<img src="{$display_path}images/external.png"/>
+													<img src="/xeac/xforms/images/external.png"/>
 												</xforms:label>
 												<xforms:load ev:event="DOMActivate" show="new" ref="instance('temp')/@vocabularySource"/>
 											</xforms:trigger>
@@ -261,7 +241,7 @@
 											</xforms:output>
 											<xforms:trigger appearance="xxforms:link">
 												<xforms:label>
-													<img src="{$display_path}images/external.png"/>
+													<img src="/xeac/xforms/images/external.png"/>
 												</xforms:label>
 												<xforms:load ev:event="DOMActivate" show="new" ref="instance('temp')/@vocabularySource"/>
 											</xforms:trigger>
@@ -424,11 +404,13 @@
 
 						<!-- mint type radio button -->
 						<xforms:instance id="interface-type">
-							<interface/>
+							<interface>geonames</interface>
 						</xforms:instance>
 
 						<xforms:submission id="load-config" serialization="none" method="get" action="{instance('exist-url')}xeac/config.xml" replace="instance" instance="config"
-							xxforms:username="admin" xxforms:password=""/>
+							xxforms:username="admin" xxforms:password="">
+							<xforms:message ev:event="xforms-submit-error" level="modal">Unable to load config.</xforms:message>
+						</xforms:submission>
 
 						<!-- search for matching keywords -->
 						<xforms:submission id="query-geonames" serialization="none" method="get"
@@ -454,7 +436,7 @@
 						</xforms:submission>
 
 						<!-- query nomisma for ancient places -->
-						<xforms:submission id="query-nomisma" serialization="none" method="get" action="http://nomisma.org/feed/?q=(typeof:mint+OR+typeof:head_1911_region)+{instance('search-query')}"
+						<xforms:submission id="query-nomisma" serialization="none" method="get" action="http://nomisma.org/feed/?q=(typeof:mint+OR+typeof:head_1911_region+OR+typeof:nomisma_region)+{instance('search-query')}"
 							instance="feed" replace="instance">
 							<xforms:message ev:event="xforms-submit-error" level="modal">Unable to communicate with nomisma.org Atom feed.</xforms:message>
 						</xforms:submission>

@@ -25,7 +25,7 @@
 							<span class="add">
 								<xforms:trigger appearance="minimal">
 									<xforms:label>
-										<img src="{$display_path}images/add.gif"/>
+										<img src="/xeac/xforms/images/add.gif"/>
 									</xforms:label>
 									<xxforms:show ev:event="DOMActivate" dialog="descriptionTerm-objects"/>
 								</xforms:trigger>
@@ -33,7 +33,7 @@
 							<xforms:trigger appearance="minimal">
 								<xforms:delete ev:event="DOMActivate" nodeset="."/>
 								<xforms:label>
-									<img src="{$display_path}images/remove.gif"/>
+									<img src="/xeac/xforms/images/remove.gif"/>
 								</xforms:label>
 							</xforms:trigger>
 							<xxforms:dialog id="descriptionTerm-objects" appearance="full" level="modal" close="true" draggable="true" visible="false">
@@ -41,7 +41,7 @@
 								<xforms:group ref=".[count(eac:citation) = 0]">
 									<xforms:trigger appearance="minimal">
 										<xforms:label>
-											<img src="{$display_path}images/add.gif"/>Citation</xforms:label>
+											<img src="/xeac/xforms/images/add.gif"/>Citation</xforms:label>
 										<xforms:action ev:event="DOMActivate">
 											<xforms:insert context="." origin="instance('citation-template')"/>
 											<xxforms:hide dialog="descriptionTerm-objects"/>
@@ -51,7 +51,7 @@
 								<xforms:group ref=".[count(eac:date) = 0 and count(eac:dateRange) = 0 and count(eac:dateSet) = 0]">
 									<xforms:trigger appearance="minimal">
 										<xforms:label>
-											<img src="{$display_path}images/add.gif"/>Date</xforms:label>
+											<img src="/xeac/xforms/images/add.gif"/>Date</xforms:label>
 										<xforms:action ev:event="DOMActivate">
 											<xforms:insert context="." origin="instance('date-template')"/>
 											<xxforms:hide dialog="descriptionTerm-objects"/>
@@ -59,7 +59,7 @@
 									</xforms:trigger>
 									<xforms:trigger appearance="minimal">
 										<xforms:label>
-											<img src="{$display_path}images/add.gif"/>Date Range</xforms:label>
+											<img src="/xeac/xforms/images/add.gif"/>Date Range</xforms:label>
 										<xforms:action ev:event="DOMActivate">
 											<xforms:insert context="." origin="instance('dateRange-template')"/>
 											<xxforms:hide dialog="descriptionTerm-objects"/>
@@ -67,7 +67,7 @@
 									</xforms:trigger>
 									<xforms:trigger appearance="minimal">
 										<xforms:label>
-											<img src="{$display_path}images/add.gif"/>Date Set</xforms:label>
+											<img src="/xeac/xforms/images/add.gif"/>Date Set</xforms:label>
 										<xforms:action ev:event="DOMActivate">
 											<xforms:insert context="." origin="instance('dateSet-template')"/>
 											<xxforms:hide dialog="descriptionTerm-objects"/>
@@ -77,7 +77,7 @@
 								<xforms:group ref=".[count(eac:descriptiveNote) = 0]">
 									<xforms:trigger appearance="minimal">
 										<xforms:label>
-											<img src="{$display_path}images/add.gif"/>Descriptive Note</xforms:label>
+											<img src="/xeac/xforms/images/add.gif"/>Descriptive Note</xforms:label>
 										<xforms:action ev:event="DOMActivate">
 											<xforms:insert context="." origin="instance('descriptiveNote-template')"/>
 											<xxforms:hide dialog="descriptionTerm-objects"/>
@@ -87,7 +87,7 @@
 								<xforms:group ref=".[count(eac:placeEntry) = 0]">
 									<xforms:trigger appearance="minimal">
 										<xforms:label>
-											<img src="{$display_path}images/add.gif"/>Place Entry</xforms:label>
+											<img src="/xeac/xforms/images/add.gif"/>Place Entry</xforms:label>
 										<xforms:action ev:event="DOMActivate">
 											<xforms:insert context="." origin="instance('placeEntry-template')"/>
 											<xxforms:hide dialog="descriptionTerm-objects"/>
@@ -134,31 +134,31 @@
 
 					<!-- ********************************************************************** -->
 					<xforms:model id="descriptionTerm-model" xmlns="urn:isbn:1-931666-33-4">
-						<xforms:instance id="citation-template">
+						<xforms:instance id="citation-template" xxforms:exclude-result-prefixes="#all">
 							<citation/>
 						</xforms:instance>
 
-						<xforms:instance id="date-template">
+						<xforms:instance id="date-template" xxforms:exclude-result-prefixes="#all">
 							<date standardDate=""/>
 						</xforms:instance>
 
-						<xforms:instance id="dateRange-template">
+						<xforms:instance id="dateRange-template" xxforms:exclude-result-prefixes="#all">
 							<dateRange>
 								<fromDate standardDate=""/>
 								<toDate standardDate=""/>
 							</dateRange>
 						</xforms:instance>
 
-						<xforms:instance id="dateSet-template">
+						<xforms:instance id="dateSet-template" xxforms:exclude-result-prefixes="#all">
 							<dateSet/>
 						</xforms:instance>
 
-						<xforms:instance id="descriptiveNote-template">
+						<xforms:instance id="descriptiveNote-template" xxforms:exclude-result-prefixes="#all">
 							<descriptiveNote><p/></descriptiveNote>
 						</xforms:instance>
 
-						<xforms:instance id="placeEntry-template">
-							<placeEntry/>
+						<xforms:instance id="placeEntry-template" xxforms:exclude-result-prefixes="#all">
+							<placeEntry vocabularySource=""/>
 						</xforms:instance>
 					</xforms:model>
 				</xforms:group>

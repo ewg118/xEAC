@@ -27,7 +27,7 @@
 							<span class="add">
 								<xforms:trigger appearance="minimal">
 									<xforms:label>
-										<img src="{$display_path}images/add.gif"/>
+										<img src="/xeac/xforms/images/add.gif"/>
 									</xforms:label>
 									<xxforms:show ev:event="DOMActivate" dialog="nameEntry-objects"/>
 								</xforms:trigger>
@@ -36,7 +36,7 @@
 								<xforms:trigger appearance="minimal">
 									<xforms:delete ev:event="DOMActivate" nodeset="."/>
 									<xforms:label>
-										<img src="{$display_path}images/remove.gif"/>
+										<img src="/xeac/xforms/images/remove.gif"/>
 									</xforms:label>
 								</xforms:trigger>
 							</xforms:group>
@@ -44,7 +44,7 @@
 								<xforms:label>Name Entry Objects</xforms:label>
 								<xforms:trigger appearance="minimal">
 									<xforms:label>
-										<img src="{$display_path}images/add.gif"/>Part</xforms:label>
+										<img src="/xeac/xforms/images/add.gif"/>Part</xforms:label>
 									<xforms:action ev:event="DOMActivate">
 										<xforms:insert context="." origin="instance('part-template')" nodeset="eac:part" position="after"/>
 										<xxforms:hide dialog="nameEntry-objects"/>
@@ -54,7 +54,7 @@
 									<xforms:group ref=".[count(eac:authorizedForm) = 0]">
 										<xforms:trigger appearance="minimal">
 											<xforms:label>
-												<img src="{$display_path}images/add.gif"/>Authorized Form</xforms:label>
+												<img src="/xeac/xforms/images/add.gif"/>Authorized Form</xforms:label>
 											<xforms:action ev:event="DOMActivate">
 												<xforms:insert context="." origin="instance('authorizedForm-template')" nodeset="./child::node()[last()]"/>
 												<xxforms:hide dialog="nameEntry-objects"/>
@@ -65,7 +65,7 @@
 									<xforms:group ref=".[count(eac:alternativeForm) = 0]">
 										<xforms:trigger appearance="minimal">
 											<xforms:label>
-												<img src="{$display_path}images/add.gif"/>Alternative Form</xforms:label>
+												<img src="/xeac/xforms/images/add.gif"/>Alternative Form</xforms:label>
 											<xforms:action ev:event="DOMActivate">
 												<xforms:insert context="." origin="instance('alternativeForm-template')" nodeset="./child::node()[last()]"/>
 												<xxforms:hide dialog="nameEntry-objects"/>
@@ -76,7 +76,7 @@
 								<xforms:group ref=".[count(eac:preferredForm) = 0]">
 									<xforms:trigger appearance="minimal">
 										<xforms:label>
-											<img src="{$display_path}images/add.gif"/>Preferred Form</xforms:label>
+											<img src="/xeac/xforms/images/add.gif"/>Preferred Form</xforms:label>
 										<xforms:action ev:event="DOMActivate">
 											<xforms:insert context="." origin="instance('preferredForm-template')" nodeset="./child::node()[last()]"/>
 											<xxforms:hide dialog="nameEntry-objects"/>
@@ -86,7 +86,7 @@
 								<xforms:group ref=".[count(eac:useDates) = 0]">
 									<xforms:trigger appearance="minimal">
 										<xforms:label>
-											<img src="{$display_path}images/add.gif"/>Use Dates</xforms:label>
+											<img src="/xeac/xforms/images/add.gif"/>Use Dates</xforms:label>
 										<xforms:action ev:event="DOMActivate">
 											<xforms:insert context="." origin="instance('useDates-template')" nodeset="./child::node()[last()]"/>
 											<xxforms:hide dialog="nameEntry-objects"/>
@@ -105,7 +105,7 @@
 										<xforms:trigger appearance="minimal">
 											<xforms:delete ev:event="DOMActivate" nodeset="."/>
 											<xforms:label>
-												<img src="{$display_path}images/remove.gif"/>
+												<img src="/xeac/xforms/images/remove.gif"/>
 											</xforms:label>
 										</xforms:trigger>
 									</xforms:group>
@@ -129,7 +129,7 @@
 									<xforms:trigger appearance="minimal">
 										<xforms:delete ev:event="DOMActivate" nodeset="."/>
 										<xforms:label>
-											<img src="{$display_path}images/remove.gif"/>
+											<img src="/xeac/xforms/images/remove.gif"/>
 										</xforms:label>
 									</xforms:trigger>
 								</div>
@@ -152,7 +152,7 @@
 									<xforms:trigger appearance="minimal">
 										<xforms:delete ev:event="DOMActivate" nodeset="."/>
 										<xforms:label>
-											<img src="{$display_path}images/remove.gif"/>
+											<img src="/xeac/xforms/images/remove.gif"/>
 										</xforms:label>
 									</xforms:trigger>
 								</div>
@@ -175,7 +175,7 @@
 									<xforms:trigger appearance="minimal">
 										<xforms:delete ev:event="DOMActivate" nodeset="."/>
 										<xforms:label>
-											<img src="{$display_path}images/remove.gif"/>
+											<img src="/xeac/xforms/images/remove.gif"/>
 										</xforms:label>
 									</xforms:trigger>
 								</div>
@@ -193,31 +193,31 @@
 
 					<!-- ********************************************************************** -->
 					<xforms:model id="nameEntry-model" xmlns="urn:isbn:1-931666-33-4">
-						<xforms:instance id="conventionDeclaration-list">
+						<xforms:instance id="conventionDeclaration-list" xxforms:exclude-result-prefixes="#all">
 							<list/>
 						</xforms:instance>
 
-						<xforms:instance id="duplicate">
+						<xforms:instance id="duplicate" xxforms:exclude-result-prefixes="#all">
 							<duplicate/>
 						</xforms:instance>
 
-						<xforms:instance id="part-template">
+						<xforms:instance id="part-template" xxforms:exclude-result-prefixes="#all">
 							<part/>
 						</xforms:instance>
 
-						<xforms:instance id="authorizedForm-template">
+						<xforms:instance id="authorizedForm-template" xxforms:exclude-result-prefixes="#all">
 							<authorizedForm/>
 						</xforms:instance>
 
-						<xforms:instance id="alternativeForm-template">
+						<xforms:instance id="alternativeForm-template" xxforms:exclude-result-prefixes="#all">
 							<alternativeForm/>
 						</xforms:instance>
 
-						<xforms:instance id="preferredForm-template">
+						<xforms:instance id="preferredForm-template" xxforms:exclude-result-prefixes="#all">
 							<preferredForm/>
 						</xforms:instance>
 
-						<xforms:instance id="useDates-template">
+						<xforms:instance id="useDates-template" xxforms:exclude-result-prefixes="#all">
 							<useDates/>
 						</xforms:instance>
 					</xforms:model>

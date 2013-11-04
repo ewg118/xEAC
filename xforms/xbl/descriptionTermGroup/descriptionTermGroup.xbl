@@ -18,63 +18,63 @@
 							<xforms:trigger appearance="minimal">
 								<xforms:delete ev:event="DOMActivate" nodeset="."/>
 								<xforms:label>
-									<img src="{$display_path}images/remove.gif"/>
+									<img src="/xeac/xforms/images/remove.gif"/>
 								</xforms:label>
 							</xforms:trigger>
 							<div class="trigger_container">
 								<xforms:group ref=".[local-name()='functions']">
 									<xforms:trigger appearance="minimal">
 										<xforms:label>
-											<img src="{$display_path}images/add.gif"/>Function</xforms:label>
+											<img src="/xeac/xforms/images/add.gif"/>Function</xforms:label>
 										<xforms:insert ev:event="DOMActivate" context="." nodeset="./child::node()[last()]" origin="instance('function-template')"/>
 									</xforms:trigger>
 								</xforms:group>
 								<xforms:group ref=".[local-name()='languagesUsed']">
 									<xforms:trigger appearance="minimal">
 										<xforms:label>
-											<img src="{$display_path}images/add.gif"/>Language Used</xforms:label>
+											<img src="/xeac/xforms/images/add.gif"/>Language Used</xforms:label>
 										<xforms:insert ev:event="DOMActivate" context="." nodeset="./child::node()[last()]" origin="instance('languageUsed-template')"/>
 									</xforms:trigger>
 								</xforms:group>
 								<xforms:group ref=".[local-name()='legalStatuses']">
 									<xforms:trigger appearance="minimal">
 										<xforms:label>
-											<img src="{$display_path}images/add.gif"/>Legal Status</xforms:label>
+											<img src="/xeac/xforms/images/add.gif"/>Legal Status</xforms:label>
 										<xforms:insert ev:event="DOMActivate" context="." nodeset="./child::node()[last()]" origin="instance('legalStatus-template')"/>
 									</xforms:trigger>
 								</xforms:group>
 								<xforms:group ref=".[local-name()='localDescriptions']">
 									<xforms:trigger appearance="minimal">
 										<xforms:label>
-											<img src="{$display_path}images/add.gif"/>Local Description</xforms:label>
+											<img src="/xeac/xforms/images/add.gif"/>Local Description</xforms:label>
 										<xforms:insert ev:event="DOMActivate" context="." nodeset="./child::node()[last()]" origin="instance('localDescription-template')"/>
 									</xforms:trigger>
 								</xforms:group>
 								<xforms:group ref=".[local-name()='mandates']">
 									<xforms:trigger appearance="minimal">
 										<xforms:label>
-											<img src="{$display_path}images/add.gif"/>Mandate</xforms:label>
+											<img src="/xeac/xforms/images/add.gif"/>Mandate</xforms:label>
 										<xforms:insert ev:event="DOMActivate" context="." nodeset="./child::node()[last()]" origin="instance('mandate-template')"/>
 									</xforms:trigger>
 								</xforms:group>
 								<xforms:group ref=".[local-name()='occupations']">
 									<xforms:trigger appearance="minimal">
 										<xforms:label>
-											<img src="{$display_path}images/add.gif"/>Occupation</xforms:label>
+											<img src="/xeac/xforms/images/add.gif"/>Occupation</xforms:label>
 										<xforms:insert ev:event="DOMActivate" context="." nodeset="./child::node()[last()]" origin="instance('occupation-template')"/>
 									</xforms:trigger>
 								</xforms:group>
 								<xforms:group ref=".[local-name()='places']">
 									<xforms:trigger appearance="minimal">
 										<xforms:label>
-											<img src="{$display_path}images/add.gif"/>Place</xforms:label>
+											<img src="/xeac/xforms/images/add.gif"/>Place</xforms:label>
 										<xforms:insert ev:event="DOMActivate" context="." nodeset="./child::node()[last()]" origin="instance('place-template')"/>
 									</xforms:trigger>
 								</xforms:group>
 								<xforms:group ref=".[count(eac:citation) = 0]">
 									<xforms:trigger appearance="minimal">
 										<xforms:label>
-											<img src="{$display_path}images/add.gif"/>Citation</xforms:label>
+											<img src="/xeac/xforms/images/add.gif"/>Citation</xforms:label>
 										<xforms:action ev:event="DOMActivate">
 											<xforms:insert context="." nodeset="./child::node()[last()]"  origin="instance('citation-template')"/>
 										</xforms:action>
@@ -83,7 +83,7 @@
 								<xforms:group ref=".[count(eac:descriptiveNote) = 0]">
 									<xforms:trigger appearance="minimal">
 										<xforms:label>
-											<img src="{$display_path}images/add.gif"/>Descriptive Note</xforms:label>
+											<img src="/xeac/xforms/images/add.gif"/>Descriptive Note</xforms:label>
 										<xforms:action ev:event="DOMActivate">
 											<xforms:insert context="." nodeset="./child::node()[last()]"  origin="instance('descriptiveNote-template')"/>
 										</xforms:action>
@@ -92,7 +92,7 @@
 								<xforms:group ref=".[count(eac:list) = 0]">
 									<xforms:trigger appearance="minimal">
 										<xforms:label>
-											<img src="{$display_path}images/add.gif"/>List</xforms:label>
+											<img src="/xeac/xforms/images/add.gif"/>List</xforms:label>
 										<xforms:action ev:event="DOMActivate">
 											<xforms:insert context="." nodeset="./child::node()[last()]" origin="instance('list-template')"/>
 										</xforms:action>
@@ -101,7 +101,7 @@
 								<xforms:group ref=".[count(eac:outline) = 0]">
 									<xforms:trigger appearance="minimal">
 										<xforms:label>
-											<img src="{$display_path}images/add.gif"/>Outline</xforms:label>
+											<img src="/xeac/xforms/images/add.gif"/>Outline</xforms:label>
 										<xforms:action ev:event="DOMActivate">
 											<xforms:insert context="." nodeset="./child::node()[last()]"  origin="instance('outline-template')"/>
 										</xforms:action>
@@ -110,7 +110,7 @@
 								<xforms:group ref=".[count(eac:p) = 0]">
 									<xforms:trigger appearance="minimal">
 										<xforms:label>
-											<img src="{$display_path}images/add.gif"/>Paragraph</xforms:label>
+											<img src="/xeac/xforms/images/add.gif"/>Paragraph</xforms:label>
 										<xforms:action ev:event="DOMActivate">
 											<xforms:insert context="." nodeset="./child::node()[last()]"  origin="instance('p-template')"/>
 										</xforms:action>
@@ -172,63 +172,63 @@
 
 					<!-- ********************************************************************** -->
 					<xforms:model id="descriptionTermGroup-model" xmlns="urn:isbn:1-931666-33-4">
-						<xforms:instance id="function-template">
+						<xforms:instance id="function-template" xxforms:exclude-result-prefixes="#all">
 							<function>
 								<term/>
 							</function>
 						</xforms:instance>
 
-						<xforms:instance id="languageUsed-template">
+						<xforms:instance id="languageUsed-template" xxforms:exclude-result-prefixes="#all">
 							<languageUsed>
 								<language languageCode=""/>
 								<script scriptCode=""/>
 							</languageUsed>
 						</xforms:instance>
 
-						<xforms:instance id="legalStatus-template">
+						<xforms:instance id="legalStatus-template" xxforms:exclude-result-prefixes="#all">
 							<legalStatus>
 								<term/>
 							</legalStatus>
 						</xforms:instance>
 
-						<xforms:instance id="localDescription-template">
+						<xforms:instance id="localDescription-template" xxforms:exclude-result-prefixes="#all">
 							<localDescription>
 								<term/>
 							</localDescription>
 						</xforms:instance>
 
-						<xforms:instance id="mandate-template">
+						<xforms:instance id="mandate-template" xxforms:exclude-result-prefixes="#all">
 							<mandate>
 								<term/>
 							</mandate>
 						</xforms:instance>
 
-						<xforms:instance id="occupation-template">
+						<xforms:instance id="occupation-template" xxforms:exclude-result-prefixes="#all">
 							<occupation>
 								<term/>
 							</occupation>
 						</xforms:instance>
 
-						<xforms:instance id="place-template">
+						<xforms:instance id="place-template" xxforms:exclude-result-prefixes="#all">
 							<place>
 								<placeEntry/>
 							</place>
 						</xforms:instance>
 
 						<!-- generic instances -->
-						<xforms:instance id="citation-template">
+						<xforms:instance id="citation-template" xxforms:exclude-result-prefixes="#all">
 							<citation/>
 						</xforms:instance>
 
-						<xforms:instance id="descriptiveNote-template">
+						<xforms:instance id="descriptiveNote-template" xxforms:exclude-result-prefixes="#all">
 							<descriptiveNote><p/></descriptiveNote>
 						</xforms:instance>
 						
-						<xforms:instance id="list-template">
+						<xforms:instance id="list-template" xxforms:exclude-result-prefixes="#all">
 							<list/>
 						</xforms:instance>
 
-						<xforms:instance id="outline-template">
+						<xforms:instance id="outline-template" xxforms:exclude-result-prefixes="#all">
 							<outline>
 								<level>
 									<item/>
@@ -236,7 +236,7 @@
 							</outline>
 						</xforms:instance>
 
-						<xforms:instance id="p-template">
+						<xforms:instance id="p-template" xxforms:exclude-result-prefixes="#all">
 							<p/>
 						</xforms:instance>
 					</xforms:model>

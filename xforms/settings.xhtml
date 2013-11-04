@@ -1,26 +1,23 @@
-<xhtml:html xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:xforms="http://www.w3.org/2002/xforms" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ev="http://www.w3.org/2001/xml-events"
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:xforms="http://www.w3.org/2002/xforms" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ev="http://www.w3.org/2001/xml-events"
 	xmlns:xxforms="http://orbeon.org/oxf/xml/xforms" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:fr="http://orbeon.org/oxf/xml/form-runner" xmlns:xlink="http://www.w3.org/1999/xlink"
-	xmlns:xxi="http://orbeon.org/oxf/xml/xinclude" xmlns="urn:isbn:1-931666-33-4" xmlns:xxbl="http://orbeon.org/oxf/xml/xbl"
-	xmlns:pipeline="java:org.orbeon.oxf.processor.pipeline.PipelineFunctionLibrary" xmlns:exf="http://www.exforms.org/exf/1-0" xmlns:saxon="http://saxon.sf.net/"
-	xmlns:oxf="http://www.orbeon.com/oxf/processors" xmlns:xbl="http://www.w3.org/ns/xbl" xmlns:exist="http://exist.sourceforge.net/NS/exist">
-	<xhtml:head>
-		<xhtml:title> Administration</xhtml:title>
-		<link rel="stylesheet" type="text/css" href="/apps/xeac/css/grids-min.css"/>
-		<link rel="stylesheet" type="text/css" href="/apps/xeac/css/reset-fonts-grids.css"/>
-		<link rel="stylesheet" type="text/css" href="/apps/xeac/css/base-min.css"/>
-		<link rel="stylesheet" type="text/css" href="/apps/xeac/css/fonts-min.css"/>
-		<link rel="stylesheet" href="/apps/xeac/css/style.css"/>
-		<link rel="stylesheet" href="/apps/xeac/css/themes/smoothness.css"/>
-		<script type="text/javascript" src="/apps/xeac/javascript/jquery-1.4.2.min.js"/>
-		<script type="text/javascript" src="/apps/xeac/javascript/menu.js"/>
+	xmlns:xxi="http://orbeon.org/oxf/xml/xinclude" xmlns:eac="urn:isbn:1-931666-33-4" xmlns:oxf="http://www.orbeon.com/oxf/processors" xmlns:exist="http://exist.sourceforge.net/NS/exist">
+	<head>
+		<title> Administration</title>
+		<link rel="stylesheet" href="/fr/style/bootstrap/css/bootstrap.css" type="text/css"/>
+		<link rel="stylesheet" href="/fr/style/form-runner-bootstrap-override.css" type="text/css"/>
+		<link rel="stylesheet" href="/config/theme/examples.css" type="text/css" media="all"/>
+		<link rel="shortcut icon" href="/ops/images/orbeon-icon-16.ico"/>
+		<link rel="icon" href="/ops/images/orbeon-icon-16.png" type="image/png"/>
+		<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/3.8.0/build/cssgrids/grids-min.css"/>
+		<link rel="stylesheet" type="text/css" href="/apps/xeac/xforms/css/xforms.css"/>
+
 		<xforms:model>
-			<!-- exist URL is stored in an XML file -->
-			<xforms:instance id="exist-url">
-				<xi:include href="../exist-url.xml"/>
+			<xforms:instance id="config" xxforms:exclude-result-prefixes="#all">
+				<config xmlns=""/>
 			</xforms:instance>
 
-			<xforms:instance id="config">
-				<config xmlns=""/>
+			<xforms:instance id="exist-url" xxforms:exclude-result-prefixes="#all">
+				<xi:include href="../exist-url.xml"/>
 			</xforms:instance>
 
 			<xforms:instance id="status">
@@ -36,21 +33,42 @@
 					<api-key-accepted/>
 					<save-trigger/>
 					<collection-name/>
+					<error/>
 				</control>
 			</xforms:instance>
 
-			<xforms:instance id="dump">
-				<dump/>
-			</xforms:instance>
-
-			<xforms:instance id="temp">
-				<temp/>
-			</xforms:instance>
-
-			<xforms:instance id="item-template">
+			<xforms:instance id="agencyName-template">
 				<item xmlns=""/>
 			</xforms:instance>
 
+			<xforms:instance id="relation-template" xxforms:exclude-result-prefixes="#all">
+				<relation from="" to="" xmlns=""/>
+			</xforms:instance>
+
+			<!-- xquery -->
+			<xforms:instance id="eXist-xquery">
+				<exist:query xmlns="">
+					<exist:text/>
+				</exist:query>
+			</xforms:instance>
+
+			<xforms:instance id="xqueries">
+				<queries xmlns="">
+					<query id="gather-relations">declare namespace eac="urn:isbn:1-931666-33-4"; &lt;report> { for $arcrole in distinct-values(collection()//eac:cpfRelation/@xlink:arcrole) order by
+						$arcrole return &lt;relation> { $arcrole } &lt;/relation> } &lt;/report> </query>
+				</queries>
+			</xforms:instance>
+
+			<xforms:instance id="xquery-result">
+				<exist:result/>
+			</xforms:instance>
+
+			<!-- lists -->
+			<xforms:instance id="relations-list" xxforms:exclude-result-prefixes="#all">
+				<relations xmlns=""/>
+			</xforms:instance>
+
+			<!-- ************ BINDINGS *************** -->
 			<xforms:bind nodeset="instance('config')">
 				<xforms:bind nodeset="title" required="true()"/>
 				<!--<xforms:bind nodeset="banner_text" required="true()"/>-->
@@ -63,8 +81,20 @@
 					<xforms:bind nodeset="thumbnail" required="true()" type="xs:integer"/>
 					<xforms:bind nodeset="reference" required="true()" type="xs:integer"/>
 				</xforms:bind>
+				<xforms:bind nodeset="relationSemantics">
+					<xforms:bind nodeset="relation">
+						<xforms:bind nodeset="@from" required="true()"/>
+						<xforms:bind nodeset="@to" required="true()"/>
+					</xforms:bind>
+				</xforms:bind>
 			</xforms:bind>
 
+			<!-- tabs -->
+			<xforms:bind id="settings-tab" nodeset="instance('config')"/>
+			<xforms:bind id="relations-tab" nodeset="instance('config')"/>
+			<xforms:bind id="advanced-tab" nodeset="instance('config')"/>
+
+			<!-- ****************** SUBMISSIONS ***************** -->
 			<!-- Load File -->
 			<xforms:submission id="load-config" serialization="none" method="get" action="{instance('exist-url')}xeac/config.xml" xxforms:username="admin" xxforms:password="" replace="instance"
 				instance="config">
@@ -73,41 +103,45 @@
 
 			<!-- Save File -->
 			<xforms:submission id="save-config" ref="instance('config')" xxforms:username="admin" xxforms:password="" action="{instance('exist-url')}xeac/config.xml" method="put" replace="none">
-				<xforms:setvalue ev:event="xforms-submit-done" ref="instance('status')"> configuration saved.</xforms:setvalue>
+				<xforms:setvalue ev:event="xforms-submit-done" ref="instance('status')">Configuration saved.</xforms:setvalue>
 				<xforms:message ev:event="xforms-submit-error" level="modal">Error saving configuration file.</xforms:message>
 			</xforms:submission>
 
+			<xforms:submission id="xquery-collection" ref="instance('eXist-xquery')" action="{instance('exist-url')}xeac/records" method="post" replace="instance" instance="xquery-result"
+				xxforms:username="admin" xxforms:password="">
+				<xforms:setvalue ref="instance('control-instance')/error" ev:event="xforms-submit-error">Error querying eXist database.</xforms:setvalue>
+			</xforms:submission>
 
 			<xforms:action ev:event="xforms-model-construct-done">
 				<xforms:send submission="load-config"/>
 			</xforms:action>
 		</xforms:model>
-	</xhtml:head>
-	<xhtml:body class="yui-skin-sam">
-		<div id="doc4" class="yui-t2">
-			<xxforms:variable name="display_path">../../</xxforms:variable>
-			<div id="bd">
-				<p>
-					<a href="../">&lt; Return</a>
-				</p>
-				<div id="form">
-					<xforms:group ref="instance('status')/text()">
-						<div class="success">
-							<xforms:output ref="instance('status')"/>
+	</head>
+	<body>
+		<div class="yui3-g">
+			<div class="yui3-u-1">
+				<div class="content">
+					<p>
+						<a href="../">&lt; Return</a>
+					</p>
+					<div id="form">
+						<xforms:group ref="instance('status')/text()">
+							<div class="success">
+								<xforms:output ref="instance('status')"/>
+							</div>
+						</xforms:group>
+						<div class="submission">
+							<xforms:trigger>
+								<xforms:label><img src="/xeac/xforms/images/save.gif" alt="Save"/> Save</xforms:label>
+								<xforms:send ev:event="DOMActivate" submission="save-config"/>
+							</xforms:trigger>
 						</div>
-					</xforms:group>
-					<div class="submission">
-						<xforms:trigger appearance="minimal">
-							<xforms:label><img src="{$display_path}images/save.gif" alt="Save"/> Save</xforms:label>
-							<xforms:send ev:event="DOMActivate" submission="save-config"/>
-						</xforms:trigger>
-					</div>
-					<h1>Edit Settings</h1>
-					<p>Edit titles, URLs, and index text.</p>
-					<fr:tabview>
-						<fr:tab id="settings">
-							<fr:label>Settings</fr:label>
-							<xforms:group ref="instance('config')">
+						<h1>Edit Settings</h1>
+						<p>Edit titles, URLs, and index text.</p>
+						<fr:tabview>
+							<fr:tab bind="settings-tab">
+								<fr:label>Settings</fr:label>
+								<h2>Primary Settings</h2>
 								<div class="section">
 									<h3>Titles and URLs</h3>
 									<div>
@@ -134,34 +168,35 @@
 									</div>
 									<!--<div>
 										<xforms:textarea ref="google_analytics/script">
-											<xforms:label>Google Analytics</xforms:label>
+										<xforms:label>Google Analytics</xforms:label>
 										</xforms:textarea>
 										<p>Copy and paste the javascript code between <b>&lt;script type="text/javascript"&gt;&lt;/script&gt;</b> provided by Google.</p>
-									</div>-->
+										</div>-->
 								</div>
 								<div class="section">
 									<h2>API Keys</h2>
 									<!--<h3>flickr</h3>
-									<xforms:group ref=".[instance('flickr-response')/@stat='fail' and string-length(flickr_api_key) &gt; 0]">
+										<xforms:group ref=".[instance('flickr-response')/@stat='fail' and string-length(flickr_api_key) &gt; 0]">
 										<div class="ui-widget">
-											<div class="ui-state-error ui-corner-all">
-												<p>
-													<span class="ui-icon ui-icon-alert" style="float: left; margin-right: 0.3em;"/>
-													<strong>Alert:</strong>
-													<xforms:output ref="instance('flickr-response')/err/@msg"/>
-												</p>
-											</div>
+										<div class="ui-state-error ui-corner-all">
+										<p>
+										<span class="ui-icon ui-icon-alert" style="float: left; margin-right: 0.3em;"/>
+										<strong>Alert:</strong>
+										<xforms:output ref="instance('flickr-response')/err/@msg"/>
+										</p>
 										</div>
-									</xforms:group>
-									<div>
+										</div>
+										</xforms:group>
+										<div>
 										<xforms:input ref="flickr_api_key" incremental="true">
-											<xforms:label>Key</xforms:label>
-											<xforms:send submission="test-for-echo" ev:event="xforms-value-changed"/>
+										<xforms:label>Key</xforms:label>
+										<xforms:send submission="test-for-echo" ev:event="xforms-value-changed"/>
 										</xforms:input>
 										<p>A <a href="http://www.flickr.com/services/api/misc.api_keys.html">flickr API key</a> is required in order to take advantage of flickr image linking in
-											Numishare.</p>
-									</div>-->
-									<div class="subsection"><h3>geonames</h3>
+										Numishare.</p>
+										</div>-->
+									<div class="subsection">
+										<h3>geonames</h3>
 										<div>
 											<xforms:input ref="geonames_api_key" incremental="true">
 												<xforms:label>Key</xforms:label>
@@ -175,8 +210,8 @@
 										<h2>Agency Names</h2>
 										<xforms:trigger appearance="minimal">
 											<xforms:label>
-												<img src="{$display_path}images/add.gif"/>Agency</xforms:label>
-											<xforms:insert ev:event="DOMActivate" context="." nodeset="./child::node()[last()]" origin="instance('item-template')"/>
+												<img src="/xeac/xforms/images/add.gif"/>Agency</xforms:label>
+											<xforms:insert ev:event="DOMActivate" context="." nodeset="./child::node()[last()]" origin="instance('agencyName-template')"/>
 										</xforms:trigger>
 										<xforms:repeat nodeset="item">
 											<div>
@@ -189,7 +224,7 @@
 													<xforms:trigger appearance="minimal">
 														<xforms:delete ev:event="DOMActivate" nodeset="."/>
 														<xforms:label>
-															<xhtml:img src="{$display_path}images/remove.gif"/>
+															<img src="/xeac/xforms/images/remove.gif"/>
 														</xforms:label>
 													</xforms:trigger>
 												</xforms:group>
@@ -197,13 +232,104 @@
 										</xforms:repeat>
 									</xforms:group>
 								</div>
-							</xforms:group>
-						</fr:tab>
-						<fr:tab id="advanced">
-							<fr:label>Advanced</fr:label>
-							<xforms:group ref="instance('config')">
-								<h2>Solr URLs</h2>
+							</fr:tab>
+							<fr:tab bind="relations-tab">
+								<fr:label>Semantic Relationships</fr:label>
 								<div class="section">
+									<h2>Semantic Relationships</h2>
+									<span class="add">
+										<xforms:trigger appearance="minimal">
+											<xforms:label><img src="/xeac/xforms/images/add.gif"/>Import</xforms:label>
+											<xforms:action ev:event="DOMActivate">
+												<xforms:setvalue ref="instance('eXist-xquery')/exist:text" value="instance('xqueries')/query[@id='gather-relations']"/>
+												<xforms:send submission="xquery-collection"/>
+												<xforms:insert context="instance('relations-list')" origin="instance('xquery-result')//relation"/>
+											</xforms:action>
+										</xforms:trigger>
+									</span>
+									<xforms:group ref="instance('relations-list')[count(//relation) &gt; 0]">
+										<div class="subsection">
+											<h3>Available Relationships</h3>
+											<p>The following semantic relationships are already employed in this EAC-CPF collection.</p>
+											<xforms:repeat nodeset="relation">
+												<xforms:var name="val" select="text()"/>
+												<div>
+													<xforms:output ref=".">
+														<xforms:label>Relation</xforms:label>
+													</xforms:output>
+													<xforms:group ref=".[not(instance('config')/relationSemantics/relation/@from = $val)]">
+														<xforms:trigger appearance="minimal">
+															<xforms:label><img src="/xeac/xforms/images/add.gif"/>Add</xforms:label>
+															<xforms:action ev:event="DOMActivate">
+																<xforms:insert context="instance('config')/relationSemantics" nodeset="./child::node()[last()]" origin="instance('relation-template')"/>
+																<xforms:setvalue ref="instance('config')/relationSemantics/relation[last()]/@from" value="$val"/>
+																<!--<xforms:setvalue ref="instance('config')/relationSemantics/relation[last()]/@to" value="$val"/>-->
+															</xforms:action>
+														</xforms:trigger>
+													</xforms:group>
+												</div>
+											</xforms:repeat>
+										</div>
+									</xforms:group>
+									<xforms:group ref="relationSemantics">
+										<div class="subsection">
+											<h3>Controlled Template</h3>
+											<span class="add">
+												<xforms:trigger appearance="minimal">
+													<xforms:label><img src="/xeac/xforms/images/add.gif"/>Add New</xforms:label>
+													<xforms:action ev:event="DOMActivate">
+														<xforms:insert context="instance('config')/relationSemantics" nodeset="./child::node()[last()]" origin="instance('relation-template')"/>
+													</xforms:action>
+												</xforms:trigger>
+											</span>
+											<xforms:group ref=".[count(relation) &gt; 0]">
+												<table>
+													<thead>
+														<tr>
+															<th>Relation</th>
+															<th>Inverse</th>
+															<th>Delete</th>
+														</tr>
+													</thead>
+													<tbody>
+														<xforms:repeat nodeset="relation">
+															<tr>
+																<td>
+																	<xforms:input ref="@from">
+																		<xforms:alert>Required</xforms:alert>																		
+																		<xforms:setvalue ref="parent::node()/@to" value="parent::node()/@from" ev:event="xforms-value-changed"/>
+																	</xforms:input>													
+																</td>
+																<td>
+																	<xforms:select1 ref="@to">																	
+																		<xforms:itemset nodeset="instance('config')/relationSemantics/relation">
+																			<xforms:label ref="@from"/>
+																			<xforms:value ref="@from"/>
+																		</xforms:itemset>
+																		<xforms:alert>Required</xforms:alert>
+																	</xforms:select1>
+																</td>
+																<td>
+																	<xforms:trigger appearance="minimal">
+																		<xforms:delete ev:event="DOMActivate" nodeset="."/>
+																		<xforms:label>
+																			<img src="/xeac/xforms/images/remove.gif"/>
+																		</xforms:label>
+																	</xforms:trigger>
+																</td>
+															</tr>
+														</xforms:repeat>
+													</tbody>
+												</table>
+											</xforms:group>								
+										</div>
+									</xforms:group>
+								</div>
+							</fr:tab>
+							<fr:tab bind="advanced-tab">
+								<fr:label>Advanced</fr:label>
+								<div class="section">
+									<h2>Solr URLs</h2>
 									<p>
 										<b>Only change these options if Orbeon is run on a separate server.</b>
 									</p>
@@ -221,13 +347,13 @@
 										</xforms:input>
 									</div>
 								</div>
-							</xforms:group>
-						</fr:tab>
-					</fr:tabview>
+							</fr:tab>
+						</fr:tabview>
+						<!--<fr:xforms-inspector id="orbeon-xforms-inspector"/>-->
+					</div>
 				</div>
 			</div>
-			<!--<widget:xforms-instance-inspector id="orbeon-xforms-inspector" xmlns:widget="http://orbeon.org/oxf/xml/widget"/>-->
 		</div>
-	</xhtml:body>
+	</body>
 
-</xhtml:html>
+</html>

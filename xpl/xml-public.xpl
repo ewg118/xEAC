@@ -35,6 +35,9 @@
 							<xsl:when test="substring($basename, string-length($basename) - 3) = '.xml'">
 								<xsl:value-of select="substring-before($basename, '.xml')"/>
 							</xsl:when>
+							<xsl:when test="substring($basename, string-length($basename) - 4) = '.solr'">
+								<xsl:value-of select="substring-before($basename, '.solr')"/>
+							</xsl:when>
 							<xsl:otherwise>
 								<xsl:value-of select="$basename"/>
 							</xsl:otherwise>

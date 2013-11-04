@@ -7,16 +7,13 @@
 				<xforms:group xxbl:scope="inner">
 					<xxforms:variable name="binding" as="node()?">
 						<xxforms:sequence select="." xxbl:scope="outer"/>
-					</xxforms:variable>
-					<xxforms:variable name="display_path">../../</xxforms:variable>
+					</xxforms:variable>					
 
 					<xforms:group ref="$binding">
 						<h4>Date Range</h4>
 						<xforms:trigger appearance="minimal">
 							<xforms:delete ev:event="DOMActivate" nodeset="."/>
-							<xforms:label>
-								<img src="{$display_path}images/remove.gif"/>
-							</xforms:label>
+							<xforms:label><img src="/xeac/xforms/images/remove.gif"/></xforms:label>
 						</xforms:trigger>
 						<div class="subsection">
 							<!-- fromDate -->							
@@ -59,8 +56,7 @@
 									<xforms:trigger appearance="minimal">
 										<xforms:insert  ev:event="DOMActivate"  context="eac:fromDate" origin="xxforms:attribute('standardDate', '')" if="not(eac:fromDate/@standardDate)"/>
 										<xforms:label>
-											<img src="{$display_path}/images/add.gif"/>Standard Date
-										</xforms:label>
+											<img src="{$display_path}/images/add.gif"/>Standard Date</xforms:label>
 									</xforms:trigger>
 								</div>
 							</xforms:group>
@@ -110,7 +106,7 @@
 							</xforms:group>
 						</div>
 					</xforms:group>
-
+					<!-- ********************************************************************** -->
 					<xforms:model id="date-model">
 						<xforms:instance id="month-list">
 							<list xmlns="">

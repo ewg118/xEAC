@@ -8,8 +8,7 @@
 				<xforms:group xxbl:scope="inner">
 					<xxforms:variable name="binding" as="node()?">
 						<xxforms:sequence select="." xxbl:scope="outer"/>
-					</xxforms:variable>
-					<xxforms:variable name="display_path">../../</xxforms:variable>
+					</xxforms:variable>					
 
 					<xforms:group ref="$binding">
 						<xforms:group ref=".[string(parent::node()/@xlink:href)]">
@@ -19,7 +18,7 @@
 								</xforms:output>
 								<xforms:trigger appearance="minimal">
 									<xforms:label>
-										<img src="{$display_path}images/external.png"/>
+										<img src="/xeac/xforms/images/external.png"/>
 									</xforms:label>
 									<xforms:load ev:event="DOMActivate" show="new" ref="@xlink:href"/>
 								</xforms:trigger>
@@ -48,6 +47,9 @@
 									<xforms:trigger appearance="minimal">
 										<xforms:label>Create Record</xforms:label>
 										<xforms:action ev:event="DOMActivate">
+											<!-- load config if it hasn't already -->
+											<xforms:send submission="load-config" if="not(string(instance('config')/url))"/>
+											<!-- show dialog -->
 											<xxforms:show dialog="generate-dialog"/>
 										</xforms:action>
 									</xforms:trigger>
@@ -76,7 +78,7 @@
 										
 									</xforms:trigger>
 								</div>
-								<div>
+								<!--<div>
 									<xforms:select1 ref="attribute[@name='cpfRelationType']">
 										<xforms:label>CPF Relation Type</xforms:label>
 										<xforms:item>
@@ -88,23 +90,25 @@
 											<xforms:value ref="."/>
 										</xforms:itemset>													
 									</xforms:select1>
-								</div>
+									</div>-->
 								<div>
-									<!--<xforms:select1 ref="attribute[@name='xlink:arcrole']">
+									<xforms:select1 ref="instance('attributes')/attribute[@name='xlink:arcrole']">
 										<xforms:label>Xlink Arcrole</xforms:label>
 										<xforms:item>
 											<xforms:label>Select...</xforms:label>
 											<xforms:value/>
 										</xforms:item>
-										<xforms:itemset nodeset="instance('arcrole-list')/item">
-											<xforms:label ref="."/>
-											<xforms:value ref="."/>
-										</xforms:itemset>													
-										</xforms:select1>-->
-									<xforms:input ref="attribute[@name='xlink:arcrole']">
-										<xforms:label>Xlink Arcrole</xforms:label>										
-									</xforms:input>
-								</div>
+										<xforms:itemset nodeset="instance('config')/relationSemantics/relation">
+											<xforms:label ref="@from"/>
+											<xforms:value ref="@from"/>
+										</xforms:itemset>
+										<xforms:action ev:event="xforms-value-changed">
+											<xforms:insert context="$binding" origin="xxforms:attribute('xlink:arcrole', instance('attributes')/attribute[@name='xlink:arcrole'])"
+												if="not(@xlink:arcrole) and string-length(instance('attributes')/attribute[@name='xlink:arcrole']) &gt; 0"/>
+											<xforms:delete if="string-length(instance('attributes')/attribute[@name='xlink:arcrole']) = 0" context="$binding" nodeset="@xlink:arcrole"/>
+										</xforms:action>
+									</xforms:select1>
+								</div>								
 								<div>
 									<xforms:select1 ref="attribute[@name='xlink:role']">
 										<xforms:label>Xlink Role</xforms:label>
@@ -158,6 +162,14 @@
 
 					<!-- ********************* MODEL ******************** -->
 					<xforms:model id="relationEntry-model" xmlns:xi="http://www.w3.org/2001/XInclude">
+						<xforms:instance id="config">
+							<config xmlns=""/>
+						</xforms:instance>
+						
+						<xforms:instance id="exist-url" xmlns:xi="http://www.w3.org/2001/XInclude">
+							<xi:include href="../../../exist-url.xml"/>
+						</xforms:instance>
+						
 						<xforms:instance id="attributes">
 							<attributes xmlns="">
 								<attribute name="cpfRelationType"/>
@@ -168,7 +180,7 @@
 						</xforms:instance>
 						
 						<!-- controlled vocabulary -->
-						<xforms:instance id="cpfRelationType-list">
+						<!--<xforms:instance id="cpfRelationType-list">
 							<list xmlns="">
 								<item>identity</item>
 								<item>hierarchical</item>
@@ -180,14 +192,7 @@
 								<item>family</item>
 								<item>associative</item>
 							</list>
-						</xforms:instance>
-						
-						<xforms:instance id="arcrole-list">
-							<list xmlns="">
-								<item>correspondedWith</item>
-								<item>associatedWith</item>
-							</list>
-						</xforms:instance>
+						</xforms:instance>-->
 						
 						<xforms:instance id="role-list">
 							<list xmlns="">
@@ -198,8 +203,14 @@
 						</xforms:instance>
 						
 						<xforms:bind nodeset="instance('attributes')">
-							<xforms:bind nodeset="attribute[@name='xlink:href']" type="xs:ID"/>
+							<xforms:bind nodeset="attribute[@name='xlink:href']" type="xs:anyURI"/>
 						</xforms:bind>
+						
+						<!-- ***** SUBMISSIONS ***** -->
+						<xforms:submission id="load-config" serialization="none" method="get" action="{instance('exist-url')}xeac/config.xml" replace="instance" instance="config"
+							xxforms:username="admin" xxforms:password="">
+							<xforms:message ev:event="xforms-submit-error" level="modal">Unable to load config.</xforms:message>
+						</xforms:submission>
 					</xforms:model>
 				</xforms:group>
 			</xforms:group>

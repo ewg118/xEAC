@@ -35,7 +35,7 @@
 								<xforms:group ref=".[$position > 1]">
 									<xforms:trigger appearance="minimal">
 										<xforms:label>
-											<img alt="up" src="{$display_path}images/up.gif"/>
+											<img alt="up" src="/xeac/xforms/images/up.gif"/>
 										</xforms:label>
 										<xforms:action ev:event="DOMActivate">
 											<xforms:insert origin="$binding/*[$position]" context="instance('copy')"/>
@@ -49,7 +49,7 @@
 								<xforms:group ref=".[$position &lt; $count]">
 									<xforms:trigger appearance="minimal">
 										<xforms:label>
-											<img alt="down" src="{$display_path}images/down.gif"/>
+											<img alt="down" src="/xeac/xforms/images/down.gif"/>
 										</xforms:label>
 										<xforms:action ev:event="DOMActivate">
 											<xforms:insert origin="$binding/*[$position]" context="instance('copy')"/>

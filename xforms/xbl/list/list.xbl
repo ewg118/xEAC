@@ -16,14 +16,14 @@
 						<xforms:trigger appearance="minimal">
 							<xforms:delete ev:event="DOMActivate" nodeset="."/>
 							<xforms:label>
-								<img src="{$display_path}images/remove.gif"/>
+								<img src="/xeac/xforms/images/remove.gif"/>
 							</xforms:label>
 						</xforms:trigger>
 
 						<div class="trigger_container">
 							<xforms:trigger appearance="minimal">
 								<xforms:label>
-									<img src="{$display_path}images/add.gif"/>Item</xforms:label>
+									<img src="/xeac/xforms/images/add.gif"/>Item</xforms:label>
 								<xforms:action ev:event="DOMActivate">
 									<xforms:insert context="." nodeset="./child::node()[last()]" origin="instance('item-template')"/>
 								</xforms:action>
@@ -39,7 +39,7 @@
 									<xforms:trigger appearance="minimal">
 										<xforms:delete ev:event="DOMActivate" nodeset="."/>
 										<xforms:label>
-											<img src="{$display_path}images/remove.gif"/>
+											<img src="/xeac/xforms/images/remove.gif"/>
 										</xforms:label>
 									</xforms:trigger>
 								</xforms:group>
@@ -48,7 +48,7 @@
 					</xforms:group>
 					<!-- ********************************************************************** -->
 					<xforms:model id="list-model" xmlns="urn:isbn:1-931666-33-4">
-						<xforms:instance id="item-template">
+						<xforms:instance id="item-template" xxforms:exclude-result-prefixes="#all">
 							<item/>
 						</xforms:instance>
 					</xforms:model>
