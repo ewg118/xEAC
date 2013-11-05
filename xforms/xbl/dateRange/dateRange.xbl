@@ -107,7 +107,7 @@
 						</div>
 					</xforms:group>
 					<!-- ********************************************************************** -->
-					<xforms:model id="date-model">
+					<xforms:model id="dateRange-model">
 						<xforms:instance id="month-list">
 							<list xmlns="">
 								<item id="01">January</item>

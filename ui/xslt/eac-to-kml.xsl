@@ -4,12 +4,11 @@
 	xmlns:osgeo="http://data.ordnancesurvey.co.uk/ontology/geometry/" xmlns:geo="http://www.w3.org/2003/01/geo/wgs84_pos#" xmlns:xs="http://www.w3.org/2001/XMLSchema"
 	xmlns:foaf="http://xmlns.com/foaf/0.1/" xmlns:spatial="http://geovocab.org/spatial#" exclude-result-prefixes="#all" xmlns="http://earth.google.com/kml/2.0" version="2.0">
 
-	<xsl:param name="exist-url" select="//exist-url"/>
-	<xsl:variable name="config" select="document(concat($exist-url, 'xeac/config.xml'))"/>
+	
 	<xsl:variable name="geonames-url">
 		<xsl:text>http://api.geonames.org</xsl:text>
 	</xsl:variable>
-	<xsl:variable name="geonames_api_key" select="exsl:node-set($config)/config/geonames_api_key"/>
+	<xsl:variable name="geonames_api_key" select="/content/config/geonames_api_key"/>
 
 	<xsl:variable name="rdf">
 		<rdf:RDF>

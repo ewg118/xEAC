@@ -130,9 +130,11 @@
 											<xforms:action ev:event="DOMActivate">
 												<!-- first, load config if it hasn't been loaded -->
 												<xforms:send submission="load-config" if="not(string(instance('config')/url))"/>
-												<!-- clear result instance and submit query -->
-												<xforms:delete context="instance('geonames')/*"/>
-												<xforms:send submission="query-geonames"/>
+												<!-- clear result instance -->
+												<xforms:delete context="instance('geonames')/*"/>												
+												<!-- create alert when there is no geonames_api_key, otherwise submit query -->
+												<xforms:message level="modal" if="not(string(instance('config')/geonames_api_key))">No Geonames API key entered into config.</xforms:message>
+												<xforms:send submission="query-geonames" if="string(instance('config')/geonames_api_key)"/>
 											</xforms:action>
 											<xforms:label>Search</xforms:label>
 										</xforms:trigger>

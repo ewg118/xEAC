@@ -7,8 +7,7 @@
 				<xforms:group xxbl:scope="inner">
 					<xxforms:variable name="binding" as="node()?">
 						<xxforms:sequence select="." xxbl:scope="outer"/>
-					</xxforms:variable>
-					<xxforms:variable name="display_path">../../</xxforms:variable>
+					</xxforms:variable>					
 
 					<xforms:group ref="$binding">
 						<!-- edit @standardDate by default -->
@@ -17,12 +16,17 @@
 								<xforms:input ref="@standardDate">
 									<xforms:label>Date - Standard</xforms:label>
 									<xforms:alert>Required; must meet ISO specification</xforms:alert>
+									<!--<xforms:action ev:event="xforms-value-changed">	
+										<xforms:var name="val" select="."/>
+										<xforms:setvalue  ref="$binding" if="$val castable as xs:date" value="format-date(xs:date($val), '[MNn] [D], [Y]', 'en', (), ())"/>		
+										<xforms:setvalue  ref="$binding" if="$val castable as xs:gYearMonth" value="format-date(xs:date($val), '[MNn], [Y]', 'en', (), ())"/>																				
+										</xforms:action>-->
 									<xforms:action ev:event="xforms-value-changed">
 										<xforms:action if="substring(., 1, 1) = '-'">
 											<xxforms:variable name="year" select="abs(number(tokenize(., '-')[2]))"/>
 											<xxforms:variable name="month" select="tokenize(., '-')[3]"/>
 											<xxforms:variable name="day" select="tokenize(., '-')[4]"/>
-											<xforms:setvalue ref="$binding"
+											<xforms:setvalue ref="$binding/eac:toDate"
 												value="concat(if (number($month)) then concat(instance('month-list')/item[@id=$month], ' ') else '', if (number($day)) then concat($day, ', ') else '', $year, ' B.C.')"
 											/>
 										</xforms:action>
@@ -30,21 +34,26 @@
 											<xxforms:variable name="year" select="abs(number(tokenize(., '-')[1]))"/>
 											<xxforms:variable name="month" select="tokenize(., '-')[2]"/>
 											<xxforms:variable name="day" select="tokenize(., '-')[3]"/>
-											<xforms:setvalue ref="$binding"
+											<xforms:setvalue ref="$binding/eac:toDate"
 												value="concat(if ($year &lt;= 300) then 'A.D. ' else '', if (number($month)) then concat(instance('month-list')/item[@id=$month], ' ') else '', if (number($day)) then concat($day, ', ') else '', $year)"
 											/>
 										</xforms:action>
 									</xforms:action>
-								</xforms:input>
-								<xforms:group ref=".[not(@standardDate = .)]">
-									<xforms:output ref="."/>
-								</xforms:group>
+									<xforms:action ev:event="xforms-invalid">
+										<xforms:setvalue  ref="$binding"/>
+									</xforms:action>
+								</xforms:input>								
 								<xforms:trigger appearance="minimal">
 									<xforms:delete ev:event="DOMActivate" nodeset="."/>
 									<xforms:label>
 										<img src="/xeac/xforms/images/remove.gif"/>
 									</xforms:label>
 								</xforms:trigger>
+							</div>
+							<div>
+								<xforms:output ref=".">										
+									<xforms:label>Date - Textual</xforms:label>
+								</xforms:output>
 							</div>
 						</xforms:group>
 						<xforms:group ref=".[not(@standardDate)]">

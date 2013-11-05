@@ -260,35 +260,35 @@
 				</list>
 			</xforms:instance>
 			<!-- relations diff -->
-			<xforms:instance id="relations-pre">
-				<relations/>
+			<xforms:instance id="relations-pre" xxforms:exclude-result-prefixes="#all">
+				<relations xmlns=""/>
 			</xforms:instance>
-			<xforms:instance id="relations-post">
-				<relations/>
+			<xforms:instance id="relations-post" xxforms:exclude-result-prefixes="#all">
+				<relations xmlns=""/>
 			</xforms:instance>
-			<xforms:instance id="rel-template">
-				<relation xlink:href="" xlink:arcrole=""/>
+			<xforms:instance id="rel-template" xxforms:exclude-result-prefixes="#all">
+				<relation xlink:href="" xlink:arcrole="" xmlns=""/>
 			</xforms:instance>
 			<xforms:instance id="identifier">
 				<identifer/>
 			</xforms:instance>
-			<xforms:instance id="action-list">
-				<actions/>
+			<xforms:instance id="action-list" xxforms:exclude-result-prefixes="#all">
+				<actions xmlns=""/>
 			</xforms:instance>
-			<xforms:instance id="action-template">
-				<action source="" dest=""/>
+			<xforms:instance id="action-template" xxforms:exclude-result-prefixes="#all">
+				<action source="" dest="" xmlns=""/>
 			</xforms:instance>
-			<xforms:instance id="action-add">
-				<add type="" xlink:arcrole="" relationEntry=""/>
+			<xforms:instance id="action-add" xxforms:exclude-result-prefixes="#all">
+				<add type="" xlink:arcrole="" relationEntry="" xmlns=""/>
 			</xforms:instance>
-			<xforms:instance id="action-remove">
-				<remove/>
+			<xforms:instance id="action-remove" xxforms:exclude-result-prefixes="#all">
+				<remove xmlns=""/>
 			</xforms:instance>
-			<xforms:instance id="action-change">
-				<change xlink:arcrole=""/>
+			<xforms:instance id="action-change" xxforms:exclude-result-prefixes="#all">
+				<change xlink:arcrole="" xmlns=""/>
 			</xforms:instance>
 			<!-- temp instances -->
-			<xforms:instance id="temp-doc">
+			<xforms:instance id="temp-doc" xxforms:exclude-result-prefixes="#all">
 				<eac-cpf xmlns="urn:isbn:1-931666-33-4"/>
 			</xforms:instance>
 			<!-- ******************* EAC ELEMENTS ****************** -->
@@ -591,7 +591,9 @@
 						<!-- only set the pre-edited relations @xlink:href if it is an internal link -->
 						<xforms:setvalue ref="instance('rel-template')/@xlink:href" value="context()/@xlink:href"
 							if="string(context()/@xlink:href) and not(contains(context()/@xlink:href, 'http://'))"/>
-						<xforms:setvalue ref="instance('rel-template')/@xlink:arcrole" value="context()/@xlink:arcrole"/>
+						<!-- set inverse @xlink:arcrole from config -->
+						<xforms:var name="arcrole" select="context()/@xlink:arcrole"/>						
+						<xforms:setvalue ref="instance('rel-template')/@xlink:arcrole" value="if (instance('config')/relationSemantics/relation[@from=$arcrole]) then instance('config')/relationSemantics/relation[@from=$arcrole]/@to else $arcrole"/>
 						<xforms:insert context="instance('relations-pre')" nodeset="./child::node()[last()]" origin="instance('rel-template')"/>
 					</xforms:action>
 					<!-- insert maintenanceEvent, set values -->
@@ -679,8 +681,7 @@
 				<xforms:message ev:event="xforms-submit-error" level="modal">Error Saving Documents. Be sure all required inputs are filled in.</xforms:message>
 				<xforms:action ev:event="xforms-submit-done">
 					<xforms:setvalue ref="instance('status')">EAC record saved.</xforms:setvalue>
-					<!-- update dateTime of last maintenanceEvent -->
-					<xforms:setvalue ref="instance('doc')/eac:control/eac:maintenanceHistory/eac:maintenanceEvent[last()]/eac:eventDateTime/@standardDateTime" value="current-dateTime()"/>					
+										
 					<!-- generate KML -->
 					<xforms:insert nodeset="instance('kml')" origin="xxforms:call-xpl('oxf:/apps/xeac/xpl/eac-to-kml.xpl', 'data', instance('doc'), 'data')"/>
 					<xforms:send submission="save-kml"/>
@@ -689,51 +690,52 @@
 					<xforms:action xxforms:iterate="instance('doc')/eac:cpfDescription/eac:relations/eac:cpfRelation">
 						<xforms:insert context="instance('relations-post')" nodeset="./child::node()[last()]" origin="instance('rel-template')"/>
 						<!-- only set the @xlink:href if it is a local, relative value, i.e., does not contain http:// -->
-						<xforms:setvalue ref="instance('relations-post')/eac:relation[last()]/@xlink:href" value="context()/@xlink:href"
+						<xforms:setvalue ref="instance('relations-post')/relation[last()]/@xlink:href" value="context()/@xlink:href"
 							if="string(context()/@xlink:href) and not(contains(context()/@xlink:href, 'http://'))"/>
-						<xforms:setvalue ref="instance('relations-post')/eac:relation[last()]/@xlink:arcrole" value="context()/@xlink:arcrole"/>
+						<xforms:var name="arcrole" select="context()/@xlink:arcrole"/>						
+						<xforms:setvalue ref="instance('relations-post')/relation[last()]/@xlink:arcrole" value="if (instance('config')/relationSemantics/relation[@from=$arcrole]) then instance('config')/relationSemantics/relation[@from=$arcrole]/@to else $arcrole"/>						
 					</xforms:action>
 					<!-- ***** GENERATE ACTION LIST ***** -->
-					<xforms:action xxforms:iterate="instance('relations-post')/eac:relation[@xlink:href]">
+					<xforms:action xxforms:iterate="instance('relations-post')/relation[@xlink:href]">
 						<!-- create new relations -->
 						<xforms:var name="href" select="@xlink:href"/>
-						<xforms:action if="not(instance('relations-pre')/eac:relation[@xlink:href=$href])">
+						<xforms:action if="not(instance('relations-pre')/relation[@xlink:href=$href])">
 							<xforms:insert context="instance('action-list')" nodeset="./child::node()[last()]" origin="instance('action-template')"/>
-							<xforms:setvalue ref="instance('action-list')/eac:action[last()]/@source" value="instance('doc')/eac:control/eac:recordId"/>
-							<xforms:setvalue ref="instance('action-list')/eac:action[last()]/@dest" value="context()/@xlink:href"/>
+							<xforms:setvalue ref="instance('action-list')/action[last()]/@source" value="instance('doc')/eac:control/eac:recordId"/>
+							<xforms:setvalue ref="instance('action-list')/action[last()]/@dest" value="context()/@xlink:href"/>
 							<!-- insert add action -->
-							<xforms:insert context="instance('action-list')/eac:action[last()]" origin="instance('action-add')"/>
-							<xforms:setvalue ref="instance('action-list')/eac:action[last()]/eac:add/@xlink:arcrole" value="context()/@xlink:arcrole"/>
+							<xforms:insert context="instance('action-list')/action[last()]" origin="instance('action-add')"/>
+							<xforms:setvalue ref="instance('action-list')/action[last()]/add/@xlink:arcrole" value="context()/@xlink:arcrole"/>
 							<!-- set @relationEntry as the WIKIPEDIA preferredForm, otherwise the first eac:nameEntry in the document -->
-							<xforms:setvalue ref="instance('action-list')/eac:action[last()]/eac:add/@relationEntry"
+							<xforms:setvalue ref="instance('action-list')/action[last()]/add/@relationEntry"
 								value="if (instance('doc')/eac:cpfDescription/eac:identity/eac:nameEntry[eac:preferredForm='WIKIPEDIA']) then instance('doc')/eac:cpfDescription/eac:identity/eac:nameEntry[eac:preferredForm='WIKIPEDIA']/eac:part else instance('doc')/eac:cpfDescription/eac:identity/eac:nameEntry[1]/eac:part"
 							/>
 						</xforms:action>
 						<!-- create changes by comparing pre and post relations with matching xlink:hrefs -->
 					</xforms:action>
 					<!-- add removals to action list: cpfRelations with xlink:hrefs that do not appear in post -->
-					<xforms:action xxforms:iterate="instance('relations-pre')/eac:relation[@xlink:href]">
+					<xforms:action xxforms:iterate="instance('relations-pre')/relation[@xlink:href]">
 						<!-- create new relations -->
 						<xforms:var name="href" select="@xlink:href"/>
-						<xforms:action if="not(instance('relations-post')/eac:relation[@xlink:href=$href])">
+						<xforms:action if="not(instance('relations-post')/relation[@xlink:href=$href])">
 							<xforms:insert context="instance('action-list')" nodeset="./child::node()[last()]" origin="instance('action-template')"/>
-							<xforms:setvalue ref="instance('action-list')/eac:action[last()]/@source" value="instance('doc')/eac:control/eac:recordId"/>
-							<xforms:setvalue ref="instance('action-list')/eac:action[last()]/@dest" value="context()/@xlink:href"/>
+							<xforms:setvalue ref="instance('action-list')/action[last()]/@source" value="instance('doc')/eac:control/eac:recordId"/>
+							<xforms:setvalue ref="instance('action-list')/action[last()]/@dest" value="context()/@xlink:href"/>
 							<!-- insert remove action -->
-							<xforms:insert context="instance('action-list')/eac:action[last()]" origin="instance('action-remove')"/>
+							<xforms:insert context="instance('action-list')/action[last()]" origin="instance('action-remove')"/>
 						</xforms:action>
 					</xforms:action>
 					<!-- ***** PROCESS ACTION LIST ***** -->
 					<!-- iterate through additions -->
-					<xforms:action xxforms:iterate="instance('action-list')/eac:action[eac:add]">
+					<xforms:action xxforms:iterate="instance('action-list')/action[add]">
 						<xforms:setvalue ref="instance('temp-id')/identifier" value="context()/@dest"/>
 						<xforms:setvalue ref="instance('temp-id')/href" value="context()/@source"/>
-						<xforms:setvalue ref="instance('temp-id')/arcrole" value="context()/eac:add/@xlink:arcrole"/>
-						<xforms:setvalue ref="instance('temp-id')/relationEntry" value="context()/eac:add/@relationEntry"/>
+						<xforms:setvalue ref="instance('temp-id')/arcrole" value="context()/add/@xlink:arcrole"/>
+						<xforms:setvalue ref="instance('temp-id')/relationEntry" value="context()/add/@relationEntry"/>
 						<xforms:send submission="load-temp-doc"/>
 					</xforms:action>
 					<!-- iterate through removals -->
-					<xforms:action xxforms:iterate="instance('action-list')/eac:action[eac:remove]">
+					<xforms:action xxforms:iterate="instance('action-list')/action[remove]">
 						<xforms:setvalue ref="instance('temp-id')/identifier" value="context()/@dest"/>
 						<xforms:setvalue ref="instance('temp-id')/href" value="context()/@source"/>
 						<xforms:send submission="load-temp-doc"/>
@@ -748,10 +750,6 @@
 					<!-- remove relations from post-list -->
 					<xforms:delete nodeset="instance('relations-post')/*"/>
 					<xforms:delete nodeset="instance('action-list')/*"/>
-					
-					<!-- handle solr publication -->
-					<xforms:setvalue ref="instance('control-instance')/id" value="instance('doc')/eac:control/eac:recordId"/>
-					<xforms:setvalue ref="instance('status')">Coin saved.</xforms:setvalue>
 					
 					<!-- publish coin if the publicationStatus is approved -->
 					<xforms:send submission="to-solr" if="instance('doc')/eac:control/eac:publicationStatus = 'approved'"/>
@@ -917,7 +915,7 @@
 		<xi:include href="xbl/p/p.xbl" xi:omit-xml-base="true"/>
 		<xi:include href="xbl/place/place.xbl" xi:omit-xml-base="true"/>
 		<xi:include href="xbl/placeEntry/placeEntry.xbl" xi:omit-xml-base="true"/>
-		<xi:include href="xbl/relation/relation.xbl" xi:omit-xml-base="true"/>
+		<!--<xi:include href="xbl/relation/relation.xbl" xi:omit-xml-base="true"/>-->
 		<xi:include href="xbl/relationEntry/relationEntry.xbl" xi:omit-xml-base="true"/>
 		<xi:include href="xbl/reorder/reorder.xbl" xi:omit-xml-base="true"/>
 		<xi:include href="xbl/resourceRelation/resourceRelation.xbl" xi:omit-xml-base="true"/>
@@ -938,9 +936,13 @@
 					</p>
 					<div id="form">
 						<div class="submission">
-							<xforms:submit submission="save-doc">
+							<xforms:trigger>
 								<xforms:label><img src="/xeac/xforms/images/save.gif" alt="Save"/>Save</xforms:label>
-							</xforms:submit>							
+								<xforms:action ev:event="DOMActivate">
+									<xforms:setvalue ref="instance('doc')/eac:control/eac:maintenanceHistory/eac:maintenanceEvent[last()]/eac:eventDateTime/@standardDateTime" value="current-dateTime()"/>
+									<xforms:send submission="save-doc"/>
+								</xforms:action>
+							</xforms:trigger>				
 							<xforms:submit submission="load-doc">
 								<xforms:label><img src="/xeac/xforms/images/recycle-green.png" alt="Revert"/>Load</xforms:label>
 							</xforms:submit>
@@ -1515,9 +1517,7 @@
 									<h1>Description</h1>
 									<span class="add">
 										<xforms:trigger appearance="minimal">
-											<xforms:label>
-												<img src="/xeac/xforms/images/add.gif"/>
-											</xforms:label>
+											<xforms:label><img src="/xeac/xforms/images/add.gif"/></xforms:label>
 											<xxforms:show ev:event="DOMActivate" dialog="description-objects"/>
 										</xforms:trigger>
 									</span>
@@ -1976,9 +1976,15 @@
 														</xforms:action>
 													</xforms:trigger>
 												</div>
-												<xforms:repeat nodeset="eac:maintenanceEvent">
+												<xforms:repeat nodeset="eac:maintenanceEvent">													
 													<div class="subsection">
 														<h3>Maintenance Event</h3>
+														<!--<xforms:trigger appearance="minimal">
+															<xforms:action ev:event="DOMActivate">																
+																<xforms:dispatch target="delete-maintenanceEvent" name="fr-show"/>
+															</xforms:action>															
+															<xforms:label><img src="/xeac/xforms/images/remove.gif"/></xforms:label>
+														</xforms:trigger>-->
 														<div class="trigger_container">
 															<xforms:group ref=".[count(eac:eventDescription) = 0]">
 																<xforms:trigger appearance="minimal">
@@ -2003,10 +2009,10 @@
 															</xforms:select1>
 														</div>
 														<div>
-															<xforms:input ref="eac:eventDateTime/@standardDateTime">
+															<xforms:output ref="eac:eventDateTime/@standardDateTime">
 																<xforms:label>Event Date/Time</xforms:label>
-																<xforms:alert>Required</xforms:alert>
-															</xforms:input>
+																<xforms:alert>Must conform to schema.</xforms:alert>
+															</xforms:output>
 														</div>
 														<div>
 															<xforms:select1 ref="eac:agentType">
@@ -2043,6 +2049,19 @@
 														</xforms:group>
 													</div>
 												</xforms:repeat>
+												<!--<fr:alert-dialog id="delete-maintenanceEvent">
+													<fr:label>Delete Maintenance Event</fr:label>
+													<fr:message>Deleting a Maintenance Event is not recommended.  Proceed?</fr:message>
+													<fr:negative-choice>
+														<fr:label>No</fr:label>
+													</fr:negative-choice>
+													<fr:positive-choice>
+														<fr:label>Yes</fr:label>
+														<xforms:action ev:event="DOMActivate">
+															<xforms:delete nodeset="."/>														
+														</xforms:action>
+													</fr:positive-choice>
+												</fr:alert-dialog>-->
 											</div>
 										</xforms:group>
 									</div>

@@ -12,17 +12,18 @@
 
 					<xforms:group ref="$binding">
 						<xforms:group ref=".[parent::eac:description]">
-							<h3>Dates of Existence</h3>
+							<h3>Dates of Existence</h3>							
 						</xforms:group>
 						<xforms:group ref=".[not(parent::eac:description)]">
-							<h4>Use Dates</h4>
-						</xforms:group>						
+							<h4>Use Dates</h4>							
+						</xforms:group>	
 						<xforms:trigger appearance="minimal">
 							<xforms:delete ev:event="DOMActivate" nodeset="."/>
 							<xforms:label>
-								<img src="/apps/xeac/images/remove.gif"/>
+								<img src="/xeac/xforms/images/remove.gif"/>
 							</xforms:label>
-						</xforms:trigger>
+						</xforms:trigger>						
+						
 						<div class="subsection">
 							<div class="trigger_container">
 								<xforms:group ref=".[count(eac:date) = 0 and count(eac:dateRange) = 0 and count(eac:dateSet) = 0]">
@@ -49,7 +50,6 @@
 									</xforms:trigger>
 								</xforms:group>
 							</div>
-
 
 							<xforms:group ref="eac:date">
 								<xeac:date/>

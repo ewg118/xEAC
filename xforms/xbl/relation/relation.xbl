@@ -12,21 +12,19 @@
 					<xforms:var name="binding" as="node()?">
 						<xxforms:sequence select="." xxbl:scope="outer"/>
 					</xforms:var>
-					<span class="add">						
-						<xforms:trigger appearance="minimal">
-							<xforms:label>@</xforms:label>
-							<xforms:action ev:event="DOMActivate">
-								<!-- load config on trigger click enabled -->
-								<xforms:send submission="load-config" if="not(string(instance('config')/url))"/>
-								<!-- pre-set the values of instance('attributes') -->
-								<xforms:setvalue ref="instance('attributes')/attribute[@name='cpfRelationType']" value="$binding/@cpfRelationType"/>
-								<xforms:setvalue ref="instance('attributes')/attribute[@name='xlink:role']" value="$binding/@xlink:role"/>
-								<xforms:setvalue ref="instance('attributes')/attribute[@name='xlink:arcrole']" value="$binding/@xlink:arcrole"/>
-								<xforms:setvalue ref="instance('attributes')/attribute[@name='xlink:href']" value="$binding/@xlink:href"/>
-								<xxforms:show dialog="relation-dialog"/>
-							</xforms:action>
-						</xforms:trigger>
-					</span>
+					<xforms:trigger appearance="minimal">
+						<xforms:label>@</xforms:label>
+						<xforms:action ev:event="DOMActivate">
+							<!-- load config on trigger click enabled -->
+							<xforms:send submission="load-config" if="not(string(instance('config')/url))"/>
+							<!-- pre-set the values of instance('attributes') -->
+							<xforms:setvalue ref="instance('attributes')/attribute[@name='cpfRelationType']" value="$binding/@cpfRelationType"/>
+							<xforms:setvalue ref="instance('attributes')/attribute[@name='xlink:role']" value="$binding/@xlink:role"/>
+							<xforms:setvalue ref="instance('attributes')/attribute[@name='xlink:arcrole']" value="$binding/@xlink:arcrole"/>
+							<xforms:setvalue ref="instance('attributes')/attribute[@name='xlink:href']" value="$binding/@xlink:href"/>
+							<xxforms:show dialog="relation-dialog"/>
+						</xforms:action>
+					</xforms:trigger>
 					<xxforms:dialog id="relation-dialog" appearance="full" level="modal" close="false" draggable="true" visible="false">
 						<xforms:label>Establish Relationship</xforms:label>
 						<!-- handle xlink:href -->
@@ -36,43 +34,82 @@
 							</xforms:input>
 						</xforms:group>
 						<xforms:group ref=".[not(string($binding/@xlink:href))]">
-							<div>
-								<xforms:input ref="instance('query')">
-									<xforms:label>Search</xforms:label>
-								</xforms:input>
-								<xforms:trigger>
-									<xforms:action ev:event="DOMActivate">
-										<!--<xforms:delete context="instance('eXist-result')/*"/>-->
-										<xforms:setvalue ref="instance('eXist-xquery')/exist:text" value="replace(instance('xquery'), 'QUERY', lower-case(instance('query')))"/>
-										<xforms:send submission="xquery-collection"/>
-									</xforms:action>
-									<xforms:label>Search</xforms:label>
-								</xforms:trigger>
-							</div>
-							<xforms:group ref=".[count(instance('xquery-result')//*:record) &gt; 0]">
-								<div>
-									<xforms:select1 ref="instance('attributes')/attribute[@name='xlink:href']" appearance="compact">
-										<xforms:label>Name</xforms:label>
-										<xforms:itemset nodeset="instance('xquery-result')//*:record">
-											<xforms:label ref="concat(*:title, ' (', *:id, ')')"/>
-											<xforms:value ref="*:id"/>
-										</xforms:itemset>
-									</xforms:select1>
-									<xforms:trigger>
-										<xforms:label>Select</xforms:label>
-										<xforms:action ev:event="DOMActivate">
-											<xforms:insert context="$binding" origin="xxforms:attribute('xlink:href', instance('attributes')/attribute[@name='xlink:href'])"
-												if="not(@xlink:href) and string-length(instance('attributes')/attribute[@name='xlink:href']) &gt; 0"/>
-											<xforms:setvalue ref="$binding/eac:relationEntry" value="instance('xquery-result')//*:record[*:id = $binding/@xlink:href]/*:title"/>
+							<radiogroup>
+								<xforms:select1 ref="instance('interface-type')" appearance="full">
+									<xforms:label>Interface Type</xforms:label>
+									<xforms:item>
+										<xforms:label>Internal Link</xforms:label>
+										<xforms:value>internal</xforms:value>
+									</xforms:item>
+									<xforms:item>
+										<xforms:label>External Link</xforms:label>
+										<xforms:value>external</xforms:value>
+									</xforms:item>
+									<xforms:action ev:event="xforms-value-changed">
+										<xforms:action if=". = 'internal'">
+											<xforms:toggle case="internal-input"/>
 										</xforms:action>
-									</xforms:trigger>
-								</div>
-							</xforms:group>
-							<!--<xforms:group ref=".[count(instance('xquery-result')//record) = 0]">
-								<div style="padding:10px 30px">
-									<i>No results found.</i>
-								</div>
-							</xforms:group>-->
+										<xforms:action if=". = 'external'">
+											<xforms:toggle case="external-input"/>
+										</xforms:action>
+									</xforms:action>
+								</xforms:select1>
+							</radiogroup>
+							<xforms:switch>
+								<xforms:case id="internal-input">
+									<div>
+										<xforms:input ref="instance('query')">
+											<xforms:label>Search</xforms:label>
+										</xforms:input>
+										<xforms:trigger>
+											<xforms:action ev:event="DOMActivate">
+												<!--<xforms:delete context="instance('eXist-result')/*"/>-->
+												<xforms:setvalue ref="instance('eXist-xquery')/exist:text" value="replace(instance('xquery'), 'QUERY', lower-case(instance('query')))"/>
+												<xforms:send submission="xquery-collection"/>
+											</xforms:action>
+											<xforms:label>Search</xforms:label>
+										</xforms:trigger>
+									</div>
+									<xforms:group ref=".[count(instance('xquery-result')//*:record) &gt; 0]">
+										<div>
+											<xforms:select1 ref="instance('attributes')/attribute[@name='xlink:href']" appearance="compact">
+												<xforms:label>Name</xforms:label>
+												<xforms:itemset nodeset="instance('xquery-result')//*:record">
+													<xforms:label ref="concat(*:title, ' (', *:id, ')')"/>
+													<xforms:value ref="*:id"/>
+												</xforms:itemset>
+											</xforms:select1>
+											<xforms:trigger>
+												<xforms:label>Select</xforms:label>
+												<xforms:action ev:event="DOMActivate">
+													<xforms:insert context="$binding" origin="xxforms:attribute('xlink:href', instance('attributes')/attribute[@name='xlink:href'])"
+														if="not(@xlink:href) and string-length(instance('attributes')/attribute[@name='xlink:href']) &gt; 0"/>
+													<xforms:setvalue ref="$binding/eac:relationEntry" value="instance('xquery-result')//*:record[*:id = $binding/@xlink:href]/*:title"/>
+												</xforms:action>
+											</xforms:trigger>
+										</div>
+									</xforms:group>
+									<!--<xforms:group ref=".[count(instance('xquery-result')//record) = 0]">
+										<div style="padding:10px 30px">
+										<i>No results found.</i>
+										</div>
+										</xforms:group>-->
+								</xforms:case>
+								<xforms:case id="external-input">
+									<div>
+										<xforms:input ref="instance('attributes')/attribute[@name='xlink:href']">
+											<xforms:label>Xlink Href</xforms:label>
+										</xforms:input>
+										<xforms:trigger>
+											<xforms:label>Select</xforms:label>
+											<xforms:action ev:event="DOMActivate">
+												<xforms:insert context="$binding" origin="xxforms:attribute('xlink:href', instance('attributes')/attribute[@name='xlink:href'])"
+													if="not(@xlink:href) and string-length(instance('attributes')/attribute[@name='xlink:href']) &gt; 0"/>
+											</xforms:action>
+										</xforms:trigger>
+									</div>
+								</xforms:case>
+							</xforms:switch>
 						</xforms:group>
 
 						<!--<div>
@@ -164,7 +201,7 @@
 								<item>family</item>
 								<item>associative</item>
 							</list>
-						</xforms:instance>-->
+							</xforms:instance>-->
 
 						<xforms:instance id="attributes">
 							<attributes xmlns="">
@@ -181,6 +218,10 @@
 								<item role="http://RDVocab.info/uri/schema/FRBRentitiesRDA/Person">Person</item>
 								<item role="http://RDVocab.info/uri/schema/FRBRentitiesRDA/Family">Family</item>
 							</list>
+						</xforms:instance>
+
+						<xforms:instance id="interface-type">
+							<interface>internal</interface>
 						</xforms:instance>
 
 						<!-- xquery -->
