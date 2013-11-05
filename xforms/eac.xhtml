@@ -307,6 +307,12 @@
 					<citation/>
 				</conventionDeclaration>
 			</xforms:instance>
+			<xforms:instance id="localTypeDeclaration-template" xxforms:exclude-result-prefixes="#all">
+				<localTypeDeclaration>
+					<abbreviation/>
+					<citation/>
+				</localTypeDeclaration>
+			</xforms:instance>
 			<xforms:instance id="eventDescription-template" xxforms:exclude-result-prefixes="#all">
 				<eventDescription/>
 			</xforms:instance>
@@ -546,6 +552,11 @@
 						<xforms:bind nodeset="eac:abbreviation" required="true()" readonly="string-length(.) &gt; 0 and instance('doc')//eac:nameEntry/*[contains(local-name(), 'Form')] = ."/>
 						<xforms:bind nodeset="eac:citation" required="true()"
 							readonly="string-length(parent::node()/eac:abbreviation) &gt; 0 and instance('doc')//eac:nameEntry/*[contains(local-name(), 'Form')] = parent::node()/eac:abbreviation"/>
+					</xforms:bind>
+					<xforms:bind nodeset="eac:localTypeDeclaration">
+						<!-- only allow editing of abbreviation and citation if they are unused by nameEntry -->
+						<xforms:bind nodeset="eac:abbreviation" required="true()" type="xs:token"/>
+						<xforms:bind nodeset="eac:citation" required="true()"/>
 					</xforms:bind>
 				</xforms:bind>
 				<xforms:bind nodeset="eac:cpfDescription">
@@ -889,7 +900,18 @@
 					<!-- set current dateTime and boilerplate information on creation of new record -->
 					<xforms:setvalue ref="instance('doc')/eac:control/eac:maintenanceHistory/eac:maintenanceEvent/eac:eventDateTime/@standardDateTime" value="current-dateTime()"/>
 					<xforms:setvalue ref="instance('doc')/eac:control/eac:maintenanceAgency/eac:agencyName" value="instance('config')/instances/agencyName-list/item[@default='true']"/>
-					<!--<xforms:send submission="load-eac-template"/>-->
+					
+					<!-- insert localTypeDeclaration, if necessary -->
+					<xforms:action xxforms:iterate="instance('config')//localTypeDeclaration[not(abbreviation = instance('doc')/eac:control/eac:localTypeDeclaration/eac:abbreviation)]">		
+						<xforms:var name="href" select="context()/citation/@href"/>					
+						<xforms:insert context="instance('doc')/eac:control" nodeset="./child::node()[last()]" origin="instance('localTypeDeclaration-template')"/>
+						<xforms:setvalue ref="instance('doc')/eac:control/eac:localTypeDeclaration[last()]/eac:abbreviation" value="context()/abbreviation"/>
+						<xforms:setvalue ref="instance('doc')/eac:control/eac:localTypeDeclaration[last()]/eac:citation" value="context()/citation"/>
+						<xforms:insert context="instance('doc')/eac:control/eac:localTypeDeclaration[last()]/eac:citation" origin="xforms:attribute('xlink:type', 'simple')"/>
+						<xforms:insert context="instance('doc')/eac:control/eac:localTypeDeclaration[last()]/eac:citation" origin="xforms:attribute('xlink:role', 'semantic')"/>
+						<xforms:insert context="instance('doc')/eac:control/eac:localTypeDeclaration[last()]/eac:citation" origin="xforms:attribute('xlink:href', $href)"/>
+						<xforms:insert context="instance('doc')/eac:control/eac:localTypeDeclaration[last()]" nodeset="./child::node()[last()]" origin="instance('descriptiveNote-template')"/>
+					</xforms:action>
 				</xforms:action>
 			</xforms:action>
 			<!--<xforms:action ev:event="xforms-ready">
@@ -2084,6 +2106,49 @@
 															<xforms:setvalue ref="instance('control-instance')/pos" value="$position"/>
 															<xforms:dispatch target="remove-conventionDeclaration" name="fr-show"/>
 														</xforms:action>
+														<xforms:label>
+															<img src="/xeac/xforms/images/remove.gif"/>
+														</xforms:label>
+													</xforms:trigger>
+													<div class="trigger_container">
+														<xforms:trigger appearance="minimal">
+															<xforms:label>
+																<img src="/xeac/xforms/images/add.gif"/>Descriptive Note</xforms:label>
+															<xforms:insert ev:event="DOMActivate" context="." origin="instance('descriptiveNote-template')" nodeset="./child::node()[last()]"/>
+														</xforms:trigger>
+													</div>
+													<div>
+														<xforms:input ref="eac:abbreviation">
+															<xforms:label>Abbreviation</xforms:label>
+															<xforms:alert>Required</xforms:alert>
+														</xforms:input>
+													</div>
+													<div>
+														<xforms:input ref="eac:citation">
+															<xforms:label>Citation</xforms:label>
+															<xforms:alert>Required</xforms:alert>
+														</xforms:input>
+													</div>
+													<xforms:group ref="eac:descriptiveNote">
+														<xeac:descriptiveNote/>
+													</xforms:group>
+												</div>
+											</xforms:repeat>
+										</div>
+										<div class="section">
+											<h2>Local Type Declarations</h2>
+											<div class="trigger_container">
+												<xforms:trigger appearance="minimal">
+													<xforms:label>
+														<img src="/xeac/xforms/images/add.gif"/>Local Type Declaration</xforms:label>
+													<xforms:insert ev:event="DOMActivate" context="." origin="instance('localTypeDeclaration-template')" nodeset="./child::node()[last()]"/>
+												</xforms:trigger>
+											</div>
+											<xforms:repeat nodeset="eac:localTypeDeclaration">												
+												<div class="subsection">
+													<h3>Declaration</h3>
+													<xforms:trigger appearance="minimal">
+														<xforms:delete context="." ev:event="DOMActivate"/>
 														<xforms:label>
 															<img src="/xeac/xforms/images/remove.gif"/>
 														</xforms:label>

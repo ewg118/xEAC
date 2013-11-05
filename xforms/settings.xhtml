@@ -1,8 +1,9 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:xforms="http://www.w3.org/2002/xforms" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ev="http://www.w3.org/2001/xml-events"
 	xmlns:xxforms="http://orbeon.org/oxf/xml/xforms" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:fr="http://orbeon.org/oxf/xml/form-runner" xmlns:xlink="http://www.w3.org/1999/xlink"
-	xmlns:xxi="http://orbeon.org/oxf/xml/xinclude" xmlns:eac="urn:isbn:1-931666-33-4" xmlns:oxf="http://www.orbeon.com/oxf/processors" xmlns:exist="http://exist.sourceforge.net/NS/exist">
+	xmlns:xxi="http://orbeon.org/oxf/xml/xinclude" xmlns:eac="urn:isbn:1-931666-33-4" xmlns:oxf="http://www.orbeon.com/oxf/processors" xmlns:exist="http://exist.sourceforge.net/NS/exist"
+	xmlns:xeac="https://github.com/ewg118/xEAC">
 	<head>
-		<title> Administration</title>
+		<title>xEAC Application Settings</title>
 		<link rel="stylesheet" href="/fr/style/bootstrap/css/bootstrap.css" type="text/css"/>
 		<link rel="stylesheet" href="/fr/style/form-runner-bootstrap-override.css" type="text/css"/>
 		<link rel="stylesheet" href="/config/theme/examples.css" type="text/css" media="all"/>
@@ -45,6 +46,19 @@
 				<relation from="" to="" xmlns=""/>
 			</xforms:instance>
 
+			<xforms:instance id="localTypeDeclaration-template" xxforms:exclude-result-prefixes="#all">
+				<localTypeDeclaration xmlns="">
+					<abbreviation/>
+					<citation role="semantic" type="simple" href=""/>
+				</localTypeDeclaration>
+			</xforms:instance>
+
+			<xforms:instance id="descriptiveNote-template" xxforms:exclude-result-prefixes="#all">
+				<descriptiveNote>
+					<p/>
+				</descriptiveNote>
+			</xforms:instance>
+
 			<!-- xquery -->
 			<xforms:instance id="eXist-xquery">
 				<exist:query xmlns="">
@@ -71,7 +85,6 @@
 			<!-- ************ BINDINGS *************** -->
 			<xforms:bind nodeset="instance('config')">
 				<xforms:bind nodeset="title" required="true()"/>
-				<!--<xforms:bind nodeset="banner_text" required="true()"/>-->
 				<xforms:bind nodeset="url" required="true()"/>
 				<xforms:bind nodeset="solr_published" required="true()"/>
 				<xforms:bind nodeset="instances/agencyName-list">
@@ -83,8 +96,16 @@
 				</xforms:bind>
 				<xforms:bind nodeset="relationSemantics">
 					<xforms:bind nodeset="relation">
-						<xforms:bind nodeset="@from" required="true()"/>
+						<xforms:bind nodeset="@from" constraint="if (contains(., ':')) then substring-before(., ':') = instance('config')//abbreviation else string-length(.) &gt; 0"/>
 						<xforms:bind nodeset="@to" required="true()"/>
+					</xforms:bind>
+				</xforms:bind>
+				<xforms:bind nodeset="localTypeDeclarations">
+					<xforms:bind nodeset="localTypeDeclaration">
+						<xforms:bind nodeset="abbreviation" required="true()" type="xs:token"/>
+						<xforms:bind nodeset="citation">
+							<xforms:bind nodeset="@href" required="true()" type="xs:anyURI"/>
+						</xforms:bind>						
 					</xforms:bind>
 				</xforms:bind>
 			</xforms:bind>
@@ -116,15 +137,18 @@
 				<xforms:send submission="load-config"/>
 			</xforms:action>
 		</xforms:model>
+
+		<!--<xi:include href="xbl/descriptiveNote/descriptiveNote.xbl" xi:omit-xml-base="true"/>-->
 	</head>
 	<body>
 		<div class="yui3-g">
 			<div class="yui3-u-1">
 				<div class="content">
-					<p>
-						<a href="../">&lt; Return</a>
-					</p>
 					<div id="form">
+						<h1>Edit Settings</h1>
+						<p>
+							<a href="../">&lt; Return</a>
+						</p>
 						<xforms:group ref="instance('status')/text()">
 							<div class="success">
 								<xforms:output ref="instance('status')"/>
@@ -136,8 +160,6 @@
 								<xforms:send ev:event="DOMActivate" submission="save-config"/>
 							</xforms:trigger>
 						</div>
-						<h1>Edit Settings</h1>
-						<p>Edit titles, URLs, and index text.</p>
 						<fr:tabview>
 							<fr:tab bind="settings-tab">
 								<fr:label>Settings</fr:label>
@@ -296,12 +318,22 @@
 															<tr>
 																<td>
 																	<xforms:input ref="@from">
-																		<xforms:alert>Required</xforms:alert>																		
-																		<xforms:setvalue ref="parent::node()/@to" value="parent::node()/@from" ev:event="xforms-value-changed"/>
-																	</xforms:input>													
+																		<xforms:alert>Required</xforms:alert>
+																		<xforms:action ev:event="DOMActivate">
+																			<xforms:setvalue ref="parent::node()/@to" value="parent::node()/@from"/>
+																			<!-- insert localTypeDeclaration -->
+																			<xforms:action if="contains(., ':') and not(instance('config')//abbreviation = substring-before(., ':'))">
+																				<xforms:var name="prefix" select="substring-before(., ':')"/>
+																				<xforms:insert context="instance('config')/localTypeDeclarations" nodeset="./child::node()[last()]"
+																					origin="instance('localTypeDeclaration-template')"/>
+																				<xforms:setvalue ref="instance('config')/localTypeDeclarations/localTypeDeclaration[last()]/abbreviation"
+																					value="$prefix"/>
+																			</xforms:action>
+																		</xforms:action>
+																	</xforms:input>
 																</td>
 																<td>
-																	<xforms:select1 ref="@to">																	
+																	<xforms:select1 ref="@to">
 																		<xforms:itemset nodeset="instance('config')/relationSemantics/relation">
 																			<xforms:label ref="@from"/>
 																			<xforms:value ref="@from"/>
@@ -321,9 +353,58 @@
 														</xforms:repeat>
 													</tbody>
 												</table>
-											</xforms:group>								
+											</xforms:group>
 										</div>
 									</xforms:group>
+									<div class="section">
+										<h2>Semantic Local Type Declarations</h2>										
+										<span class="add">
+											<xforms:trigger appearance="minimal">
+												<xforms:label>
+													<img src="/xeac/xforms/images/add.gif"/>Local Type Declaration</xforms:label>
+												<xforms:insert context="instance('config')/localTypeDeclarations" nodeset="./child::node()[last()]" origin="instance('localTypeDeclaration-template')" ev:event="DOMActivate"/>
+											</xforms:trigger>
+										</span>
+										<xforms:repeat nodeset="instance('config')/localTypeDeclarations/localTypeDeclaration">
+											<div class="subsection">
+												<h3>Declaration</h3>
+												<xforms:trigger appearance="minimal">
+													<xforms:delete ev:event="DOMActivate" nodeset="."/>
+													<xforms:label>
+														<img src="/xeac/xforms/images/remove.gif"/>
+													</xforms:label>
+												</xforms:trigger>
+												<!--<div class="trigger_container">
+													<xforms:group ref=".[count(descriptiveNote) = 0]">
+														<xforms:trigger appearance="minimal">
+															<xforms:label>
+																<img src="/xeac/xforms/images/add.gif"/>Descriptive Note</xforms:label>
+															<xforms:insert context="." nodeset="./child::node()[last()]" origin="instance('descriptiveNote-template')" ev:event="DOMActivate"/>
+														</xforms:trigger>
+													</xforms:group>
+												</div>-->
+												<div>
+													<xforms:input ref="abbreviation">
+														<xforms:label>Prefix</xforms:label>
+														<xforms:alert>Required; must be token</xforms:alert>
+													</xforms:input>
+												</div>
+												<div>
+													<xforms:input ref="citation/@href">
+														<xforms:label>URI</xforms:label>
+														<xforms:alert>Required; must be URI</xforms:alert>
+														<xforms:action ev:event="xforms-value-changed">
+															<xforms:var name="href" select="."/>
+															<xforms:setvalue ev:event="xforms-value-changed" ref="parent::node()" value="$href"/>
+														</xforms:action>
+													</xforms:input>
+												</div>
+												<!--<xforms:group ref="descriptiveNote">														
+													<xeac:descriptiveNote/>
+												</xforms:group>-->
+											</div>
+										</xforms:repeat>
+									</div>
 								</div>
 							</fr:tab>
 							<fr:tab bind="advanced-tab">

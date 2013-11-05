@@ -76,6 +76,7 @@
 					<relationSemantics>
 						<relation from="correspondedWith" to="correspondedWith"/>
 					</relationSemantics>
+					<localTypeDeclarations/>
 				</config>
 			</xforms:instance>
 
@@ -173,7 +174,6 @@
 				<xforms:bind nodeset="solr_published" required="true()" type="xs:anyURI"/>
 				<xforms:bind nodeset="solr_all" required="true()" type="xs:anyURI"/>				
 			</xforms:bind>-->
-
 
 			<!-- submissions -->
 			<xforms:submission id="load-config" serialization="none" method="get" action="{instance('exist-url')}xeac/config.xml" replace="instance" instance="config" xxforms:username="admin"
@@ -319,36 +319,43 @@
 								<xforms:output ref="instance('status')"/>
 							</div>
 						</xforms:group>
-						<h2>Object Management</h2>
-						<ul>
-							<li>
-								<a href="edit/">Create New EAC-CPF Record</a>
-							</li>
-							<li>
-								<a href="settings/">xEAC Settings</a>
-							</li>
-						</ul>
-						<h2>Publication</h2>
-						<ul>
-							<li>
-								<xforms:trigger appearance="minimal">
-									<xforms:label>Publish All Records</xforms:label>
-									<xforms:dispatch target="publish-all" name="fr-show" ev:event="DOMActivate"/>
-								</xforms:trigger>
-							</li>
-							<!--<li>
-								<xforms:trigger appearance="minimal">
+						<h1>xEAC Administration</h1>
+						<a href="{instance('config')/url}" style="float:right" target="_blank">View Pubic Interface</a>
+						<div class="subsection">
+							<h2>Object Management</h2>
+							<ul>
+								<li>
+									<a href="edit/">Create New EAC-CPF Record</a>
+								</li>
+								<li>
+									<a href="settings/">xEAC Settings</a>
+								</li>
+							</ul>
+						</div>
+						<div class="subsection">
+							<h2>Publication</h2>
+							<ul>
+								<li>
+									<xforms:trigger appearance="minimal">
+										<xforms:label>Publish All Records</xforms:label>
+										<xforms:dispatch target="publish-all" name="fr-show" ev:event="DOMActivate"/>
+									</xforms:trigger>
+								</li>
+								<!--<li>
+									<xforms:trigger appearance="minimal">
 									<xforms:label>Reindex Published Records</xforms:label>
 									<xforms:dispatch target="republish-dialog" name="fr-show" ev:event="DOMActivate"/>
-								</xforms:trigger>
-							</li>-->
-							<li>
-								<xforms:trigger appearance="minimal">
-									<xforms:label>Unpublish All Records</xforms:label>
-									<xforms:dispatch target="unpublish-all" name="fr-show" ev:event="DOMActivate"/>
-								</xforms:trigger>
-							</li>
-						</ul>
+									</xforms:trigger>
+									</li>-->
+								<li>
+									<xforms:trigger appearance="minimal">
+										<xforms:label>Unpublish All Records</xforms:label>
+										<xforms:dispatch target="unpublish-all" name="fr-show" ev:event="DOMActivate"/>
+									</xforms:trigger>
+								</li>
+							</ul>
+						</div>
+						
 						<xforms:group ref="instance('control-instance')[number(numFound) &gt; 0]">
 							<div>
 								<h3>Search</h3>
