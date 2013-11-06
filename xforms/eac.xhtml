@@ -612,6 +612,17 @@
 					<xforms:setvalue ref="instance('doc')/eac:control/eac:maintenanceHistory/eac:maintenanceEvent[last()]/eac:eventType">revised</xforms:setvalue>
 					<xforms:setvalue ref="instance('doc')/eac:control/eac:maintenanceHistory/eac:maintenanceEvent[last()]/eac:eventDateTime/@standardDateTime" value="current-dateTime()"/>
 					
+					<!-- insert localTypeDeclaration, if necessary -->
+					<xforms:action xxforms:iterate="instance('config')//localTypeDeclaration[not(abbreviation = instance('doc')/eac:control/eac:localTypeDeclaration/eac:abbreviation)]">		
+						<xforms:var name="href" select="context()/citation/@href"/>					
+						<xforms:insert context="instance('doc')/eac:control" nodeset="./child::node()[last()]" origin="instance('localTypeDeclaration-template')"/>
+						<xforms:setvalue ref="instance('doc')/eac:control/eac:localTypeDeclaration[last()]/eac:abbreviation" value="context()/abbreviation"/>
+						<xforms:setvalue ref="instance('doc')/eac:control/eac:localTypeDeclaration[last()]/eac:citation" value="context()/citation"/>
+						<xforms:insert context="instance('doc')/eac:control/eac:localTypeDeclaration[last()]/eac:citation" origin="xforms:attribute('xlink:type', 'simple')"/>
+						<xforms:insert context="instance('doc')/eac:control/eac:localTypeDeclaration[last()]/eac:citation" origin="xforms:attribute('xlink:role', 'semantic')"/>
+						<xforms:insert context="instance('doc')/eac:control/eac:localTypeDeclaration[last()]/eac:citation" origin="xforms:attribute('xlink:href', $href)"/>
+						<!--<xforms:insert context="instance('doc')/eac:control/eac:localTypeDeclaration[last()]" nodeset="./child::node()[last()]" origin="instance('descriptiveNote-template')"/>-->
+					</xforms:action>					
 					<!-- set conventionDeclaration-list for nameEntry forms -->
 					<!--<xforms:action xxforms:iterate="instance('doc')/eac:control/eac:conventionDeclaration">
 						<xforms:insert context="instance('conventionDeclaration-list')" nodeset="./child::node()[last()]" origin="instance('item-template')"/>
@@ -637,6 +648,17 @@
 						<xforms:setvalue ref="instance('temp-doc')/eac:control/eac:maintenanceHistory/eac:maintenanceEvent[last()]/eac:eventDateTime/@standardDateTime" value="current-dateTime()"/>
 						<xforms:setvalue ref="instance('temp-doc')/eac:control/eac:maintenanceHistory/eac:maintenanceEvent[last()]/eac:eventDescription">Relation Inserted</xforms:setvalue>
 						<xforms:insert context="instance('temp-doc')/eac:cpfDescription/eac:relations" nodeset="./child::node()[last()]" origin="instance('cpfRelation-template')"/>
+						<!-- insert localTypeDeclaration, if necessary -->
+						<xforms:action xxforms:iterate="instance('config')//localTypeDeclaration[not(abbreviation = instance('temp-doc')/eac:control/eac:localTypeDeclaration/eac:abbreviation)]">		
+							<xforms:var name="href" select="context()/citation/@href"/>					
+							<xforms:insert context="instance('temp-doc')/eac:control" nodeset="./child::node()[last()]" origin="instance('localTypeDeclaration-template')"/>
+							<xforms:setvalue ref="instance('temp-doc')/eac:control/eac:localTypeDeclaration[last()]/eac:abbreviation" value="context()/abbreviation"/>
+							<xforms:setvalue ref="instance('temp-doc')/eac:control/eac:localTypeDeclaration[last()]/eac:citation" value="context()/citation"/>
+							<xforms:insert context="instance('temp-doc')/eac:control/eac:localTypeDeclaration[last()]/eac:citation" origin="xforms:attribute('xlink:type', 'simple')"/>
+							<xforms:insert context="instance('temp-doc')/eac:control/eac:localTypeDeclaration[last()]/eac:citation" origin="xforms:attribute('xlink:role', 'semantic')"/>
+							<xforms:insert context="instance('temp-doc')/eac:control/eac:localTypeDeclaration[last()]/eac:citation" origin="xforms:attribute('xlink:href', $href)"/>
+							<!--<xforms:insert context="instance('temp-doc')/eac:control/eac:localTypeDeclaration[last()]" nodeset="./child::node()[last()]" origin="instance('descriptiveNote-template')"/>-->
+						</xforms:action>						
 						<!-- insert xlink attributes -->
 						<xforms:insert context="instance('temp-doc')/eac:cpfDescription/eac:relations/eac:cpfRelation[last()]" origin="xxforms:attribute('xlink:href', instance('temp-id')/href)"/>
 						<xforms:insert context="instance('temp-doc')/eac:cpfDescription/eac:relations/eac:cpfRelation[last()]" origin="xxforms:attribute('xlink:arcrole', instance('temp-id')/arcrole)"/>
@@ -910,7 +932,7 @@
 						<xforms:insert context="instance('doc')/eac:control/eac:localTypeDeclaration[last()]/eac:citation" origin="xforms:attribute('xlink:type', 'simple')"/>
 						<xforms:insert context="instance('doc')/eac:control/eac:localTypeDeclaration[last()]/eac:citation" origin="xforms:attribute('xlink:role', 'semantic')"/>
 						<xforms:insert context="instance('doc')/eac:control/eac:localTypeDeclaration[last()]/eac:citation" origin="xforms:attribute('xlink:href', $href)"/>
-						<xforms:insert context="instance('doc')/eac:control/eac:localTypeDeclaration[last()]" nodeset="./child::node()[last()]" origin="instance('descriptiveNote-template')"/>
+						<!--<xforms:insert context="instance('doc')/eac:control/eac:localTypeDeclaration[last()]" nodeset="./child::node()[last()]" origin="instance('descriptiveNote-template')"/>-->
 					</xforms:action>
 				</xforms:action>
 			</xforms:action>
@@ -2154,11 +2176,13 @@
 														</xforms:label>
 													</xforms:trigger>
 													<div class="trigger_container">
-														<xforms:trigger appearance="minimal">
-															<xforms:label>
-																<img src="/xeac/xforms/images/add.gif"/>Descriptive Note</xforms:label>
-															<xforms:insert ev:event="DOMActivate" context="." origin="instance('descriptiveNote-template')" nodeset="./child::node()[last()]"/>
-														</xforms:trigger>
+														<xforms:group ref=".[count(eac:descriptiveNote) = 0]">
+															<xforms:trigger appearance="minimal">
+																<xforms:label>
+																	<img src="/xeac/xforms/images/add.gif"/>Descriptive Note</xforms:label>
+																<xforms:insert ev:event="DOMActivate" context="." origin="instance('descriptiveNote-template')" nodeset="./child::node()[last()]"/>
+															</xforms:trigger>
+														</xforms:group>														
 													</div>
 													<div>
 														<xforms:input ref="eac:abbreviation">

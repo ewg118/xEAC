@@ -28,6 +28,7 @@
 	<page path-info="/xeac/id/(.*)\.xml" matcher="oxf:perl5-matcher" view="xpl/xml-public.xpl"/>
 	<page path-info="/xeac/id/(.*)\.kml" matcher="oxf:perl5-matcher" view="xpl/display-kml.xpl"/>
 	<page path-info="/xeac/id/(.*)\.solr" matcher="oxf:perl5-matcher" model="xpl/xml-public.xpl" view="xpl/eac-to-solr-published.xpl"/>
+	<page path-info="/xeac/id/(.*)\.rdf" matcher="oxf:perl5-matcher" model="xpl/xml-public.xpl" view="xpl/eac-to-rdf.xpl"/>
 	<page path-info="/xeac/id/(.*)" matcher="oxf:perl5-matcher" model="xpl/xml-public.xpl" view="xpl/display.xpl"/>		
 	<!--<page path-info="/xeac/json/(.*)" matcher="oxf:perl5-matcher" model="xpl/xml-public.xpl" view="xpl/eac-to-json.xpl"/>-->
 	
