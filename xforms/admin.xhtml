@@ -25,7 +25,7 @@
 				<xi:include href="../exist-url.xml"/>
 			</xforms:instance>
 
-			<xforms:instance id="control-instance">
+			<xforms:instance id="control-instance" xxforms:exclude-result-prefixes="#all">
 				<controls xmlns="">
 					<id/>
 					<identifiers/>
@@ -71,7 +71,7 @@
 							<facet>legalStatus</facet>
 							<facet>localDescription</facet>
 						</facets>
-						<jquery_ui_theme>smoothness</jquery_ui_theme>						
+						<jquery_ui_theme>smoothness</jquery_ui_theme>
 					</theme>
 					<relationSemantics>
 						<relation from="correspondedWith" to="correspondedWith"/>
@@ -92,11 +92,11 @@
 				</item>
 			</xforms:instance>
 
-			<xforms:instance id="doc">
+			<xforms:instance id="doc" xxforms:exclude-result-prefixes="#all">
 				<eac-cpf xmlns=""/>
 			</xforms:instance>
 
-			<xforms:instance id="kml">
+			<xforms:instance id="kml" xxforms:exclude-result-prefixes="#all">>
 				<kml/>
 			</xforms:instance>
 
@@ -114,7 +114,7 @@
 						&lt;maintenanceStatus&gt; {$record/eac:eac-cpf/eac:control/eac:maintenanceStatus/text()}&lt;/maintenanceStatus&gt; &lt;id>{$record//eac:recordId/text() }&lt;/id> &lt;title>{
 						$record//eac:nameEntry[@xml:lang='en'][string(eac:preferredForm)][1]/eac:part/text() }&lt;/title> &lt;published/&gt; &lt;/record> } &lt;/report> </query>
 					<query id="create-collection">xmldb:create-collection('/db/xeac', 'records')</query>
-					<query id="publish-all">&lt;report> { for $foo in collection()[descendant::*:publicationStatus='approved'] return &lt;item> { $foo//*:recordId } &lt;/item> } &lt;/report></query>
+					<query id="publish-all">&lt;report> { for $foo in collection()[descendant::*:publicationStatus='approved'] return &lt;id> { $foo//*:recordId/text() } &lt;/id> } &lt;/report></query>
 					<!--<query id="query-objects"> &lt;report> { for $record in collection()[contains(descendant::*[local-name()='unittitle'], 'QUERY') or descendant::*[local-name()='eadid'] = 'QUERY' or
 						descendant::*[local-name()='identifier'] = 'QUERY' or descendant::*[local-name()='recordIdentifier'] = 'QUERY' or contains(descendant::*[local-name()='title'], 'QUERY')] let
 						$type := $record/*/local-name() return if ($type='ead') then &lt;record> &lt;type>{ $type }&lt;/type> &lt;id>{ $record//*[local-name()='eadid']/text() }&lt;/id> &lt;title>{
@@ -142,29 +142,29 @@
 			</xforms:instance>
 
 			<!-- send to Solr -->
-			<xforms:instance id="addIndex">
+			<xforms:instance id="addIndex" xxforms:exclude-result-prefixes="#all">>
 				<add xmlns=""/>
 			</xforms:instance>
-			<xforms:instance id="addDoc">
+			<xforms:instance id="addDoc" xxforms:exclude-result-prefixes="#all">>
 				<add xmlns=""/>
 			</xforms:instance>
 			<!-- Instance for Solr commit-->
-			<xforms:instance id="sendCommit">
+			<xforms:instance id="sendCommit" xxforms:exclude-result-prefixes="#all">>
 				<commit/>
 			</xforms:instance>
 			<!-- delete from Solr -->
-			<xforms:instance id="deleteId">
+			<xforms:instance id="deleteId" xxforms:exclude-result-prefixes="#all">>
 				<delete xmlns="">
 					<query/>
 				</delete>
 			</xforms:instance>
-			<xforms:instance id="deleteAll">
+			<xforms:instance id="deleteAll" xxforms:exclude-result-prefixes="#all">>
 				<delete xmlns="">
 					<query>id:*</query>
 				</delete>
 			</xforms:instance>
 
-			<xforms:instance id="optimizeIndex">
+			<xforms:instance id="optimizeIndex" xxforms:exclude-result-prefixes="#all">>
 				<optimize/>
 			</xforms:instance>
 
@@ -248,8 +248,15 @@
 			<!-- load eac record temporarily -->
 			<xforms:submission id="load-doc" serialization="none" method="get" action="{instance('exist-url')}xeac/records/{instance('control-instance')/id}.xml" replace="instance" instance="doc"
 				xxforms:username="admin" xxforms:password="">
-				<xforms:message ev:event="xforms-submit-error" level="modal">Cannot load finding aid.</xforms:message>
+				<xforms:message ev:event="xforms-submit-error" level="modal">Error loading file.</xforms:message>
+				<xforms:action ev:event="xforms-submit-done">
+					<xforms:setvalue ref="instance('doc')/eac:control/eac:publicationStatus" value="instance('control-instance')/publicationStatus"/>
+					<xforms:send submission="save-doc"/>
+				</xforms:action>
 			</xforms:submission>
+
+			<xforms:submission id="save-doc" ref="instance('doc')" xxforms:username="admin" xxforms:password="" action="{instance('exist-url')}xeac/records/{instance('control-instance')/id}.xml"
+				method="put" replace="none"/>
 
 			<!-- delete finding aid -->
 			<xforms:submission id="delete-doc" action="{instance('exist-url')}xeac/records/{instance('control-instance')/id}.xml" method="delete" replace="none" xxforms:username="admin"
@@ -278,7 +285,7 @@
 			</xforms:submission>
 			<!-- post instance to Solr -->
 			<xforms:submission id="post-solr-doc" action="{instance('control-instance')/solr-core}update" ref="instance('addIndex')" instance="addIndex" replace="instance" method="post">
-				<xforms:message ev:event="xforms-submit-error" level="modal">Data Failed to POST to Solr. Index may be offline or URL is incorrect.</xforms:message>
+				<xforms:message ev:event="xforms-submit-error" level="modal">Data Failed to POST to Solr. Index may be offline or URL is incorrect.</xforms:message>				
 			</xforms:submission>
 			<!-- delete from Solr -->
 			<xforms:submission id="delete-solr-doc" action="{instance('control-instance')/solr-core}update" ref="instance('deleteId')" instance="deleteId" replace="none" method="post">
@@ -355,7 +362,6 @@
 								</li>
 							</ul>
 						</div>
-						
 						<xforms:group ref="instance('control-instance')[number(numFound) &gt; 0]">
 							<div>
 								<h3>Search</h3>
@@ -632,17 +638,15 @@
 							<xforms:action ev:event="DOMActivate">
 								<!-- update publicationStatus -->
 								<xforms:setvalue ref="instance('control-instance')/publicationStatus">approved</xforms:setvalue>
-								<xforms:send submission="load-object"/>
-								
+								<xforms:send submission="load-doc"/>
 								<!-- publish to solr -->
 								<xforms:setvalue ref="instance('control-instance')/solr-core" value="instance('config')/solr_published"/>
 								<xforms:send submission="eac-to-solr"/>
-								<xforms:send submission="submit-commit"/>
+								<xforms:send submission="commit" ev:event="xforms-submit-done"/>
 								<!-- reload table -->
 								<xforms:var name="page" select="number(instance('control-instance')/page)"/>
 								<xforms:var name="start" select="(($page - 1) * 20) + 1"/>
-								<xforms:setvalue ref="instance('eXist-xquery')/exist:text"
-									value="replace(instance('xqueries')/query[@id='get-objects'], 'START', string($start))"/>
+								<xforms:setvalue ref="instance('eXist-xquery')/exist:text" value="replace(instance('xqueries')/query[@id='get-objects'], 'START', string($start))"/>
 								<xforms:send submission="xquery-pagination"/>
 							</xforms:action>
 						</fr:positive-choice>
@@ -655,8 +659,7 @@
 							<xforms:action ev:event="DOMActivate">
 								<!-- update publicationStatus -->
 								<xforms:setvalue ref="instance('control-instance')/publicationStatus">inProcess</xforms:setvalue>
-								<xforms:send submission="load-object"/>
-								
+								<xforms:send submission="load-doc"/>
 								<!-- delete from Solr -->
 								<xforms:setvalue ref="instance('deleteId')/query" value="concat('recordId:&#x022;', instance('control-instance')/id, '&#x022;')"/>
 								<xforms:setvalue ref="instance('control-instance')/solr-core" value="instance('config')/solr_published"/>
@@ -664,8 +667,7 @@
 								<!-- reload table -->
 								<xforms:var name="page" select="number(instance('control-instance')/page)"/>
 								<xforms:var name="start" select="(($page - 1) * 20) + 1"/>
-								<xforms:setvalue ref="instance('eXist-xquery')/exist:text"
-									value="replace(instance('xqueries')/query[@id='get-objects'], 'START', string($start))"/>
+								<xforms:setvalue ref="instance('eXist-xquery')/exist:text" value="replace(instance('xqueries')/query[@id='get-objects'], 'START', string($start))"/>
 								<xforms:send submission="xquery-pagination"/>
 							</xforms:action>
 						</fr:positive-choice>
@@ -684,15 +686,13 @@
 								<!-- get new numCount -->
 								<xforms:setvalue ref="instance('eXist-xquery')/exist:text" value="instance('xqueries')/query[@id='collection-count']"/>
 								<xforms:send submission="xquery-collection"/>
-								
 								<!-- reload table -->
 								<xforms:var name="page" select="number(instance('control-instance')/page)"/>
 								<xforms:var name="start" select="(($page - 1) * 20) + 1"/>
 								<xforms:var name="end" select="$page * 20"/>
-								<xforms:setvalue ref="instance('eXist-xquery')/exist:text"
-									value="replace(instance('xqueries')/query[@id='get-objects'], 'START', string($start))"/>
+								<xforms:setvalue ref="instance('eXist-xquery')/exist:text" value="replace(instance('xqueries')/query[@id='get-objects'], 'START', string($start))"/>
 								<xforms:send submission="xquery-pagination"/>
-							</xforms:action>							
+							</xforms:action>
 						</fr:positive-choice>
 					</fr:alert-dialog>
 					<!-- mass publication dialogs -->
@@ -705,8 +705,8 @@
 								<xforms:setvalue ref="instance('eXist-xquery')/exist:text" value="instance('xqueries')/query[@id='publish-all']"/>
 								<xforms:send submission="xquery-collection"/>
 								<xforms:setvalue ref="instance('control-instance')/solr-core" value="instance('config')/solr_published"/>
-								<xforms:action xxforms:iterate="instance('xquery-result')/report/item">
-									<xforms:var name="id" select="@id"/>
+								<xforms:action xxforms:iterate="instance('xquery-result')/report/id">
+									<xforms:var name="id" select="context()"/>
 									<xforms:setvalue ref="instance('control-instance')/id" value="$id"/>
 									<xforms:send submission="eac-to-solr"/>
 								</xforms:action>
@@ -727,7 +727,6 @@
 								<xforms:setvalue ref="instance('control-instance')/solr-core" value="instance('config')/solr_published"/>
 								<xforms:setvalue ref="instance('deleteAll')/query">*:*</xforms:setvalue>
 								<xforms:send submission="delete-all" ev:event="DOMActivate"/>
-								
 								<!-- optimize index -->
 								<xforms:send submission="optimize"/>
 								<!-- reload table -->

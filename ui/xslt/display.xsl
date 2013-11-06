@@ -372,11 +372,17 @@
 	</xsl:template>
 
 	<xsl:template name="icons">
-		<div class="submenu">
-			<div class="icon">
+		<div class="submenu">	
+			<span class="icon">
+				<a href="id/{//eac:eac-cpf/eac:control/eac:recordId}.kml">KML</a>
+			</span>
+			<span class="icon">
+				<a href="id/{//eac:eac-cpf/eac:control/eac:recordId}.rdf">RDF/XML</a>
+			</span>			
+			<span class="icon">
 				<a href="id/{//eac:eac-cpf/eac:control/eac:recordId}.xml">EAC-CPF/XML</a>
-			</div>
-			<div class="icon">
+			</span>			
+			<span class="icon">
 				<!-- AddThis Button BEGIN -->
 				<div class="addthis_toolbox addthis_default_style ">
 					<a class="addthis_button_preferred_1"/>
@@ -388,7 +394,7 @@
 				</div>
 				<script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#pubid=xa-4dd29d0e2f66557f"/>
 				<!-- AddThis Button END -->
-			</div>
+			</span>			
 		</div>
 	</xsl:template>
 
