@@ -15,6 +15,9 @@
 			<field name="id">
 				<xsl:value-of select="eac:control/eac:recordId"/>
 			</field>
+			<field name="recordId">
+				<xsl:value-of select="eac:control/eac:recordId"/>
+			</field>
 			<field name="timestamp">
 				<xsl:variable name="timestamp" select="datetime:dateTime()"/>
 				<xsl:choose>
@@ -107,9 +110,8 @@
 		</xsl:choose>
 	</xsl:template>
 	
-	<xsl:template match="eac:relations">
-				
-	</xsl:template>
+	<!-- relations not yet posted to Solr -->
+	<xsl:template match="eac:relations"/>
 	
 	<xsl:template match="eac:existDates/*">
 		<field name="existDates_display">
@@ -125,6 +127,5 @@
 			</xsl:choose>
 		</field>
 	</xsl:template>
-
 
 </xsl:stylesheet>

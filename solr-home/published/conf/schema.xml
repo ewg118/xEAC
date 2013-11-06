@@ -459,6 +459,7 @@
 
 		<!-- unique id -->
 		<field name="id" type="string" indexed="true" stored="true"/>
+		<field name="recordId" type="string" indexed="true" stored="true"/>
 		<field name="georef" type="string" indexed="true" stored="true" multiValued="true"/>
 		
 		<!-- index timestamp -->
