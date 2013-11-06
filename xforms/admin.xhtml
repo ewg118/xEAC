@@ -115,13 +115,10 @@
 						$record//eac:nameEntry[@xml:lang='en'][string(eac:preferredForm)][1]/eac:part/text() }&lt;/title> &lt;published/&gt; &lt;/record> } &lt;/report> </query>
 					<query id="create-collection">xmldb:create-collection('/db/xeac', 'records')</query>
 					<query id="publish-all">&lt;report> { for $foo in collection()[descendant::*:publicationStatus='approved'] return &lt;id> { $foo//*:recordId/text() } &lt;/id> } &lt;/report></query>
-					<!--<query id="query-objects"> &lt;report> { for $record in collection()[contains(descendant::*[local-name()='unittitle'], 'QUERY') or descendant::*[local-name()='eadid'] = 'QUERY' or
-						descendant::*[local-name()='identifier'] = 'QUERY' or descendant::*[local-name()='recordIdentifier'] = 'QUERY' or contains(descendant::*[local-name()='title'], 'QUERY')] let
-						$type := $record/*/local-name() return if ($type='ead') then &lt;record> &lt;type>{ $type }&lt;/type> &lt;id>{ $record//*[local-name()='eadid']/text() }&lt;/id> &lt;title>{
-						$record//*[local-name()='archdesc']/*[local-name()='did']/*[local-name()='unittitle']/text() }&lt;/title> &lt;components>{ if (count($record//*[local-name()='c']) &gt; 0) then
-						'true' else 'false' }&lt;/components> &lt;published/> &lt;/record> else &lt;record> &lt;type>{ $type }&lt;/type> &lt;id>{
-						$record//*[local-name()='mods']/*[local-name()='recordInfo']/*[local-name()='recordIdentifier']/text() }&lt;/id> &lt;title>{
-						$record//*[local-name()='mods']/*[local-name()='titleInfo']/*[local-name()='title']/text() }&lt;/title> &lt;published/> &lt;/record> } &lt;/report> </query>-->
+					<query id="query-objects"> &lt;report> { for $record in collection() return if ($record//*:recordId[contains(., 'QUERY')] or $record//*:nameEntry/*:part[matches(., 'QUERY', 'i')]) then
+						&lt;record> &lt;id>{ $record//*:recordId/text() }&lt;/id> &lt;title>{ $record//*:nameEntry[@xml:lang='en'][string(*:preferredForm)][1]/*:part/text() }&lt;/title>
+						&lt;maintenanceStatus&gt; {$record/eac:eac-cpf/eac:control/eac:maintenanceStatus/text()}&lt;/maintenanceStatus&gt;&lt;published/&gt;
+						&lt;/record> else '' } &lt;/report> </query>
 				</queries>
 			</xforms:instance>
 
@@ -365,30 +362,33 @@
 						<xforms:group ref="instance('control-instance')[number(numFound) &gt; 0]">
 							<div>
 								<h3>Search</h3>
-								<xforms:input ref="query_input"/>
-								<xforms:trigger>
-									<xforms:label>Search</xforms:label>
-									<xforms:action ev:event="DOMActivate">
-										<xforms:setvalue ref="instance('control-instance')/query_sent" value="instance('control-instance')/query_input"/>
-										<xforms:setvalue ref="instance('eXist-xquery')/exist:text"
-											value="replace(instance('xqueries')/query[@id='query-objects'], 'QUERY', instance('control-instance')/query_sent)"/>
-										<xforms:send submission="xquery-pagination"/>
-									</xforms:action>
-								</xforms:trigger>
-								<xforms:group ref=".[string(query_sent)]">
+								<p>Query recordId or nameEntry/part containing the following string (case insensitive):</p>
+								<div>
+									<xforms:input ref="query_input"/>
 									<xforms:trigger>
-										<xforms:label>Clear</xforms:label>
+										<xforms:label>Search</xforms:label>
 										<xforms:action ev:event="DOMActivate">
-											<!-- clear queries-->
-											<xforms:setvalue ref="instance('control-instance')/query_input"/>
-											<xforms:setvalue ref="instance('control-instance')/query_sent"/>
-											<!-- re-establish pagination query on page 1 -->
-											<xforms:setvalue ref="instance('control-instance')/page" value="1"/>
-											<xforms:setvalue ref="instance('eXist-xquery')/exist:text" value="replace(instance('xqueries')/query[@id='get-objects'], 'START', '1')"/>
+											<xforms:setvalue ref="instance('control-instance')/query_sent" value="instance('control-instance')/query_input"/>
+											<xforms:setvalue ref="instance('eXist-xquery')/exist:text"
+												value="replace(instance('xqueries')/query[@id='query-objects'], 'QUERY', instance('control-instance')/query_sent)"/>
 											<xforms:send submission="xquery-pagination"/>
 										</xforms:action>
 									</xforms:trigger>
-								</xforms:group>
+									<xforms:group ref=".[string(query_sent)]">
+										<xforms:trigger>
+											<xforms:label>Clear</xforms:label>
+											<xforms:action ev:event="DOMActivate">
+												<!-- clear queries-->
+												<xforms:setvalue ref="instance('control-instance')/query_input"/>
+												<xforms:setvalue ref="instance('control-instance')/query_sent"/>
+												<!-- re-establish pagination query on page 1 -->
+												<xforms:setvalue ref="instance('control-instance')/page" value="1"/>
+												<xforms:setvalue ref="instance('eXist-xquery')/exist:text" value="replace(instance('xqueries')/query[@id='get-objects'], 'START', '1')"/>
+												<xforms:send submission="xquery-pagination"/>
+											</xforms:action>
+										</xforms:trigger>
+									</xforms:group>
+								</div>	
 							</div>
 						</xforms:group>
 						<xforms:group ref="instance('pagination-result')">
