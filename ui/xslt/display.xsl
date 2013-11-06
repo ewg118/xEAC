@@ -179,14 +179,17 @@
 	</xsl:template>
 
 	<xsl:template name="body">
-		<div id="timemap">
-			<div id="mapcontainer">
-				<div id="map"/>
+		<xsl:if test="descendant::eac:placeEntry[string(@vocabularySource)]">
+			<div id="timemap">
+				<div id="mapcontainer">
+					<div id="map"/>
+				</div>
+				<div id="timelinecontainer">
+					<div id="timeline"/>
+				</div>
 			</div>
-			<div id="timelinecontainer">
-				<div id="timeline"/>
-			</div>
-		</div>
+		</xsl:if>
+		
 
 		<xsl:apply-templates select="eac:cpfDescription"/>
 	</xsl:template>

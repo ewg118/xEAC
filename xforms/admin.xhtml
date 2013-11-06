@@ -357,6 +357,12 @@
 										<xforms:dispatch target="unpublish-all" name="fr-show" ev:event="DOMActivate"/>
 									</xforms:trigger>
 								</li>
+								<li>
+									<xforms:trigger appearance="minimal">
+										<xforms:label>Generate KML for All Records</xforms:label>
+										<xforms:dispatch target="generate-kml" name="fr-show" ev:event="DOMActivate"/>
+									</xforms:trigger>
+								</li>
 							</ul>
 						</div>
 						<xforms:group ref="instance('control-instance')[number(numFound) &gt; 0]">
@@ -639,6 +645,9 @@
 								<!-- update publicationStatus -->
 								<xforms:setvalue ref="instance('control-instance')/publicationStatus">approved</xforms:setvalue>
 								<xforms:send submission="load-doc"/>
+								<!-- create kml -->
+								<xforms:insert nodeset="instance('kml')" origin="xxforms:call-xpl('oxf:/apps/xeac/xpl/eac-to-kml.xpl', 'data', instance('doc'), 'data')"/>
+								<xforms:send submission="save-kml"/>								
 								<!-- publish to solr -->
 								<xforms:setvalue ref="instance('control-instance')/solr-core" value="instance('config')/solr_published"/>
 								<xforms:send submission="eac-to-solr"/>
@@ -706,6 +715,7 @@
 								<xforms:send submission="xquery-collection"/>
 								<xforms:setvalue ref="instance('control-instance')/solr-core" value="instance('config')/solr_published"/>
 								<xforms:action xxforms:iterate="instance('xquery-result')/report/id">
+									<!-- publish to solr -->
 									<xforms:var name="id" select="context()"/>
 									<xforms:setvalue ref="instance('control-instance')/id" value="$id"/>
 									<xforms:send submission="eac-to-solr"/>
@@ -715,6 +725,31 @@
 								<!-- reload table -->
 								<xforms:setvalue ref="instance('eXist-xquery')/exist:text" value="replace(instance('xqueries')/query[@id='get-objects'], 'START', '1')"/>
 								<xforms:send submission="xquery-pagination"/>
+							</xforms:action>
+						</fr:positive-choice>
+					</fr:alert-dialog>
+					<fr:alert-dialog id="generate-kml">
+						<fr:label>Generate KML</fr:label>
+						<fr:message>This will generate KML documents for all records. It may take several minutes.  Proceed?</fr:message>
+						<fr:negative-choice>
+							<fr:label>No</fr:label>
+						</fr:negative-choice>
+						<fr:positive-choice>
+							<fr:label>Yes</fr:label>
+							<xforms:action ev:event="DOMActivate">
+								<xforms:setvalue ref="instance('eXist-xquery')/exist:text" value="instance('xqueries')/query[@id='publish-all']"/>
+								<xforms:send submission="xquery-collection"/>
+								<xforms:action xxforms:iterate="instance('xquery-result')/report/id">
+									<xforms:var name="id" select="context()"/>
+									<xforms:setvalue ref="instance('control-instance')/id" value="$id"/>
+									<xforms:send submission="load-doc"/>				
+									<!-- create kml -->
+									<xforms:action ev:event="xforms-submit-done">
+										<xforms:insert nodeset="instance('kml')" origin="xxforms:call-xpl('oxf:/apps/xeac/xpl/eac-to-kml.xpl', 'data', instance('doc'), 'data')"/>
+										<xforms:send submission="save-kml"/>
+									</xforms:action>
+								</xforms:action>
+								<xforms:setvalue ref="instance('status')">Process complete: KML files generated.</xforms:setvalue>
 							</xforms:action>
 						</fr:positive-choice>
 					</fr:alert-dialog>
@@ -747,7 +782,7 @@
 							</xforms:action>
 						</fr:positive-choice>
 					</fr:alert-dialog>
-					<fr:xforms-inspector id="orbeon-xforms-inspector"/>
+					<!--<fr:xforms-inspector id="orbeon-xforms-inspector"/>-->
 				</div>
 			</div>
 		</div>
