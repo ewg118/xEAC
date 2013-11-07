@@ -165,12 +165,12 @@
 					</div>
 				</div>
 			</div>
-			<div class="yui3-u-4-5">
+			<div class="yui3-u-3-4">
 				<div class="content">
 					<xsl:call-template name="body"/>
 				</div>
 			</div>
-			<div class="yui3-u-1-5">
+			<div class="yui3-u-1-4">
 				<div class="content">
 					<xsl:call-template name="side-bar"/>
 				</div>
@@ -198,20 +198,13 @@
 		<xsl:if test="descendant::eac:resourceRelation[@xlink:role='portrait']">
 			<img src="{descendant::eac:resourceRelation[@xlink:role='portrait']/@xlink:href}" alt="Portrait" style="max-width:240px;"/>
 		</xsl:if>
-
-		<xsl:call-template name="xeac:getOcreCoins">
-			<xsl:with-param name="name">
-				<xsl:choose>
-					<xsl:when test="eac:cpfDescription/eac:identity/eac:nameEntry[eac:preferredForm='WIKIPEDIA']">
-						<xsl:value-of select="eac:cpfDescription/eac:identity/eac:nameEntry[eac:preferredForm='WIKIPEDIA']/eac:part"/>
-					</xsl:when>
-					<xsl:otherwise>
-						<xsl:value-of select="eac:cpfDescription/eac:identity/eac:nameEntry[1]/eac:part"/>
-					</xsl:otherwise>
-				</xsl:choose>
-			</xsl:with-param>
-		</xsl:call-template>
-
+		
+		<!-- if there is an otherRecordId with a nomisma ID, construction nomisma SPARQL -->
+		<xsl:for-each select="descendant::eac:otherRecordId[contains(., 'nomisma.org')]">
+			<xsl:call-template name="xeac:queryNomisma">
+				<xsl:with-param name="uri" select="."/>
+			</xsl:call-template>
+		</xsl:for-each>
 	</xsl:template>
 
 	<xsl:template match="eac:cpfDescription">

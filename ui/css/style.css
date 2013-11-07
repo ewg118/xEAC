@@ -3,14 +3,14 @@
   GLOBAL
   ****************************************
  */
- html{
- 	font-family: Verdana, Arial, Helvetica, sans-serif;
-	font-size: 13px;	
- }
- body {
+html {
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 13px;
+}
+body {
 	margin:20px auto;
 	min-width:960px;
-	max-width:90%;
+	max-width:95%;
 }
 .content {
 	padding:5px;
@@ -37,6 +37,23 @@ a:hover {
 }
 #linked_data a {
 	margin:5px;
+}
+dt {
+	float: left;
+	clear: left;
+	width: 100px;
+	text-align: right;
+	font-weight:bold;
+}
+dd {
+	margin: 0 0 0 110px;
+	padding: 0 0 0.5em 0;
+}
+.g_doc {
+	margin:5px 0;	
+}
+.gi {
+	max-width:100px;	
 }
 /*
   ***************************************
