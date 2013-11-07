@@ -23,10 +23,10 @@
 										</xforms:action>-->
 									<xforms:action ev:event="xforms-value-changed">
 										<xforms:action if="substring(., 1, 1) = '-'">
-											<xxforms:variable name="year" select="abs(number(tokenize(., '-')[2]))"/>
+											<xxforms:variable name="year" select="abs(number(tokenize(., '-')[2]) + 1)"/>
 											<xxforms:variable name="month" select="tokenize(., '-')[3]"/>
 											<xxforms:variable name="day" select="tokenize(., '-')[4]"/>
-											<xforms:setvalue ref="$binding/eac:toDate"
+											<xforms:setvalue ref="$binding"
 												value="concat(if (number($month)) then concat(instance('month-list')/item[@id=$month], ' ') else '', if (number($day)) then concat($day, ', ') else '', $year, ' B.C.')"
 											/>
 										</xforms:action>
@@ -34,14 +34,11 @@
 											<xxforms:variable name="year" select="abs(number(tokenize(., '-')[1]))"/>
 											<xxforms:variable name="month" select="tokenize(., '-')[2]"/>
 											<xxforms:variable name="day" select="tokenize(., '-')[3]"/>
-											<xforms:setvalue ref="$binding/eac:toDate"
+											<xforms:setvalue ref="$binding"
 												value="concat(if ($year &lt;= 300) then 'A.D. ' else '', if (number($month)) then concat(instance('month-list')/item[@id=$month], ' ') else '', if (number($day)) then concat($day, ', ') else '', $year)"
 											/>
 										</xforms:action>
-									</xforms:action>
-									<xforms:action ev:event="xforms-invalid">
-										<xforms:setvalue  ref="$binding"/>
-									</xforms:action>
+									</xforms:action>									
 								</xforms:input>								
 								<xforms:trigger appearance="minimal">
 									<xforms:delete ev:event="DOMActivate" nodeset="."/>

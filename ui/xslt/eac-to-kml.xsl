@@ -10,7 +10,7 @@
 	</xsl:variable>
 	<xsl:variable name="geonames_api_key" select="/content/config/geonames_api_key"/>
 
-	<xsl:variable name="rdf">
+	<xsl:variable name="rdf" as="node()*">
 		<rdf:RDF>
 			<!-- look up only mints -->
 			<xsl:for-each select="distinct-values(descendant::eac:placeEntry[contains(@vocabularySource, 'nomisma.org')]/@vocabularySource)">
@@ -30,6 +30,7 @@
 
 	<xsl:template match="eac:eac-cpf">
 		<kml xmlns="http://earth.google.com/kml/2.0">
+			<!--<xsl:copy-of select="$rdf"/>-->
 			<Document>
 				<!--<Style xmlns="" id="place">
 					<IconStyle>
@@ -181,7 +182,7 @@
 				</Point>
 			</xsl:when>
 			<xsl:when test="contains($href, 'nomisma')">
-				<xsl:variable name="coordinates" select="exsl:node-set($rdf)/rdf:RDF/*[@rdf:about=$href]/descendant::gml:pos"/>
+				<xsl:variable name="coordinates" select="$rdf//*[@rdf:about=$href]/descendant::gml:pos"/>
 				<xsl:if test="string($coordinates)">
 					<xsl:variable name="lat" select="substring-before($coordinates, ' ')"/>
 					<xsl:variable name="lon" select="substring-after($coordinates, ' ')"/>
@@ -192,14 +193,14 @@
 					</Point>
 				</xsl:if>
 			</xsl:when>
-			<xsl:when test="contains($href, 'pleiades')">
+			<xsl:when test="contains($href, 'pleiades')">				
 				<xsl:variable name="coordinates">
 					<xsl:choose>
-						<xsl:when test="number(exsl:node-set($rdf)/rdf:RDF/*[@rdf:about=concat($href, '#this')]/geo:lat) and number(exsl:node-set($rdf)/rdf:RDF/*[@rdf:about=concat($href, '#this')]/geo:long)">
-							<xsl:value-of select="concat(exsl:node-set($rdf)/rdf:RDF/*[@rdf:about=concat($href, '#this')]/geo:long, ',', exsl:node-set($rdf)/rdf:RDF/*[@rdf:about=concat($href, '#this')]/geo:lat)"/>
+						<xsl:when test="number($rdf//*[@rdf:about=concat($href, '#this')]/descendant::geo:lat) and number($rdf//*[@rdf:about=concat($href, '#this')]/descendant::geo:long)">
+							<xsl:value-of select="concat($rdf//*[@rdf:about=concat($href, '#this')]/descendant::geo:long, ',', $rdf//*[@rdf:about=concat($href, '#this')]/descendant::geo:lat)"/>
 						</xsl:when>
-						<xsl:when test="exsl:node-set($rdf)/rdf:RDF/*[@rdf:about=concat($href, '#this')]/following-sibling::osgeo:AbstractGeometry">
-							<xsl:variable name="area" select="exsl:node-set($rdf)/rdf:RDF/*[@rdf:about=concat($href, '#this')]/following-sibling::osgeo:AbstractGeometry[1]/osgeo:asGeoJSON"/>
+						<xsl:when test="$rdf//*[@rdf:about=concat($href, '#this')]/following-sibling::osgeo:AbstractGeometry">
+							<xsl:variable name="area" select="$rdf//*[@rdf:about=concat($href, '#this')]/following-sibling::osgeo:AbstractGeometry[1]/osgeo:asGeoJSON"/>
 							<xsl:value-of select="translate(replace(replace(substring-after($area, '['), ',\s', ','), '\],', ' '), '[]}', '')"/>
 						</xsl:when>
 					</xsl:choose>				

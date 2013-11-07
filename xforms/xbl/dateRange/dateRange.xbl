@@ -25,7 +25,7 @@
 										<xforms:action ev:event="xforms-value-changed">
 											<!-- BC dates -->
 											<xforms:action if="substring(., 1, 1) = '-'">
-												<xxforms:variable name="year" select="abs(number(tokenize(., '-')[2]))"/>
+												<xxforms:variable name="year" select="abs(number(tokenize(., '-')[2]) + 1)"/>
 												<xxforms:variable name="month" select="tokenize(., '-')[3]"/>
 												<xxforms:variable name="day" select="tokenize(., '-')[4]"/>
 												<xforms:setvalue ref="$binding/eac:fromDate"
@@ -69,7 +69,7 @@
 										<xforms:alert>Required; must meet ISO specification</xforms:alert>
 										<xforms:action ev:event="xforms-value-changed">
 											<xforms:action if="substring(., 1, 1) = '-'">
-												<xxforms:variable name="year" select="abs(number(tokenize(., '-')[2]))"/>
+												<xxforms:variable name="year" select="abs(number(tokenize(., '-')[2]) + 1)"/>
 												<xxforms:variable name="month" select="tokenize(., '-')[3]"/>
 												<xxforms:variable name="day" select="tokenize(., '-')[4]"/>
 												<xforms:setvalue ref="$binding/eac:toDate"
