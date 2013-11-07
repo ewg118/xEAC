@@ -289,7 +289,7 @@
 				</a>
 				<xsl:if test="string(parent::node()/eac:placeEntry/@vocabularySource)">
 					<a href="{parent::node()/eac:placeEntry/@vocabularySource}" style="margin-left:5px;">
-						<img src="{$display_path}images/external.png" alt="External link"/>
+						<img src="{$display_path}ui/images/external.png" alt="External link"/>
 					</a>
 				</xsl:if>
 			</xsl:when>
@@ -301,7 +301,7 @@
 			</a>
 			<xsl:if test="string(parent::node()/eac:placeEntry/@vocabularySource)">
 				<a href="{parent::node()/eac:placeEntry/@vocabularySource}" style="margin-left:5px;">
-					<img src="{$display_path}images/external.png" alt="External link"/>
+					<img src="{$display_path}ui/images/external.png" alt="External link"/>
 				</a>
 			</xsl:if>
 			<xsl:text>.</xsl:text>
@@ -353,7 +353,7 @@
 							<xsl:value-of select="eac:relationEntry"/>
 							<!-- create external link to resources outside of xEAC -->
 							<a href="{@xlink:href}" style="margin-left:5px;">
-								<img src="{$display_path}images/external.png" alt="External link"/>
+								<img src="{$display_path}ui/images/external.png" alt="External link"/>
 							</a>
 						</xsl:when>
 					</xsl:choose>

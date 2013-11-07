@@ -62,10 +62,10 @@
 											<xforms:label>Geonames</xforms:label>
 											<xforms:value>geonames</xforms:value>
 										</xforms:item>
-										<xforms:item>
+										<!--<xforms:item>
 											<xforms:label>Nomisma</xforms:label>
 											<xforms:value>nomisma</xforms:value>
-										</xforms:item>
+										</xforms:item>-->
 										<xforms:item>
 											<xforms:label>Pleiades</xforms:label>
 											<xforms:value>pleiades</xforms:value>
@@ -86,17 +86,17 @@
 												<xforms:insert context="$binding" origin="xxforms:attribute('vocabularySource', '')" if="not($binding/@vocabularySource)"/>
 												<xforms:toggle case="geonames-search"/>
 											</xforms:action>
-											<xforms:action if=". = 'nomisma'">
-												<!-- remove temporary values, applicable when switching back to geonames from local -->
+											<!--<xforms:action if=". = 'nomisma'">
+												<!-\- remove temporary values, applicable when switching back to geonames from local -\->
 												<xforms:delete context="instance('geonames')/*"/>
 												<xforms:delete context="instance('feed')/*"/>
 												<xforms:setvalue ref="instance('search-query')"/>
 
-												<!-- create attributes, clear $binding text when applicable -->
+												<!-\- create attributes, clear $binding text when applicable -\->
 												<xforms:setvalue ref="$binding"/>
 												<xforms:insert context="$binding" origin="xxforms:attribute('vocabularySource', '')" if="not($binding/@vocabularySource)"/>
 												<xforms:toggle case="nomisma-search"/>
-											</xforms:action>
+											</xforms:action>-->
 											<xforms:action if=". = 'pleiades'">
 												<!-- remove temporary values, applicable when switching back to geonames from local -->
 												<xforms:delete context="instance('geonames')/*"/>
@@ -157,7 +157,7 @@
 										</xforms:trigger>
 									</xforms:group>
 								</xforms:case>
-								<xforms:case id="nomisma-search">
+								<!--<xforms:case id="nomisma-search">
 									<div>
 										<xforms:input ref="instance('search-query')">
 											<xforms:label>Search</xforms:label>
@@ -206,7 +206,7 @@
 											</xforms:trigger>
 										</div>
 									</xforms:group>
-								</xforms:case>
+								</xforms:case>-->
 								<xforms:case id="pleiades-search">
 									<div>
 										<xforms:input ref="instance('search-query')">

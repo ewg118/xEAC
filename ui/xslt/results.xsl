@@ -88,11 +88,11 @@
 						<div class="data_options">
 							<h3>Data Options</h3>
 							<a href="{$display_path}feed/?q=*:*">
-								<img alt="Atom" title="Atom" src="{$display_path}images/atom-medium.png"/>
+								<img alt="Atom" title="Atom" src="{$display_path}ui/images/atom-medium.png"/>
 							</a>
 							<xsl:if test="count(//lst[@name='georef']/int) &gt; 0">
 								<a href="{$display_path}query.kml?q={$q}">
-									<img src="{$display_path}images/googleearth.png" alt="KML" title="KML: Limit, 500 objects"/>
+									<img src="{$display_path}ui/images/googleearth.png" alt="KML" title="KML: Limit, 500 objects"/>
 								</a>
 							</xsl:if>
 						</div>
@@ -526,7 +526,7 @@
 							<xsl:for-each select="int">
 								<li>
 									<span class="expand_century" century="{@name}" q="{$q}">
-										<img src="{$display_path}images/{if (contains($q, concat(':', @name))) then 'minus' else 'plus'}.gif" alt="expand"/>
+										<img src="{$display_path}ui/images/{if (contains($q, concat(':', @name))) then 'minus' else 'plus'}.gif" alt="expand"/>
 									</span>
 									<xsl:choose>
 										<xsl:when test="contains($q, concat(':',@name))">
