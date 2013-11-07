@@ -112,11 +112,11 @@
 					<query id="collection-count">&lt;report&gt;{count(collection())}&lt;/report&gt;</query>
 					<query id="get-objects"> declare namespace eac="urn:isbn:1-931666-33-4"; &lt;report> { for $record in subsequence(collection(), START, 20) return &lt;record>
 						&lt;maintenanceStatus&gt; {$record/eac:eac-cpf/eac:control/eac:maintenanceStatus/text()}&lt;/maintenanceStatus&gt; &lt;id>{$record//eac:recordId/text() }&lt;/id> &lt;title>{
-						$record//eac:nameEntry[@xml:lang='en'][string(eac:preferredForm)][1]/eac:part/text() }&lt;/title> &lt;published/&gt; &lt;/record> } &lt;/report> </query>
+						if (string($record//*:nameEntry[@xml:lang='en'][string(*:preferredForm)][1]/*:part/text())) then $record//*:nameEntry[@xml:lang='en'][string(*:preferredForm)][1]/*:part/text() else $record//*:nameEntry[1]/*:part[1]/text() }&lt;/title> &lt;published/&gt; &lt;/record> } &lt;/report> </query>
 					<query id="create-collection">xmldb:create-collection('/db/xeac', 'records')</query>
 					<query id="publish-all">&lt;report> { for $foo in collection()[descendant::*:publicationStatus='approved'] return &lt;id> { $foo//*:recordId/text() } &lt;/id> } &lt;/report></query>
 					<query id="query-objects"> &lt;report> { for $record in collection() return if ($record//*:recordId[contains(., 'QUERY')] or $record//*:nameEntry/*:part[matches(., 'QUERY', 'i')]) then
-						&lt;record> &lt;id>{ $record//*:recordId/text() }&lt;/id> &lt;title>{ $record//*:nameEntry[@xml:lang='en'][string(*:preferredForm)][1]/*:part/text() }&lt;/title>
+						&lt;record> &lt;id>{ $record//*:recordId/text() }&lt;/id> &lt;title>{ if (string($record//*:nameEntry[@xml:lang='en'][string(*:preferredForm)][1]/*:part/text())) then $record//*:nameEntry[@xml:lang='en'][string(*:preferredForm)][1]/*:part/text() else $record//*:nameEntry[1]/*:part[1]/text() }&lt;/title>
 						&lt;maintenanceStatus&gt; {$record/eac:eac-cpf/eac:control/eac:maintenanceStatus/text()}&lt;/maintenanceStatus&gt;&lt;published/&gt;
 						&lt;/record> else '' } &lt;/report> </query>
 				</queries>

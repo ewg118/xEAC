@@ -102,12 +102,7 @@
 									<xforms:itemset nodeset="instance('config')/relationSemantics/relation">
 										<xforms:label ref="@from"/>
 										<xforms:value ref="@from"/>
-									</xforms:itemset>
-									<xforms:action ev:event="xforms-value-changed">
-										<xforms:insert context="$binding" origin="xxforms:attribute('xlink:arcrole', instance('attributes')/attribute[@name='xlink:arcrole'])"
-											if="not(@xlink:arcrole) and string-length(instance('attributes')/attribute[@name='xlink:arcrole']) &gt; 0"/>
-										<xforms:delete if="string-length(instance('attributes')/attribute[@name='xlink:arcrole']) = 0" context="$binding" nodeset="@xlink:arcrole"/>
-									</xforms:action>
+									</xforms:itemset>									
 								</xforms:select1>
 							</div>								
 							<div>
@@ -129,19 +124,19 @@
 							<xforms:trigger>
 								<xforms:action ev:event="DOMActivate">
 									<!-- edit xlink:href -->
-									<xforms:insert context="parent::node()" origin="xxforms:attribute('xlink:href', instance('attributes')/attribute[@name='xlink:href'])"
+									<xforms:insert context="$binding/parent::node()" origin="xxforms:attribute('xlink:href', instance('attributes')/attribute[@name='xlink:href'])"
 										if="not(parent::node()/@xlink:href) and string-length(instance('attributes')/attribute[@name='xlink:href']) &gt; 0"/>
 									<xforms:delete if="string-length(instance('attributes')/attribute[@name='xlink:href']) = 0" context="parent::node()" nodeset="parent::node()/@xlink:href"/>
 									<!-- edit relationType -->
-									<xforms:insert context="parent::node()" origin="xxforms:attribute('cpfRelationType', instance('attributes')/attribute[@name='cpfRelationType'])"
-										if="not(parent::node()/@cpfRelationType) and string-length(instance('attributes')/attribute[@name='cpfRelationType']) &gt; 0"/>
-									<xforms:delete if="string-length(instance('attributes')/attribute[@name='cpfRelationType']) = 0" context="parent::node()" nodeset="parent::node()/@cpfRelationType"/>
+									<!--<xforms:insert context="$binding/parent::node()" origin="xxforms:attribute('cpfRelationType', instance('attributes')/attribute[@name='cpfRelationType'])"
+										if="not(parent::node()/@cpfRelationType) and string-length(instance('attributes')/attribute[@name='cpfRelationType']) &gt; 0"/>-->
+									<!--<xforms:delete if="string-length(instance('attributes')/attribute[@name='cpfRelationType']) = 0" context="parent::node()" nodeset="parent::node()/@cpfRelationType"/>-->
 									<!-- edit xlink:arcrole -->
-									<xforms:insert context="parent::node()" origin="xxforms:attribute('xlink:arcrole', instance('attributes')/attribute[@name='xlink:arcrole'])"
+									<xforms:insert context="$binding/parent::node()" origin="xxforms:attribute('xlink:arcrole', instance('attributes')/attribute[@name='xlink:arcrole'])"
 										if="not(parent::node()/@xlink:arcrole) and string-length(instance('attributes')/attribute[@name='xlink:arcrole']) &gt; 0"/>
 									<xforms:delete if="string-length(instance('attributes')/attribute[@name='xlink:arcrole']) = 0" context="parent::node()" nodeset="parent::node()/@xlink:arcrole"/>
 									<!-- edit xlink:role -->
-									<xforms:insert context="parent::node()" origin="xxforms:attribute('xlink:role', instance('attributes')/attribute[@name='xlink:role'])"
+									<xforms:insert context="$binding/parent::node()" origin="xxforms:attribute('xlink:role', instance('attributes')/attribute[@name='xlink:role'])"
 										if="not(parent::node()/@xlink:role) and string-length(instance('attributes')/attribute[@name='xlink:role']) &gt; 0"/>
 									<xforms:delete if="string-length(instance('attributes')/attribute[@name='xlink:role']) = 0" context="parent::node()" nodeset="parent::node()/@xlink:role"/>
 									

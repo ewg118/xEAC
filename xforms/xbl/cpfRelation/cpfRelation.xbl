@@ -345,7 +345,7 @@
 
 						<xforms:instance id="xquery" xxforms:exclude-result-prefixes="#all">
 							<xquery> &lt;report> { for $record in collection() return if ($record//*:recordId[contains(., 'QUERY')] or $record//*:nameEntry/*:part[matches(., 'QUERY', 'i')]) then
-								&lt;record> &lt;id>{ $record//*:recordId/text() }&lt;/id> &lt;title>{ $record//*:nameEntry[@xml:lang='en'][string(*:preferredForm)][1]/*:part/text() }&lt;/title>
+								&lt;record> &lt;id>{ $record//*:recordId/text() }&lt;/id> &lt;title>{ if (string($record//*:nameEntry[@xml:lang='en'][string(*:preferredForm)][1]/*:part/text())) then $record//*:nameEntry[@xml:lang='en'][string(*:preferredForm)][1]/*:part/text() else $record//*:nameEntry[1]/*:part[1]/text() }&lt;/title>
 								&lt;/record> else '' } &lt;/report> </xquery>
 						</xforms:instance>
 

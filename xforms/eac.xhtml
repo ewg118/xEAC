@@ -21,7 +21,7 @@
 		<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/3.8.0/build/cssgrids/grids-min.css"/>
 		<link rel="stylesheet" type="text/css" href="/apps/xeac/xforms/css/xforms.css"/>
 
-		<xforms:model xmlns="urn:isbn:1-931666-33-4">		
+		<xforms:model xmlns="urn:isbn:1-931666-33-4">
 			<xs:schema elementFormDefault="qualified" attributeFormDefault="unqualified">
 				<xs:simpleType name="m.data.standardDateTime">
 					<xs:union>
@@ -66,7 +66,7 @@
 						</xs:simpleType>
 					</xs:union>
 				</xs:simpleType>
-			</xs:schema>			
+			</xs:schema>
 			<!-- ******************* INSTANCES ****************** -->
 			<xforms:instance id="doc" xxforms:exclude-result-prefixes="#all">
 				<eac-cpf xmlns="urn:isbn:1-931666-33-4" xmlns:xlink="http://www.w3.org/1999/xlink">
@@ -125,27 +125,27 @@
 							</nameEntry>
 						</identity>
 						<relations>
-							<cpfRelation xlink:type="simple" xlink:href="" xlink:role="">
+							<cpfRelation xlink:type="simple" xlink:href="" xlink:role="" xlink:arcrole="">
 								<relationEntry/>
 							</cpfRelation>
 						</relations>
 					</cpfDescription>
 				</eac-cpf>
 			</xforms:instance>
-			
+
 			<!-- exist URL is stored in an XML file -->
 			<xforms:instance id="exist-url">
 				<xi:include href="../exist-url.xml"/>
 			</xforms:instance>
-			
+
 			<xforms:instance id="config">
 				<config xmlns=""/>
 			</xforms:instance>
-			
+
 			<xforms:instance id="kml">
 				<kml/>
 			</xforms:instance>
-			
+
 			<xforms:instance id="control-instance">
 				<control xmlns="">
 					<pos/>
@@ -179,7 +179,7 @@
 					<item id="11">November</item>
 					<item id="12">December</item>
 				</list>
-			</xforms:instance>			
+			</xforms:instance>
 			<!-- VIAF instances -->
 			<xforms:instance id="search-query">
 				<query/>
@@ -279,7 +279,7 @@
 				<action source="" dest="" xmlns=""/>
 			</xforms:instance>
 			<xforms:instance id="action-add" xxforms:exclude-result-prefixes="#all">
-				<add type="" xlink:arcrole="" relationEntry="" xmlns=""/>
+				<add xlink:arcrole="" relationEntry="" xmlns=""/>
 			</xforms:instance>
 			<xforms:instance id="action-remove" xxforms:exclude-result-prefixes="#all">
 				<remove xmlns=""/>
@@ -589,7 +589,7 @@
 			<!-- load preliminary instances -->
 			<xforms:submission id="load-config" serialization="none" method="get" action="{instance('exist-url')}xeac/config.xml" replace="instance" instance="config" xxforms:username="admin"
 				xxforms:password=""/>
-			
+
 			<!-- Submission to get the document -->
 			<xforms:submission id="load-doc" serialization="none" method="get" action="{instance('exist-url')}xeac/records/{instance('doc')/eac:control/eac:recordId}.xml" replace="instance"
 				instance="doc" xxforms:username="admin" xxforms:password="">
@@ -598,23 +598,23 @@
 					<!-- set publicationStatus in control-instance -->
 					<xforms:setvalue ref="instance('control-instance')/publicationStatus" value="instance('doc')/eac:control/eac:publicationStatus"/>
 					<!-- create relations list for diff -->
-					<xforms:action xxforms:iterate="instance('doc')/eac:cpfDescription/eac:relations/eac:cpfRelation">
+					<xforms:action xxforms:iterate="instance('doc')/eac:cpfDescription/eac:relations/eac:cpfRelation[string(@xlink:href) and not(contains(@xlink:href, 'http://'))]">
 						<!-- only set the pre-edited relations @xlink:href if it is an internal link -->
-						<xforms:setvalue ref="instance('rel-template')/@xlink:href" value="context()/@xlink:href"
-							if="string(context()/@xlink:href) and not(contains(context()/@xlink:href, 'http://'))"/>
+						<xforms:setvalue ref="instance('rel-template')/@xlink:href" value="context()/@xlink:href"/>
 						<!-- set inverse @xlink:arcrole from config -->
-						<xforms:var name="arcrole" select="context()/@xlink:arcrole"/>						
-						<xforms:setvalue ref="instance('rel-template')/@xlink:arcrole" value="if (instance('config')/relationSemantics/relation[@from=$arcrole]) then instance('config')/relationSemantics/relation[@from=$arcrole]/@to else $arcrole"/>
+						<xforms:var name="arcrole" select="context()/@xlink:arcrole"/>
+						<xforms:setvalue ref="instance('rel-template')/@xlink:arcrole"
+							value="if (instance('config')/relationSemantics/relation[@from=$arcrole]) then instance('config')/relationSemantics/relation[@from=$arcrole]/@to else $arcrole"/>
 						<xforms:insert context="instance('relations-pre')" nodeset="./child::node()[last()]" origin="instance('rel-template')"/>
 					</xforms:action>
 					<!-- insert maintenanceEvent, set values -->
 					<xforms:insert context="instance('doc')/eac:control/eac:maintenanceHistory" nodeset="./child::node()[last()]" origin="instance('maintenanceEvent-template')"/>
 					<xforms:setvalue ref="instance('doc')/eac:control/eac:maintenanceHistory/eac:maintenanceEvent[last()]/eac:eventType">revised</xforms:setvalue>
 					<xforms:setvalue ref="instance('doc')/eac:control/eac:maintenanceHistory/eac:maintenanceEvent[last()]/eac:eventDateTime/@standardDateTime" value="current-dateTime()"/>
-					
+
 					<!-- insert localTypeDeclaration, if necessary -->
-					<xforms:action xxforms:iterate="instance('config')//localTypeDeclaration[not(abbreviation = instance('doc')/eac:control/eac:localTypeDeclaration/eac:abbreviation)]">		
-						<xforms:var name="href" select="context()/citation/@href"/>					
+					<xforms:action xxforms:iterate="instance('config')//localTypeDeclaration[not(abbreviation = instance('doc')/eac:control/eac:localTypeDeclaration/eac:abbreviation)]">
+						<xforms:var name="href" select="context()/citation/@href"/>
 						<xforms:insert context="instance('doc')/eac:control" nodeset="./child::node()[last()]" origin="instance('localTypeDeclaration-template')"/>
 						<xforms:setvalue ref="instance('doc')/eac:control/eac:localTypeDeclaration[last()]/eac:abbreviation" value="context()/abbreviation"/>
 						<xforms:setvalue ref="instance('doc')/eac:control/eac:localTypeDeclaration[last()]/eac:citation" value="context()/citation"/>
@@ -622,7 +622,7 @@
 						<xforms:insert context="instance('doc')/eac:control/eac:localTypeDeclaration[last()]/eac:citation" origin="xforms:attribute('xlink:role', 'semantic')"/>
 						<xforms:insert context="instance('doc')/eac:control/eac:localTypeDeclaration[last()]/eac:citation" origin="xforms:attribute('xlink:href', $href)"/>
 						<!--<xforms:insert context="instance('doc')/eac:control/eac:localTypeDeclaration[last()]" nodeset="./child::node()[last()]" origin="instance('descriptiveNote-template')"/>-->
-					</xforms:action>					
+					</xforms:action>
 					<!-- set conventionDeclaration-list for nameEntry forms -->
 					<!--<xforms:action xxforms:iterate="instance('doc')/eac:control/eac:conventionDeclaration">
 						<xforms:insert context="instance('conventionDeclaration-list')" nodeset="./child::node()[last()]" origin="instance('item-template')"/>
@@ -630,7 +630,7 @@
 						</xforms:action>-->
 				</xforms:action>
 			</xforms:submission>
-			
+
 			<xforms:submission id="load-temp-doc" serialization="none" method="get" action="{instance('exist-url')}xeac/records/{instance('temp-id')/identifier}.xml" replace="instance"
 				instance="temp-doc" xxforms:username="admin" xxforms:password="">
 				<!-- only initiate the following functions for an 'add' -->
@@ -649,8 +649,8 @@
 						<xforms:setvalue ref="instance('temp-doc')/eac:control/eac:maintenanceHistory/eac:maintenanceEvent[last()]/eac:eventDescription">Relation Inserted</xforms:setvalue>
 						<xforms:insert context="instance('temp-doc')/eac:cpfDescription/eac:relations" nodeset="./child::node()[last()]" origin="instance('cpfRelation-template')"/>
 						<!-- insert localTypeDeclaration, if necessary -->
-						<xforms:action xxforms:iterate="instance('config')//localTypeDeclaration[not(abbreviation = instance('temp-doc')/eac:control/eac:localTypeDeclaration/eac:abbreviation)]">		
-							<xforms:var name="href" select="context()/citation/@href"/>					
+						<xforms:action xxforms:iterate="instance('config')//localTypeDeclaration[not(abbreviation = instance('temp-doc')/eac:control/eac:localTypeDeclaration/eac:abbreviation)]">
+							<xforms:var name="href" select="context()/citation/@href"/>
 							<xforms:insert context="instance('temp-doc')/eac:control" nodeset="./child::node()[last()]" origin="instance('localTypeDeclaration-template')"/>
 							<xforms:setvalue ref="instance('temp-doc')/eac:control/eac:localTypeDeclaration[last()]/eac:abbreviation" value="context()/abbreviation"/>
 							<xforms:setvalue ref="instance('temp-doc')/eac:control/eac:localTypeDeclaration[last()]/eac:citation" value="context()/citation"/>
@@ -658,7 +658,7 @@
 							<xforms:insert context="instance('temp-doc')/eac:control/eac:localTypeDeclaration[last()]/eac:citation" origin="xforms:attribute('xlink:role', 'semantic')"/>
 							<xforms:insert context="instance('temp-doc')/eac:control/eac:localTypeDeclaration[last()]/eac:citation" origin="xforms:attribute('xlink:href', $href)"/>
 							<!--<xforms:insert context="instance('temp-doc')/eac:control/eac:localTypeDeclaration[last()]" nodeset="./child::node()[last()]" origin="instance('descriptiveNote-template')"/>-->
-						</xforms:action>						
+						</xforms:action>
 						<!-- insert xlink attributes -->
 						<xforms:insert context="instance('temp-doc')/eac:cpfDescription/eac:relations/eac:cpfRelation[last()]" origin="xxforms:attribute('xlink:href', instance('temp-id')/href)"/>
 						<xforms:insert context="instance('temp-doc')/eac:cpfDescription/eac:relations/eac:cpfRelation[last()]" origin="xxforms:attribute('xlink:arcrole', instance('temp-id')/arcrole)"/>
@@ -693,15 +693,11 @@
 						value="if ($role='http://RDVocab.info/uri/schema/FRBRentitiesRDA/Person') then 'person' else 'corporateBody'"/>
 					<!-- set cpfRelation with current doc info -->
 					<xforms:var name="entityType" select="instance('doc')/eac:cpfDescription/eac:identity/eac:entityType"/>
-					<xforms:setvalue ref="instance('eac-template')/eac:cpfDescription/eac:relations/eac:cpfRelation/eac:relationEntry"
-						value="instance('doc')/eac:cpfDescription/eac:identity/eac:nameEntry[1]/eac:part"/>
+					<xforms:setvalue ref="instance('eac-template')/eac:cpfDescription/eac:relations/eac:cpfRelation/eac:relationEntry" value="instance('temp-id')/relationEntry"/>
 					<xforms:setvalue ref="instance('eac-template')/eac:cpfDescription/eac:relations/eac:cpfRelation/@xlink:href" value="instance('doc')/eac:control/eac:recordId"/>
 					<xforms:setvalue ref="instance('eac-template')/eac:cpfDescription/eac:relations/eac:cpfRelation/@xlink:role"
 						value="if ($entityType = 'person') then 'http://RDVocab.info/uri/schema/FRBRentitiesRDA/Person' else 'http://RDVocab.info/uri/schema/FRBRentitiesRDA/CorporateBody'"/>
-					<!-- set xlink:arcrole if it has been set -->
-					<xforms:insert context="instance('eac-template')/eac:cpfDescription/eac:relations/eac:cpfRelation"
-						origin="xxforms:attribute('xlink:arcrole', instance('doc')//eac:cpfRelation[@xlink:href=$id]/@xlink:arcrole)"
-						if="string-length(instance('doc')//eac:cpfRelation[@xlink:href=$id]/@xlink:arcrole) &gt; 0"/>
+					<xforms:setvalue ref="instance('eac-template')/eac:cpfDescription/eac:relations/eac:cpfRelation/@xlink:arcrole" value="instance('temp-id')/arcrole"/>
 					<!-- set current dateTime -->
 					<xforms:setvalue ref="instance('eac-template')/eac:control/eac:maintenanceHistory/eac:maintenanceEvent/eac:eventDateTime/@standardDateTime" value="current-dateTime()"/>
 					<!-- save template -->
@@ -714,19 +710,19 @@
 				<xforms:message ev:event="xforms-submit-error" level="modal">Error Saving Documents. Be sure all required inputs are filled in.</xforms:message>
 				<xforms:action ev:event="xforms-submit-done">
 					<xforms:setvalue ref="instance('status')">EAC record saved.</xforms:setvalue>
-										
+
 					<!-- generate KML -->
 					<xforms:insert nodeset="instance('kml')" origin="xxforms:call-xpl('oxf:/apps/xeac/xpl/eac-to-kml.xpl', 'data', instance('doc'), 'data')"/>
 					<xforms:send submission="save-kml"/>
 					<!-- *************** PROCESS RELATIONS **************** -->
 					<!-- generate post-edit list on Save -->
-					<xforms:action xxforms:iterate="instance('doc')/eac:cpfDescription/eac:relations/eac:cpfRelation">
+					<xforms:action xxforms:iterate="instance('doc')/eac:cpfDescription/eac:relations/eac:cpfRelation[string(@xlink:href) and not(contains(@xlink:href, 'http://'))]">
 						<xforms:insert context="instance('relations-post')" nodeset="./child::node()[last()]" origin="instance('rel-template')"/>
 						<!-- only set the @xlink:href if it is a local, relative value, i.e., does not contain http:// -->
-						<xforms:setvalue ref="instance('relations-post')/relation[last()]/@xlink:href" value="context()/@xlink:href"
-							if="string(context()/@xlink:href) and not(contains(context()/@xlink:href, 'http://'))"/>
-						<xforms:var name="arcrole" select="context()/@xlink:arcrole"/>						
-						<xforms:setvalue ref="instance('relations-post')/relation[last()]/@xlink:arcrole" value="if (instance('config')/relationSemantics/relation[@from=$arcrole]) then instance('config')/relationSemantics/relation[@from=$arcrole]/@to else $arcrole"/>						
+						<xforms:setvalue ref="instance('relations-post')/relation[last()]/@xlink:href" value="context()/@xlink:href"/>
+						<xforms:var name="arcrole" select="context()/@xlink:arcrole"/>
+						<xforms:setvalue ref="instance('relations-post')/relation[last()]/@xlink:arcrole"
+							value="if (instance('config')/relationSemantics/relation[@from=$arcrole]) then instance('config')/relationSemantics/relation[@from=$arcrole]/@to else $arcrole"/>
 					</xforms:action>
 					<!-- ***** GENERATE ACTION LIST ***** -->
 					<xforms:action xxforms:iterate="instance('relations-post')/relation[@xlink:href]">
@@ -771,83 +767,85 @@
 					<xforms:action xxforms:iterate="instance('action-list')/action[remove]">
 						<xforms:setvalue ref="instance('temp-id')/identifier" value="context()/@dest"/>
 						<xforms:setvalue ref="instance('temp-id')/href" value="context()/@source"/>
+						<xforms:setvalue ref="instance('temp-id')/arcrole"/>
+						<xforms:setvalue ref="instance('temp-id')/relationEntry"/>
 						<xforms:send submission="load-temp-doc"/>
 					</xforms:action>
 					<!-- reprocess pre list -->
 					<xforms:delete nodeset="instance('relations-pre')/*"/>
-					<xforms:action xxforms:iterate="instance('doc')/eac:cpfDescription/eac:relations/eac:cpfRelation">
+					<xforms:action xxforms:iterate="instance('doc')/eac:cpfDescription/eac:relations/eac:cpfRelation[string(@xlink:href) and not(contains(@xlink:href, 'http://'))]">
 						<xforms:setvalue ref="instance('rel-template')/@xlink:href" value="context()/@xlink:href"/>
-						<xforms:setvalue ref="instance('rel-template')/@xlink:arcrole" value="context()/@xlink:arcrole"/>
+						<!-- set inverse @xlink:arcrole from config -->
+						<xforms:var name="arcrole" select="context()/@xlink:arcrole"/>
+						<xforms:setvalue ref="instance('rel-template')/@xlink:arcrole"
+							value="if (instance('config')/relationSemantics/relation[@from=$arcrole]) then instance('config')/relationSemantics/relation[@from=$arcrole]/@to else $arcrole"/>
 						<xforms:insert context="instance('relations-pre')" nodeset="./child::node()[last()]" origin="instance('rel-template')"/>
 					</xforms:action>
 					<!-- remove relations from post-list -->
 					<xforms:delete nodeset="instance('relations-post')/*"/>
 					<xforms:delete nodeset="instance('action-list')/*"/>
-					
+
 					<!-- publish coin if the publicationStatus is approved -->
 					<xforms:send submission="to-solr" if="instance('doc')/eac:control/eac:publicationStatus = 'approved'"/>
 					<!-- remove coin from Solr if the publicationStatus is inProcess on save but was approved on load.-->
-					<xforms:action
-						if="instance('control-instance')/publicationStatus = 'approved' and instance('doc')/eac:control/eac:publicationStatus = 'inProcess'">
-						<xforms:setvalue ref="instance('deleteId')/query"
-							value="concat('recordId:&#x022;', instance('doc')/eac:control/eac:recordId, '&#x022;')"/>
+					<xforms:action if="instance('control-instance')/publicationStatus = 'approved' and instance('doc')/eac:control/eac:publicationStatus = 'inProcess'">
+						<xforms:setvalue ref="instance('deleteId')/query" value="concat('recordId:&#x022;', instance('doc')/eac:control/eac:recordId, '&#x022;')"/>
 						<xforms:send submission="delete-solr-doc"/>
 						<xforms:setvalue ref="instance('control-instance')/publicationStatus">inProcess</xforms:setvalue>
 					</xforms:action>
 				</xforms:action>
 			</xforms:submission>
-			
+
 			<xforms:submission id="save-kml" ref="instance('kml')" action="{instance('exist-url')}xeac/kml/{instance('doc')/eac:control/eac:recordId}.kml" method="put" replace="none"
 				xxforms:username="admin" xxforms:password="">
 				<xforms:message ev:event="xforms-submit-error" level="modal">Error Saving KML.</xforms:message>
 			</xforms:submission>
-			
+
 			<xforms:submission id="save-temp-doc" ref="instance('temp-doc')" action="{instance('exist-url')}xeac/records/{instance('temp-doc')/eac:control/eac:recordId}.xml" method="put"
 				replace="none" xxforms:username="admin" xxforms:password="">
 				<xforms:message ev:event="xforms-submit-error" level="modal">
 					<xforms:output value="concat('Unable to update relational document: ', instance('temp-doc')/eac:control/eac:recordId)"/>
 				</xforms:message>
 				<xforms:action ev:event="xforms-submit-done">
-					<xforms:setvalue ref="instance('status')">EAC record saved.</xforms:setvalue>					
+					<xforms:setvalue ref="instance('status')">EAC record saved.</xforms:setvalue>
 				</xforms:action>
 			</xforms:submission>
-			
+
 			<xforms:submission id="save-eac-template" ref="instance('eac-template')" action="{instance('exist-url')}xeac/records/{instance('eac-template')/eac:control/eac:recordId}.xml" method="put"
 				replace="none" xxforms:username="admin" xxforms:password="">
 				<xforms:message ev:event="xforms-submit-error" level="modal">
 					<xforms:output value="concat('Unable generate new document: ', instance('eac-template')/eac:control/eac:recordId)"/>
 				</xforms:message>
 				<xforms:action ev:event="xforms-submit-done">
-					<xforms:setvalue ref="instance('status')">EAC record saved.</xforms:setvalue>	
+					<xforms:setvalue ref="instance('status')">EAC record saved.</xforms:setvalue>
 				</xforms:action>
 			</xforms:submission>
 			<!-- ********************* SOLR SUBMISSIONS ********************** -->
 			<!-- access service to read in pre-transformed solr doc -->
-			<xforms:submission id="to-solr" method="get" replace="instance" instance="addIndex" serialization="none" resource="{instance('config')/url}id/{instance('doc')/eac:control/eac:recordId}.solr">
+			<xforms:submission id="to-solr" method="get" replace="instance" instance="addIndex" serialization="none"
+				resource="{instance('config')/url}id/{instance('doc')/eac:control/eac:recordId}.solr">
 				<xforms:message ev:event="xforms-submit-error" level="modal">Error transforming EAC record to Solr document.</xforms:message>
 				<xforms:send ev:event="xforms-submit-done" submission="publish-submission"/>
 			</xforms:submission>
-			
-			<xforms:submission id="delete-solr-doc" action="{instance('config')/solr_published}update" ref="instance('deleteId')" instance="deleteId"
-				replace="none" method="post">
+
+			<xforms:submission id="delete-solr-doc" action="{instance('config')/solr_published}update" ref="instance('deleteId')" instance="deleteId" replace="none" method="post">
 				<xforms:action ev:event="xforms-submit-done">
 					<xforms:send submission="submit-commit"/>
-					<xforms:setvalue ref="instance('status')">Object saved, but removed from Solr index (publicationStatus set to
-						'inProcess').</xforms:setvalue>
+					<xforms:setvalue ref="instance('status')">Object saved, but removed from Solr index (publicationStatus set to 'inProcess').</xforms:setvalue>
 				</xforms:action>
 				<xforms:message ev:event="xforms-submit-error" level="modal">Data Failed to POST to Solr.</xforms:message>
 			</xforms:submission>
-			
+
 			<!-- post instance to Solr -->
 			<xforms:submission id="publish-submission" action="{instance('config')/solr_published}update" ref="instance('addIndex')" instance="addIndex" replace="instance" method="post">
 				<xforms:send ev:event="xforms-submit-done" submission="submit-commit"/>
 				<xforms:setvalue ev:event="xforms-submit-done" ref="instance('status')">EAC record saved and updated to search index.</xforms:setvalue>
 				<xforms:message ev:event="xforms-submit-error" level="modal">Data Failed to POST to Solr. Index may be offline or URL is incorrect.</xforms:message>
 			</xforms:submission>
-			
+
 			<!-- send commit -->
 			<xforms:submission id="submit-commit" action="{instance('config')/solr_published}update" ref="instance('sendCommit')" instance="sendCommit" replace="none" method="post"/>
-			
+
 			<!-- ***************** QUERY VIAF *****************-->
 			<xforms:submission id="query-viaf" serialization="none" method="get"
 				action="http://viaf.org/viaf/search?query=local.names+all+%22{instance('search-query')}%22&amp;sortKeys=holdingscount&amp;maximumRecords=50&amp;httpAccept=application/rss%2bxml"
@@ -916,16 +914,16 @@
 				<!-- if there is a recordId parameter, load existing EAC record -->
 				<xforms:action if="string(xxforms:get-request-parameter('recordId'))">
 					<xforms:setvalue ref="instance('doc')/eac:control/eac:recordId" value="xxforms:get-request-parameter('recordId')"/>
-					<xforms:send submission="load-doc"/>					
+					<xforms:send submission="load-doc"/>
 				</xforms:action>
 				<xforms:action if="not(string(xxforms:get-request-parameter('recordId')))">
 					<!-- set current dateTime and boilerplate information on creation of new record -->
 					<xforms:setvalue ref="instance('doc')/eac:control/eac:maintenanceHistory/eac:maintenanceEvent/eac:eventDateTime/@standardDateTime" value="current-dateTime()"/>
 					<xforms:setvalue ref="instance('doc')/eac:control/eac:maintenanceAgency/eac:agencyName" value="instance('config')/instances/agencyName-list/item[@default='true']"/>
-					
+
 					<!-- insert localTypeDeclaration, if necessary -->
-					<xforms:action xxforms:iterate="instance('config')//localTypeDeclaration[not(abbreviation = instance('doc')/eac:control/eac:localTypeDeclaration/eac:abbreviation)]">		
-						<xforms:var name="href" select="context()/citation/@href"/>					
+					<xforms:action xxforms:iterate="instance('config')//localTypeDeclaration[not(abbreviation = instance('doc')/eac:control/eac:localTypeDeclaration/eac:abbreviation)]">
+						<xforms:var name="href" select="context()/citation/@href"/>
 						<xforms:insert context="instance('doc')/eac:control" nodeset="./child::node()[last()]" origin="instance('localTypeDeclaration-template')"/>
 						<xforms:setvalue ref="instance('doc')/eac:control/eac:localTypeDeclaration[last()]/eac:abbreviation" value="context()/abbreviation"/>
 						<xforms:setvalue ref="instance('doc')/eac:control/eac:localTypeDeclaration[last()]/eac:citation" value="context()/citation"/>
@@ -983,10 +981,11 @@
 							<xforms:trigger>
 								<xforms:label><img src="/xeac/xforms/images/save.gif" alt="Save"/>Save</xforms:label>
 								<xforms:action ev:event="DOMActivate">
-									<xforms:setvalue ref="instance('doc')/eac:control/eac:maintenanceHistory/eac:maintenanceEvent[last()]/eac:eventDateTime/@standardDateTime" value="current-dateTime()"/>
+									<xforms:setvalue ref="instance('doc')/eac:control/eac:maintenanceHistory/eac:maintenanceEvent[last()]/eac:eventDateTime/@standardDateTime"
+										value="current-dateTime()"/>
 									<xforms:send submission="save-doc"/>
 								</xforms:action>
-							</xforms:trigger>				
+							</xforms:trigger>
 							<xforms:submit submission="load-doc">
 								<xforms:label><img src="/xeac/xforms/images/recycle-green.png" alt="Revert"/>Load</xforms:label>
 							</xforms:submit>
@@ -1258,7 +1257,7 @@
 										</xforms:trigger>
 									</xforms:group>
 								</xxforms:dialog>
-								<xxforms:dialog id="import-dbpedia-dialog" appearance="full" level="modal" close="false" draggable="true" visible="false">
+								<xxforms:dialog id="import-dbpedia-dialog" appearance="full" level="modal" close="true" draggable="true" visible="false">
 									<xforms:label>Import Data from DBpedia</xforms:label>
 									<div>
 										<xforms:input ref="instance('dbpedia-id')">
@@ -1958,14 +1957,14 @@
 							<!--**************************************** CONTROL **********************************-->
 							<fr:tab bind="control-tab">
 								<fr:label>Control</fr:label>
-								<h1>Control</h1>	
+								<h1>Control</h1>
 								<div class="trigger_container">
 									<xforms:trigger appearance="minimal">
 										<xforms:label>
 											<img src="/xeac/xforms/images/add.gif"/>Other Record ID</xforms:label>
 										<xforms:insert ev:event="DOMActivate" context="." nodeset="eac:recordId" position="after" origin="instance('otherRecordId-template')"/>
-									</xforms:trigger>									
-								</div>								
+									</xforms:trigger>
+								</div>
 								<div>
 									<xforms:select1 ref="eac:maintenanceAgency/eac:agencyName">
 										<xforms:label>Agency Name</xforms:label>
@@ -2020,7 +2019,7 @@
 														</xforms:action>
 													</xforms:trigger>
 												</div>
-												<xforms:repeat nodeset="eac:maintenanceEvent">													
+												<xforms:repeat nodeset="eac:maintenanceEvent">
 													<div class="subsection">
 														<h3>Maintenance Event</h3>
 														<!--<xforms:trigger appearance="minimal">
@@ -2166,7 +2165,7 @@
 													<xforms:insert ev:event="DOMActivate" context="." origin="instance('localTypeDeclaration-template')" nodeset="./child::node()[last()]"/>
 												</xforms:trigger>
 											</div>
-											<xforms:repeat nodeset="eac:localTypeDeclaration">												
+											<xforms:repeat nodeset="eac:localTypeDeclaration">
 												<div class="subsection">
 													<h3>Declaration</h3>
 													<xforms:trigger appearance="minimal">
@@ -2182,7 +2181,7 @@
 																	<img src="/xeac/xforms/images/add.gif"/>Descriptive Note</xforms:label>
 																<xforms:insert ev:event="DOMActivate" context="." origin="instance('descriptiveNote-template')" nodeset="./child::node()[last()]"/>
 															</xforms:trigger>
-														</xforms:group>														
+														</xforms:group>
 													</div>
 													<div>
 														<xforms:input ref="eac:abbreviation">
@@ -2209,7 +2208,6 @@
 										</xforms:group>
 									</div>
 								</div>
-								
 								<!-- alert for removal of conventionDeclaration -->
 								<fr:alert-dialog id="remove-conventionDeclaration">
 									<fr:label>Remove Convention Declaration</fr:label>
