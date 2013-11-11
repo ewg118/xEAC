@@ -15,6 +15,19 @@ Installation and Use
 
 Installation and usage instructions may be found in the xEAC wiki, hosted by the American Numismatic Society: [http://wiki.numismatics.org/xeac:xeac](http://wiki.numismatics.org/xeac:xeac)
 
+Future Work
+-----------
+
+It must be stressed the xEAC is still beta software.  While the majority of EAC-CPF elements can be edited within the form, not all attributes are available for editing.  Development has focused mainly on those attributes which correspond to linking entities together (xlink attributes within CPF relation) and standard dates.  Future work includes:
+
+* Finish form: Represent all EAC-CPF elements and attributes
+* Test for scalability
+* Interface with more APIs
+* Improve public interface, especially searching and browsing
+* Incorporate social network graph visualization (see SPARQL, below)
+* Follow evolving best practices in RDF/linked open data
+* Employ SPARQL endpoint for more sophisticated querying and visualization (?)
+
 More Information
 -----------------
 The EADitor blog contains information about the use of XForms work in archives in general (including xEAC) and specific implementations at the American Numismatic Society: [http://eaditor.blogspot.com/](http://eaditor.blogspot.com/).
