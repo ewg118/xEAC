@@ -491,7 +491,7 @@
 			<xforms:instance id="places-template" xxforms:exclude-result-prefixes="#all">
 				<places>
 					<place>
-						<term/>
+						<placeEntry vocabularySource=""/>
 					</place>
 				</places>
 			</xforms:instance>
@@ -1597,7 +1597,7 @@
 											<xforms:label>
 												<img src="/xeac/xforms/images/add.gif"/>Function</xforms:label>
 											<xforms:action ev:event="DOMActivate">
-												<xforms:insert context="." origin="instance('function-template')"/>
+												<xforms:insert context="." nodeset="./child::node()[last()]" origin="instance('function-template')"/>
 												<xxforms:hide dialog="description-objects"/>
 											</xforms:action>
 										</xforms:trigger>
@@ -1605,7 +1605,7 @@
 											<xforms:label>
 												<img src="/xeac/xforms/images/add.gif"/>Functions</xforms:label>
 											<xforms:action ev:event="DOMActivate">
-												<xforms:insert context="." origin="instance('functions-template')"/>
+												<xforms:insert context="." nodeset="./child::node()[last()]" origin="instance('functions-template')"/>
 												<xxforms:hide dialog="description-objects"/>
 											</xforms:action>
 										</xforms:trigger>
@@ -1614,7 +1614,7 @@
 												<xforms:label>
 													<img src="/xeac/xforms/images/add.gif"/>General Context</xforms:label>
 												<xforms:action ev:event="DOMActivate">
-													<xforms:insert context="." origin="instance('generalContext-template')"/>
+													<xforms:insert context="." nodeset="./child::node()[last()]" origin="instance('generalContext-template')"/>
 													<xxforms:hide dialog="description-objects"/>
 												</xforms:action>
 											</xforms:trigger>
@@ -1623,7 +1623,7 @@
 											<xforms:label>
 												<img src="/xeac/xforms/images/add.gif"/>Language Used</xforms:label>
 											<xforms:action ev:event="DOMActivate">
-												<xforms:insert context="." origin="instance('languageUsed-template')"/>
+												<xforms:insert context="." nodeset="./child::node()[last()]" origin="instance('languageUsed-template')"/>
 												<xxforms:hide dialog="description-objects"/>
 											</xforms:action>
 										</xforms:trigger>
@@ -1631,7 +1631,7 @@
 											<xforms:label>
 												<img src="/xeac/xforms/images/add.gif"/>Languages Used</xforms:label>
 											<xforms:action ev:event="DOMActivate">
-												<xforms:insert context="." origin="instance('languagesUsed-template')"/>
+												<xforms:insert context="." nodeset="./child::node()[last()]" origin="instance('languagesUsed-template')"/>
 												<xxforms:hide dialog="description-objects"/>
 											</xforms:action>
 										</xforms:trigger>
@@ -1639,7 +1639,7 @@
 											<xforms:label>
 												<img src="/xeac/xforms/images/add.gif"/>Legal Status</xforms:label>
 											<xforms:action ev:event="DOMActivate">
-												<xforms:insert context="." origin="instance('legalStatus-template')"/>
+												<xforms:insert context="." nodeset="./child::node()[last()]" origin="instance('legalStatus-template')"/>
 												<xxforms:hide dialog="description-objects"/>
 											</xforms:action>
 										</xforms:trigger>
@@ -1647,7 +1647,7 @@
 											<xforms:label>
 												<img src="/xeac/xforms/images/add.gif"/>Legal Statuses</xforms:label>
 											<xforms:action ev:event="DOMActivate">
-												<xforms:insert context="." origin="instance('legalStatuses-template')"/>
+												<xforms:insert context="." nodeset="./child::node()[last()]" origin="instance('legalStatuses-template')"/>
 												<xxforms:hide dialog="description-objects"/>
 											</xforms:action>
 										</xforms:trigger>
@@ -1655,7 +1655,7 @@
 											<xforms:label>
 												<img src="/xeac/xforms/images/add.gif"/>Local Description</xforms:label>
 											<xforms:action ev:event="DOMActivate">
-												<xforms:insert context="." origin="instance('localDescription-template')"/>
+												<xforms:insert context="." nodeset="./child::node()[last()]" origin="instance('localDescription-template')"/>
 												<xxforms:hide dialog="description-objects"/>
 											</xforms:action>
 										</xforms:trigger>
@@ -1663,7 +1663,7 @@
 											<xforms:label>
 												<img src="/xeac/xforms/images/add.gif"/>Local Descriptions</xforms:label>
 											<xforms:action ev:event="DOMActivate">
-												<xforms:insert context="." origin="instance('localDescriptions-template')"/>
+												<xforms:insert context="." nodeset="./child::node()[last()]" origin="instance('localDescriptions-template')"/>
 												<xxforms:hide dialog="description-objects"/>
 											</xforms:action>
 										</xforms:trigger>
@@ -1671,7 +1671,7 @@
 											<xforms:label>
 												<img src="/xeac/xforms/images/add.gif"/>Mandate</xforms:label>
 											<xforms:action ev:event="DOMActivate">
-												<xforms:insert context="." origin="instance('mandate-template')"/>
+												<xforms:insert context="." nodeset="./child::node()[last()]" origin="instance('mandate-template')"/>
 												<xxforms:hide dialog="description-objects"/>
 											</xforms:action>
 										</xforms:trigger>
@@ -1679,7 +1679,7 @@
 											<xforms:label>
 												<img src="/xeac/xforms/images/add.gif"/>Mandates</xforms:label>
 											<xforms:action ev:event="DOMActivate">
-												<xforms:insert context="." origin="instance('mandates-template')"/>
+												<xforms:insert context="." nodeset="./child::node()[last()]" origin="instance('mandates-template')"/>
 												<xxforms:hide dialog="description-objects"/>
 											</xforms:action>
 										</xforms:trigger>
@@ -1687,7 +1687,7 @@
 											<xforms:label>
 												<img src="/xeac/xforms/images/add.gif"/>Occupation</xforms:label>
 											<xforms:action ev:event="DOMActivate">
-												<xforms:insert context="." origin="instance('occupation-template')"/>
+												<xforms:insert context="." nodeset="./child::node()[last()]" origin="instance('occupation-template')"/>
 												<xxforms:hide dialog="description-objects"/>
 											</xforms:action>
 										</xforms:trigger>
@@ -1695,7 +1695,7 @@
 											<xforms:label>
 												<img src="/xeac/xforms/images/add.gif"/>Occupations</xforms:label>
 											<xforms:action ev:event="DOMActivate">
-												<xforms:insert context="." origin="instance('occupations-template')"/>
+												<xforms:insert context="." nodeset="./child::node()[last()]" origin="instance('occupations-template')"/>
 												<xxforms:hide dialog="description-objects"/>
 											</xforms:action>
 										</xforms:trigger>
@@ -1703,7 +1703,7 @@
 											<xforms:label>
 												<img src="/xeac/xforms/images/add.gif"/>Place</xforms:label>
 											<xforms:action ev:event="DOMActivate">
-												<xforms:insert context="." origin="instance('place-template')"/>
+												<xforms:insert context="." nodeset="./child::node()[last()]" origin="instance('place-template')"/>
 												<xxforms:hide dialog="description-objects"/>
 											</xforms:action>
 										</xforms:trigger>
@@ -1711,7 +1711,7 @@
 											<xforms:label>
 												<img src="/xeac/xforms/images/add.gif"/>Places</xforms:label>
 											<xforms:action ev:event="DOMActivate">
-												<xforms:insert context="." origin="instance('places-template')"/>
+												<xforms:insert context="." nodeset="./child::node()[last()]" origin="instance('places-template')"/>
 												<xxforms:hide dialog="description-objects"/>
 											</xforms:action>
 										</xforms:trigger>
@@ -1720,7 +1720,7 @@
 												<xforms:label>
 													<img src="/xeac/xforms/images/add.gif"/>Structure or Genealogy</xforms:label>
 												<xforms:action ev:event="DOMActivate">
-													<xforms:insert context="." origin="instance('structureOrGenealogy-template')"/>
+													<xforms:insert context="." nodeset="./child::node()[last()]" origin="instance('structureOrGenealogy-template')"/>
 													<xxforms:hide dialog="description-objects"/>
 												</xforms:action>
 											</xforms:trigger>

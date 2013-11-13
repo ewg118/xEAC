@@ -89,7 +89,9 @@
 						
 						
 						<xforms:instance id="list-template" xxforms:exclude-result-prefixes="#all">
-							<list/>
+							<list>
+								<item/>
+							</list>
 						</xforms:instance>
 
 						<xforms:instance id="outline-template" xxforms:exclude-result-prefixes="#all">

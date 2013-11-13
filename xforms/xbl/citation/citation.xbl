@@ -14,7 +14,7 @@
 					<xforms:trigger appearance="minimal">
 						<xforms:delete ev:event="DOMActivate" nodeset="$binding"/>
 						<xforms:label>
-							<img src="/apps/eaditor/images/remove.gif"/>
+							<img src="/xeac/xforms/images/remove.gif"/>
 						</xforms:label>
 					</xforms:trigger>
 					<!-- ********************************************************************** -->

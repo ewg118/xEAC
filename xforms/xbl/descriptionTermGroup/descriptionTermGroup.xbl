@@ -8,7 +8,6 @@
 					<xxforms:variable name="binding" as="node()?">
 						<xxforms:sequence select="." xxbl:scope="outer"/>
 					</xxforms:variable>
-					<xxforms:variable name="display_path">../../</xxforms:variable>
 
 					<xforms:group ref="$binding">
 						<div class="section">
@@ -221,11 +220,15 @@
 						</xforms:instance>
 
 						<xforms:instance id="descriptiveNote-template" xxforms:exclude-result-prefixes="#all">
-							<descriptiveNote><p/></descriptiveNote>
+							<descriptiveNote>
+								<p/>
+							</descriptiveNote>
 						</xforms:instance>
 						
 						<xforms:instance id="list-template" xxforms:exclude-result-prefixes="#all">
-							<list/>
+							<list>
+								<item/>
+							</list>
 						</xforms:instance>
 
 						<xforms:instance id="outline-template" xxforms:exclude-result-prefixes="#all">
