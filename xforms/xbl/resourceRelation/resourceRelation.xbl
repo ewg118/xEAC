@@ -13,32 +13,26 @@
 					<xforms:group ref="$binding">
 						<div class="subsection">
 							<h3>Relation</h3>
-							<span class="add">
-								<xforms:trigger appearance="minimal">
-									<xforms:label>@</xforms:label>
-									<xforms:action ev:event="DOMActivate">
-										<!-- pre-set the values of instance('attributes') -->
-										<xforms:setvalue ref="instance('attributes')/attribute[@name='xlink:role']" value="$binding/@xlink:role"/>
-										<xforms:setvalue ref="instance('attributes')/attribute[@name='xlink:arcrole']" value="$binding/@xlink:arcrole"/>
-										<xforms:setvalue ref="instance('attributes')/attribute[@name='xlink:href']" value="$binding/@xlink:href"/>
-
-										<xxforms:show dialog="relation-dialog"/>
-									</xforms:action>
-								</xforms:trigger>
-							</span>
-							<span class="add">
-								<xforms:trigger appearance="minimal">
-									<xforms:label>
-										<img src="/xeac/xforms/images/add.gif"/>
-									</xforms:label>
-									<xxforms:show ev:event="DOMActivate" dialog="resourceRelation-objects"/>
-								</xforms:trigger>
-							</span>
 							<xforms:trigger appearance="minimal">
 								<xforms:delete ev:event="DOMActivate" nodeset="."/>
-								<xforms:label>
-									<img src="/xeac/xforms/images/remove.gif"/>
-								</xforms:label>
+								<xforms:label><img src="/xeac/xforms/images/remove.gif"/></xforms:label>
+							</xforms:trigger>
+							<xforms:trigger appearance="minimal">
+								<xforms:label><img src="/xeac/xforms/images/add.gif"/></xforms:label>
+								<xxforms:show ev:event="DOMActivate" dialog="resourceRelation-objects"/>
+							</xforms:trigger>
+							<xforms:trigger appearance="minimal">
+								<xforms:label>@</xforms:label>
+								<xforms:action ev:event="DOMActivate">
+									<!-- load config on trigger click enabled -->
+									<xforms:send submission="load-config" if="not(string(instance('config')/url))"/>
+									<!-- pre-set the values of instance('attributes') -->
+									<xforms:setvalue ref="instance('attributes')/attribute[@name='xlink:role']" value="$binding/@xlink:role"/>
+									<xforms:setvalue ref="instance('attributes')/attribute[@name='xlink:arcrole']" value="$binding/@xlink:arcrole"/>
+									<xforms:setvalue ref="instance('attributes')/attribute[@name='xlink:href']" value="$binding/@xlink:href"/>
+									
+									<xxforms:show dialog="relation-dialog"/>
+								</xforms:action>
 							</xforms:trigger>
 
 							<xxforms:dialog id="resourceRelation-objects" appearance="full" level="modal" close="true" draggable="true" visible="false">
@@ -161,6 +155,15 @@
 
 					<!-- ********************************************************************** -->
 					<xforms:model id="resourceRelation-model" xmlns="urn:isbn:1-931666-33-4">
+						<!-- relational instances -->
+						<xforms:instance id="config">
+							<config xmlns=""/>
+						</xforms:instance>
+						
+						<xforms:instance id="exist-url" xmlns:xi="http://www.w3.org/2001/XInclude">
+							<xi:include href="../../../exist-url.xml"/>
+						</xforms:instance>
+						
 						<xforms:instance id="attributes">
 							<attributes xmlns="">
 								<attribute name="xlink:arcrole"/>
@@ -169,6 +172,7 @@
 							</attributes>
 						</xforms:instance>
 
+						<!-- resourceRelation elements -->
 						<xforms:instance id="date-template" xxforms:exclude-result-prefixes="#all">
 							<date standardDate=""/>
 						</xforms:instance>
@@ -191,6 +195,12 @@
 						<xforms:instance id="placeEntry-template" xxforms:exclude-result-prefixes="#all">
 							<placeEntry vocabularySource=""/>
 						</xforms:instance>
+						
+						<!-- ***** SUBMISSIONS ***** -->
+						<xforms:submission id="load-config" serialization="none" method="get" action="{instance('exist-url')}xeac/config.xml" replace="instance" instance="config"
+							xxforms:username="admin" xxforms:password="">
+							<xforms:message ev:event="xforms-submit-error" level="modal">Unable to load config.</xforms:message>
+						</xforms:submission>
 					</xforms:model>
 				</xforms:group>
 			</xforms:group>

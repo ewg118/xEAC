@@ -189,7 +189,7 @@
 				</div>
 			</div>
 		</xsl:if>
-		
+
 
 		<xsl:apply-templates select="eac:cpfDescription"/>
 	</xsl:template>
@@ -198,7 +198,28 @@
 		<xsl:if test="descendant::eac:resourceRelation[@xlink:role='portrait']">
 			<img src="{descendant::eac:resourceRelation[@xlink:role='portrait']/@xlink:href}" alt="Portrait" style="max-width:240px;"/>
 		</xsl:if>
-		
+
+		<!-- display otherRecordIds, create links when applicable -->
+		<xsl:if test="count(eac:control/eac:otherRecordId) &gt; 0">
+			<h3>Associated Identifiers</h3>
+			<ul>
+				<xsl:for-each select="eac:control/eac:otherRecordId">
+					<li>
+						<xsl:choose>
+							<xsl:when test="contains(., 'http://')">
+								<a href="{.}">
+									<xsl:value-of select="."/>
+								</a>
+							</xsl:when>
+							<xsl:otherwise>
+								<xsl:value-of select="."/>
+							</xsl:otherwise>
+						</xsl:choose>
+					</li>
+				</xsl:for-each>
+			</ul>
+		</xsl:if>
+
 		<!-- if there is an otherRecordId with a nomisma ID, construction nomisma SPARQL -->
 		<xsl:for-each select="descendant::eac:otherRecordId[contains(., 'nomisma.org')]">
 			<xsl:call-template name="xeac:queryNomisma">
@@ -236,14 +257,25 @@
 	</xsl:template>
 
 	<xsl:template match="eac:biogHist">
-		<xsl:if test="eac:abstract">
-			<h3>Abstract</h3>
-			<p>
-				<xsl:value-of select="eac:abstract"/>
-			</p>
-		</xsl:if>
+		<h3>Biographical or Historical Note</h3>
+		<xsl:apply-templates select="eac:abstract|eac:citation|eac:outline|eac:list"/>
+		<xsl:apply-templates select="eac:p"/>
 	</xsl:template>
 
+	<xsl:template match="eac:abstract|eac:citation|eac:outline|eac:list">
+		<dt>
+			<xsl:value-of select="local-name()"/>
+		</dt>
+		<dd>
+			<xsl:value-of select="."/>
+		</dd>
+	</xsl:template>
+
+	<xsl:template match="eac:p">
+		<p>
+			<xsl:apply-templates/>
+		</p>
+	</xsl:template>
 
 	<xsl:template match="eac:date|eac:dateRange">
 		<xsl:if test="not(parent::eac:existDates)">
@@ -368,16 +400,16 @@
 	</xsl:template>
 
 	<xsl:template name="icons">
-		<div class="submenu">	
+		<div class="submenu">
 			<span class="icon">
 				<a href="id/{//eac:eac-cpf/eac:control/eac:recordId}.kml">KML</a>
 			</span>
 			<span class="icon">
 				<a href="id/{//eac:eac-cpf/eac:control/eac:recordId}.rdf">RDF/XML</a>
-			</span>			
+			</span>
 			<span class="icon">
 				<a href="id/{//eac:eac-cpf/eac:control/eac:recordId}.xml">EAC-CPF/XML</a>
-			</span>			
+			</span>
 			<span class="icon">
 				<!-- AddThis Button BEGIN -->
 				<div class="addthis_toolbox addthis_default_style ">
@@ -390,7 +422,7 @@
 				</div>
 				<script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#pubid=xa-4dd29d0e2f66557f"/>
 				<!-- AddThis Button END -->
-			</span>			
+			</span>
 		</div>
 	</xsl:template>
 
