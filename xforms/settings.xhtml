@@ -42,7 +42,11 @@
 				<item xmlns=""/>
 			</xforms:instance>
 
-			<xforms:instance id="relation-template" xxforms:exclude-result-prefixes="#all">
+			<xforms:instance id="cpfRelation-template" xxforms:exclude-result-prefixes="#all">
+				<relation from="" to="" xmlns=""/>
+			</xforms:instance>
+
+			<xforms:instance id="resourceRelation-template" xxforms:exclude-result-prefixes="#all">
 				<relation from="" to="" xmlns=""/>
 			</xforms:instance>
 
@@ -68,8 +72,10 @@
 
 			<xforms:instance id="xqueries">
 				<queries xmlns="">
-					<query id="gather-relations">declare namespace eac="urn:isbn:1-931666-33-4"; &lt;report> { for $arcrole in distinct-values(collection()//eac:cpfRelation/@xlink:arcrole) order by
+					<query id="gather-cpfRelations">declare namespace eac="urn:isbn:1-931666-33-4"; &lt;report> { for $arcrole in distinct-values(collection()//eac:cpfRelation/@xlink:arcrole) order by
 						$arcrole return &lt;relation> { $arcrole } &lt;/relation> } &lt;/report> </query>
+					<query id="gather-resourceRelations">declare namespace eac="urn:isbn:1-931666-33-4"; &lt;report> { for $arcrole in
+						distinct-values(collection()//eac:resourceRelation/@xlink:arcrole) order by $arcrole return &lt;relation> { $arcrole } &lt;/relation> } &lt;/report> </query>
 				</queries>
 			</xforms:instance>
 
@@ -78,7 +84,10 @@
 			</xforms:instance>
 
 			<!-- lists -->
-			<xforms:instance id="relations-list" xxforms:exclude-result-prefixes="#all">
+			<xforms:instance id="cpfRelations-list" xxforms:exclude-result-prefixes="#all">
+				<relations xmlns=""/>
+			</xforms:instance>
+			<xforms:instance id="resourceRelations-list" xxforms:exclude-result-prefixes="#all">
 				<relations xmlns=""/>
 			</xforms:instance>
 
@@ -105,7 +114,7 @@
 						<xforms:bind nodeset="abbreviation" required="true()" type="xs:token"/>
 						<xforms:bind nodeset="citation">
 							<xforms:bind nodeset="@href" required="true()" type="xs:anyURI"/>
-						</xforms:bind>						
+						</xforms:bind>
 					</xforms:bind>
 				</xforms:bind>
 			</xforms:bind>
@@ -259,110 +268,203 @@
 								<fr:label>Semantic Relationships</fr:label>
 								<div class="section">
 									<h2>Semantic Relationships</h2>
-									<span class="add">
-										<xforms:trigger appearance="minimal">
-											<xforms:label><img src="/xeac/xforms/images/add.gif"/>Import</xforms:label>
-											<xforms:action ev:event="DOMActivate">
-												<xforms:setvalue ref="instance('eXist-xquery')/exist:text" value="instance('xqueries')/query[@id='gather-relations']"/>
-												<xforms:send submission="xquery-collection"/>
-												<xforms:insert context="instance('relations-list')" origin="instance('xquery-result')//relation"/>
-											</xforms:action>
-										</xforms:trigger>
-									</span>
-									<xforms:group ref="instance('relations-list')[count(//relation) &gt; 0]">
+									<xforms:group ref="relationSemantics/cpfRelations">
 										<div class="subsection">
-											<h3>Available Relationships</h3>
-											<p>The following semantic relationships are already employed in this EAC-CPF collection.</p>
-											<xforms:repeat nodeset="relation">
-												<xforms:var name="val" select="text()"/>
-												<div>
-													<xforms:output ref=".">
-														<xforms:label>Relation</xforms:label>
-													</xforms:output>
-													<xforms:group ref=".[not(instance('config')/relationSemantics/relation/@from = $val)]">
-														<xforms:trigger appearance="minimal">
-															<xforms:label><img src="/xeac/xforms/images/add.gif"/>Add</xforms:label>
-															<xforms:action ev:event="DOMActivate">
-																<xforms:insert context="instance('config')/relationSemantics" nodeset="./child::node()[last()]" origin="instance('relation-template')"/>
-																<xforms:setvalue ref="instance('config')/relationSemantics/relation[last()]/@from" value="$val"/>
-																<!--<xforms:setvalue ref="instance('config')/relationSemantics/relation[last()]/@to" value="$val"/>-->
-															</xforms:action>
-														</xforms:trigger>
-													</xforms:group>
-												</div>
-											</xforms:repeat>
-										</div>
-									</xforms:group>
-									<xforms:group ref="relationSemantics">
-										<div class="subsection">
-											<h3>Controlled Template</h3>
+											<h3>CPF Relations</h3>
 											<span class="add">
 												<xforms:trigger appearance="minimal">
-													<xforms:label><img src="/xeac/xforms/images/add.gif"/>Add New</xforms:label>
+													<xforms:label><img src="/xeac/xforms/images/add.gif"/>Import</xforms:label>
 													<xforms:action ev:event="DOMActivate">
-														<xforms:insert context="instance('config')/relationSemantics" nodeset="./child::node()[last()]" origin="instance('relation-template')"/>
+														<xforms:setvalue ref="instance('eXist-xquery')/exist:text" value="instance('xqueries')/query[@id='gather-cpfRelations']"/>
+														<xforms:send submission="xquery-collection"/>
+														<xforms:insert context="instance('cpfRelations-list')" origin="instance('xquery-result')//relation"/>
 													</xforms:action>
 												</xforms:trigger>
 											</span>
-											<xforms:group ref=".[count(relation) &gt; 0]">
-												<table>
-													<thead>
-														<tr>
-															<th>Relation</th>
-															<th>Inverse</th>
-															<th>Delete</th>
-														</tr>
-													</thead>
-													<tbody>
-														<xforms:repeat nodeset="relation">
-															<tr>
-																<td>
-																	<xforms:input ref="@from">
-																		<xforms:alert>Required</xforms:alert>
-																		<xforms:action ev:event="DOMActivate">
-																			<xforms:setvalue ref="parent::node()/@to" value="parent::node()/@from"/>
-																			<!-- insert localTypeDeclaration -->
-																			<xforms:action if="contains(., ':') and not(instance('config')//abbreviation = substring-before(., ':'))">
-																				<xforms:var name="prefix" select="substring-before(., ':')"/>
-																				<xforms:insert context="instance('config')/localTypeDeclarations" nodeset="./child::node()[last()]"
-																					origin="instance('localTypeDeclaration-template')"/>
-																				<xforms:setvalue ref="instance('config')/localTypeDeclarations/localTypeDeclaration[last()]/abbreviation"
-																					value="$prefix"/>
-																			</xforms:action>
-																		</xforms:action>
-																	</xforms:input>
-																</td>
-																<td>
-																	<xforms:select1 ref="@to">
-																		<xforms:itemset nodeset="instance('config')/relationSemantics/relation">
-																			<xforms:label ref="@from"/>
-																			<xforms:value ref="@from"/>
-																		</xforms:itemset>
-																		<xforms:alert>Required</xforms:alert>
-																	</xforms:select1>
-																</td>
-																<td>
-																	<xforms:trigger appearance="minimal">
-																		<xforms:delete ev:event="DOMActivate" nodeset="."/>
-																		<xforms:label>
-																			<img src="/xeac/xforms/images/remove.gif"/>
-																		</xforms:label>
-																	</xforms:trigger>
-																</td>
-															</tr>
-														</xforms:repeat>
-													</tbody>
-												</table>
+											<xforms:group ref="instance('cpfRelations-list')[count(//relation) &gt; 0]">
+												<div class="subsection">
+													<h4>Available Relationships</h4>
+													<p>The following semantic relationships are already employed in this EAC-CPF collection.</p>
+													<xforms:repeat nodeset="relation">
+														<xforms:var name="val" select="text()"/>
+														<div>
+															<xforms:output ref=".">
+																<xforms:label>Relation</xforms:label>
+															</xforms:output>
+															<xforms:group ref=".[not(instance('config')/relationSemantics/cpfRelations/relation/@from = $val)]">
+																<xforms:trigger appearance="minimal">
+																	<xforms:label><img src="/xeac/xforms/images/add.gif"/>Add</xforms:label>
+																	<xforms:action ev:event="DOMActivate">
+																		<xforms:insert context="instance('config')/relationSemantics/cpfRelations" nodeset="./child::node()[last()]"
+																			origin="instance('cpfRelation-template')"/>
+																		<xforms:setvalue ref="instance('config')/relationSemantics/cpfRelations/relation[last()]/@from" value="$val"/>
+																	</xforms:action>
+																</xforms:trigger>
+															</xforms:group>
+														</div>
+													</xforms:repeat>
+												</div>
 											</xforms:group>
+											<div class="subsection">
+												<h4>Controlled Template</h4>
+												<span class="add">
+													<xforms:trigger appearance="minimal">
+														<xforms:label><img src="/xeac/xforms/images/add.gif"/>Add New</xforms:label>
+														<xforms:action ev:event="DOMActivate">
+															<xforms:insert nodeset="./child::node()[last()]" origin="instance('cpfRelation-template')"/>
+														</xforms:action>
+													</xforms:trigger>
+												</span>
+												<xforms:group ref=".[count(relation) &gt; 0]">
+													<table>
+														<thead>
+															<tr>
+																<th>Relation</th>
+																<th>Inverse</th>
+																<th>Delete</th>
+															</tr>
+														</thead>
+														<tbody>
+															<xforms:repeat nodeset="relation">
+																<tr>
+																	<td>
+																		<xforms:input ref="@from">
+																			<xforms:alert>Required</xforms:alert>
+																			<xforms:action ev:event="xforms-value-changed">
+																				<xforms:setvalue ref="parent::node()/@to" value="parent::node()/@from"/>
+																				<!-- insert localTypeDeclaration -->
+																				<xforms:action if="contains(., ':') and not(instance('config')//abbreviation = substring-before(., ':'))">
+																					<xforms:var name="prefix" select="substring-before(., ':')"/>
+																					<xforms:insert context="instance('config')/localTypeDeclarations" nodeset="./child::node()[last()]"
+																						origin="instance('localTypeDeclaration-template')"/>
+																					<xforms:setvalue ref="instance('config')/localTypeDeclarations/localTypeDeclaration[last()]/abbreviation"
+																						value="$prefix"/>
+																				</xforms:action>
+																			</xforms:action>
+																		</xforms:input>
+																	</td>
+																	<td>
+																		<xforms:select1 ref="@to">
+																			<xforms:itemset nodeset="instance('config')/relationSemantics/cpfRelations/relation">
+																				<xforms:label ref="@from"/>
+																				<xforms:value ref="@from"/>
+																			</xforms:itemset>
+																			<xforms:alert>Required</xforms:alert>
+																		</xforms:select1>
+																	</td>
+																	<td>
+																		<xforms:trigger appearance="minimal">
+																			<xforms:delete ev:event="DOMActivate" nodeset="."/>
+																			<xforms:label>
+																				<img src="/xeac/xforms/images/remove.gif"/>
+																			</xforms:label>
+																		</xforms:trigger>
+																	</td>
+																</tr>
+															</xforms:repeat>
+														</tbody>
+													</table>
+												</xforms:group>
+											</div>
+										</div>
+									</xforms:group>
+									<xforms:group ref="relationSemantics/resourceRelations">
+										<div class="subsection">
+											<h3>Resource Relations</h3>
+											<span class="add">
+												<xforms:trigger appearance="minimal">
+													<xforms:label><img src="/xeac/xforms/images/add.gif"/>Import</xforms:label>
+													<xforms:action ev:event="DOMActivate">
+														<xforms:setvalue ref="instance('eXist-xquery')/exist:text" value="instance('xqueries')/query[@id='gather-resourceRelations']"/>
+														<xforms:send submission="xquery-collection"/>
+														<xforms:insert context="instance('resourceRelations-list')" origin="instance('xquery-result')//relation"/>
+													</xforms:action>
+												</xforms:trigger>
+											</span>
+											<xforms:group ref="instance('resourceRelations-list')[count(//relation) &gt; 0]">
+												<div class="subsection">
+													<h4>Available Relationships</h4>
+													<p>The following semantic relationships are already employed in this EAC-CPF collection.</p>
+													<xforms:repeat nodeset="relation">
+														<xforms:var name="val" select="text()"/>
+														<div>
+															<xforms:output ref=".">
+																<xforms:label>Relation</xforms:label>
+															</xforms:output>
+															<xforms:group ref=".[not(instance('config')/relationSemantics/resourceRelations/relation/@from = $val)]">
+																<xforms:trigger appearance="minimal">
+																	<xforms:label><img src="/xeac/xforms/images/add.gif"/>Add</xforms:label>
+																	<xforms:action ev:event="DOMActivate">
+																		<xforms:insert context="instance('config')/relationSemantics/resourceRelations" nodeset="./child::node()[last()]"
+																			origin="instance('cpfRelation-template')"/>
+																		<xforms:setvalue ref="instance('config')/relationSemantics/resourceRelations/relation[last()]/@from" value="$val"/>
+																	</xforms:action>
+																</xforms:trigger>
+															</xforms:group>
+														</div>
+													</xforms:repeat>
+												</div>
+											</xforms:group>
+											<div class="subsection">
+												<h4>Controlled Template</h4>
+												<span class="add">
+													<xforms:trigger appearance="minimal">
+														<xforms:label><img src="/xeac/xforms/images/add.gif"/>Add New</xforms:label>
+														<xforms:action ev:event="DOMActivate">
+															<xforms:insert nodeset="./child::node()[last()]" origin="instance('cpfRelation-template')"/>
+														</xforms:action>
+													</xforms:trigger>
+												</span>
+												<xforms:group ref=".[count(relation) &gt; 0]">
+													<table>
+														<thead>
+															<tr>
+																<th>Relation</th>																
+																<th>Delete</th>
+															</tr>
+														</thead>
+														<tbody>
+															<xforms:repeat nodeset="relation">
+																<tr>
+																	<td>
+																		<xforms:input ref=".">
+																			<xforms:alert>Required</xforms:alert>
+																			<xforms:action ev:event="xforms-value-changed">																				
+																				<!-- insert localTypeDeclaration -->
+																				<xforms:action if="contains(., ':') and not(instance('config')//abbreviation = substring-before(., ':'))">
+																					<xforms:var name="prefix" select="substring-before(., ':')"/>
+																					<xforms:insert context="instance('config')/localTypeDeclarations" nodeset="./child::node()[last()]"
+																						origin="instance('localTypeDeclaration-template')"/>
+																					<xforms:setvalue ref="instance('config')/localTypeDeclarations/localTypeDeclaration[last()]/abbreviation"
+																						value="$prefix"/>
+																				</xforms:action>
+																			</xforms:action>
+																		</xforms:input>
+																	</td>																	
+																	<td>
+																		<xforms:trigger appearance="minimal">
+																			<xforms:delete ev:event="DOMActivate" nodeset="."/>
+																			<xforms:label>
+																				<img src="/xeac/xforms/images/remove.gif"/>
+																			</xforms:label>
+																		</xforms:trigger>
+																	</td>
+																</tr>
+															</xforms:repeat>
+														</tbody>
+													</table>
+												</xforms:group>
+											</div>
 										</div>
 									</xforms:group>
 									<div class="section">
-										<h2>Semantic Local Type Declarations</h2>										
+										<h2>Semantic Local Type Declarations</h2>
 										<span class="add">
 											<xforms:trigger appearance="minimal">
 												<xforms:label>
 													<img src="/xeac/xforms/images/add.gif"/>Local Type Declaration</xforms:label>
-												<xforms:insert context="instance('config')/localTypeDeclarations" nodeset="./child::node()[last()]" origin="instance('localTypeDeclaration-template')" ev:event="DOMActivate"/>
+												<xforms:insert context="instance('config')/localTypeDeclarations" nodeset="./child::node()[last()]" origin="instance('localTypeDeclaration-template')"
+													ev:event="DOMActivate"/>
 											</xforms:trigger>
 										</span>
 										<xforms:repeat nodeset="instance('config')/localTypeDeclarations/localTypeDeclaration">

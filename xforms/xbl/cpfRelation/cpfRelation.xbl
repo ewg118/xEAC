@@ -219,7 +219,7 @@
 										<xforms:label>Select...</xforms:label>
 										<xforms:value/>
 									</xforms:item>
-									<xforms:itemset nodeset="instance('config')/relationSemantics/relation">
+									<xforms:itemset nodeset="instance('config')/relationSemantics/cpfRelations/relation">
 										<xforms:label ref="@from"/>
 										<xforms:value ref="@from"/>
 									</xforms:itemset>

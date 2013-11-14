@@ -85,14 +85,22 @@
 							<xxforms:dialog id="relation-dialog" appearance="full" level="modal" close="false" draggable="true" visible="false">
 								<xforms:label>Establish Relationship</xforms:label>
 								<div>
-									<xforms:input ref="instance('attributes')/attribute[@name='xlink:arcrole']">
+									<xforms:select1 ref="instance('attributes')/attribute[@name='xlink:arcrole']">
 										<xforms:label>Xlink Arcrole</xforms:label>
+										<xforms:item>
+											<xforms:label>Select...</xforms:label>
+											<xforms:value/>
+										</xforms:item>
+										<xforms:itemset nodeset="instance('config')/relationSemantics/resourceRelations/relation">
+											<xforms:label ref="."/>
+											<xforms:value ref="."/>
+										</xforms:itemset>
 										<xforms:action ev:event="xforms-value-changed">
 											<xforms:insert context="$binding" origin="xxforms:attribute('xlink:arcrole', instance('attributes')/attribute[@name='xlink:arcrole'])"
 												if="not(@xlink:arcrole) and string-length(instance('attributes')/attribute[@name='xlink:arcrole']) &gt; 0"/>
 											<xforms:delete if="string-length(instance('attributes')/attribute[@name='xlink:arcrole']) = 0" context="$binding" nodeset="@xlink:arcrole"/>
 										</xforms:action>
-									</xforms:input>
+									</xforms:select1>
 								</div>
 								<div>
 									<xforms:input ref="instance('attributes')/attribute[@name='xlink:role']">
