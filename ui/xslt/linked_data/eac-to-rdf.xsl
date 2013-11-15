@@ -57,14 +57,16 @@
 
 		<!-- relations -->
 		<!-- only process relations with an xlink:arcrole from a defined namespace -->
-		<xsl:for-each select="descendant::eac:cpfRelation[contains(@xlink:arcrole, ':')]">
-			<xsl:variable name="uri" select="if (contains(@xlink:href, 'http://')) then . else concat($url, 'id/', @xlink:href)"/>
-			<xsl:variable name="prefix" select="substring-before(@xlink:arcrole, ':')"/>
-			<xsl:variable name="namespace" select="ancestor::eac:eac-cpf/eac:control/eac:localTypeDeclaration[eac:abbreviation=$prefix]/eac:citation/@xlink:href"/>
-			
-			<xsl:element name="{@xlink:arcrole}" namespace="{$namespace}">
-				<xsl:attribute name="rdf:resource" select="$uri"/>
-			</xsl:element>
-		</xsl:for-each>
+		<xsl:apply-templates select="descendant::eac:cpfRelation[contains(@xlink:arcrole, ':') and string(@xlink:href)]|descendant::eac:resourceReslation[contains(@xlink:arcrole, ':') and string(@xlink:href)]"/>		
+	</xsl:template>
+	
+	<xsl:template match="eac:cpfRelation|eac:resourceRelation">
+		<xsl:variable name="uri" select="if (contains(@xlink:href, 'http://')) then . else concat($url, 'id/', @xlink:href)"/>
+		<xsl:variable name="prefix" select="substring-before(@xlink:arcrole, ':')"/>
+		<xsl:variable name="namespace" select="ancestor::eac:eac-cpf/eac:control/eac:localTypeDeclaration[eac:abbreviation=$prefix]/eac:citation/@xlink:href"/>
+		
+		<xsl:element name="{@xlink:arcrole}" namespace="{$namespace}">
+			<xsl:attribute name="rdf:resource" select="$uri"/>
+		</xsl:element>
 	</xsl:template>
 </xsl:stylesheet>

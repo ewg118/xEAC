@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:eac="urn:isbn:1-931666-33-4" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xeac="https://github.com/ewg118/xEAC"
-	exclude-result-prefixes="#all" version="2.0">
+	xmlns:xs="http://www.w3.org/2001/XMLSchema" exclude-result-prefixes="#all" version="2.0">
 	<xsl:include href="templates.xsl"/>
 	<xsl:include href="widgets.xsl"/>
 
@@ -96,7 +96,6 @@
 			<div class="yui3-u-1">
 				<div class="content">
 					<xsl:call-template name="icons"/>
-
 					<h1>
 						<xsl:choose>
 							<xsl:when test="eac:cpfDescription/eac:identity/eac:nameEntry[eac:preferredForm='WIKIPEDIA']">
@@ -175,6 +174,8 @@
 					<xsl:call-template name="side-bar"/>
 				</div>
 			</div>
+
+			<xsl:call-template name="control-fields"/>
 		</div>
 	</xsl:template>
 
@@ -388,6 +389,9 @@
 								<img src="{$display_path}ui/images/external.png" alt="External link"/>
 							</a>
 						</xsl:when>
+						<xsl:otherwise>
+							<xsl:value-of select="eac:relationEntry"/>
+						</xsl:otherwise>
 					</xsl:choose>
 				</xsl:when>
 				<xsl:when test="local-name()='resourceRelation'">

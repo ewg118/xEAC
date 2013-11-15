@@ -50,7 +50,7 @@ mxn.register('openlayers', {
 			
 			// deal with zoom change
 			/*map.events.register('zoomend', map, function (evt) {
-				me.changeZoom.fire();
+			me.changeZoom.fire();
 			});*/
 			
 			// deal with map movement
@@ -77,22 +77,24 @@ mxn.register('openlayers', {
 			this.maps[api] = map;
 			this.loaded[api] = true;
 			
-			/*********
-			MANUAL ADDITION OF IMPERIUM LAYER AND ZOOMING
-			*********/
+			/**********************************
+			xEAC CUSTOMIZATION: SELECT BASELAYER BASED ON VARIABLE
+			***********************************/
+			var baseLayerControl = $('#baseLayer').text();
 			
-			var imperium = new OpenLayers.Layer.XYZ(
-			"Imperium Romanum",[
-			"http://pelagios.dme.ait.ac.at/tilesets/imperium/${z}/${x}/${y}.png"], {
-				sphericalMercator: true,
-				isBaseLayer: true,
-				numZoomLevels: 12
-			});
-			
-			map.addLayer(imperium);
-			//map.zoomTo('4');
-			//map.setCenter(new OpenLayers.LonLat(12.5,41.9));
-			//map.zoomToExtent(imperium.getDataExtent());
+			if (baseLayerControl == 'imperium') {
+				var imperium = new OpenLayers.Layer.XYZ(
+				"Imperium Romanum",[
+				"http://pelagios.dme.ait.ac.at/tilesets/imperium/${z}/${x}/${y}.png"], {
+					sphericalMercator: true,
+					isBaseLayer: true,
+					numZoomLevels: 12
+				});
+				map.addLayer(imperium);
+			} else if (baseLayerControl == 'osm') {
+				map.addLayer(new OpenLayers.Layer.OSM());
+				map.zoomToMaxExtent();
+			}
 		},
 		
 		applyOptions: function () {

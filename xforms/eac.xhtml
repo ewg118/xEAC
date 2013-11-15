@@ -292,6 +292,9 @@
 			<xforms:instance id="temp-doc" xxforms:exclude-result-prefixes="#all">
 				<eac-cpf xmlns="urn:isbn:1-931666-33-4"/>
 			</xforms:instance>
+			<xforms:instance id="temp-nameEntry" xxforms:exclude-result-prefixes="#all">
+				<temp xmlns=""/>
+			</xforms:instance>
 			<!-- ******************* EAC ELEMENTS ****************** -->
 			<!-- control -->
 			<xforms:instance id="maintenanceEvent-template" xxforms:exclude-result-prefixes="#all">
@@ -1103,14 +1106,7 @@
 									</div>
 									<xforms:repeat nodeset="eac:nameEntry">
 										<div class="subsection">
-											<h3>Name Entry</h3>
-											<!--<xforms:trigger appearance="minimal">
-												<xforms:label>(set as default)</xforms:label>
-												<xforms:action ev:event="DOMActivate">
-													<xforms:insert origin="$binding" context="parent::node()"/>
-													<xforms:delete nodeset="."/>
-												</xforms:action>
-												</xforms:trigger>-->
+											<h3>Name Entry</h3>											
 											<xforms:group ref=".[count(parent::node()/eac:nameEntry) &gt; 1 or count(parent::node()/eac:nameEntryParallel) &gt; 1]">
 												<xforms:trigger appearance="minimal">
 													<xforms:delete ev:event="DOMActivate" nodeset="."/>
@@ -1119,6 +1115,16 @@
 													</xforms:label>
 												</xforms:trigger>
 											</xforms:group>
+											<xforms:trigger appearance="minimal">
+												<xforms:label>(set as default)</xforms:label>
+												<xforms:action ev:event="DOMActivate">
+													<xforms:var name="position" select="position()"/>
+													<xforms:insert origin="instance('doc')//eac:nameEntry[$position]" context="instance('temp-nameEntry')"/>
+													<xforms:insert origin="instance('temp-nameEntry')/eac:nameEntry" context="instance('doc')/eac:cpfDescription/eac:identity"/>
+													<xforms:delete nodeset="."/>
+													<xforms:delete nodeset="instance('temp-nameEntry')/eac:nameEntry"/>
+												</xforms:action>
+											</xforms:trigger>
 											<div class="trigger_container">
 												<!-- must add part -->
 												<xforms:group ref=".[not(parent::eac:nameEntryParallel)]">

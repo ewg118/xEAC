@@ -85,6 +85,16 @@
 							<xxforms:dialog id="relation-dialog" appearance="full" level="modal" close="false" draggable="true" visible="false">
 								<xforms:label>Establish Relationship</xforms:label>
 								<div>
+									<xforms:input ref="instance('attributes')/attribute[@name='xlink:href']">
+										<xforms:label>Xlink Href</xforms:label>
+										<xforms:action ev:event="xforms-value-changed">
+											<xforms:insert context="$binding" origin="xxforms:attribute('xlink:href', instance('attributes')/attribute[@name='xlink:href'])"
+												if="not(@xlink:href) and string-length(instance('attributes')/attribute[@name='xlink:href']) &gt; 0"/>
+											<xforms:delete if="string-length(instance('attributes')/attribute[@name='xlink:href']) = 0" context="$binding" nodeset="@xlink:href"/>
+										</xforms:action>
+									</xforms:input>
+								</div>
+								<div>
 									<xforms:select1 ref="instance('attributes')/attribute[@name='xlink:arcrole']">
 										<xforms:label>Xlink Arcrole</xforms:label>
 										<xforms:item>
@@ -111,17 +121,7 @@
 											<xforms:delete if="string-length(instance('attributes')/attribute[@name='xlink:role']) = 0" context="$binding" nodeset="@xlink:role"/>
 										</xforms:action>
 									</xforms:input>
-								</div>
-								<div>
-									<xforms:input ref="instance('attributes')/attribute[@name='xlink:href']">
-										<xforms:label>Xlink Href</xforms:label>
-										<xforms:action ev:event="xforms-value-changed">
-											<xforms:insert context="$binding" origin="xxforms:attribute('xlink:href', instance('attributes')/attribute[@name='xlink:href'])"
-												if="not(@xlink:href) and string-length(instance('attributes')/attribute[@name='xlink:href']) &gt; 0"/>
-											<xforms:delete if="string-length(instance('attributes')/attribute[@name='xlink:href']) = 0" context="$binding" nodeset="@xlink:href"/>
-										</xforms:action>
-									</xforms:input>
-								</div>
+								</div>								
 								<div style="text-align:right">
 									<xforms:trigger>
 										<xforms:action ev:event="DOMActivate">

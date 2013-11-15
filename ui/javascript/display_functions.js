@@ -1,4 +1,4 @@
-function initialize_timemap(id) {
+function initialize_timemap(id) {	
 	var tm;
 	tm = TimeMap.init({
 		mapId: "map", // Id of map div element (required)
