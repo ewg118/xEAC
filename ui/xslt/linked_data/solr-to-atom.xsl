@@ -53,21 +53,13 @@
 	<xsl:template match="doc">
 		<entry>
 			<title>
-				<xsl:value-of select="str[@name='unittitle_display']"/>
+				<xsl:value-of select="str[@name='name_display']"/>
 			</title>
 			<link href="{$url}id/{str[@name='id']}"/>
-			<link rel="alternate xml" type="text/xml" href="{$url}id/{str[@name='id']}.xml"/>
-
+			<link rel="alternate xml" type="text/xml" href="{$url}id/{str[@name='id']}.xml"/>	
 			<id>
 				<xsl:value-of select="str[@name='id']"/>
-			</id>
-			<xsl:if test="arr[@name='mint_facet']/str[1]">
-				<creator>
-					<name>
-						<xsl:value-of select="arr[@name='mint_facet']/str[1]"/>
-					</name>
-				</creator>
-			</xsl:if>
+			</id>			
 			<updated>
 				<xsl:value-of select="date[@name='timestamp']"/>
 			</updated>
