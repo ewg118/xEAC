@@ -886,35 +886,6 @@
 					<xforms:setvalue ref="instance('doc')/eac:control/eac:sources/eac:source[last()]/@xlink:href" value="instance('viaf-id')"/>
 
 					<!-- iterate through checked boxes -->
-					<xforms:action if="instance('viaf-import')/names = true()">
-						<!-- create nameEntries -->
-						<xforms:action xxforms:iterate="instance('viaf-rdf')//skos:Concept">
-							<xforms:var name="auth" select="substring-after(context()/skos:inScheme/@rdf:resource, 'authorityScheme/')"/>
-							<xforms:setvalue ref="instance('viaf-id')" value="context()/skos:inScheme/@rdf:resource"/>
-							<!-- insert conventionDeclarations into control -->
-							<xforms:insert context="instance('doc')/eac:control" nodeset="./child::node()[last()]" origin="instance('conventionDeclaration-template')"/>
-							<!--<xforms:insert context="instance('doc')/eac:control/eac:conventionDeclaration[last()]" nodeset="./child::node()[last()]" origin="instance('descriptiveNote-template')"/>-->
-							<xforms:setvalue ref="instance('doc')/eac:control/eac:conventionDeclaration[last()]/eac:abbreviation" value="$auth"/>
-							<!--<xforms:setvalue ref="instance('doc')/eac:control/eac:conventionDeclaration[last()]/eac:descriptiveNote/eac:p" value="context()/skos:inScheme/@rdf:resource"/>-->
-							<!-- set the citation with the dcterms:title from VIAF, if it exists, otherwise the URI for the authorityScheme -->
-							<xforms:send submission="get-viaf-authority-rdf"/>
-							<!-- insert preferred forms per authority -->
-							<xforms:action xxforms:iterate="context()/skos:prefLabel">
-								<xforms:insert context="instance('doc')/eac:cpfDescription/eac:identity" nodeset="./child::node()[last()]" origin="instance('nameEntry-template')"/>
-								<xforms:setvalue ref="instance('doc')/eac:cpfDescription/eac:identity/eac:nameEntry[last()]/eac:part" value="context()"/>
-								<xforms:insert context="instance('doc')/eac:cpfDescription/eac:identity/eac:nameEntry[last()]" nodeset="./child::node()[last()]"
-									origin="instance('preferredForm-template')"/>
-								<xforms:setvalue ref="instance('doc')/eac:cpfDescription/eac:identity/eac:nameEntry[last()]/eac:preferredForm" value="$auth"/>
-							</xforms:action>
-							<xforms:action xxforms:iterate="context()/skos:altLabel">
-								<xforms:insert context="instance('doc')/eac:cpfDescription/eac:identity" nodeset="./child::node()[last()]" origin="instance('nameEntry-template')"/>
-								<xforms:setvalue ref="instance('doc')/eac:cpfDescription/eac:identity/eac:nameEntry[last()]/eac:part" value="context()"/>
-								<xforms:insert context="instance('doc')/eac:cpfDescription/eac:identity/eac:nameEntry[last()]" nodeset="./child::node()[last()]"
-									origin="instance('alternativeForm-template')"/>
-								<xforms:setvalue ref="instance('doc')/eac:cpfDescription/eac:identity/eac:nameEntry[last()]/eac:alternativeForm" value="$auth"/>
-							</xforms:action>
-						</xforms:action>
-					</xforms:action>
 					<xforms:action if="instance('viaf-import')/existDates = true()">
 						<xforms:action if="string(instance('viaf-rdf')//rdaGr2:dateOfBirth) and string(instance('viaf-rdf')//rdaGr2:dateOfDeath)">
 							<xforms:var name="fdi" select="instance('viaf-rdf')//rdaGr2:dateOfBirth"/>
@@ -981,6 +952,35 @@
 							</xforms:action>			
 						</xforms:action>
 					</xforms:action>
+					<xforms:action if="instance('viaf-import')/names = true()">
+						<!-- create nameEntries -->
+						<xforms:action xxforms:iterate="instance('viaf-rdf')//skos:Concept">
+							<xforms:var name="auth" select="substring-after(context()/skos:inScheme/@rdf:resource, 'authorityScheme/')"/>
+							<xforms:setvalue ref="instance('viaf-id')" value="context()/skos:inScheme/@rdf:resource"/>
+							<!-- insert conventionDeclarations into control -->
+							<xforms:insert context="instance('doc')/eac:control" nodeset="./child::node()[last()]" origin="instance('conventionDeclaration-template')"/>
+							<!--<xforms:insert context="instance('doc')/eac:control/eac:conventionDeclaration[last()]" nodeset="./child::node()[last()]" origin="instance('descriptiveNote-template')"/>-->
+							<xforms:setvalue ref="instance('doc')/eac:control/eac:conventionDeclaration[last()]/eac:abbreviation" value="$auth"/>
+							<!--<xforms:setvalue ref="instance('doc')/eac:control/eac:conventionDeclaration[last()]/eac:descriptiveNote/eac:p" value="context()/skos:inScheme/@rdf:resource"/>-->
+							<!-- set the citation with the dcterms:title from VIAF, if it exists, otherwise the URI for the authorityScheme -->
+							<xforms:send submission="get-viaf-authority-rdf"/>
+							<!-- insert preferred forms per authority -->
+							<xforms:action xxforms:iterate="context()/skos:prefLabel">
+								<xforms:insert context="instance('doc')/eac:cpfDescription/eac:identity" nodeset="./child::node()[last()]" origin="instance('nameEntry-template')"/>
+								<xforms:setvalue ref="instance('doc')/eac:cpfDescription/eac:identity/eac:nameEntry[last()]/eac:part" value="context()"/>
+								<xforms:insert context="instance('doc')/eac:cpfDescription/eac:identity/eac:nameEntry[last()]" nodeset="./child::node()[last()]"
+									origin="instance('preferredForm-template')"/>
+								<xforms:setvalue ref="instance('doc')/eac:cpfDescription/eac:identity/eac:nameEntry[last()]/eac:preferredForm" value="$auth"/>
+							</xforms:action>
+							<xforms:action xxforms:iterate="context()/skos:altLabel">
+								<xforms:insert context="instance('doc')/eac:cpfDescription/eac:identity" nodeset="./child::node()[last()]" origin="instance('nameEntry-template')"/>
+								<xforms:setvalue ref="instance('doc')/eac:cpfDescription/eac:identity/eac:nameEntry[last()]/eac:part" value="context()"/>
+								<xforms:insert context="instance('doc')/eac:cpfDescription/eac:identity/eac:nameEntry[last()]" nodeset="./child::node()[last()]"
+									origin="instance('alternativeForm-template')"/>
+								<xforms:setvalue ref="instance('doc')/eac:cpfDescription/eac:identity/eac:nameEntry[last()]/eac:alternativeForm" value="$auth"/>
+							</xforms:action>
+						</xforms:action>
+					</xforms:action>					
 				</xforms:action>
 			</xforms:submission>
 			<xforms:submission id="get-viaf-authority-rdf" serialization="none" method="get" action="{instance('viaf-id')}/rdf.xml" instance="viaf-authority-rdf" replace="instance">
