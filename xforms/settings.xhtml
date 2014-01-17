@@ -17,8 +17,8 @@
 				<config xmlns=""/>
 			</xforms:instance>
 
-			<xforms:instance id="exist-url" xxforms:exclude-result-prefixes="#all">
-				<xi:include href="../exist-url.xml"/>
+			<xforms:instance id="exist-config" xxforms:exclude-result-prefixes="#all">
+				<xi:include href="../exist-config.xml"/>
 			</xforms:instance>
 
 			<xforms:instance id="status">
@@ -126,19 +126,19 @@
 
 			<!-- ****************** SUBMISSIONS ***************** -->
 			<!-- Load File -->
-			<xforms:submission id="load-config" serialization="none" method="get" action="{instance('exist-url')}xeac/config.xml" xxforms:username="admin" xxforms:password="" replace="instance"
+			<xforms:submission id="load-config" serialization="none" method="get" action="{instance('exist-config')/url}xeac/config.xml" xxforms:username="{instance('exist-config')/username}" xxforms:password="{instance('exist-config')/password}" replace="instance"
 				instance="config">
 				<xforms:message ev:event="xforms-submit-error" level="modal">Unable to load configuration file</xforms:message>
 			</xforms:submission>
 
 			<!-- Save File -->
-			<xforms:submission id="save-config" ref="instance('config')" xxforms:username="admin" xxforms:password="" action="{instance('exist-url')}xeac/config.xml" method="put" replace="none">
+			<xforms:submission id="save-config" ref="instance('config')" xxforms:username="{instance('exist-config')/username}" xxforms:password="{instance('exist-config')/password}" action="{instance('exist-config')/url}xeac/config.xml" method="put" replace="none">
 				<xforms:setvalue ev:event="xforms-submit-done" ref="instance('status')">Configuration saved.</xforms:setvalue>
 				<xforms:message ev:event="xforms-submit-error" level="modal">Error saving configuration file.</xforms:message>
 			</xforms:submission>
 
-			<xforms:submission id="xquery-collection" ref="instance('eXist-xquery')" action="{instance('exist-url')}xeac/records" method="post" replace="instance" instance="xquery-result"
-				xxforms:username="admin" xxforms:password="">
+			<xforms:submission id="xquery-collection" ref="instance('eXist-xquery')" action="{instance('exist-config')/url}xeac/records" method="post" replace="instance" instance="xquery-result"
+				xxforms:username="{instance('exist-config')/username}" xxforms:password="{instance('exist-config')/password}">
 				<xforms:setvalue ref="instance('control-instance')/error" ev:event="xforms-submit-error">Error querying eXist database.</xforms:setvalue>
 			</xforms:submission>
 

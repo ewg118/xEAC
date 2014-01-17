@@ -184,8 +184,8 @@
 							<config xmlns=""/>
 						</xforms:instance>
 
-						<xforms:instance id="exist-url" xmlns:xi="http://www.w3.org/2001/XInclude">
-							<xi:include href="../../../exist-url.xml"/>
+						<xforms:instance id="exist-config" xmlns:xi="http://www.w3.org/2001/XInclude">
+							<xi:include href="../../../exist-config.xml"/>
 						</xforms:instance>
 
 						<!-- controlled vocabulary -->
@@ -246,13 +246,13 @@
 						</xforms:instance>
 
 						<!-- ***** SUBMISSIONS ***** -->
-						<xforms:submission id="load-config" serialization="none" method="get" action="{instance('exist-url')}xeac/config.xml" replace="instance" instance="config"
-							xxforms:username="admin" xxforms:password="">
+						<xforms:submission id="load-config" serialization="none" method="get" action="{instance('exist-config')/url}xeac/config.xml" replace="instance" instance="config"
+							xxforms:username="{instance('exist-config')/username}" xxforms:password="{instance('exist-config')/password}">
 							<xforms:message ev:event="xforms-submit-error" level="modal">Unable to load config.</xforms:message>
 						</xforms:submission>
 
-						<xforms:submission id="xquery-collection" ref="instance('eXist-xquery')" action="{instance('exist-url')}xeac/records" method="post" replace="instance" instance="xquery-result"
-							xxforms:username="admin" xxforms:password="">
+						<xforms:submission id="xquery-collection" ref="instance('eXist-xquery')" action="{instance('exist-config')/url}xeac/records" method="post" replace="instance" instance="xquery-result"
+							xxforms:username="{instance('exist-config')/username}" xxforms:password="{instance('exist-config')/password}">
 							<xforms:message ev:event="xforms-submit-error" level="modal">Errory querying eXist database.</xforms:message>
 						</xforms:submission>
 					</xforms:model>

@@ -21,8 +21,8 @@
 
 		<xforms:model>
 			<!-- exist URL is stored in an XML file -->
-			<xforms:instance id="exist-url" xxforms:exclude-result-prefixes="#all">
-				<xi:include href="../exist-url.xml"/>
+			<xforms:instance id="exist-config" xxforms:exclude-result-prefixes="#all">
+				<xi:include href="../exist-config.xml"/>
 			</xforms:instance>
 
 			<xforms:instance id="control-instance" xxforms:exclude-result-prefixes="#all">
@@ -38,6 +38,7 @@
 					<query_input/>
 					<query_sent/>
 					<solr-core/>
+					<firstrun/>
 				</controls>
 			</xforms:instance>
 
@@ -46,7 +47,7 @@
 			</xforms:instance>
 
 			<xforms:instance id="config-template" xxforms:exclude-result-prefixes="#all">
-				<config version="0.1">
+				<config version="0.1" xmlns="">
 					<flickr_api_key/>
 					<geonames_api_key/>
 					<title>xEAC</title>
@@ -178,8 +179,8 @@
 			</xforms:bind>-->
 
 			<!-- submissions -->
-			<xforms:submission id="load-config" serialization="none" method="get" action="{instance('exist-url')}xeac/config.xml" replace="instance" instance="config" xxforms:username="admin"
-				xxforms:password="">
+			<xforms:submission id="load-config" serialization="none" method="get" action="{instance('exist-config')/url}xeac/config.xml" replace="instance" instance="config" xxforms:username="{instance('exist-config')/username}"
+				xxforms:password="{instance('exist-config')/password}">
 				<xforms:action ev:event="xforms-submit-done">
 					<!-- get the number of docs in the eXist collection() -->
 					<xforms:setvalue ref="instance('eXist-xquery')/exist:text" value="instance('xqueries')/query[@id='collection-count']"/>
@@ -194,20 +195,17 @@
 					<xforms:send submission="xquery-pagination"/>
 				</xforms:action>
 				<xforms:action ev:event="xforms-submit-error">
-					<xforms:send submission="save-config"/>
+					<xforms:setvalue ref="instance('control-instance')/firstrun">true</xforms:setvalue>
 				</xforms:action>
 			</xforms:submission>
 
-			<xforms:submission id="save-config" ref="instance('config-template')" action="{instance('exist-url')}xeac/config.xml" method="put" replace="none" xxforms:username="admin"
-				xxforms:password="">
-				<xforms:message ev:event="xforms-submit-error" level="modal">Error Saving Config.</xforms:message>
-				<xforms:action ev:event="xforms-submit-done">
-					<xforms:send submission="create-records-collection"/>
-				</xforms:action>
+			<xforms:submission id="save-config" ref="instance('config-template')" action="{instance('exist-config')/url}xeac/config.xml" method="put" replace="none" xxforms:username="{instance('exist-config')/username}"
+				xxforms:password="{instance('exist-config')/password}">
+				<xforms:message ev:event="xforms-submit-error" level="modal">Error Saving Config.</xforms:message>				
 			</xforms:submission>
 
-			<xforms:submission id="create-records-collection" ref="instance('create-collection')" method="post" action="{instance('exist-url')}" replace="none" xxforms:username="admin"
-				xxforms:password="">
+			<xforms:submission id="create-records-collection" ref="instance('eXist-xquery')" method="post" action="{instance('exist-config')/url}" replace="none" xxforms:username="{instance('exist-config')/username}"
+				xxforms:password="{instance('exist-config')/password}">
 				<xforms:action ev:event="xforms-submit-done">
 					<xforms:send submission="load-config"/>
 				</xforms:action>
@@ -215,8 +213,8 @@
 
 			<!--***************** XQUERY ******************-->
 			<!-- xquery for getting and processing query results into pages of items -->
-			<xforms:submission id="xquery-pagination" ref="instance('eXist-xquery')" action="{instance('exist-url')}xeac/records" method="post" replace="instance" instance="pagination-result"
-				xxforms:username="admin" xxforms:password="">
+			<xforms:submission id="xquery-pagination" ref="instance('eXist-xquery')" action="{instance('exist-config')/url}xeac/records" method="post" replace="instance" instance="pagination-result"
+				xxforms:username="{instance('exist-config')/username}" xxforms:password="{instance('exist-config')/password}">
 				<xforms:setvalue ref="instance('control-instance')/error" ev:event="xforms-submit-error">Error querying eXist database.</xforms:setvalue>
 				<xforms:action ev:event="xforms-submit-done">
 					<!--iterate through docs, check for publication -->
@@ -228,13 +226,13 @@
 				</xforms:action>
 			</xforms:submission>
 
-			<xforms:submission id="xquery-collection" ref="instance('eXist-xquery')" action="{instance('exist-url')}xeac/records" method="post" replace="instance" instance="xquery-result"
-				xxforms:username="admin" xxforms:password="">
+			<xforms:submission id="xquery-collection" ref="instance('eXist-xquery')" action="{instance('exist-config')/url}xeac/records" method="post" replace="instance" instance="xquery-result"
+				xxforms:username="{instance('exist-config')/username}" xxforms:password="{instance('exist-config')/password}">
 				<xforms:setvalue ref="instance('control-instance')/error" ev:event="xforms-submit-error">Error querying eXist database.</xforms:setvalue>
 			</xforms:submission>
 
-			<!--<xforms:submission id="temp-query" ref="instance('temp-xquery')" action="{instance('exist-url')}xeac/records/" method="post" replace="instance" instance="temp-result"
-				xxforms:username="admin" xxforms:password="">
+			<!--<xforms:submission id="temp-query" ref="instance('temp-xquery')" action="{instance('exist-config')/url}xeac/records/" method="post" replace="instance" instance="temp-result"
+				xxforms:username="{instance('exist-config')/username}" xxforms:password="{instance('exist-config')/password}">
 				<xforms:setvalue ref="instance('control-instance')/error" ev:event="xforms-submit-error">Error querying eXist database.</xforms:setvalue>
 			</xforms:submission>-->
 
@@ -247,9 +245,9 @@
 			</xforms:submission>
 
 
-			<!-- load eac record temporarily -->
-			<xforms:submission id="load-doc" serialization="none" method="get" action="{instance('exist-url')}xeac/records/{instance('control-instance')/id}.xml" replace="instance" instance="doc"
-				xxforms:username="admin" xxforms:password="">
+			<!-- ************** Temporary Document Submissions ************** -->
+			<xforms:submission id="load-doc" serialization="none" method="get" action="{instance('exist-config')/url}xeac/records/{instance('control-instance')/id}.xml" replace="instance" instance="doc"
+				xxforms:username="{instance('exist-config')/username}" xxforms:password="{instance('exist-config')/password}">
 				<xforms:message ev:event="xforms-submit-error" level="modal">Error loading file.</xforms:message>
 				<xforms:action ev:event="xforms-submit-done">
 					<xforms:setvalue ref="instance('doc')/eac:control/eac:publicationStatus" value="instance('control-instance')/publicationStatus"/>
@@ -257,23 +255,23 @@
 				</xforms:action>
 			</xforms:submission>
 
-			<xforms:submission id="save-doc" ref="instance('doc')" xxforms:username="admin" xxforms:password="" action="{instance('exist-url')}xeac/records/{instance('control-instance')/id}.xml"
+			<xforms:submission id="save-doc" ref="instance('doc')" xxforms:username="{instance('exist-config')/username}" xxforms:password="{instance('exist-config')/password}" action="{instance('exist-config')/url}xeac/records/{instance('control-instance')/id}.xml"
 				method="put" replace="none"/>
 
 			<!-- delete finding aid -->
-			<xforms:submission id="delete-doc" action="{instance('exist-url')}xeac/records/{instance('control-instance')/id}.xml" method="delete" replace="none" xxforms:username="admin"
-				xxforms:password="">
+			<xforms:submission id="delete-doc" action="{instance('exist-config')/url}xeac/records/{instance('control-instance')/id}.xml" method="delete" replace="none" xxforms:username="{instance('exist-config')/username}"
+				xxforms:password="{instance('exist-config')/password}">
 				<xforms:setvalue ev:event="xforms-submit-done" ref="instance('control-instance')/status">Finding aid successfully deleted.</xforms:setvalue>
 			</xforms:submission>
 
 			<!-- save KML -->
-			<xforms:submission id="save-kml" ref="instance('kml')" action="{instance('exist-url')}xeac/kml/{instance('doc')/eac:control/eac:recordId}.kml" method="put" replace="none"
-				xxforms:username="admin" xxforms:password="">
+			<xforms:submission id="save-kml" ref="instance('kml')" action="{instance('exist-config')/url}xeac/kml/{instance('doc')/eac:control/eac:recordId}.kml" method="put" replace="none"
+				xxforms:username="{instance('exist-config')/username}" xxforms:password="{instance('exist-config')/password}">
 				<xforms:message ev:event="xforms-submit-error" level="modal">Error Saving KML.</xforms:message>
 			</xforms:submission>
 
-			<xforms:submission id="delete-kml" action="{instance('exist-url')}xeac/kml/{instance('control-instance')/id}.kml" method="delete" replace="none" xxforms:username="admin"
-				xxforms:password="">
+			<xforms:submission id="delete-kml" action="{instance('exist-config')/url}xeac/kml/{instance('control-instance')/id}.kml" method="delete" replace="none" xxforms:username="{instance('exist-config')/username}"
+				xxforms:password="{instance('exist-config')/password}">
 				<xforms:setvalue ev:event="xforms-submit-done" ref="instance('control-instance')/status">Finding aid successfully deleted.</xforms:setvalue>
 			</xforms:submission>
 
@@ -791,5 +789,77 @@
 				</div>
 			</div>
 		</div>
+		
+		<!-- *************** FIRST RUN ***************-->
+		<!-- handle the creation of new collections when a new role has successfull logged in -->
+		<xforms:action ev:event="xforms-enabled" if="instance('control-instance')/firstrun = 'true'">
+			<xxforms:show dialog="firstrun"/>
+		</xforms:action>
+		<!--<xxforms:dialog id="create-collection" appearance="full" level="modal" close="false" draggable="true" visible="false">
+			<xforms:label>Welcome to Numishare</xforms:label>
+			<p>Please create a collection for your authenticated group.</p>
+			<xforms:group ref="instance('collections-list')">
+				<h3>
+					<xforms:output ref="instance('control-instance')/request-security/role"/>
+				</h3>
+				<div>
+					<xforms:input ref="collection[@role=instance('control-instance')/request-security/role]/@name">
+						<xforms:label>Collection Name</xforms:label>
+						<xforms:alert>Required</xforms:alert>
+					</xforms:input>
+				</div>
+			</xforms:group>
+			<xforms:trigger>
+				<xforms:label>Save</xforms:label>
+				<xforms:action ev:event="DOMActivate">
+					<xforms:setvalue ref="instance('control-instance')/collection-name" value="instance('collections-list')/collection[@role=instance('control-instance')/request-security/role]/@name"/>
+					<!-\- set exist collection value for creating new collection-\->
+					<xforms:setvalue ref="instance('xqueries')/query[@id='create-collection']"
+						value="concat(&quot;xmldb:create-collection(&#x0027;/db/eaditor/&quot;, instance(&quot;control-instance&quot;)/collection-name, &quot;&#x0027;, &#x0027;guides&#x0027;)&quot;)"/>
+					<xforms:send submission="save-collections"/>
+					<xxforms:hide dialog="create-collection"/>
+					<xxforms:show dialog="firstrun"/>
+				</xforms:action>
+			</xforms:trigger>
+		</xxforms:dialog>-->
+		
+		<!-- if this is the first time that EADitor has ever been run, show a dialog that enables the user to set the title and URLs -->
+		<xxforms:dialog id="firstrun" appearance="full" level="modal" close="false" draggable="true" visible="false">
+			<xforms:label>Welcome to EADitor</xforms:label>
+			<p>This is the first time you have run EADitor.<br/>Please set the following fields (they can be changed later under "Settings")</p>
+			<xforms:group ref="instance('config-template')">
+				<div>
+					<xforms:input ref="title">
+						<xforms:label>Title</xforms:label>
+						<xforms:alert>Required</xforms:alert>
+					</xforms:input>
+				</div>
+				<div>
+					<xforms:input ref="url">
+						<xforms:label>Site URL</xforms:label>
+						<xforms:alert>Required, must be a URL</xforms:alert>
+					</xforms:input>
+				</div>
+				<h3>Solr URLs</h3>
+				<div>
+					<xforms:input ref="solr_published">
+						<xforms:label>Published</xforms:label>
+						<xforms:alert>Required, must be a URL</xforms:alert>
+					</xforms:input>
+				</div>
+			</xforms:group>
+			<xforms:trigger>
+				<xforms:label>Save</xforms:label>
+				<!-- save collections and XML files to config -->
+				<xforms:action ev:event="DOMActivate">
+					<xforms:send submission="save-config"/>
+					
+					<!-- set value and add collection -->
+					<xforms:setvalue ref="instance('eXist-xquery')/exist:text" value="instance('xqueries')/query[@id='create-collection']"/>
+					<xforms:send submission="create-records-collection"/>
+					<xxforms:hide dialog="firstrun"/>
+				</xforms:action>
+			</xforms:trigger>
+		</xxforms:dialog>
 	</body>
 </html>

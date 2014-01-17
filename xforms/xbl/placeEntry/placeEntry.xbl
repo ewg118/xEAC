@@ -275,8 +275,8 @@
 					</xforms:group>
 					<!-- ********************************************************************** -->
 					<xforms:model id="placeEntry-model" xmlns:xi="http://www.w3.org/2001/XInclude">
-						<xforms:instance id="exist-url">
-							<xi:include href="../../../exist-url.xml"/>
+						<xforms:instance id="exist-config">
+							<xi:include href="../../../exist-config.xml"/>
 						</xforms:instance>
 						<xforms:instance id="config">
 							<config xmlns=""/>
@@ -414,8 +414,8 @@
 							<interface>geonames</interface>
 						</xforms:instance>
 
-						<xforms:submission id="load-config" serialization="none" method="get" action="{instance('exist-url')}xeac/config.xml" replace="instance" instance="config"
-							xxforms:username="admin" xxforms:password="">
+						<xforms:submission id="load-config" serialization="none" method="get" action="{instance('exist-config')/url}xeac/config.xml" replace="instance" instance="config"
+							xxforms:username="{instance('exist-config')/username}" xxforms:password="{instance('exist-config')/password}">
 							<xforms:message ev:event="xforms-submit-error" level="modal">Unable to load config.</xforms:message>
 						</xforms:submission>
 

@@ -135,8 +135,8 @@
 			</xforms:instance>
 
 			<!-- exist URL is stored in an XML file -->
-			<xforms:instance id="exist-url">
-				<xi:include href="../exist-url.xml"/>
+			<xforms:instance id="exist-config">
+				<xi:include href="../exist-config.xml"/>
 			</xforms:instance>
 
 			<xforms:instance id="config">
@@ -605,12 +605,12 @@
 			</xforms:bind>
 			<!-- ******************* SUBMISSIONS ****************** -->
 			<!-- load preliminary instances -->
-			<xforms:submission id="load-config" serialization="none" method="get" action="{instance('exist-url')}xeac/config.xml" replace="instance" instance="config" xxforms:username="admin"
-				xxforms:password=""/>
+			<xforms:submission id="load-config" serialization="none" method="get" action="{instance('exist-config')/url}xeac/config.xml" replace="instance" instance="config" xxforms:username="{instance('exist-config')/username}"
+				xxforms:password="{instance('exist-config')/password}"/>
 
 			<!-- Submission to get the document -->
-			<xforms:submission id="load-doc" serialization="none" method="get" action="{instance('exist-url')}xeac/records/{instance('doc')/eac:control/eac:recordId}.xml" replace="instance"
-				instance="doc" xxforms:username="admin" xxforms:password="">
+			<xforms:submission id="load-doc" serialization="none" method="get" action="{instance('exist-config')/url}xeac/records/{instance('doc')/eac:control/eac:recordId}.xml" replace="instance"
+				instance="doc" xxforms:username="{instance('exist-config')/username}" xxforms:password="{instance('exist-config')/password}">
 				<xforms:message ev:event="xforms-submit-error" level="modal">Unable to load EAC record</xforms:message>
 				<xforms:action ev:event="xforms-submit-done">
 					<!-- set publicationStatus in control-instance -->
@@ -651,8 +651,8 @@
 				</xforms:action>
 			</xforms:submission>
 
-			<xforms:submission id="load-temp-doc" serialization="none" method="get" action="{instance('exist-url')}xeac/records/{instance('temp-id')/identifier}.xml" replace="instance"
-				instance="temp-doc" xxforms:username="admin" xxforms:password="">
+			<xforms:submission id="load-temp-doc" serialization="none" method="get" action="{instance('exist-config')/url}xeac/records/{instance('temp-id')/identifier}.xml" replace="instance"
+				instance="temp-doc" xxforms:username="{instance('exist-config')/username}" xxforms:password="{instance('exist-config')/password}">
 				<!-- only initiate the following functions for an 'add' -->
 				<!-- load document to create cpfRelation, if it exists -->
 				<xforms:action ev:event="xforms-submit-done">
@@ -725,8 +725,8 @@
 				</xforms:action>
 			</xforms:submission>
 			<!-- Submission to save the document -->
-			<xforms:submission id="save-doc" ref="instance('doc')" action="{instance('exist-url')}xeac/records/{instance('doc')/eac:control/eac:recordId}.xml" method="put" replace="none"
-				xxforms:username="admin" xxforms:password="">
+			<xforms:submission id="save-doc" ref="instance('doc')" action="{instance('exist-config')/url}xeac/records/{instance('doc')/eac:control/eac:recordId}.xml" method="put" replace="none"
+				xxforms:username="{instance('exist-config')/username}" xxforms:password="{instance('exist-config')/password}">
 				<xforms:message ev:event="xforms-submit-error" level="modal">Error Saving Documents. Be sure all required inputs are filled in.</xforms:message>
 				<xforms:action ev:event="xforms-submit-done">
 					<xforms:setvalue ref="instance('status')">EAC record saved.</xforms:setvalue>
@@ -816,13 +816,13 @@
 				</xforms:action>
 			</xforms:submission>
 
-			<xforms:submission id="save-kml" ref="instance('kml')" action="{instance('exist-url')}xeac/kml/{instance('doc')/eac:control/eac:recordId}.kml" method="put" replace="none"
-				xxforms:username="admin" xxforms:password="">
+			<xforms:submission id="save-kml" ref="instance('kml')" action="{instance('exist-config')/url}xeac/kml/{instance('doc')/eac:control/eac:recordId}.kml" method="put" replace="none"
+				xxforms:username="{instance('exist-config')/username}" xxforms:password="{instance('exist-config')/password}">
 				<xforms:message ev:event="xforms-submit-error" level="modal">Error Saving KML.</xforms:message>
 			</xforms:submission>
 
-			<xforms:submission id="save-temp-doc" ref="instance('temp-doc')" action="{instance('exist-url')}xeac/records/{instance('temp-doc')/eac:control/eac:recordId}.xml" method="put"
-				replace="none" xxforms:username="admin" xxforms:password="">
+			<xforms:submission id="save-temp-doc" ref="instance('temp-doc')" action="{instance('exist-config')/url}xeac/records/{instance('temp-doc')/eac:control/eac:recordId}.xml" method="put"
+				replace="none" xxforms:username="{instance('exist-config')/username}" xxforms:password="{instance('exist-config')/password}">
 				<xforms:message ev:event="xforms-submit-error" level="modal">
 					<xforms:output value="concat('Unable to update relational document: ', instance('temp-doc')/eac:control/eac:recordId)"/>
 				</xforms:message>
@@ -831,8 +831,8 @@
 				</xforms:action>
 			</xforms:submission>
 
-			<xforms:submission id="save-eac-template" ref="instance('eac-template')" action="{instance('exist-url')}xeac/records/{instance('eac-template')/eac:control/eac:recordId}.xml" method="put"
-				replace="none" xxforms:username="admin" xxforms:password="">
+			<xforms:submission id="save-eac-template" ref="instance('eac-template')" action="{instance('exist-config')/url}xeac/records/{instance('eac-template')/eac:control/eac:recordId}.xml" method="put"
+				replace="none" xxforms:username="{instance('exist-config')/username}" xxforms:password="{instance('exist-config')/password}">
 				<xforms:message ev:event="xforms-submit-error" level="modal">
 					<xforms:output value="concat('Unable generate new document: ', instance('eac-template')/eac:control/eac:recordId)"/>
 				</xforms:message>

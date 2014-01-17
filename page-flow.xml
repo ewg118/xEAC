@@ -37,7 +37,7 @@
 
 	<!-- public search/browse interface -->
 	<page path-info="/xeac/results/" model="xpl/solr-results.xpl" view="xpl/results.xpl"/>
-	<page path-info="/xeac/search/" model="exist-url.xml" view="xpl/search.xpl"/>
+	<page path-info="/xeac/search/" model="exist-config.xml" view="xpl/search.xpl"/>
 	
 	<!-- Atom feed -->
 	<page path-info="/xeac/feed/" model="xpl/solr-feed.xpl" view="xpl/feed.xpl"/>

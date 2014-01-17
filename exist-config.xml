@@ -7,4 +7,8 @@ This points to Orbeon's internal eXist database (http://localhost:8080/orbeon/ex
 
 Note: do not forget trailing / after db!
 -->
-<exist-url>http://localhost:8080/exist/rest/db/</exist-url>
+<exist-config>
+	<username>admin</username>
+	<password/>
+	<url>http://localhost:8080/exist/rest/db/</url>
+</exist-config>
