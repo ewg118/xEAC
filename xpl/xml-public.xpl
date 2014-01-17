@@ -48,10 +48,10 @@
 					</xsl:variable>
 					<xsl:choose>
 						<xsl:when test="substring($basename, string-length($basename) - 3) = '.kml'">
-							<xsl:copy-of select="document(concat(/exist-url, 'xeac/kml/', $id, '.kml'))/*"/>
+							<xsl:copy-of select="document(concat(/exist-config/url, 'xeac/kml/', $id, '.kml'))/*"/>
 						</xsl:when>
 						<xsl:otherwise>
-							<xsl:copy-of select="document(concat(/exist-url, 'xeac/records/', $id, '.xml'))/eac:eac-cpf"/>
+							<xsl:copy-of select="document(concat(/exist-config/url, 'xeac/records/', $id, '.xml'))/eac:eac-cpf"/>
 						</xsl:otherwise>
 					</xsl:choose>
 				</xsl:template>

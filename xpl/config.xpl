@@ -15,7 +15,7 @@
 		<p:input name="config">
 			<xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 				<xsl:template match="/">
-					<xsl:copy-of select="document(concat(/exist-url, 'xeac/config.xml'))"/>
+					<xsl:copy-of select="document(concat(/exist-config/url, 'xeac/config.xml'))"/>
 				</xsl:template>
 			</xsl:stylesheet>
 		</p:input>
