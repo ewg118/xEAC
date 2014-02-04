@@ -13,14 +13,15 @@
 							<xforms:alert>Content Required.</xforms:alert>
 							<xforms:label>Paragraph</xforms:label>
 						</xforms:textarea>
-						<xforms:trigger appearance="minimal">
-							<xforms:delete ev:event="DOMActivate" nodeset="$binding"/>
-							<xforms:label>
-								<img src="/apps/xeac/images/remove.gif"/>
-							</xforms:label>
-						</xforms:trigger>
+						<xforms:group ref=".[($binding/parent::node()/local-name()='descriptiveNote' and count($binding/parent::node()/eac:p) &gt; 1) or not($binding/parent::node()/local-name()='descriptiveNote')]">
+							<xforms:trigger appearance="minimal">
+								<xforms:delete ev:event="DOMActivate" nodeset="$binding"/>
+								<xforms:label>
+									<img src="/apps/xeac/xforms/images/remove.gif"/>
+								</xforms:label>
+							</xforms:trigger>
+						</xforms:group>
 					</div>
-					<!-- ********************************************************************** -->
 				</xforms:group>
 			</xforms:group>
 		</xbl:template>
