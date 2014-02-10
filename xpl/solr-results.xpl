@@ -69,12 +69,21 @@
 				</xsl:variable>
 				
 				<xsl:template match="/">
-					<xsl:copy-of select="document($service)/response"/>
+					<config>
+						<url>
+							<xsl:value-of select="$service"/>
+						</url>
+						<content-type>application/xml</content-type>
+						<encoding>utf-8</encoding>
+					</config>
 				</xsl:template>
 			</xsl:stylesheet>
 		</p:input>
-		<p:output name="data" ref="data"/>
+		<p:output name="data" id="generator-config"/>
 	</p:processor>
 
-
+	<p:processor name="oxf:url-generator">
+		<p:input name="config" href="#generator-config"/>
+		<p:output name="data" ref="data"/>
+	</p:processor>
 </p:config>

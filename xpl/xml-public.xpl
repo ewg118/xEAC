@@ -46,17 +46,33 @@
 							</xsl:otherwise>
 						</xsl:choose>
 					</xsl:variable>
-					<xsl:choose>
-						<xsl:when test="substring($basename, string-length($basename) - 3) = '.kml'">
-							<xsl:copy-of select="document(concat(/exist-config/url, 'xeac/kml/', $id, '.kml'))/*"/>
-						</xsl:when>
-						<xsl:otherwise>
-							<xsl:copy-of select="document(concat(/exist-config/url, 'xeac/records/', $id, '.xml'))/eac:eac-cpf"/>
-						</xsl:otherwise>
-					</xsl:choose>
+					<xsl:variable name="url">
+						<xsl:choose>
+							<xsl:when test="substring($basename, string-length($basename) - 3) = '.kml'">
+								<xsl:copy-of select="concat(/exist-config/url, 'xeac/kml/', $id, '.kml')"/>
+							</xsl:when>
+							<xsl:otherwise>
+								<xsl:copy-of select="concat(/exist-config/url, 'xeac/records/', $id, '.xml')"/>
+							</xsl:otherwise>
+						</xsl:choose>
+					</xsl:variable>
+					
+					
+					<config>
+						<url>
+							<xsl:value-of select="$url"/>
+						</url>
+						<content-type>application/xml</content-type>
+						<encoding>utf-8</encoding>
+					</config>
 				</xsl:template>
 			</xsl:stylesheet>
 		</p:input>
+		<p:output name="data" id="generator-config"/>
+	</p:processor>
+	
+	<p:processor name="oxf:url-generator">
+		<p:input name="config" href="#generator-config"/>
 		<p:output name="data" ref="data"/>
 	</p:processor>
 </p:config>
