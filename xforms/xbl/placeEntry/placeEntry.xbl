@@ -131,7 +131,7 @@
 												<!-- first, load config if it hasn't been loaded -->
 												<xforms:send submission="load-config" if="not(string(instance('config')/url))"/>
 												<!-- clear result instance -->
-												<xforms:delete context="instance('geonames')/*"/>												
+												<xforms:delete context="instance('geonames')/*"/>
 												<!-- create alert when there is no geonames_api_key, otherwise submit query -->
 												<xforms:message level="modal" if="not(string(instance('config')/geonames_api_key))">No Geonames API key entered into config.</xforms:message>
 												<xforms:send submission="query-geonames" if="string(instance('config')/geonames_api_key)"/>
@@ -215,7 +215,10 @@
 										<xforms:trigger>
 											<xforms:action ev:event="DOMActivate">
 												<xforms:delete context="instance('feed')/*"/>
-												<xforms:send submission="query-pleiades"/>
+												<xforms:setvalue ref="instance('pleiades-config')/url"
+													value="concat('http://pleiades.stoa.org/search_rss?Title=', encode-for-uri(instance('search-query')), '&amp;portal_type=Place')"/>
+												<xforms:insert nodeset="instance('feed')"
+													origin="xxforms:call-xpl('oxf:/apps/xeac/xpl/query-pleiades-rss.xpl', 'file', instance('pleiades-config'), 'data')"/>
 											</xforms:action>
 											<xforms:label>Search</xforms:label>
 										</xforms:trigger>
@@ -405,6 +408,18 @@
 							<feed xmlns=""/>
 						</xforms:instance>
 
+						<xforms:instance id="pleiades-config">
+							<config xmlns="">
+								<url/>
+								<content-type>application/xml</content-type>
+								<mode>xml</mode>
+								<header>
+									<name>User-Agent</name>
+									<value>Orbeon/XForms</value>
+								</header>
+							</config>
+						</xforms:instance>
+
 						<xforms:instance id="description">
 							<description xmlns=""/>
 						</xforms:instance>
@@ -446,12 +461,6 @@
 						<xforms:submission id="query-nomisma" serialization="none" method="get"
 							action="http://nomisma.org/feed/?q=(typeof:mint+OR+typeof:head_1911_region+OR+typeof:nomisma_region)+{instance('search-query')}" instance="feed" replace="instance">
 							<xforms:message ev:event="xforms-submit-error" level="modal">Unable to communicate with nomisma.org Atom feed.</xforms:message>
-						</xforms:submission>
-
-						<!-- query pleiades for ancient places -->
-						<xforms:submission id="query-pleiades" serialization="none" method="get" action="http://pleiades.stoa.org/search_rss?Title={instance('search-query')}&amp;portal_type=Place"
-							instance="feed" replace="instance">
-							<xforms:message ev:event="xforms-submit-error" level="modal">Unable to communicate with Pleiades RSS feed.</xforms:message>
 						</xforms:submission>
 					</xforms:model>
 				</xforms:group>

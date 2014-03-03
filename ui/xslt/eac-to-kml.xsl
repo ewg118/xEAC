@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:exsl="http://exslt.org/common" xmlns:gml="http://www.opengis.net/gml/" xmlns:skos="http://www.w3.org/2004/02/skos/core#"
-	xmlns:nm="http://nomisma.org/id/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:eac="urn:isbn:1-931666-33-4" xmlns:xlink="http://www.w3.org/1999/xlink"
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:skos="http://www.w3.org/2004/02/skos/core#" xmlns:nm="http://nomisma.org/id/"
+	xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:eac="urn:isbn:1-931666-33-4" xmlns:xlink="http://www.w3.org/1999/xlink"
 	xmlns:osgeo="http://data.ordnancesurvey.co.uk/ontology/geometry/" xmlns:geo="http://www.w3.org/2003/01/geo/wgs84_pos#" xmlns:xs="http://www.w3.org/2001/XMLSchema"
 	xmlns:foaf="http://xmlns.com/foaf/0.1/" xmlns:spatial="http://geovocab.org/spatial#" exclude-result-prefixes="#all" xmlns="http://earth.google.com/kml/2.0" version="2.0">
 
-	
+
 	<xsl:variable name="geonames-url">
 		<xsl:text>http://api.geonames.org</xsl:text>
 	</xsl:variable>
@@ -19,7 +19,7 @@
 			</xsl:for-each>
 			<xsl:for-each select="distinct-values(descendant::eac:placeEntry[contains(@vocabularySource, 'pleiades.stoa.org')]/@vocabularySource)">
 				<xsl:variable name="rdf_url" select="concat(., '/rdf')"/>
-				<xsl:copy-of select="document($rdf_url)/rdf:RDF/*"/>
+				<xsl:copy-of select="document($rdf_url)/rdf:RDF/spatial:Feature"/>
 			</xsl:for-each>
 		</rdf:RDF>
 	</xsl:variable>
@@ -32,7 +32,7 @@
 		<kml xmlns="http://earth.google.com/kml/2.0">
 			<!--<xsl:copy-of select="$rdf"/>-->
 			<Document>
-				<!--<Style xmlns="" id="place">
+				<Style id="place">
 					<IconStyle>
 						<scale>1</scale>
 						<hotSpot x="0.5" y="0.5" xunits="fraction" yunits="fraction"/>
@@ -40,7 +40,7 @@
 							<href>http://maps.google.com/mapfiles/kml/paddle/red-circle.png</href>
 						</Icon>
 					</IconStyle>
-				</Style>-->
+				</Style>
 				<xsl:apply-templates select="descendant::eac:date[string(@standardDate)]|descendant::eac:dateRange[string(eac:fromDate/@standardDate) or string(eac:toDate/@standardDate)]"/>
 				<xsl:apply-templates
 					select="descendant::eac:placeEntry[string(@vocabularySource)][not(preceding-sibling::eac:date|preceding-sibling::eac:dateRange|following-sibling::eac:date|following-sibling::eac:dateRange)]"
@@ -101,6 +101,7 @@
 					<xsl:value-of select="$description"/>
 				</description>
 			</xsl:if>
+			<styleUrl>#place</styleUrl>
 			<xsl:choose>
 				<xsl:when test="local-name() = 'date'">
 					<TimeStamp>
@@ -160,7 +161,7 @@
 			<description>
 				<xsl:value-of select="."/>
 			</description>
-
+			<styleUrl>#place</styleUrl>
 			<xsl:call-template name="get-point">
 				<xsl:with-param name="href" select="$href"/>
 			</xsl:call-template>
@@ -173,8 +174,10 @@
 		<xsl:choose>
 			<xsl:when test="contains($href, 'geonames')">
 				<xsl:variable name="geonameId" select="substring-before(substring-after($href, 'geonames.org/'), '/')"/>
-				<xsl:variable name="geonames_data" select="document(concat($geonames-url, '/get?geonameId=', $geonameId, '&amp;username=', $geonames_api_key, '&amp;style=full'))"/>
-				<xsl:variable name="coordinates" select="concat(exsl:node-set($geonames_data)//lng, ',', exsl:node-set($geonames_data)//lat)"/>
+				<xsl:variable name="geonames_data" as="item()*">
+					<xsl:copy-of select="document(concat($geonames-url, '/get?geonameId=', $geonameId, '&amp;username=', $geonames_api_key, '&amp;style=full'))/*"/>
+				</xsl:variable>
+				<xsl:variable name="coordinates" select="$geonames_data//lng, ',', $geonames_data//lat"/>
 				<Point>
 					<coordinates>
 						<xsl:value-of select="$coordinates"/>
@@ -182,54 +185,40 @@
 				</Point>
 			</xsl:when>
 			<xsl:when test="contains($href, 'nomisma')">
-				<xsl:variable name="coordinates" select="$rdf//*[@rdf:about=$href]/descendant::gml:pos"/>
-				<xsl:if test="string($coordinates)">
-					<xsl:variable name="lat" select="substring-before($coordinates, ' ')"/>
-					<xsl:variable name="lon" select="substring-after($coordinates, ' ')"/>
+				<xsl:if test="string($rdf//*[@rdf:about=$href]/descendant::geo:lat) and string($rdf//*[@rdf:about=$href]/descendant::geo:long)">
+					<xsl:variable name="lat" select="$rdf//*[@rdf:about=$href]/descendant::geo:lat"/>
+					<xsl:variable name="long" select="$rdf//*[@rdf:about=$href]/descendant::geo:long"/>
 					<Point>
 						<coordinates>
-							<xsl:value-of select="concat($lon, ',', $lat)"/>
+							<xsl:value-of select="concat($long, ',', $lat)"/>
 						</coordinates>
 					</Point>
 				</xsl:if>
 			</xsl:when>
-			<xsl:when test="contains($href, 'pleiades')">				
-				<xsl:variable name="coordinates">
-					<xsl:choose>
-						<xsl:when test="number($rdf//*[@rdf:about=concat($href, '#this')]/descendant::geo:lat) and number($rdf//*[@rdf:about=concat($href, '#this')]/descendant::geo:long)">
-							<xsl:value-of select="concat($rdf//*[@rdf:about=concat($href, '#this')]/descendant::geo:long, ',', $rdf//*[@rdf:about=concat($href, '#this')]/descendant::geo:lat)"/>
-						</xsl:when>
-						<xsl:when test="$rdf//*[@rdf:about=concat($href, '#this')]/following-sibling::osgeo:AbstractGeometry">
-							<xsl:variable name="area" select="$rdf//*[@rdf:about=concat($href, '#this')]/following-sibling::osgeo:AbstractGeometry[1]/osgeo:asGeoJSON"/>
-							<xsl:value-of select="translate(replace(replace(substring-after($area, '['), ',\s', ','), '\],', ' '), '[]}', '')"/>
-						</xsl:when>
-					</xsl:choose>				
-				</xsl:variable>
-				
-				<xsl:if test="string($coordinates)">
-					<xsl:choose>
-						<xsl:when test="contains($coordinates, ' ')">
-							<MultiGeometry>								
-								<Polygon>
-									<outerBoundaryIs>
-										<LinearRing>
-											<coordinates>
-												<xsl:value-of select="$coordinates"/>
-											</coordinates>
-										</LinearRing>
-									</outerBoundaryIs>
-								</Polygon>
-							</MultiGeometry>
-						</xsl:when>
-						<xsl:otherwise>
-							<Point>
-								<coordinates>
-									<xsl:value-of select="$coordinates"/>
-								</coordinates>
-							</Point>
-						</xsl:otherwise>
-					</xsl:choose>					
-				</xsl:if>
+			<xsl:when test="contains($href, 'pleiades')">
+				<xsl:choose>
+					<xsl:when test="number($rdf//spatial:Feature[@rdf:about=concat($href, '#this')]/descendant::geo:lat) and number($rdf//spatial:Feature[@rdf:about=concat($href, '#this')]/descendant::geo:long)">
+						<Point>
+							<coordinates>
+								<xsl:value-of select="concat($rdf//spatial:Feature[@rdf:about=concat($href, '#this')]/descendant::geo:long, ',', $rdf//spatial:Feature[@rdf:about=concat($href, '#this')]/descendant::geo:lat)"/>
+							</coordinates>
+						</Point>
+					</xsl:when>
+					<xsl:when test="$rdf//*[@rdf:about=concat($href, '#this')]/following-sibling::osgeo:AbstractGeometry">
+						<xsl:variable name="area" select="$rdf//*[@rdf:about=concat($href, '#this')]/following-sibling::osgeo:AbstractGeometry[1]/osgeo:asGeoJSON"/>
+						<MultiGeometry>
+							<Polygon>
+								<outerBoundaryIs>
+									<LinearRing>
+										<coordinates>
+											<xsl:value-of select="translate(replace(replace(substring-after($area, '['), ',\s', ','), '\],', ' '), '[]}', '')"/>
+										</coordinates>
+									</LinearRing>
+								</outerBoundaryIs>
+							</Polygon>
+						</MultiGeometry>
+					</xsl:when>
+				</xsl:choose>
 			</xsl:when>
 		</xsl:choose>
 	</xsl:template>

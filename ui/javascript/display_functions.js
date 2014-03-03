@@ -1,21 +1,38 @@
-function initialize_timemap(id) {	
+$(document).ready(function () {
+	var id = $('#id').text();	
+	initialize_timemap(id);
+	/*$('#toggle_names').click(function () {
+		$('#names').toggle('show');
+		return false;
+	});*/
+});
+
+function initialize_timemap(id) {
+	var url = "../api/get?id=" + id + "&format=json";
+	var datasets = new Array();
+	
+	//first dataset
+	datasets.push({
+		id: 'dist',
+		title: "Distribution",
+		type: "json",
+		options: {
+			url: url
+		}
+	});
+	
 	var tm;
 	tm = TimeMap.init({
 		mapId: "map", // Id of map div element (required)
 		timelineId: "timeline", // Id of timeline div element (required)
 		options: {
-			eventIconPath: "../images/timemap/"
+			mapType: "physical",
+			eventIconPath: "../ui/images/timemap/"
 		},
-		datasets:[ {
-			title: "Title",
-			theme: "red",
-			type: "kml", // Data to be loaded in KML - must be a local URL
-			options: {
-				url: id + ".kml" // KML file to load
-			}
-		}],
+		datasets: datasets,
 		bandIntervals:[
 		Timeline.DateTime.YEAR,
 		Timeline.DateTime.DECADE]
 	});
+	
 }

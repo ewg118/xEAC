@@ -36,7 +36,18 @@ mxn.register('openlayers', {
 			this.proprietary_bubbles =[];
 			
 			// default road map: OpenStreetMap
-			this.layers.road = new OpenLayers.Layer.OSM();
+			this.layers.osm = new OpenLayers.Layer.OSM();
+			this.layers.imperium = new OpenLayers.Layer.XYZ(
+			"Imperium Romanum",[
+			"http://pelagios.dme.ait.ac.at/tilesets/imperium/${z}/${x}/${y}.png"], {
+				sphericalMercator: true,
+				isBaseLayer: true,
+				numZoomLevels: 12,
+				attribution: '<a href="http://imperium.ahlfeldt.se">Digital Atlas of the Roman Empire</a>, hosted by <a href="http://pelagios-project.blogspot.com">Pelagios</a>.'
+			});
+			this.layers.google_physical = new OpenLayers.Layer.Google("Google Physical", {
+				type: google.maps.MapTypeId.TERRAIN
+			});
 			
 			// deal with click
 			map.events.register('click', map, function (evt) {
@@ -73,28 +84,15 @@ mxn.register('openlayers', {
 				}
 			}
 			
-			//map.addLayer(this.layers.road);
-			this.maps[api] = map;
-			this.loaded[api] = true;
-			
 			/**********************************
 			xEAC CUSTOMIZATION: SELECT BASELAYER BASED ON VARIABLE
 			***********************************/
-			var baseLayerControl = $('#baseLayer').text();
+			var baselayer = $('#baselayer').text();
+			map.addLayer(eval('this.layers.' + baselayer));
+			map.addLayer(this.layers.google_physical);
 			
-			if (baseLayerControl == 'imperium') {
-				var imperium = new OpenLayers.Layer.XYZ(
-				"Imperium Romanum",[
-				"http://pelagios.dme.ait.ac.at/tilesets/imperium/${z}/${x}/${y}.png"], {
-					sphericalMercator: true,
-					isBaseLayer: true,
-					numZoomLevels: 12
-				});
-				map.addLayer(imperium);
-			} else if (baseLayerControl == 'osm') {
-				map.addLayer(new OpenLayers.Layer.OSM());
-				map.zoomToMaxExtent();
-			}
+			this.maps[api] = map;
+			this.loaded[api] = true;
 		},
 		
 		applyOptions: function () {

@@ -4,8 +4,6 @@
 	<xsl:include href="templates.xsl"/>
 	<xsl:include href="widgets.xsl"/>
 
-	<!-- config variables -->
-	<xsl:variable name="ui-theme" select="/content/config/theme/jquery_ui_theme"/>
 	<xsl:param name="mode">
 		<xsl:choose>
 			<xsl:when test="contains(doc('input:request')/request/request-url, 'admin/')">private</xsl:when>
@@ -42,59 +40,42 @@
 						</xsl:otherwise>
 					</xsl:choose>
 				</title>
-				<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/3.8.0/build/cssgrids/grids-min.css"/>
-				<!-- EADitor styling -->
+				<meta name="viewport" content="width=device-width, initial-scale=1"/>
+				<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"/>
+				<!-- bootstrap -->
+				<link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css"/>
+				<script src="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"/>
 				<link rel="stylesheet" href="{$display_path}ui/css/style.css"/>
-				<link rel="stylesheet" href="{$display_path}ui/css/themes/{$ui-theme}.css"/>
 
-				<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"/>
-				<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.23/jquery-ui.min.js"/>
-
-				<!-- menu -->
-				<script type="text/javascript" src="{$display_path}ui/javascript/ui/jquery.ui.core.js"/>
-				<script type="text/javascript" src="{$display_path}ui/javascript/ui/jquery.ui.widget.js"/>
-				<script type="text/javascript" src="{$display_path}ui/javascript/ui/jquery.ui.position.js"/>
-				<script type="text/javascript" src="{$display_path}ui/javascript/ui/jquery.ui.button.js"/>
-				<script type="text/javascript" src="{$display_path}ui/javascript/ui/jquery.ui.menu.js"/>
-				<script type="text/javascript" src="{$display_path}ui/javascript/ui/jquery.ui.menubar.js"/>
-				<script type="text/javascript" src="{$display_path}ui/javascript/menu.js"/>
-
-				<!-- mapping -->
+				<!-- mapping -->				
 				<script src="http://www.openlayers.org/api/OpenLayers.js" type="text/javascript"/>
-				<!--<script src="http://maps.google.com/maps/api/js?sensor=false" type="text/javascript"/>
-				<script src="http://maps.google.com/maps?file=api&amp;v=2&amp;key=ABQIAAAASI0kCI-azC8RgbOZzWc3VRRarOQe_TKf_51Omf6UUSOFm7EABRRhO0PO4nBAO9FCmVDuowVwROLo3w"
-      type="text/javascript"></script>-->
+				<script type="text/javascript" src="http://maps.google.com/maps/api/js?v=3.2&amp;sensor=false"/>
 				<script type="text/javascript" src="{$display_path}ui/javascript/mxn.js"/>
-				<script src="http://static.simile.mit.edu/timeline/api-2.2.0/timeline-api.js?bundle=true" type="text/javascript"/>
-				<script type="text/javascript" src="{$display_path}ui/javascript/timemap_full.pack.js"/>
-				<link type="text/css" href="{$display_path}ui/ui/css/timeline-2.3.0.css" rel="stylesheet"/>
+				<script type="text/javascript" src="{$display_path}ui/javascript/timeline-2.3.0.js"/>
+				<script type="text/javascript" src="{$display_path}ui/javascript/timemap_full.pack.js"/>				
 				<script type="text/javascript" src="{$display_path}ui/javascript/param.js"/>
-				<script type="text/javascript" src="{$display_path}ui/javascript/loaders/xml.js"/>
-				<script type="text/javascript" src="{$display_path}ui/javascript/loaders/kml.js"/>
-				<script type="text/javascript" src="{$display_path}ui/javascript/display_functions.js"/>
-				<script type="text/javascript">
-					$(document).ready(function(){
-						initialize_timemap('<xsl:value-of select="//eac:recordId"/>');
-						$('#toggle_names').click(function(){
-							$('#names').toggle('show');
-							return false;
-						});
-					});
-				</script>
+				<script type="text/javascript" src="{$display_path}ui/javascript/loaders/kml.js"/>		
+				<script type="text/javascript" src="{$display_path}ui/javascript/display_functions.js"/>				
 				<xsl:copy-of select="/content/config/google_analytics/*"/>
 			</head>
 			<body>
 				<xsl:call-template name="header"/>
 				<xsl:call-template name="display"/>
 				<xsl:call-template name="footer"/>
+				<div style="display:none">
+					<span id="id">
+						<xsl:value-of select="//eac:recordId"/>
+					</span>
+					<xsl:call-template name="control-fields"/>
+				</div>
 			</body>
 		</html>
 	</xsl:template>
 
 	<xsl:template name="display">
-		<div class="yui3-g">
-			<div class="yui3-u-1">
-				<div class="content">
+		<div class="container-fluid">
+			<div class="row">
+				<div class="col-md-12">
 					<xsl:call-template name="icons"/>
 					<h1>
 						<xsl:choose>
@@ -164,18 +145,14 @@
 					</div>
 				</div>
 			</div>
-			<div class="yui3-u-3-4">
-				<div class="content">
+			<div class="row">
+				<div class="col-md-9">
 					<xsl:call-template name="body"/>
 				</div>
-			</div>
-			<div class="yui3-u-1-4">
-				<div class="content">
+				<div class="col-md-3">
 					<xsl:call-template name="side-bar"/>
 				</div>
-			</div>
-
-			<xsl:call-template name="control-fields"/>
+			</div>		
 		</div>
 	</xsl:template>
 
@@ -188,7 +165,9 @@
 				<div id="timelinecontainer">
 					<div id="timeline"/>
 				</div>
-			</div>
+				</div>
+			<!--<div id="mapcontainer"/>-->
+			
 		</xsl:if>
 
 

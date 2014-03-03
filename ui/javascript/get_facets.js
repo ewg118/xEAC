@@ -139,7 +139,7 @@ $(document).ready(function() {
 				});
 			}
 		}
-	}).multiselectfilter();
+	});
 	
 	//handle expandable dates
 	$('#century_sint_link').hover(function () {
@@ -190,7 +190,7 @@ $(document).ready(function() {
 	});
 	
 	//check parent century box when a decade box is checked
-	$('.decade_checkbox').livequery('click', function(event){
+	/*$('.decade_checkbox').livequery('click', function(event){
 		if ($(this) .is(':checked')) {
 			//alert('test');
 			$(this) .parent('li').parent('ul').parent('li') .children('input') .attr('checked', true);			
@@ -205,7 +205,7 @@ $(document).ready(function() {
 		}
 		//set label
 		dateLabel();
-	});	
+	});*/	
 	
 	$('#search_button') .click(function () {
 		var q = getQuery();

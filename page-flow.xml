@@ -26,7 +26,7 @@
 	***************** -->
 	<!-- public EAC record views -->
 	<page path-info="/xeac/id/(.*)\.xml" matcher="oxf:perl5-matcher" view="xpl/xml-public.xpl"/>
-	<page path-info="/xeac/id/(.*)\.kml" matcher="oxf:perl5-matcher" model="xpl/xml-public.xpl" view="xpl/display-kml.xpl"/>
+	<page path-info="/xeac/id/(.*)\.kml" matcher="oxf:perl5-matcher" view="xpl/xml-public.xpl"/>
 	<page path-info="/xeac/id/(.*)\.solr" matcher="oxf:perl5-matcher" model="xpl/xml-public.xpl" view="xpl/eac-to-solr-published.xpl"/>
 	<page path-info="/xeac/id/(.*)\.rdf" matcher="oxf:perl5-matcher" model="xpl/xml-public.xpl" view="xpl/eac-to-rdf.xpl"/>
 	<page path-info="/xeac/id/(.*)" matcher="oxf:perl5-matcher" model="xpl/xml-public.xpl" view="xpl/display.xpl"/>		
@@ -41,6 +41,9 @@
 	
 	<!-- Atom feed -->
 	<page path-info="/xeac/feed/" model="xpl/solr-feed.xpl" view="xpl/feed.xpl"/>
+	
+	<!-- APIs -->
+	<page path-info="/xeac/api/get" model="xpl/xml-public.xpl" view="xpl/api-get.xpl"/>
 	
 	<!-- AJAX CALLS -->
 	<!-- facet results -->

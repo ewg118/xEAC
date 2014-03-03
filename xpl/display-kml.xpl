@@ -14,7 +14,7 @@
 		<p:input name="data" href="#data"/>
 		<p:input name="config">
 			<config>
-				<content-type>application/vnd.google-earth.kml+xml</content-type>
+				<content-type>application/xml</content-type>
 				<indent-amount>4</indent-amount>
 				<encoding>utf-8</encoding>
 				<indent>true</indent>

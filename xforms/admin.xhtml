@@ -54,6 +54,17 @@
 					<url>http://localhost:8080/orbeon/xeac/</url>
 					<oai-pmh active="false"/>
 					<lang>en</lang>
+					<index>
+						<div>
+							<h1>xEAC</h1>
+							<p>xEAC is an open source XForms framework for creating, managing, and publishing EAC-CPF collections.</p>
+						</div>
+					</index>
+					<footer>
+						<div id="footer">
+							<a href="https://github.com/ewg118/xEAC">xEAC</a> ©2013 Ethan Gruber. <a href="http://www.apache.org/licenses/LICENSE-2.0.html">License.</a>
+						</div>
+					</footer>
 					<instances>
 						<agencyName-list>
 							<item default="true">Default Agency</item>
@@ -792,7 +803,7 @@
 		<xforms:action ev:event="xforms-enabled" if="instance('control-instance')/firstrun = true()">
 			<xxforms:show dialog="firstrun"/>
 		</xforms:action>
-		
+
 		<!--<xxforms:dialog id="create-collection" appearance="full" level="modal" close="false" draggable="true" visible="false">
 			<xforms:label>Welcome to Numishare</xforms:label>
 			<p>Please create a collection for your authenticated group.</p>
