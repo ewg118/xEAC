@@ -50,7 +50,7 @@
 				</xsl:for-each>
 				<xsl:for-each select="descendant::eac:localTypeDeclaration[eac:citation[@xlink:role='semantic']]">
 					<xsl:value-of select="eac:abbreviation"/>
-					<xsl:text> </xsl:text>
+					<xsl:text>: </xsl:text>
 					<xsl:value-of select="eac:citation/@xlink:href"/>
 					<xsl:text> </xsl:text>
 				</xsl:for-each>
