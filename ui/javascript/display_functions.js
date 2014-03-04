@@ -1,10 +1,10 @@
 $(document).ready(function () {
-	var id = $('#id').text();	
+	var id = $('#id').text();
 	initialize_timemap(id);
-	/*$('#toggle_names').click(function () {
+	$('#toggle_names').click(function () {
 		$('#names').toggle('show');
 		return false;
-	});*/
+	});
 });
 
 function initialize_timemap(id) {
@@ -34,5 +34,4 @@ function initialize_timemap(id) {
 		Timeline.DateTime.YEAR,
 		Timeline.DateTime.DECADE]
 	});
-	
 }

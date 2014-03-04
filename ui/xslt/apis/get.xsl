@@ -111,40 +111,41 @@
 		</xsl:variable>
 		<xsl:variable name="start">
 			<xsl:choose>
-				<xsl:when test="local-name() = 'date'">
+				<xsl:when test="local-name() = 'date'">					
 					<xsl:value-of select="parent::node()/eac:date/@standardDate"/>
 				</xsl:when>
-				<xsl:when test="local-name()='dateRange'">
+				<xsl:when test="local-name()='dateRange'">					
 					<xsl:value-of select="eac:fromDate/@standardDate"/>
 				</xsl:when>
 			</xsl:choose>
 		</xsl:variable>
 		<xsl:variable name="end">
-			<xsl:if test="local-name()='dateRange'">
+			<xsl:if test="local-name()='dateRange'">				
 				<xsl:value-of select="eac:toDate/@standardDate"/>
 			</xsl:if>
 		</xsl:variable>
-		<xsl:variable name="theme">red</xsl:variable>		
+		<xsl:variable name="theme">red</xsl:variable>
+		
 		<xsl:variable name="coordinates">
 			<xsl:call-template name="get-point">
 				<xsl:with-param name="href" select="$href"/>
 			</xsl:call-template>
 		</xsl:variable>
 		<!-- output --> { <xsl:if test="string($coordinates) and not($coordinates='NULL')">"point": {"lon": <xsl:value-of select="tokenize($coordinates, '\|')[1]"/>, "lat": <xsl:value-of
-				select="tokenize($coordinates, '\|')[2]"/>},</xsl:if> "title": "<xsl:value-of select="replace($name, '&#x022;', '%27;')"/>", <xsl:if test="string($start)">"start": "<xsl:value-of select="$start"/>",</xsl:if>
+				select="tokenize($coordinates, '\|')[2]"/>},</xsl:if> "title": "<xsl:value-of select="normalize-space(replace($name, '&#x022;', ''))"/>", <xsl:if test="string($start)">"start": "<xsl:value-of select="$start"/>",</xsl:if>
 		<xsl:if test="string($end)">"end": "<xsl:value-of select="$end"/>",</xsl:if> "options": { "theme": "<xsl:value-of select="$theme"/>"<xsl:if test="string($description)">, "description":
-			"<xsl:value-of select="replace($description, '&#x022;', '%27;')"/>"</xsl:if><xsl:if test="string($href)">, "href": "<xsl:value-of select="$href"/>"</xsl:if> } } </xsl:template>
+			"<xsl:value-of select="normalize-space(replace($description, '&#x022;', ''))"/>"</xsl:if><xsl:if test="string($href)">, "href": "<xsl:value-of select="$href"/>"</xsl:if> } } </xsl:template>
 
 	<xsl:template name="get-point">
 		<xsl:param name="href"/>
 
 		<xsl:choose>
 			<xsl:when test="contains($href, 'geonames')">
-				<xsl:variable name="geonameId" select="substring-before(substring-after($href, 'geonames.org/'), '/')"/>
+				<xsl:variable name="geonameId" select="tokenize($href, '/')[4]"/>
 				<xsl:variable name="geonames_data" as="item()*">
 					<xsl:copy-of select="document(concat($geonames-url, '/get?geonameId=', $geonameId, '&amp;username=', $geonames_api_key, '&amp;style=full'))/*"/>
-				</xsl:variable>
-				<xsl:variable name="coordinates" select="$geonames_data//lng, '|', $geonames_data//lat"/>
+				</xsl:variable>				
+				<xsl:variable name="coordinates" select="concat($geonames_data//lng, '|', $geonames_data//lat)"/>
 				<xsl:value-of select="$coordinates"/>
 			</xsl:when>
 			<xsl:when test="contains($href, 'nomisma')">

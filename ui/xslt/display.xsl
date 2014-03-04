@@ -21,12 +21,40 @@
 		</xsl:choose>
 	</xsl:variable>
 
+	<xsl:variable name="namespaces" as="item()*">
+		<namespaces>
+			<namespace prefix="dcterms">http://purl.org/dc/terms/</namespace>
+			<namespace prefix="foaf">http://xmlns.com/foaf/0.1/</namespace>
+			<namespace prefix="geo">http://www.w3.org/2003/01/geo/wgs84_pos#</namespace>
+			<namespace prefix="owl">http://www.w3.org/2002/07/owl#</namespace>
+			<namespace prefix="rdfs">http://www.w3.org/2000/01/rdf-schema#</namespace>
+			<namespace prefix="rdfa">http://www.w3.org/ns/rdfa#</namespace>
+			<namespace prefix="rdf">http://www.w3.org/1999/02/22-rdf-syntax-ns#</namespace>
+			<namespace prefix="skos">http://www.w3.org/2004/02/skos/core#</namespace>
+		</namespaces>
+	</xsl:variable>
+
 	<xsl:template match="/">
 		<xsl:apply-templates select="/content/eac:eac-cpf"/>
 	</xsl:template>
 
 	<xsl:template match="eac:eac-cpf">
-		<html xml:lang="en">
+		<html lang="en" vocab="{/content/config/url}id/">
+			<!-- dynamically generate prefix attribute -->
+			<xsl:attribute name="prefix">
+				<xsl:for-each select="$namespaces//namespace">
+					<xsl:value-of select="@prefix"/>
+					<xsl:text> </xsl:text>
+					<xsl:value-of select="."/>
+					<xsl:text> </xsl:text>
+				</xsl:for-each>
+				<xsl:for-each select="descendant::eac:localTypeDeclaration[eac:citation[@xlink:role='semantic']]">
+					<xsl:value-of select="eac:abbreviation"/>
+					<xsl:text> </xsl:text>
+					<xsl:value-of select="eac:citation/@xlink:href"/>
+					<xsl:text> </xsl:text>
+				</xsl:for-each>
+			</xsl:attribute>
 			<head>
 				<title>
 					<xsl:value-of select="/content/config/title"/>
@@ -47,15 +75,15 @@
 				<script src="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"/>
 				<link rel="stylesheet" href="{$display_path}ui/css/style.css"/>
 
-				<!-- mapping -->				
+				<!-- mapping -->
 				<script src="http://www.openlayers.org/api/OpenLayers.js" type="text/javascript"/>
 				<script type="text/javascript" src="http://maps.google.com/maps/api/js?v=3.2&amp;sensor=false"/>
 				<script type="text/javascript" src="{$display_path}ui/javascript/mxn.js"/>
 				<script type="text/javascript" src="{$display_path}ui/javascript/timeline-2.3.0.js"/>
-				<script type="text/javascript" src="{$display_path}ui/javascript/timemap_full.pack.js"/>				
+				<script type="text/javascript" src="{$display_path}ui/javascript/timemap_full.pack.js"/>
 				<script type="text/javascript" src="{$display_path}ui/javascript/param.js"/>
-				<script type="text/javascript" src="{$display_path}ui/javascript/loaders/kml.js"/>		
-				<script type="text/javascript" src="{$display_path}ui/javascript/display_functions.js"/>				
+				<script type="text/javascript" src="{$display_path}ui/javascript/loaders/kml.js"/>
+				<script type="text/javascript" src="{$display_path}ui/javascript/display_functions.js"/>
 				<xsl:copy-of select="/content/config/google_analytics/*"/>
 			</head>
 			<body>
@@ -73,10 +101,18 @@
 	</xsl:template>
 
 	<xsl:template name="display">
-		<div class="container-fluid">
+		<xsl:variable name="typeof">
+			<xsl:choose>
+				<xsl:when test="descendant::eac:entityType='person'">foaf:Person</xsl:when>
+				<xsl:when test="descendant::eac:entityType='corporateBody'">foaf:Organization</xsl:when>
+				<xsl:when test="descendant::eac:entityType='family'">arch:Family</xsl:when>
+			</xsl:choose>
+		</xsl:variable>
+		
+		
+		<div class="container-fluid" typeof="{$typeof}" about="{//eac:recordId}">
 			<div class="row">
 				<div class="col-md-12">
-					<xsl:call-template name="icons"/>
 					<h1>
 						<xsl:choose>
 							<xsl:when test="eac:cpfDescription/eac:identity/eac:nameEntry[eac:preferredForm='WIKIPEDIA']">
@@ -105,26 +141,41 @@
 							<h2>
 								<xsl:value-of select="eac:citation"/>
 							</h2>
-							<ul>
+							<dl class="dl-horizontal">
 								<xsl:for-each select="//eac:nameEntry[child::node()=$abbreviation]">
-									<li>
-										<xsl:value-of select="eac:part"/>
+									<dt>
+										<xsl:choose>
+											<xsl:when test="eac:authorizedForm">
+												<xsl:text>authorized form</xsl:text>
+											</xsl:when>
+											<xsl:when test="eac:preferredForm">
+												<xsl:text>preferred form</xsl:text>
+											</xsl:when>
+											<xsl:when test="eac:alternativeForm">
+												<xsl:text>alternative form</xsl:text>
+											</xsl:when>
+										</xsl:choose>
+									</dt>
+									<dd>
+										<span>
+											<xsl:choose>
+												<xsl:when test="eac:preferredForm">
+													<xsl:attribute name="property">skos:prefLabel</xsl:attribute>
+												</xsl:when>
+												<xsl:when test="eac:alternativeForm">
+													<xsl:attribute name="property">skos:altLabel</xsl:attribute>
+												</xsl:when>
+											</xsl:choose>
+											<xsl:if test="string(@xml:lang)">
+												<xsl:attribute name="xml:lang" select="@xml:lang"/>
+											</xsl:if>
+											<xsl:value-of select="eac:part"/>
+										</span>
 										<xsl:if test="@xml:lang">
 											<xsl:text> (</xsl:text>
 											<xsl:value-of select="@xml:lang"/>
 											<xsl:text>)</xsl:text>
 										</xsl:if>
-										<xsl:choose>
-											<xsl:when test="eac:authorizedForm">
-												<xsl:text> (authorized form)</xsl:text>
-											</xsl:when>
-											<xsl:when test="eac:preferredForm">
-												<xsl:text> (preferred form)</xsl:text>
-											</xsl:when>
-											<xsl:when test="eac:alternativeForm">
-												<xsl:text> (alternative form)</xsl:text>
-											</xsl:when>
-										</xsl:choose>
 										<xsl:if test="eac:useDates">
 											<xsl:text>, dates of use: </xsl:text>
 											<xsl:choose>
@@ -138,9 +189,9 @@
 												</xsl:when>
 											</xsl:choose>
 										</xsl:if>
-									</li>
+									</dd>
 								</xsl:for-each>
-							</ul>
+							</dl>
 						</xsl:for-each>
 					</div>
 				</div>
@@ -152,7 +203,7 @@
 				<div class="col-md-3">
 					<xsl:call-template name="side-bar"/>
 				</div>
-			</div>		
+			</div>
 		</div>
 	</xsl:template>
 
@@ -165,9 +216,9 @@
 				<div id="timelinecontainer">
 					<div id="timeline"/>
 				</div>
-				</div>
+			</div>
 			<!--<div id="mapcontainer"/>-->
-			
+
 		</xsl:if>
 
 
@@ -175,10 +226,18 @@
 	</xsl:template>
 
 	<xsl:template name="side-bar">
-		<xsl:if test="descendant::eac:resourceRelation[@xlink:role='portrait']">
-			<img src="{descendant::eac:resourceRelation[@xlink:role='portrait']/@xlink:href}" alt="Portrait" style="max-width:240px;"/>
-		</xsl:if>
-
+		<h3>Export</h3>
+		<ul>
+			<li>
+				<a href="id/{//eac:eac-cpf/eac:control/eac:recordId}.xml">EAC-CPF/XML</a>
+			</li>
+			<li>
+				<a href="id/{//eac:eac-cpf/eac:control/eac:recordId}.rdf">RDF/XML</a>
+			</li>
+			<li>
+				<a href="id/{//eac:eac-cpf/eac:control/eac:recordId}.kml">KML</a>
+			</li>
+		</ul>
 		<!-- display otherRecordIds, create links when applicable -->
 		<xsl:if test="count(eac:control/eac:otherRecordId) &gt; 0">
 			<h3>Associated Identifiers</h3>
@@ -187,7 +246,7 @@
 					<li>
 						<xsl:choose>
 							<xsl:when test="contains(., 'http://')">
-								<a href="{.}">
+								<a href="{.}" rel="skos:related">
 									<xsl:value-of select="."/>
 								</a>
 							</xsl:when>
@@ -198,6 +257,10 @@
 					</li>
 				</xsl:for-each>
 			</ul>
+		</xsl:if>
+
+		<xsl:if test="descendant::eac:resourceRelation[@xlink:role='portrait']">
+			<img src="{descendant::eac:resourceRelation[@xlink:role='portrait']/@xlink:href}" alt="Portrait" style="max-width:100%;"/>
 		</xsl:if>
 
 		<!-- if there is an otherRecordId with a nomisma ID, construction nomisma SPARQL -->
@@ -238,15 +301,28 @@
 
 	<xsl:template match="eac:biogHist">
 		<h3>Biographical or Historical Note</h3>
-		<xsl:apply-templates select="eac:abstract|eac:citation|eac:outline|eac:list"/>
+
+		<xsl:if test="eac:abstract">
+			<dl class="dl-horizontal">
+				<xsl:apply-templates select="eac:abstract"/>
+			</dl>
+		</xsl:if>
+		<xsl:if test="eac:citation">
+			<dl class="dl-horizontal">
+				<xsl:apply-templates select="eac:citation"/>
+			</dl>
+		</xsl:if>
 		<xsl:apply-templates select="eac:p"/>
 	</xsl:template>
 
-	<xsl:template match="eac:abstract|eac:citation|eac:outline|eac:list">
+	<xsl:template match="eac:abstract|eac:citation">
 		<dt>
 			<xsl:value-of select="local-name()"/>
 		</dt>
 		<dd>
+			<xsl:if test="local-name()='abstract'">
+				<xsl:attribute name="property">dcterms:abstract</xsl:attribute>
+			</xsl:if>
 			<xsl:value-of select="."/>
 		</dd>
 	</xsl:template>
@@ -326,37 +402,34 @@
 			<h2>Relations</h2>
 			<xsl:if test="count(eac:cpfRelation) &gt; 0">
 				<h3>Related Corporate, Personal, and Family Names</h3>
-				<ul>
+				<dl class="dl-horizontal">
 					<xsl:apply-templates select="eac:cpfRelation">
 						<xsl:sort select="@xlink:arcrole"/>
 					</xsl:apply-templates>
-				</ul>
+				</dl>
 			</xsl:if>
 			<xsl:if test="count(eac:resourceRelation) &gt; 0">
 				<h3>Related Resources</h3>
-				<ul>
+				<dl class="dl-horizontal">
 					<xsl:apply-templates select="eac:resourceRelation[not(@xlink:role='portrait')]"/>
-				</ul>
+				</dl>
 			</xsl:if>
 		</div>
 	</xsl:template>
 
 	<xsl:template match="eac:cpfRelation|eac:resourceRelation">
-		<li>
-			<xsl:if test="@xlink:arcrole">
-				<i>
-					<xsl:value-of select="@xlink:arcrole"/>
-					<xsl:text> </xsl:text>
-				</i>
-			</xsl:if>
+		<dt>
+			<xsl:value-of select="@xlink:arcrole"/>
+		</dt>
+		<dd>
 			<xsl:choose>
 				<xsl:when test="local-name()='cpfRelation'">
 					<xsl:choose>
 						<!-- create clickable links to internal documents -->
 						<xsl:when test="string(@xlink:href) and not(contains(@xlink:href, 'http://'))">
 							<a href="{@xlink:href}">
-								<xsl:if test="local-name()='resourceRelation'">
-									<xsl:attribute name="target">_blank</xsl:attribute>
+								<xsl:if test="@xlink:arcrole">
+									<xsl:attribute name="rel" select="@xlink:arcrole"/>
 								</xsl:if>
 								<xsl:value-of select="eac:relationEntry"/>
 							</a>
@@ -365,48 +438,32 @@
 							<xsl:value-of select="eac:relationEntry"/>
 							<!-- create external link to resources outside of xEAC -->
 							<a href="{@xlink:href}" style="margin-left:5px;">
+								<xsl:if test="@xlink:arcrole">
+									<xsl:attribute name="rel" select="@xlink:arcrole"/>
+								</xsl:if>
 								<img src="{$display_path}ui/images/external.png" alt="External link"/>
 							</a>
 						</xsl:when>
 						<xsl:otherwise>
-							<xsl:value-of select="eac:relationEntry"/>
+							<span>
+								<xsl:if test="@xlink:arcrole">
+									<xsl:attribute name="property" select="@xlink:arcrole"/>
+								</xsl:if>
+								<xsl:value-of select="eac:relationEntry"/>
+							</span>
 						</xsl:otherwise>
 					</xsl:choose>
 				</xsl:when>
 				<xsl:when test="local-name()='resourceRelation'">
-					<a href="{@xlink:href}" target="_blank">
+					<a href="{@xlink:href}">
+						<xsl:if test="@xlink:arcrole">
+							<xsl:attribute name="rel" select="@xlink:arcrole"/>
+						</xsl:if>
 						<xsl:value-of select="eac:relationEntry"/>
 					</a>
 				</xsl:when>
 			</xsl:choose>
-		</li>
-	</xsl:template>
-
-	<xsl:template name="icons">
-		<div class="submenu">
-			<span class="icon">
-				<a href="id/{//eac:eac-cpf/eac:control/eac:recordId}.kml">KML</a>
-			</span>
-			<span class="icon">
-				<a href="id/{//eac:eac-cpf/eac:control/eac:recordId}.rdf">RDF/XML</a>
-			</span>
-			<span class="icon">
-				<a href="id/{//eac:eac-cpf/eac:control/eac:recordId}.xml">EAC-CPF/XML</a>
-			</span>
-			<span class="icon">
-				<!-- AddThis Button BEGIN -->
-				<div class="addthis_toolbox addthis_default_style ">
-					<a class="addthis_button_preferred_1"/>
-					<a class="addthis_button_preferred_2"/>
-					<a class="addthis_button_preferred_3"/>
-					<a class="addthis_button_preferred_4"/>
-					<a class="addthis_button_compact"/>
-					<a class="addthis_counter addthis_bubble_style"/>
-				</div>
-				<script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#pubid=xa-4dd29d0e2f66557f"/>
-				<!-- AddThis Button END -->
-			</span>
-		</div>
+		</dd>
 	</xsl:template>
 
 	<!--<xsl:template name="regularize-name">

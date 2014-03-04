@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:skos="http://www.w3.org/2004/02/skos/core#" xmlns:foaf="http://xmlns.com/foaf/spec/#" xmlns:xlink="http://www.w3.org/1999/xlink"
-	xmlns:arch="http://purl.org/archival/vocab/arch#" xmlns:eac="urn:isbn:1-931666-33-4" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:xs="http://www.w3.org/2001/XMLSchema"
-	exclude-result-prefixes="eac xs xlink" version="2.0">
+	xmlns:arch="http://purl.org/archival/vocab/arch#" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:eac="urn:isbn:1-931666-33-4" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	exclude-result-prefixes="eac xlink" version="2.0">
 
 	<xsl:variable name="url" select="/content/config/url"/>
 
@@ -57,16 +57,25 @@
 
 		<!-- relations -->
 		<!-- only process relations with an xlink:arcrole from a defined namespace -->
-		<xsl:apply-templates select="descendant::eac:cpfRelation[contains(@xlink:arcrole, ':') and string(@xlink:href)]|descendant::eac:resourceReslation[contains(@xlink:arcrole, ':') and string(@xlink:href)]"/>		
+		<xsl:apply-templates
+			select="descendant::eac:cpfRelation[contains(@xlink:arcrole, ':') and string(@xlink:href)]|descendant::eac:resourceReslation[contains(@xlink:arcrole, ':') and string(@xlink:href)]"/>
+
+		<xsl:apply-templates select="descendant::eac:abstract"/>
 	</xsl:template>
-	
+
 	<xsl:template match="eac:cpfRelation|eac:resourceRelation">
 		<xsl:variable name="uri" select="if (contains(@xlink:href, 'http://')) then . else concat($url, 'id/', @xlink:href)"/>
 		<xsl:variable name="prefix" select="substring-before(@xlink:arcrole, ':')"/>
 		<xsl:variable name="namespace" select="ancestor::eac:eac-cpf/eac:control/eac:localTypeDeclaration[eac:abbreviation=$prefix]/eac:citation/@xlink:href"/>
-		
+
 		<xsl:element name="{@xlink:arcrole}" namespace="{$namespace}">
 			<xsl:attribute name="rdf:resource" select="$uri"/>
 		</xsl:element>
+	</xsl:template>
+
+	<xsl:template match="eac:abstract">
+		<dcterms:abstract>
+			<xsl:value-of select="."/>
+		</dcterms:abstract>
 	</xsl:template>
 </xsl:stylesheet>

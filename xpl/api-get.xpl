@@ -18,6 +18,11 @@
 		</p:input>
 		<p:output name="data" id="request"/>
 	</p:processor>
+	
+	<p:processor name="oxf:pipeline">
+		<p:input name="config" href="config.xpl"/>		
+		<p:output name="data" id="config"/>
+	</p:processor>
 
 	<p:processor name="oxf:xslt">
 		<p:input name="data" href="#request"/>
@@ -35,17 +40,17 @@
 				</xsl:template>
 			</xsl:stylesheet>
 		</p:input>
-		<p:output name="data" id="config"/>
+		<p:output name="data" id="serializer-config"/>
 	</p:processor>
 
 	<p:processor name="oxf:xslt">
 		<p:input name="request" href="#request"/>
-		<p:input name="data" href="#data"/>
+		<p:input name="data" href="aggregate('content', #data, #config)"/>
 		<p:input name="config" href="../ui/xslt/apis/get.xsl"/>
 		<p:output name="data" id="model"/>
 	</p:processor>
 
-	<p:choose href="#config">
+	<p:choose href="#serializer-config">
 		<p:when test="format='text'">
 			<p:processor name="oxf:text-serializer">
 				<p:input name="data" href="#model"/>
