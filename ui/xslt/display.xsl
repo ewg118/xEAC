@@ -44,7 +44,7 @@
 			<xsl:attribute name="prefix">
 				<xsl:for-each select="$namespaces//namespace">
 					<xsl:value-of select="@prefix"/>
-					<xsl:text> </xsl:text>
+					<xsl:text>: </xsl:text>
 					<xsl:value-of select="."/>
 					<xsl:text> </xsl:text>
 				</xsl:for-each>
