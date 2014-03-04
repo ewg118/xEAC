@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:eac="urn:isbn:1-931666-33-4" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xeac="https://github.com/ewg118/xEAC"
 	xmlns:xs="http://www.w3.org/2001/XMLSchema" exclude-result-prefixes="#all" version="2.0">
-	<xsl:include href="templates.xsl"/>
-	<xsl:include href="widgets.xsl"/>
+	<xsl:include href="../../templates.xsl"/>
+	<xsl:include href="../../widgets.xsl"/>
 
 	<xsl:param name="mode">
 		<xsl:choose>

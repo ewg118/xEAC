@@ -17,7 +17,7 @@
 
 	<p:processor name="oxf:unsafe-xslt">
 		<p:input name="data" href="aggregate('content', #data, #config)"/>
-		<p:input name="config" href="../ui/xslt/eac-to-kml.xsl"/>
+		<p:input name="config" href="../ui/xslt/serializations/eac/kml.xsl"/>
 		<p:output name="data" ref="data"/>
 	</p:processor>
 </p:config>

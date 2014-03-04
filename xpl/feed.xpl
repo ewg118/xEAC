@@ -28,7 +28,7 @@
 	<p:processor name="oxf:unsafe-xslt">
 		<p:input name="params" href="#params"/>
 		<p:input name="data" href="aggregate('content', #data, #config)"/>
-		<p:input name="config" href="../ui/xslt/linked_data/solr-to-atom.xsl"/>
+		<p:input name="config" href="../ui/xslt/serializations/solr/atom.xsl"/>
 		<p:output name="data" ref="data"/>
 	</p:processor>
 	

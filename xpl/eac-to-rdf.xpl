@@ -17,7 +17,7 @@
 
 	<p:processor name="oxf:unsafe-xslt">
 		<p:input name="data" href="aggregate('content', #data, #config)"/>
-		<p:input name="config" href="../ui/xslt/linked_data/eac-to-rdf.xsl"/>
+		<p:input name="config" href="../ui/xslt/serializations/eac/rdf.xsl"/>
 		<p:output name="data" id="formatted"/>
 	</p:processor>
 
