@@ -39,7 +39,7 @@
 	</xsl:template>
 
 	<xsl:template match="eac:eac-cpf">
-		<html lang="en" vocab="{/content/config/url}id/">
+		<html lang="en">
 			<!-- dynamically generate prefix attribute -->
 			<xsl:attribute name="prefix">
 				<xsl:for-each select="$namespaces//namespace">
