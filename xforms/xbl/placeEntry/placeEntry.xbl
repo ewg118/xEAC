@@ -6,9 +6,9 @@
 			<xforms:group xbl:attr="model context ref bind" xxbl:scope="outer">
 				<xbl:content includes="xforms|label,xforms|help,xforms|hint,xforms|alert"/>
 				<xforms:group xxbl:scope="inner">
-					<xxforms:variable name="binding" as="node()?">
+					<xforms:var name="binding" as="node()?">
 						<xxforms:sequence select="." xxbl:scope="outer"/>
-					</xxforms:variable>
+					</xforms:var>
 					<xforms:group ref="$binding">
 						<xforms:group ref=".[string(text())]">
 							<div>
@@ -442,12 +442,12 @@
 								<xforms:message if="number(instance('geoname-temp')/totalResultsCount) = 0" level="modal">No results found for query.</xforms:message>
 								<!--<xforms:insert if="number(instance('geoname-temp')/totalResultsCount) &gt; 0" context="instance('geonames')" origin="instance('geoname-temp')"/>-->
 								<xforms:action xxforms:iterate="instance('geoname-temp')//geoname">
-									<xxforms:variable name="countryCode" select="countryCode"/>
-									<xxforms:variable name="countryName" select="countryName"/>
-									<xxforms:variable name="name" select="name"/>
-									<xxforms:variable name="adminName1" select="adminName1"/>
-									<xxforms:variable name="geonameId" select="geonameId"/>
-									<xxforms:variable name="fcode" select="fcode"/>
+									<xforms:var name="countryCode" select="countryCode"/>
+									<xforms:var name="countryName" select="countryName"/>
+									<xforms:var name="name" select="name"/>
+									<xforms:var name="adminName1" select="adminName1"/>
+									<xforms:var name="geonameId" select="geonameId"/>
+									<xforms:var name="fcode" select="fcode"/>
 									<!-- set a value equivalent to AACR2 standard for US, AU, CA, and GB.  This equation deviates from AACR2 for Malaysia since standard abbreviations for territories cannot be found -->
 									<xforms:setvalue ref="instance('geoname-template')/label"
 										value="if ($countryCode = 'US' or $countryCode = 'AU' or $countryCode = 'CA') then if ($fcode = 'ADM1') then $name else concat($name, ' (', instance('abbreviations')/country[@code=$countryCode]/place[. = $adminName1]/@abbr, ')') else if ($countryCode= 'GB') then  if ($fcode = 'ADM1') then $name else concat($name, ' (', $adminName1, ')') else if ($fcode = 'PCLI') then $name else concat($name, ' (', $countryName, ')')"/>

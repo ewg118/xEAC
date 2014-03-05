@@ -9,11 +9,11 @@
 			<xforms:group xbl:attr="model context ref bind" xxbl:scope="outer">
 				<xbl:content includes="xforms|label,xforms|help,xforms|hint,xforms|alert"/>
 				<xforms:group xxbl:scope="inner">
-					<xxforms:variable name="binding" as="node()?">
+					<xforms:var name="binding" as="node()?">
 						<xxforms:sequence select="." xxbl:scope="outer"/>
-					</xxforms:variable>
-					<xxforms:variable name="count" select="count($binding/*)"/>
-					<xxforms:variable name="display_path">../../</xxforms:variable>
+					</xforms:var>
+					<xforms:var name="count" select="count($binding/*)"/>
+					<xforms:var name="display_path">../../</xforms:var>
 
 					<span class="add">
 						<xforms:trigger appearance="minimal">
@@ -26,7 +26,7 @@
 					<xxforms:dialog id="reorder-dialog" appearance="full" level="modal" close="false" draggable="true" visible="false">
 						<xforms:label>Reorder Elements</xforms:label>
 						<xforms:repeat nodeset="$binding/*">
-							<xxforms:variable name="position" select="position()"/>
+							<xforms:var name="position" select="position()"/>
 
 							<div class="reorder-block">
 								<b>
