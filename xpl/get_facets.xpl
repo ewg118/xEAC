@@ -26,6 +26,5 @@
 		<p:input name="config" href="../ui/xslt/ajax/get_facets.xsl"/>
 		<p:output name="data" ref="data"/>
 	</p:processor>
-	
 
 </p:config>

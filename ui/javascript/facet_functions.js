@@ -1,7 +1,5 @@
 /*******************
 FUNCTIONS USED IN FACET-BASED PAGES: BROWSE, COLLECTION, AND MAPS
-
-
 ********************/
 
 //assemble query
@@ -52,52 +50,30 @@ function getQuery() {
 	}
 	
 	//get multiselects
-	$('.multiselect').each(function () {
+	$('select.multiselect').each(function () {
+		var val = $(this).val();
 		var facet = $(this).attr('id').split('-')[0];
-		var segment = $(this).multiselect("getChecked").map(function () {
-			return facet + ':"' + this.value + '"';
-		}).get();
-		if (segment[0] != null) {
-			if (segment.length > 1) {
-				query.push('(' + segment.join(' OR ') + ')');
+		if (val != null) {
+			segments = new Array();
+			for (var i = 0; i < val.length; i++) {
+				segments.push(facet + ':"' + val[i] + '"');
+			}
+			if (segments.length > 1) {
+				query.push('(' + segments.join(' OR ') + ')');
 			} else {
-				query.push(segment[0]);
+				query.push(segments[0]);
 			}
 		}
 	});
 	
-	//keyword search (only implemented on collection page)
-	if ($('#keyword').length > 0) {
-		if ($('#keyword').val().length > 0) {
-			query.push($('#keyword').val());
-		}
-	}
-	
-	//date range search (only implemented on collection page)
-	if ($('#from_date').length > 0 || $('#to_date').length > 0) {
-		if ($('#from_date') .val().length > 0 || $('#to_date') .val().length > 0) {
-			var string = '';
-			string += 'year_num:';
-			var from_date = $('#from_date') .val().length > 0? $('#from_date') .val(): '*';
-			var from_era = $('#from_era') .val() == 'minus'? '-': '';
-			
-			var to_date = $('#to_date') .val().length > 0? $('#to_date') .val(): '*';
-			var to_era = $('#to_era') .val() == 'minus'? '-': '';
-			
-			string += '[' + (from_date == '*'? '': from_era) + from_date + ' TO ' + (to_date == '*'? '': to_era) + to_date + ']';
-			query.push(string);
-		}
-	}
-	
 	//set the value attribute of the q param to the query assembled by javascript
-	
 	if (query.length > 0) {
 		return query.join(' AND ');
 	} else {
 		return '*:*';
 	}
 }
-	
+
 //function for assembling the Lucene syntax string for querying on centuries and decades
 function getDate() {
 	var date_array = new Array();

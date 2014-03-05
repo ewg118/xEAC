@@ -12,14 +12,16 @@
 					<xsl:value-of select="/config/title"/>
 				</title>
 				<meta name="viewport" content="width=device-width, initial-scale=1"/>
-				<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"/>
+				<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js"/>
 				<!-- bootstrap -->
 				<link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css"/>
 				<script src="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"/>
-				<!-- xEAC styling -->
 				<link rel="stylesheet" href="{$display_path}ui/css/style.css"/>
-
-				<xsl:copy-of select="/config/google_analytics/*"/>
+				<xsl:if test="string(/content/config/google_analytics)">
+					<script type="text/javascript">
+						<xsl:value-of select="/content/config/google_analytics"/>
+					</script>
+				</xsl:if>
 			</head>
 			<body>
 				<xsl:call-template name="header"/>

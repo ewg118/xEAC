@@ -1,4 +1,5 @@
 $(document).ready(function () {
+
 	$('.sortForm_categories') .change(function () {
 		var field = $(this).val();
 		var sort_order = $('.sortForm_order').val();

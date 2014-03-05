@@ -32,22 +32,14 @@
 				<!-- url params -->
 				<xsl:param name="q" select="doc('input:params')/request/parameters/parameter[name='q']/value"/>
 				<xsl:param name="lang" select="doc('input:params')/request/parameters/parameter[name='lang']/value"/>
-				<xsl:param name="category" select="doc('input:params')/request/parameters/parameter[name='category']/value"/>
-				<xsl:param name="pipeline" select="doc('input:params')/request/parameters/parameter[name='pipeline']/value"/>
+				<xsl:param name="category" select="doc('input:params')/request/parameters/parameter[name='category']/value"/>				
 				<xsl:param name="sort" select="doc('input:params')/request/parameters/parameter[name='sort']/value"/>
 				
 				<!-- config variables -->
 				<xsl:variable name="solr-url" select="concat(/config/solr_published, 'select/')"/>				
 								
 				<xsl:variable name="service">
-					<xsl:choose>
-						<xsl:when test="$pipeline='results'">
-							<xsl:value-of select="concat($solr-url, '?q=', encode-for-uri($q), '&amp;facet.field=', $category, '&amp;facet.sort=', $sort, '&amp;rows=0')"/>
-						</xsl:when>
-						<xsl:when test="$pipeline='maps' or $pipeline='maps_fullscreen'">
-							<xsl:value-of select="concat($solr-url, '?q=', encode-for-uri(concat($q, ' AND georef:*')), '&amp;facet.field=', $category, '&amp;facet.sort=', $sort, '&amp;rows=0')"/>
-						</xsl:when>			
-					</xsl:choose>
+					<xsl:value-of select="concat($solr-url, '?q=', encode-for-uri($q), '&amp;facet=true&amp;facet.field=', $category, '&amp;facet.sort=', $sort, '&amp;rows=0&amp;facet.limit=-1&amp;facet.mincount=1')"/>
 				</xsl:variable>
 				
 				<xsl:template match="/">

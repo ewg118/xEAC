@@ -69,22 +69,27 @@
 					</xsl:choose>
 				</title>
 				<meta name="viewport" content="width=device-width, initial-scale=1"/>
-				<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"/>
+				<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js"/>
 				<!-- bootstrap -->
 				<link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css"/>
 				<script src="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"/>
 				<link rel="stylesheet" href="{$display_path}ui/css/style.css"/>
-
-				<!-- mapping -->
-				<script src="http://www.openlayers.org/api/OpenLayers.js" type="text/javascript"/>
-				<script type="text/javascript" src="http://maps.google.com/maps/api/js?v=3.2&amp;sensor=false"/>
-				<script type="text/javascript" src="{$display_path}ui/javascript/mxn.js"/>
-				<script type="text/javascript" src="{$display_path}ui/javascript/timeline-2.3.0.js"/>
-				<script type="text/javascript" src="{$display_path}ui/javascript/timemap_full.pack.js"/>
-				<script type="text/javascript" src="{$display_path}ui/javascript/param.js"/>
-				<script type="text/javascript" src="{$display_path}ui/javascript/loaders/kml.js"/>
 				<script type="text/javascript" src="{$display_path}ui/javascript/display_functions.js"/>
-				<xsl:copy-of select="/content/config/google_analytics/*"/>
+				<!-- mapping -->
+				<xsl:if test="descendant::eac:placeEntry[string(@vocabularySource)]">
+					<script src="http://www.openlayers.org/api/OpenLayers.js" type="text/javascript"/>
+					<script type="text/javascript" src="http://maps.google.com/maps/api/js?v=3.2&amp;sensor=false"/>
+					<script type="text/javascript" src="{$display_path}ui/javascript/mxn.js"/>
+					<script type="text/javascript" src="{$display_path}ui/javascript/timeline-2.3.0.js"/>
+					<script type="text/javascript" src="{$display_path}ui/javascript/timemap_full.pack.js"/>
+					<script type="text/javascript" src="{$display_path}ui/javascript/param.js"/>
+					<script type="text/javascript" src="{$display_path}ui/javascript/loaders/kml.js"/>
+				</xsl:if>
+				<xsl:if test="string(/content/config/google_analytics)">
+					<script type="text/javascript">
+						<xsl:value-of select="/content/config/google_analytics"/>
+					</script>
+				</xsl:if>
 			</head>
 			<body>
 				<xsl:call-template name="header"/>
@@ -93,6 +98,12 @@
 				<div style="display:none">
 					<span id="id">
 						<xsl:value-of select="//eac:recordId"/>
+					</span>
+					<span id="mappable">
+						<xsl:choose>
+							<xsl:when test="descendant::eac:placeEntry[string(@vocabularySource)]">true</xsl:when>
+							<xsl:otherwise>false</xsl:otherwise>
+						</xsl:choose>
 					</span>
 					<xsl:call-template name="control-fields"/>
 				</div>
@@ -108,8 +119,8 @@
 				<xsl:when test="descendant::eac:entityType='family'">arch:Family</xsl:when>
 			</xsl:choose>
 		</xsl:variable>
-		
-		
+
+
 		<div class="container-fluid" typeof="{$typeof}" about="{//eac:recordId}">
 			<div class="row">
 				<div class="col-md-12">
@@ -217,11 +228,7 @@
 					<div id="timeline"/>
 				</div>
 			</div>
-			<!--<div id="mapcontainer"/>-->
-
 		</xsl:if>
-
-
 		<xsl:apply-templates select="eac:cpfDescription"/>
 	</xsl:template>
 

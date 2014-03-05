@@ -122,9 +122,8 @@ ul li, ol li {
 .flickr-link {
 	cursor:pointer;
 }
-button.ui-multiselect {
-	margin-bottom:10px;
-}
+button.multiselect {
+	margin:10px 0;
 }
 .thumbImage, .flickrthumb {
 	margin:5px;

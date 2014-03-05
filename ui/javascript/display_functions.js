@@ -1,10 +1,13 @@
 $(document).ready(function () {
-	var id = $('#id').text();
-	initialize_timemap(id);
+	var id = $('#id').text();	
 	$('#toggle_names').click(function () {
 		$('#names').toggle('show');
 		return false;
 	});
+	
+	if ($('#mappable').text()=='true'){
+		initialize_timemap(id);
+	}
 });
 
 function initialize_timemap(id) {

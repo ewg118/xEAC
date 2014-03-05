@@ -42,6 +42,8 @@
 	<!-- Atom feed -->
 	<page path-info="/xeac/feed/" model="xpl/solr-feed.xpl" view="xpl/feed.xpl"/>
 	
+	<page path-info="/xeac/test/" view="xpl/solr-results.xpl"/>
+	
 	<!-- APIs -->
 	<page path-info="/xeac/api/get" model="xpl/xml-public.xpl" view="xpl/api-get.xpl"/>
 	
