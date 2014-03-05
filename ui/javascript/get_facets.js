@@ -20,7 +20,6 @@ $(document).ready(function () {
 		disablePopup();
 	});
 	
-	
 	$('.multiselect').multiselect({
 		buttonWidth: '250px',
 		enableFiltering: true,
@@ -35,7 +34,30 @@ $(document).ready(function () {
 				options.each(function () {
 					selected += $(this).text() + ', ';
 				});
-				return select.attr('title') + ': ' + selected.substr(0, selected.length - 2) + ' <b class="caret"></b>';
+				label = selected.substr(0, selected.length - 2);
+				if (label.length > 20) {
+					label = label.substr(0, 20) + '...';
+				}
+				return select.attr('title') + ': ' + label + ' <b class="caret"></b>';
+			}
+		},
+		onChange: function (element, checked) {
+			//if there are 0 selected checks in the multiselect, re-initialize ajax to populate list
+			id = element.parent('select').attr('id');
+			if ($('#' + id).val() == null) {
+				var q = getQuery();
+				var category = id.split('-select')[0];
+				$.get(path + 'get_facets/', {
+					q: q, category: category, sort: 'index', lang: lang
+				},
+				function (data) {
+					$('#ajax-temp').html(data);
+					$('#' + id) .html('');
+					$('#ajax-temp option').each(function () {
+						$(this).clone().appendTo('#' + id);
+					});
+					$("#" + id).multiselect('rebuild');
+				});
 			}
 		}
 	});

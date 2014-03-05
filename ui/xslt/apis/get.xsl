@@ -132,9 +132,9 @@
 			</xsl:call-template>
 		</xsl:variable>
 		<!-- output --> { <xsl:if test="string($coordinates) and not($coordinates='NULL')">"point": {"lon": <xsl:value-of select="tokenize($coordinates, '\|')[1]"/>, "lat": <xsl:value-of
-				select="tokenize($coordinates, '\|')[2]"/>},</xsl:if> "title": "<xsl:value-of select="normalize-space(replace($name, '&#x022;', ''))"/>", <xsl:if test="string($start)">"start": "<xsl:value-of select="$start"/>",</xsl:if>
+				select="tokenize($coordinates, '\|')[2]"/>},</xsl:if> "title": "<xsl:value-of select="normalize-space(replace($name, '&#x022;', '\\&#x022;'))"/>", <xsl:if test="string($start)">"start": "<xsl:value-of select="$start"/>",</xsl:if>
 		<xsl:if test="string($end)">"end": "<xsl:value-of select="$end"/>",</xsl:if> "options": { "theme": "<xsl:value-of select="$theme"/>"<xsl:if test="string($description)">, "description":
-			"<xsl:value-of select="normalize-space(replace($description, '&#x022;', ''))"/>"</xsl:if><xsl:if test="string($href)">, "href": "<xsl:value-of select="$href"/>"</xsl:if> } } </xsl:template>
+			"<xsl:value-of select="normalize-space(replace($description, '&#x022;', '\\&#x022;'))"/>"</xsl:if><xsl:if test="string($href)">, "href": "<xsl:value-of select="$href"/>"</xsl:if> } } </xsl:template>
 
 	<xsl:template name="get-point">
 		<xsl:param name="href"/>
