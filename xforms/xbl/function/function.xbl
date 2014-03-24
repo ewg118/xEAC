@@ -297,7 +297,7 @@ SELECT ?c ?label {
 gvp:broaderTransitive aat:300054593 ;
 gvp:prefLabelGVP/xl:literalForm ?label ;
 luc:term "SEARCH_QUERY*"
-} ORDER BY ?label LIMIT 100]]>
+} LIMIT 25]]>
 							</query>
 						</xforms:instance>
 

@@ -27,17 +27,18 @@
 	<!-- public EAC record views -->
 	<page path-info="/xeac/id/(.*)\.xml" matcher="oxf:perl5-matcher" view="xpl/xml-public.xpl"/>
 	<page path-info="/xeac/id/(.*)\.kml" matcher="oxf:perl5-matcher" view="xpl/xml-public.xpl"/>
-	<page path-info="/xeac/id/(.*)\.solr" matcher="oxf:perl5-matcher" model="xpl/xml-public.xpl" view="xpl/eac-to-solr-published.xpl"/>
+	<page path-info="/xeac/id/(.*)\.tei" matcher="oxf:perl5-matcher" model="xpl/xml-public.xpl" view="xpl/eac-to-tei.xpl"/>
+	<page path-info="/xeac/id/(.*)\.solr" matcher="oxf:perl5-matcher" model="xpl/xml-public.xpl" view="xpl/eac-to-solr.xpl"/>
 	<page path-info="/xeac/id/(.*)\.rdf" matcher="oxf:perl5-matcher" model="xpl/xml-public.xpl" view="xpl/eac-to-rdf.xpl"/>
 	<page path-info="/xeac/id/(.*)" matcher="oxf:perl5-matcher" model="xpl/xml-public.xpl" view="xpl/display.xpl"/>		
 	<!--<page path-info="/xeac/json/(.*)" matcher="oxf:perl5-matcher" model="xpl/xml-public.xpl" view="xpl/eac-to-json.xpl"/>-->
 	
 	<!-- index -->
-	<page path-info="/xeac/" model="xpl/config.xpl" view="xpl/index.xpl"/>
+	<page path-info="/xeac/" model="xpl/config.xpl" view="xpl/page-index.xpl"/>
 
 	<!-- public search/browse interface -->
-	<page path-info="/xeac/results/" model="xpl/solr-results.xpl" view="xpl/results.xpl"/>
-	<page path-info="/xeac/search/" model="exist-config.xml" view="xpl/search.xpl"/>
+	<page path-info="/xeac/results/" model="xpl/solr-results.xpl" view="xpl/page-results.xpl"/>
+	<!--<page path-info="/xeac/search/" model="exist-config.xml" view="xpl/search.xpl"/>-->
 	
 	<!-- Atom feed -->
 	<page path-info="/xeac/feed/" model="xpl/solr-feed.xpl" view="xpl/feed.xpl"/>

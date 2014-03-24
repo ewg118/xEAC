@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:xs="http://www.w3.org/2001/XMLSchema" exclude-result-prefixes="xs xeac xs" version="2.0"
 	xmlns:xeac="http://ewg118.github.com/xEAC/">
-	<xsl:include href="templates.xsl"/>
-	<xsl:include href="results_functions.xsl"/>
+	<xsl:include href="../../templates.xsl"/>
+	<xsl:include href="../../functions.xsl"/>
 
 	<!-- config variables -->
 	<xsl:variable name="url" select="/content/config/url"/>

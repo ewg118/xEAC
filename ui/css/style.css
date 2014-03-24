@@ -65,6 +65,9 @@ ul li, ol li {
 	margin:10px 0;
 	text-align:center;
 }
+.gi {
+	max-width:50%;	
+}
  /*
   ***************************************
   SEARCH FORMS
@@ -256,40 +259,4 @@ div.custominfostyle {
 	font-size: 1.5em;
 	font-style: italic;
 	width: 20em;
-}
-/*
-  ***************************************
-  jQuery UI Menubar @VERSION
-  ***************************************
-  * Copyright 2011, AUTHORS.txt (http://jqueryui.com/about)
-  * Dual licensed under the MIT or GPL Version 2 licenses.
-  * http://jquery.org/license
- */
-.ui-menubar {
-	list-style: none;
-	margin: 0;
-	padding-left: 0;
-	border-left:0px;
-	border-right:0px;
-}
-.ui-menubar-item {
-	float: left;
-	list-style-type:none;
-}
-.ui-menubar .ui-button {
-	float: left;
-	font-weight: normal;
-	border-top-width: 0 !important;
-	border-bottom-width: 0 !important;
-	margin: 0;
-	outline: none;
-}
-.ui-menubar .ui-menubar-link {
-	border-right: 1px dashed transparent;
-	border-left: 1px dashed transparent;
-}
-.ui-menubar .ui-menu {
-	width: 200px;
-	position: absolute;
-	z-index: 9999;
 }
