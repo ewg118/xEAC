@@ -119,7 +119,7 @@
 
 							<div class="subsection">
 								<xforms:repeat nodeset="eac:function">
-									<xeac:descriptionTerm/>
+									<xeac:function/>
 								</xforms:repeat>
 
 								<xforms:repeat nodeset="eac:languageUsed">
