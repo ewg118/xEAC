@@ -32,7 +32,7 @@
 		<p:output name="data" id="model"/>
 	</p:processor>
 	
-	<p:processor name="oxf:html-converter">
+	<p:processor name="oxf:html-serializer">
 		<p:input name="data" href="#model"/>
 		<p:input name="config">
 			<config>

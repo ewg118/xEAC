@@ -57,7 +57,7 @@
 					</xsl:variable>
 					
 					<xsl:choose>
-						<xsl:when test="substring($basename, string-length($basename) - 3) = '.kml'">
+						<xsl:when test="substring($basename, string-length($basename) - 3) = '.kml' or doc('input:request')/request/parameters/parameter[name='mode']/value='static'">
 							<config>
 								<url>
 									<xsl:value-of select="concat(/exist-config/url, 'xeac/kml/', $id, '.kml')"/>

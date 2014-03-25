@@ -11,7 +11,7 @@ $(document).ready(function () {
 });
 
 function initialize_timemap(id) {
-	var url = "../api/get?id=" + id + "&format=json";
+	var url = "../api/get?id=" + id + "&format=json&mode=static";
 	var datasets = new Array();
 	
 	//first dataset

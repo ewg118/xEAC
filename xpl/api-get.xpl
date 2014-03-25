@@ -29,6 +29,7 @@
 		<p:input name="config">
 			<xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:xs="http://www.w3.org/2001/XMLSchema">
 				<xsl:param name="format" select="/request/parameters/parameter[name='format']/value"/>
+				<xsl:param name="mode" select="/request/parameters/parameter[name='mode']/value"/>
 
 				<xsl:template match="/">
 					<format>
