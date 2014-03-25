@@ -21,6 +21,8 @@
 		</xsl:choose>
 	</xsl:variable>
 
+	<xsl:variable name="id" select="//eac:eac-cpf/eac:control/eac:recordId"/>
+
 	<xsl:variable name="namespaces" as="item()*">
 		<namespaces>
 			<namespace prefix="dcterms">http://purl.org/dc/terms/</namespace>
@@ -67,6 +69,9 @@
 							<xsl:value-of select="eac:cpfDescription/eac:identity/eac:nameEntry[1]/eac:part"/>
 						</xsl:otherwise>
 					</xsl:choose>
+					<xsl:text> (</xsl:text>
+					<xsl:value-of select="$id"/>
+					<xsl:text></xsl:text>
 				</title>
 				<meta name="viewport" content="width=device-width, initial-scale=1"/>
 				<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js"/>
@@ -236,13 +241,16 @@
 		<h3>Export</h3>
 		<ul>
 			<li>
-				<a href="id/{//eac:eac-cpf/eac:control/eac:recordId}.xml">EAC-CPF/XML</a>
+				<a href="id/{$id}.xml">EAC-CPF</a>
 			</li>
 			<li>
-				<a href="id/{//eac:eac-cpf/eac:control/eac:recordId}.rdf">RDF/XML</a>
+				<a href="id/{$id}.tei">TEI</a>
 			</li>
 			<li>
-				<a href="id/{//eac:eac-cpf/eac:control/eac:recordId}.kml">KML</a>
+				<a href="id/{$id}.rdf">RDF/XML</a>
+			</li>
+			<li>
+				<a href="id/{$id}.kml">KML</a>
 			</li>
 		</ul>
 		<!-- display otherRecordIds, create links when applicable -->
