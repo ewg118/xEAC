@@ -17,9 +17,6 @@ html {
 a > img {
 	border:none;
 }
-ul li, ol li {
-	list-style-type:none;
-}
 .highlight {
 	background-color: #F8F8F8;
 	border: 1px solid #E7E7E7;

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:eac="urn:isbn:1-931666-33-4" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xeac="https://github.com/ewg118/xEAC"
-	xmlns:xs="http://www.w3.org/2001/XMLSchema" exclude-result-prefixes="#all" version="2.0">
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:eac="urn:isbn:1-931666-33-4" xmlns:xlink="http://www.w3.org/1999/xlink"
+	xmlns:xeac="https://github.com/ewg118/xEAC" xmlns:xs="http://www.w3.org/2001/XMLSchema" exclude-result-prefixes="#all" version="2.0">
 	<xsl:include href="../../templates.xsl"/>
 	<xsl:include href="../../widgets.xsl"/>
 
@@ -71,7 +71,7 @@
 					</xsl:choose>
 					<xsl:text> (</xsl:text>
 					<xsl:value-of select="$id"/>
-					<xsl:text></xsl:text>
+					<xsl:text>)</xsl:text>
 				</title>
 				<meta name="viewport" content="width=device-width, initial-scale=1"/>
 				<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js"/>
@@ -246,9 +246,11 @@
 			<li>
 				<a href="id/{$id}.tei">TEI</a>
 			</li>
-			<li>
-				<a href="id/{$id}.rdf">RDF/XML</a>
-			</li>
+			<li>RDF/XML <ul>
+					<li><a href="id/{$id}.rdf">Default</a></li>
+					<li><a href="{$display_path}api/get?id={$id}&amp;model=cidoc-crm">CIDOC CRM</a></li>
+				</ul></li>
+			<li> </li>
 			<li>
 				<a href="id/{$id}.kml">KML</a>
 			</li>
@@ -387,7 +389,8 @@
 				<xsl:value-of select="parent::node()/eac:placeRole"/>
 			</xsl:when>
 			<xsl:when test="parent::node()/eac:placeEntry">
-				<a href="{$display_path}results/?q={if (string(parent::node()/@localType)) then parent::node()/@localType else 'placeEntry'}_facet:&#x022;{parent::node()/eac:placeEntry}&#x022;">
+				<a
+					href="{$display_path}results/?q={if (string(parent::node()/@localType)) then parent::node()/@localType else 'placeEntry'}_facet:&#x022;{parent::node()/eac:placeEntry}&#x022;">
 					<xsl:value-of select="parent::node()/eac:placeEntry"/>
 				</a>
 				<xsl:if test="string(parent::node()/eac:placeEntry/@vocabularySource)">
