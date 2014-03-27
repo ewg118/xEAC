@@ -1,7 +1,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:xforms="http://www.w3.org/2002/xforms" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ev="http://www.w3.org/2001/xml-events"
 	xmlns:xxforms="http://orbeon.org/oxf/xml/xforms" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:fr="http://orbeon.org/oxf/xml/form-runner" xmlns:xlink="http://www.w3.org/1999/xlink"
 	xmlns:xxi="http://orbeon.org/oxf/xml/xinclude" xmlns:eac="urn:isbn:1-931666-33-4" xmlns:oxf="http://www.orbeon.com/oxf/processors" xmlns:exist="http://exist.sourceforge.net/NS/exist"
-	xmlns:xeac="https://github.com/ewg118/xEAC">
+	xmlns:xeac="https://github.com/ewg118/xEAC" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:owl="http://www.w3.org/2002/07/owl#">
 	<head>
 		<title>xEAC Application Settings</title>
 		<link rel="stylesheet" href="/fr/style/bootstrap/css/bootstrap.css" type="text/css"/>
@@ -35,6 +35,7 @@
 					<save-trigger/>
 					<collection-name/>
 					<error/>
+					<simple-upload-trigger/>
 				</control>
 			</xforms:instance>
 
@@ -91,6 +92,16 @@
 				<relations xmlns=""/>
 			</xforms:instance>
 
+			<!-- upload relationship ontology -->
+			<xforms:instance id="file">
+				<!-- Start with placeholders for three files -->
+				<file xmlns="" xsi:type="xs:anyURI" filename="" mediatype="" size=""/>
+			</xforms:instance>
+
+			<xforms:instance id="ontology">
+				<rdf:RDF/>
+			</xforms:instance>
+
 			<!-- ************ BINDINGS *************** -->
 			<xforms:bind nodeset="instance('config')">
 				<xforms:bind nodeset="title" required="true()"/>
@@ -104,18 +115,25 @@
 					<xforms:bind nodeset="reference" required="true()" type="xs:integer"/>
 				</xforms:bind>
 				<xforms:bind nodeset="relationSemantics">
-					<xforms:bind nodeset="relation">
-						<xforms:bind nodeset="@from" constraint="if (contains(., ':')) then substring-before(., ':') = instance('config')//abbreviation else string-length(.) &gt; 0"/>
+					<xforms:bind nodeset="descendant::relation">
+						<xforms:bind nodeset="@from" required="true()" constraint="if (contains(., ':')) then substring-before(., ':') = instance('config')//abbreviation else string-length(.) &gt; 0"/>
 						<xforms:bind nodeset="@to" required="true()"/>
 					</xforms:bind>
 				</xforms:bind>
 				<xforms:bind nodeset="localTypeDeclarations">
 					<xforms:bind nodeset="localTypeDeclaration">
-						<xforms:bind nodeset="abbreviation" required="true()" type="xs:token"/>
+						<xforms:bind nodeset="abbreviation" required="true()" type="xs:ID"/>
 						<xforms:bind nodeset="citation">
 							<xforms:bind nodeset="@href" required="true()" type="xs:anyURI"/>
 						</xforms:bind>
 					</xforms:bind>
+				</xforms:bind>
+			</xforms:bind>
+
+			<xforms:bind nodeset="instance('control-instance')">
+				<xforms:bind nodeset="namespace">
+					<xforms:bind nodeset="@prefix" type="xs:ID" readonly="not(parent::node()/@import=true())"/>
+					<xforms:bind nodeset="@import" type="xs:boolean"/>
 				</xforms:bind>
 			</xforms:bind>
 
@@ -126,13 +144,14 @@
 
 			<!-- ****************** SUBMISSIONS ***************** -->
 			<!-- Load File -->
-			<xforms:submission id="load-config" serialization="none" method="get" action="{instance('exist-config')/url}xeac/config.xml" xxforms:username="{instance('exist-config')/username}" xxforms:password="{instance('exist-config')/password}" replace="instance"
-				instance="config">
+			<xforms:submission id="load-config" serialization="none" method="get" action="{instance('exist-config')/url}xeac/config.xml" xxforms:username="{instance('exist-config')/username}"
+				xxforms:password="{instance('exist-config')/password}" replace="instance" instance="config">
 				<xforms:message ev:event="xforms-submit-error" level="modal">Unable to load configuration file</xforms:message>
 			</xforms:submission>
 
 			<!-- Save File -->
-			<xforms:submission id="save-config" ref="instance('config')" xxforms:username="{instance('exist-config')/username}" xxforms:password="{instance('exist-config')/password}" action="{instance('exist-config')/url}xeac/config.xml" method="put" replace="none">
+			<xforms:submission id="save-config" ref="instance('config')" xxforms:username="{instance('exist-config')/username}" xxforms:password="{instance('exist-config')/password}"
+				action="{instance('exist-config')/url}xeac/config.xml" method="put" replace="none">
 				<xforms:setvalue ev:event="xforms-submit-done" ref="instance('status')">Configuration saved.</xforms:setvalue>
 				<xforms:message ev:event="xforms-submit-error" level="modal">Error saving configuration file.</xforms:message>
 			</xforms:submission>
@@ -140,6 +159,15 @@
 			<xforms:submission id="xquery-collection" ref="instance('eXist-xquery')" action="{instance('exist-config')/url}xeac/records" method="post" replace="instance" instance="xquery-result"
 				xxforms:username="{instance('exist-config')/username}" xxforms:password="{instance('exist-config')/password}">
 				<xforms:setvalue ref="instance('control-instance')/error" ev:event="xforms-submit-error">Error querying eXist database.</xforms:setvalue>
+			</xforms:submission>
+
+			<!-- upload file -->
+			<xforms:submission id="upload-ontology" method="post" replace="none" resource="test:" ref="instance('control-instance')/simple-upload-trigger">
+				<xforms:message ev:event="xforms-submit-error" level="modal">Upload to temporary directory failed.</xforms:message>
+			</xforms:submission>
+
+			<xforms:submission id="get-ontology" method="get" replace="instance" instance="ontology" serialization="none" action="{instance('file')}">
+				<xforms:message ev:event="xforms-submit-error" level="modal">Unable to load file into an XForms instance. Is it an XML document?</xforms:message>
 			</xforms:submission>
 
 			<xforms:action ev:event="xforms-model-construct-done">
@@ -197,12 +225,12 @@
 										<p>Public URL of the site. Used in citations of and image references in PDF printouts. Changing this to an inactive URL will <b>not</b> break 's core
 											functionality, but web forms may be style-less since the Orbeon applications point to this URL for embedding css files.</p>
 									</div>
-									<!--<div>
-										<xforms:textarea ref="google_analytics/script">
-										<xforms:label>Google Analytics</xforms:label>
+									<div>
+										<xforms:textarea ref="google_analytics">
+											<xforms:label>Google Analytics</xforms:label>
 										</xforms:textarea>
 										<p>Copy and paste the javascript code between <b>&lt;script type="text/javascript"&gt;&lt;/script&gt;</b> provided by Google.</p>
-										</div>-->
+									</div>
 								</div>
 								<div class="section">
 									<h2>API Keys</h2>
@@ -280,6 +308,10 @@
 														<xforms:insert context="instance('cpfRelations-list')" origin="instance('xquery-result')//relation"/>
 													</xforms:action>
 												</xforms:trigger>
+												<xforms:trigger appearance="minimal">
+													<xforms:label><img src="/xeac/xforms/images/add.gif"/>Upload RDF/XML Ontology</xforms:label>
+													<xxforms:show ev:event="DOMActivate" dialog="upload-ontology-dialog"/>
+												</xforms:trigger>
 											</span>
 											<xforms:group ref="instance('cpfRelations-list')[count(//relation) &gt; 0]">
 												<div class="subsection">
@@ -330,8 +362,7 @@
 																	<td>
 																		<xforms:input ref="@from">
 																			<xforms:alert>Required</xforms:alert>
-																			<xforms:action ev:event="xforms-value-changed">
-																				<xforms:setvalue ref="parent::node()/@to" value="parent::node()/@from"/>
+																			<xforms:action ev:event="xforms-value-changed">																				
 																				<!-- insert localTypeDeclaration -->
 																				<xforms:action if="contains(., ':') and not(instance('config')//abbreviation = substring-before(., ':'))">
 																					<xforms:var name="prefix" select="substring-before(., ':')"/>
@@ -419,7 +450,7 @@
 													<table>
 														<thead>
 															<tr>
-																<th>Relation</th>																
+																<th>Relation</th>
 																<th>Delete</th>
 															</tr>
 														</thead>
@@ -429,7 +460,7 @@
 																	<td>
 																		<xforms:input ref=".">
 																			<xforms:alert>Required</xforms:alert>
-																			<xforms:action ev:event="xforms-value-changed">																				
+																			<xforms:action ev:event="xforms-value-changed">
 																				<!-- insert localTypeDeclaration -->
 																				<xforms:action if="contains(., ':') and not(instance('config')//abbreviation = substring-before(., ':'))">
 																					<xforms:var name="prefix" select="substring-before(., ':')"/>
@@ -440,7 +471,7 @@
 																				</xforms:action>
 																			</xforms:action>
 																		</xforms:input>
-																	</td>																	
+																	</td>
 																	<td>
 																		<xforms:trigger appearance="minimal">
 																			<xforms:delete ev:event="DOMActivate" nodeset="."/>
@@ -532,6 +563,120 @@
 								</div>
 							</fr:tab>
 						</fr:tabview>
+						<xxforms:dialog id="upload-ontology-dialog" appearance="full" level="modal" close="true" draggable="true" visible="false">
+							<xforms:label>Upload Ontology</xforms:label>
+							<div style="width:400px;">
+								<fr:upload ref="instance('file')">
+									<xforms:filename ref="@filename"/>
+									<xforms:mediatype ref="@mediatype"/>
+									<xxforms:size ref="@size"/>
+								</fr:upload>
+								<div style="margin:20px 0;">
+									<fr:button>
+										<xforms:label>Upload</xforms:label>
+										<xforms:action ev:event="DOMActivate">
+											<xxforms:hide dialog="upload-ontology-dialog"/>
+											<xforms:send submission="upload-ontology"/>
+											<!--get the temp file written to disk-->
+											<xforms:action ev:event="xforms-submit-done">
+												<xforms:send submission="get-ontology"/>
+												<!-- process ontology to extract namespaces -->
+												<xforms:action ev:event="xforms-submit-done">
+													<xforms:action xxforms:iterate="instance('ontology')//*[@rdf:about][rdf:type[@rdf:resource='http://www.w3.org/2002/07/owl#Ontology']]">
+														<xforms:var name="about" select="data(context()/@rdf:about)"/>
+														<xforms:insert context="instance('control-instance')" nodeset="./child::node()[last()]"
+															origin="xforms:element('namespace', (xforms:attribute('prefix', ''), xforms:attribute('import', true()), $about))"/>
+													</xforms:action>
+													<xxforms:show dialog="prefixes-dialog"/>
+												</xforms:action>
+											</xforms:action>
+										</xforms:action>
+									</fr:button>
+								</div>
+							</div>
+						</xxforms:dialog>
+						<xxforms:dialog id="prefixes-dialog" appearance="full" level="modal" close="true" draggable="true" visible="false">
+							<xforms:label>Select Prefixes</xforms:label>
+							<p>The following ontology URIs were found within the RDF upload:</p>
+							<table class="table">
+								<thead>
+									<th>Prefix</th>
+									<th>URI</th>
+									<th>Import</th>
+								</thead>
+								<tbody>
+									<xforms:repeat nodeset="instance('control-instance')/namespace">
+										<tr>
+											<td>
+												<xforms:input ref="@prefix">
+													<xforms:alert>Required if the import box is checked; must be xs:ID.</xforms:alert>
+												</xforms:input>
+											</td>
+											<td>
+												<xforms:output ref="."/>
+											</td>
+											<td>
+												<xforms:input ref="@import"/>
+											</td>
+										</tr>
+									</xforms:repeat>
+								</tbody>
+							</table>
+							<div style="margin:20px 0">
+								<xforms:trigger>
+									<xforms:label>Import</xforms:label>
+									<xforms:action ev:event="DOMActivate">
+										<xxforms:hide dialog="prefixes-dialog"/>
+										<xforms:action xxforms:iterate="instance('control-instance')/namespace[@import=true() and @prefix castable as xs:ID]">
+											<xforms:var name="uri" select="data(context()/text())"/>
+											<xforms:var name="prefix" select="data(context()/@prefix)"/>
+											<!-- insert relations extracted from RDF -->
+											<xforms:action xxforms:iterate="instance('ontology')//*[contains(@rdf:about, $uri)][rdf:type/@rdf:resource='http://www.w3.org/1999/02/22-rdf-syntax-ns#Property' or rdf:type/@rdf:resource='http://www.w3.org/2002/07/owl#SymmetricProperty']">
+												<xforms:var name="source" select="replace(@rdf:about, $uri, concat($prefix, ':'))"/>
+												<!-- ignore properties which have already been imported -->
+												<xforms:action if="not(instance('config')/relationSemantics/cpfRelations/relation/@from = $source)">
+													<xforms:insert context="instance('config')/relationSemantics/cpfRelations" nodeset="child::node()[last()]" origin="instance('cpfRelation-template')"/>
+													<!-- handle equivalent relationships -->
+													<xforms:action if="rdf:type/@rdf:resource='http://www.w3.org/2002/07/owl#SymmetricProperty'">
+														<xforms:setvalue ref="instance('config')/relationSemantics/cpfRelations/relation[last()]/@from" value="$source"/>
+														<xforms:setvalue ref="instance('config')/relationSemantics/cpfRelations/relation[last()]/@to" value="$source"/>
+													</xforms:action>
+													<!-- handle inverse relationships -->
+													<xforms:action if="rdf:type/@rdf:resource='http://www.w3.org/1999/02/22-rdf-syntax-ns#Property'">
+														<!-- if owl:inverseOf exists -->
+														<xforms:action if="string(context()/owl:inverseOf/@rdf:resource)">
+															<xforms:var name="to" select="replace(context()/owl:inverseOf/@rdf:resource, $uri, concat($prefix, ':'))"/>
+															<xforms:setvalue ref="instance('config')/relationSemantics/cpfRelations/relation[last()]/@from" value="$source"/>
+															<xforms:setvalue ref="instance('config')/relationSemantics/cpfRelations/relation[last()]/@to" value="$to"/>
+														</xforms:action>
+														<!-- otherwise, insert the same relationship -->
+														<xforms:action if="not(string(context()/owl:inverseOf/@rdf:resource))">															
+															<xforms:setvalue ref="instance('config')/relationSemantics/cpfRelations/relation[last()]/@from" value="$source"/>
+															<xforms:setvalue ref="instance('config')/relationSemantics/cpfRelations/relation[last()]/@to" value="$source"/>
+														</xforms:action>
+													</xforms:action>
+												</xforms:action>
+											</xforms:action>
+											
+											<!-- insert localTypeDeclaration for the prefix and URI if it does not already exist -->
+											<xforms:action if="not(instance('config')/localTypeDeclarations/localTypeDeclaration[abbreviation=$prefix and citation/@href=$uri])">
+												<xforms:insert context="instance('config')/localTypeDeclarations" nodeset="./child::node()[last()]"
+													origin="instance('localTypeDeclaration-template')"/>
+												<xforms:setvalue ref="instance('config')/localTypeDeclarations/localTypeDeclaration[last()]/abbreviation"
+													value="$prefix"/>
+												<xforms:setvalue ref="instance('config')/localTypeDeclarations/localTypeDeclaration[last()]/citation"
+													value="$uri"/>
+												<xforms:setvalue ref="instance('config')/localTypeDeclarations/localTypeDeclaration[last()]/citation/@href"
+													value="$uri"/>
+											</xforms:action>
+										</xforms:action>
+									</xforms:action>
+								</xforms:trigger>
+								<xforms:trigger>
+									<xforms:label>Cancel</xforms:label>
+									<xxforms:hide dialog="prefixes-dialog" ev:event="DOMActivate"/>
+								</xforms:trigger>
+							</div> </xxforms:dialog>
 						<!--<fr:xforms-inspector id="orbeon-xforms-inspector"/>-->
 					</div>
 				</div>
