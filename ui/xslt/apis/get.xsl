@@ -60,6 +60,9 @@
 			<xsl:when test="$model='cidoc-crm'">
 				<xsl:apply-templates select="/content/eac:eac-cpf" mode="crm"/>
 			</xsl:when>
+			<xsl:when test="$model='snap'">
+				<xsl:apply-templates select="/content/eac:eac-cpf" mode="snap"/>
+			</xsl:when>
 		</xsl:choose>
 	</xsl:template>
 </xsl:stylesheet>
