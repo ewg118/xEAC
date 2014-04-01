@@ -210,7 +210,7 @@
 		<rdf:RDF>
 			<lawd:Person rdf:about="{$url}id/{$id}">
 				<dcterms:publisher rdf:resource="{$url}"/>
-				<lawd:hasName rdf:resource="{$url}id/{$id}#name"/>
+				<!--<lawd:hasName rdf:resource="{$url}id/{$id}#name"/>-->
 				<xsl:for-each select="descendant::eac:nameEntry">
 					<foaf:name>
 						<xsl:if test="@xml:lang">
