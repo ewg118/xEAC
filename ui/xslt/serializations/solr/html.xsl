@@ -6,7 +6,6 @@
 
 	<!-- config variables -->
 	<xsl:variable name="url" select="/content/config/url"/>
-	<xsl:variable name="ui-theme" select="/content/config/theme/jquery_ui_theme"/>
 	<xsl:variable name="display_path">../</xsl:variable>
 	<xsl:variable name="pipeline">results</xsl:variable>
 

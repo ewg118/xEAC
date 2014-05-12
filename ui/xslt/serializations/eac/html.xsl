@@ -241,16 +241,16 @@
 		<h3>Export</h3>
 		<ul>
 			<li>
-				<a href="id/{$id}.xml">EAC-CPF</a>
+				<a href="{$id}.xml">EAC-CPF</a>
 			</li>
 			<li>
-				<a href="id/{$id}.tei">TEI</a>
+				<a href="{$id}.tei">TEI</a>
 			</li>
 			<li>RDF/XML <ul>
-					<li><a href="id/{$id}.rdf">Default</a></li>
+					<li><a href="{$id}.rdf">Default</a></li>
 					<li><a href="{$display_path}api/get?id={$id}&amp;model=cidoc-crm">CIDOC CRM</a></li>
+				<li><a href="{$display_path}api/get?id={$id}&amp;model=snap">SNAP</a></li>
 				</ul></li>
-			<li> </li>
 			<li>
 				<a href="id/{$id}.kml">KML</a>
 			</li>
