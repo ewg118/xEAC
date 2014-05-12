@@ -4,6 +4,7 @@
 	exclude-result-prefixes="eac xlink" version="2.0">
 	<xsl:include href="rdf-templates.xsl"/>
 	<xsl:variable name="url" select="/content/config/url"/>
+	<xsl:variable name="id" select="/content/eac:eac-cpf/eac:control/eac:recordId"/>
 
 	<xsl:template match="/">
 		<xsl:apply-templates select="/content/eac:eac-cpf" mode="default"/>

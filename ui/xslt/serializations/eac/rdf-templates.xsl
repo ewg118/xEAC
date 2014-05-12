@@ -7,7 +7,6 @@
 
 	<!-- ***** DEFAULT TEMPLATES: used for $id.rdf ***** -->
 	<xsl:template match="eac:eac-cpf" mode="default">
-		<xsl:variable name="id" select="eac:control/eac:recordId"/>
 		<rdf:RDF>
 			<xsl:choose>
 				<xsl:when test="descendant::eac:entityType='person'">
