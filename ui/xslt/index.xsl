@@ -5,7 +5,7 @@
 
 	<xsl:template match="/">
 		<html xml:lang="en" lang="en" prefix="dcterms: http://purl.org/dc/terms/
-			xeac: https://github.com/ewg118/xEAC">
+			xeac: https://github.com/ewg118/xEAC#">
 			<head>
 				<title property="dcterms:title">
 					<xsl:value-of select="/config/title"/>
