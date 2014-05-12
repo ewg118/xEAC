@@ -20,7 +20,7 @@
 	</p:processor>
 	
 	<p:processor name="oxf:pipeline">
-		<p:input name="config" href="config.xpl"/>		
+		<p:input name="config" href="../models/config.xpl"/>		
 		<p:output name="data" id="config"/>
 	</p:processor>
 
@@ -48,7 +48,7 @@
 	<p:processor name="oxf:xslt">
 		<p:input name="request" href="#request"/>
 		<p:input name="data" href="aggregate('content', #data, #config)"/>
-		<p:input name="config" href="../ui/xslt/apis/get.xsl"/>
+		<p:input name="config" href="../../ui/xslt/apis/get.xsl"/>
 		<p:output name="data" id="model"/>
 	</p:processor>
 

@@ -11,13 +11,13 @@
 	<p:param type="output" name="data"/>
 
 	<p:processor name="oxf:pipeline">
-		<p:input name="config" href="config.xpl"/>
+		<p:input name="config" href="../../models/config.xpl"/>
 		<p:output name="data" id="config"/>
 	</p:processor>
 
 	<p:processor name="oxf:unsafe-xslt">
 		<p:input name="data" href="aggregate('content', #data, #config)"/>
-		<p:input name="config" href="../ui/xslt/serializations/eac/rdf.xsl"/>
+		<p:input name="config" href="../../../ui/xslt/serializations/eac/rdf.xsl"/>
 		<p:output name="data" id="formatted"/>
 	</p:processor>
 
