@@ -29,6 +29,16 @@
 		<p:input name="params" href="#params"/>
 		<p:input name="data" href="aggregate('content', #data, #config)"/>
 		<p:input name="config" href="../../../ui/xslt/serializations/solr/atom.xsl"/>
+		<p:output name="data" id="model"/>
+	</p:processor>
+	
+	<p:processor name="oxf:xml-serializer">
+		<p:input name="data" href="#model"/>
+		<p:input name="config">
+			<config>
+				<content-type>application/xml</content-type>
+			</config>
+		</p:input>
 		<p:output name="data" ref="data"/>
 	</p:processor>
 	

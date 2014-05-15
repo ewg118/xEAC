@@ -14,7 +14,7 @@
 
 		<xforms:model>
 			<xforms:instance id="config" xxforms:exclude-result-prefixes="#all">
-				<config xmlns=""/>
+				<config/>
 			</xforms:instance>
 
 			<xforms:instance id="exist-config" xxforms:exclude-result-prefixes="#all">
@@ -31,11 +31,21 @@
 
 			<xforms:instance id="control-instance">
 				<control xmlns="">
+					<id/>
 					<api-key-accepted/>
 					<save-trigger/>
 					<collection-name/>
 					<error/>
 					<simple-upload-trigger/>
+					<connect-trigger/>
+					<sparql>
+						<update/>
+						<query/>
+						<store/>
+					</sparql>
+					<sparql-success>false</sparql-success>
+					<sparql-connect>false</sparql-connect>
+					<sparql-query-test>SELECT * WHERE {?s ?p ?o} LIMIT 1</sparql-query-test>
 				</control>
 			</xforms:instance>
 
@@ -77,6 +87,8 @@
 						$arcrole return &lt;relation> { $arcrole } &lt;/relation> } &lt;/report> </query>
 					<query id="gather-resourceRelations">declare namespace eac="urn:isbn:1-931666-33-4"; &lt;report> { for $arcrole in
 						distinct-values(collection()//eac:resourceRelation/@xlink:arcrole) order by $arcrole return &lt;relation> { $arcrole } &lt;/relation> } &lt;/report> </query>
+					<query id="publish-all">&lt;report> { for $foo in collection()[descendant::*:publicationStatus='approved'] return &lt;id> { $foo//*:recordId/text() } &lt;/id> }
+						&lt;/report></query>
 				</queries>
 			</xforms:instance>
 
@@ -101,12 +113,49 @@
 			<xforms:instance id="ontology">
 				<rdf:RDF/>
 			</xforms:instance>
+			
+			<!-- connecting to a SPARQL endpoint -->
+			<xforms:instance id="sparql-response">
+				<sparql xmlns="http://www.w3.org/2005/sparql-results#"/>
+			</xforms:instance>
+			
+			<!-- publish records to SPARQL endpoint -->
+			<xforms:instance id="solr-response" xxforms:exclude-result-prefixes="#all">
+				<response/>
+			</xforms:instance>
+			
+			<xforms:instance id="rdf" xxforms:exclude-result-prefixes="#all">
+				<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"/>
+			</xforms:instance>
+			
+			<xforms:instance id="rdf-test" xxforms:exclude-result-prefixes="#all">
+				<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+					<rdf:Description rdf:about="http://example.org/">
+						<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Organization"/>
+					</rdf:Description>
+				</rdf:RDF>
+			</xforms:instance>
+			
+			<xforms:instance id="sparqlUpdate-template">
+				<query>
+					<![CDATA[DELETE {?s ?p ?o} WHERE { <URI> ?p ?o . ?s ?p ?o . FILTER (?s = <URI>) }]]>
+				</query>
+			</xforms:instance>
+			
+			<xforms:instance id="sparqlUpdate">
+				<query/>
+			</xforms:instance>
 
 			<!-- ************ BINDINGS *************** -->
 			<xforms:bind nodeset="instance('config')">
 				<xforms:bind nodeset="title" required="true()"/>
 				<xforms:bind nodeset="url" required="true()"/>
 				<xforms:bind nodeset="solr_published" required="true()"/>
+				<xforms:bind nodeset="sparql">
+					<xforms:bind nodeset="query" as="xs:anyURI"/>
+					<xforms:bind nodeset="store" as="xs:anyURI"/>
+					<xforms:bind nodeset="update" as="xs:anyURI"/>
+				</xforms:bind>
 				<xforms:bind nodeset="instances/agencyName-list">
 					<xforms:bind nodeset="item" required="true()"/>
 				</xforms:bind>
@@ -135,7 +184,17 @@
 					<xforms:bind nodeset="@prefix" type="xs:ID" readonly="not(parent::node()/@import=true())"/>
 					<xforms:bind nodeset="@import" type="xs:boolean"/>
 				</xforms:bind>
+				<xforms:bind nodeset="sparql-success" type="xs:boolean"/>
+				<xforms:bind nodeset="sparql-connect" type="xs:boolean"/>
+				<xforms:bind nodeset="sparql">
+					<xforms:bind nodeset="query" as="xs:anyURI"/>
+					<xforms:bind nodeset="store" as="xs:anyURI"/>
+					<xforms:bind nodeset="update" as="xs:anyURI"/>
+				</xforms:bind>
 			</xforms:bind>
+			
+			<xforms:bind id="sparql-connect" nodeset="instance('control-instance')/connect-trigger"
+				readonly="string-length(../sparql/query) = 0 or string-length(../sparql/update) = 0 or string-length(../sparql/store) = 0"/>
 
 			<!-- tabs -->
 			<xforms:bind id="settings-tab" nodeset="instance('config')"/>
@@ -170,6 +229,49 @@
 				<xforms:message ev:event="xforms-submit-error" level="modal">Unable to load file into an XForms instance. Is it an XML document?</xforms:message>
 			</xforms:submission>
 
+			<!-- query SPARQL endpoint -->
+			<xforms:submission id="query-sparql" serialization="none" method="get"
+				action="{instance('control-instance')/sparql/query}?query={encode-for-uri(instance('control-instance')/sparql-query-test)}" replace="instance"
+				instance="sparql-response">
+				<xforms:header>
+					<xforms:name>Accept</xforms:name>
+					<xforms:value>application/sparql-results+xml</xforms:value>
+				</xforms:header>
+				<xforms:setvalue ev:event="xforms-submit-done" ref="instance('control-instance')/sparql-success">false</xforms:setvalue>
+			</xforms:submission>
+			
+			<xforms:submission id="get-rdf" method="get" replace="instance" instance="rdf" serialization="none"
+				resource="/xeac/id/{instance('control-instance')/id}.rdf">
+				<xforms:message ev:event="xforms-submit-error" level="modal">Unable to get RDF/XML serialization.</xforms:message>
+				<xforms:action ev:event="xforms-submit-done">
+					<!-- first remove existing graphs -->
+					<xforms:action xxforms:iterate="instance('rdf')//@rdf:about">
+						<xforms:var name="uri" select="."/>
+						<xforms:setvalue ref="instance('sparqlUpdate')" value="replace(instance('sparqlUpdate-template'), 'URI', $uri)"/>
+						<xforms:send submission="delete-graph"/>
+					</xforms:action>
+					<!-- then post RDF -->
+					<xforms:send submission="post-rdf"/>
+				</xforms:action>
+			</xforms:submission>
+			
+			<xforms:submission id="post-rdf" action="{instance('control-instance')/sparql/store}?default" ref="instance('rdf')" replace="none" method="post"
+				mediatype="application/rdf+xml">
+				<xforms:action ev:event="xforms-submit-error">
+					<xforms:setvalue ref="instance('control-instance')/sparql-success">false</xforms:setvalue>
+					<xforms:message level="modal">Post to endpoint failed.</xforms:message>
+				</xforms:action>
+			</xforms:submission>
+			
+			<xforms:submission id="delete-graph" action="{instance('control-instance')/sparql/update}" ref="instance('sparqlUpdate')" serialization="text/plain" replace="none"
+				method="post" mediatype="application/sparql-update">
+				<xforms:action ev:event="xforms-submit-error">
+					<xforms:setvalue ref="instance('control-instance')/sparql-success">false</xforms:setvalue>
+					<xforms:message level="modal">SPARQL update failed.</xforms:message>
+				</xforms:action>
+			</xforms:submission>
+
+			<!-- ********* XFORMS-MODEL-CONSTRUCT-DONE *********** -->
 			<xforms:action ev:event="xforms-model-construct-done">
 				<xforms:send submission="load-config"/>
 			</xforms:action>
@@ -232,6 +334,53 @@
 										<p>Copy and paste the javascript code between <b>&lt;script type="text/javascript"&gt;&lt;/script&gt;</b> provided by Google.</p>
 									</div>
 								</div>
+								<xforms:group ref="sparql">
+									<div class="section">
+										<h3>SPARQL</h3>
+										<div>
+											<xforms:group ref=".[not(string(query) and string(store) and string(update))]">
+												<xforms:trigger>
+													<xforms:label>Connect</xforms:label>
+													<xforms:action ev:event="DOMActivate">
+														<xxforms:show dialog="sparql-dialog"/>
+													</xforms:action>
+												</xforms:trigger>
+											</xforms:group>
+											<xforms:group ref=".[string(query) and string(store) and string(update)]">
+												<xforms:trigger>
+													<xforms:label>Clear</xforms:label>
+													<xforms:action ev:event="DOMActivate">
+														<xforms:setvalue ref="instance('control-instance')/sparql/query"/>
+														<xforms:setvalue ref="instance('control-instance')/sparql/update"/>
+														<xforms:setvalue ref="instance('control-instance')/sparql/store"/>
+														<xforms:setvalue ref="instance('control-instance')/sparql-success">false</xforms:setvalue>
+														<xforms:setvalue ref="update"/>
+														<xforms:setvalue ref="query"/>
+														<xforms:setvalue ref="store"/>
+													</xforms:action>
+												</xforms:trigger>
+											</xforms:group>
+										</div>
+										<p>Connect xEAC to a SPARQL endpoint for more widespread dissemination and querying.</p>
+										<xforms:group ref=".[string(query) and string(update) and string(store)]">
+											<div>
+												<xforms:output ref="query">
+													<xforms:label>Query Service</xforms:label>
+												</xforms:output>
+											</div>
+											<div>
+												<xforms:output ref="store">
+													<xforms:label>Graph Store</xforms:label>
+												</xforms:output>
+											</div>
+											<div>
+												<xforms:output ref="update">
+													<xforms:label>Update Service</xforms:label>
+												</xforms:output>
+											</div>
+										</xforms:group>
+									</div>
+								</xforms:group>
 								<div class="section">
 									<h2>API Keys</h2>
 									<!--<h3>flickr</h3>
@@ -676,7 +825,109 @@
 									<xforms:label>Cancel</xforms:label>
 									<xxforms:hide dialog="prefixes-dialog" ev:event="DOMActivate"/>
 								</xforms:trigger>
-							</div> </xxforms:dialog>
+							</div>
+						</xxforms:dialog>
+						
+						<!-- connect to SPARQL -->
+						<xxforms:dialog id="sparql-dialog" appearance="full" level="modal" close="true" draggable="true" visible="false">
+							<xforms:label>Connect to SPARQL Endpoint</xforms:label>
+							<p style="width:600px;">Insert the URLs for SPARQL endpoint query and update services below. In the Apache Fuseki endpoint, for example, the Query web service is
+								http://localhost:3030/ds/query, Graph Store is http://localhost:3030/ds/data and SPARQL/Update service is located at http://localhost:3030/ds/update</p>
+							<xforms:group ref="instance('control-instance')">
+								<xforms:group ref=".[sparql-connect=false() or sparql-success=false()]">
+									<div>
+										<xforms:input ref="sparql/query">
+											<xforms:label>Query URL</xforms:label>
+											<xforms:alert>Must conform to xs:anyURI</xforms:alert>
+										</xforms:input>
+									</div>
+									<div>
+										<xforms:input ref="sparql/store">
+											<xforms:label>Graph Store URL</xforms:label>
+											<xforms:alert>Must conform to xs:anyURI</xforms:alert>
+										</xforms:input>
+									</div>
+									<div>
+										<xforms:input ref="sparql/update">
+											<xforms:label>Update URL</xforms:label>
+											<xforms:alert>Must conform to xs:anyURI</xforms:alert>
+										</xforms:input>
+									</div>
+									<xforms:trigger bind="sparql-connect">
+										<xforms:label>Connect</xforms:label>
+										<xforms:action ev:event="DOMActivate">
+											<xforms:setvalue ref="instance('control-instance')/sparql-connect">true</xforms:setvalue>
+											<!-- first query the sparql endpoint -->
+											<xforms:send submission="query-sparql"/>
+											<xforms:action ev:event="xforms-submit-done">
+												<xforms:setvalue ref="instance('control-instance')/sparql-success">true</xforms:setvalue>
+												<!-- then test posting and deleting from the update endpoint -->
+												<xforms:insert context="instance('rdf')" origin="instance('rdf-test')/rdf:Description"/>
+												<xforms:send submission="post-rdf"/>
+												<xforms:action ev:event="xforms-submit-done">
+													<!-- if the RDF test successfully posts, then delete the graph through SPARQL/Update -->
+													<xforms:setvalue ref="instance('sparqlUpdate')" value="replace(instance('sparqlUpdate-template'), 'URI', 'http://example.org/')"/>
+													<xforms:send submission="delete-graph"/>
+												</xforms:action>
+											</xforms:action>
+										</xforms:action>
+									</xforms:trigger>
+								</xforms:group>
+								<xforms:group ref=".[sparql-success=true()]">
+									<div>
+										<p class="bg-success">SPARQL endpoints found.</p>
+										<div>
+											<xforms:output ref="instance('control-instance')/sparql/query">
+												<xforms:label>Query URL</xforms:label>
+											</xforms:output>
+										</div>
+										<div>
+											<xforms:output ref="instance('control-instance')/sparql/store">
+												<xforms:label>Graph Store URL</xforms:label>
+											</xforms:output>
+										</div>
+										<div>
+											<xforms:output ref="instance('control-instance')/sparql/update">
+												<xforms:label>Update URL</xforms:label>
+											</xforms:output>
+										</div>
+										<xforms:trigger>
+											<xforms:label>Confirm</xforms:label>
+											<xforms:action ev:event="DOMActivate">
+												<xforms:setvalue ref="instance('config')/sparql/query" value="instance('control-instance')/sparql/query"/>
+												<xforms:setvalue ref="instance('config')/sparql/update" value="instance('control-instance')/sparql/update"/>
+												<xforms:setvalue ref="instance('config')/sparql/store" value="instance('control-instance')/sparql/store"/>								
+												<xxforms:hide dialog="sparql-dialog"/>
+												<xforms:dispatch target="publish-all" name="fr-show"/>
+											</xforms:action>
+										</xforms:trigger>
+									</div>
+								</xforms:group>
+								<xforms:group ref=".[sparql-success=false() and sparql-connect=true()]">
+									<div>
+										<p class="bg-danger">Unable to query SPARQL endpoint.</p>
+									</div>
+								</xforms:group>
+							</xforms:group>
+						</xxforms:dialog>
+						
+						<!-- publish RDF -->
+						<fr:alert-dialog id="publish-all">
+							<fr:label>Publish RDF</fr:label>
+							<fr:message>Do you want to post all published records into the SPARQL endpoint? It may take several minutes.</fr:message>
+							<fr:negative-choice/>
+							<fr:positive-choice>
+								<xforms:action ev:event="DOMActivate">
+									<xforms:setvalue ref="instance('eXist-xquery')/exist:text" value="instance('xqueries')/query[@id='publish-all']"/>
+									<xforms:send submission="xquery-collection"/>
+									<xforms:action ev:event="xforms-submit-done" xxforms:iterate="instance('xquery-result')/report/id">
+										<xforms:var name="id" select="context()"/>
+										<xforms:setvalue ref="instance('control-instance')/id" value="$id"/>
+										<xforms:send submission="get-rdf"/>
+									</xforms:action>
+								</xforms:action>
+							</fr:positive-choice>
+						</fr:alert-dialog>
 						<!--<fr:xforms-inspector id="orbeon-xforms-inspector"/>-->
 					</div>
 				</div>
