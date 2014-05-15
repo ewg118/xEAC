@@ -20,6 +20,8 @@
 			</xsl:otherwise>
 		</xsl:choose>
 	</xsl:variable>
+	
+	<xsl:variable name="url" select="/content/config/url"/>
 
 	<xsl:variable name="id" select="//eac:eac-cpf/eac:control/eac:recordId"/>
 
@@ -280,6 +282,14 @@
 			<img src="{descendant::eac:resourceRelation[@xlink:role='portrait']/@xlink:href}" alt="Portrait" style="max-width:100%;"/>
 		</xsl:if>
 
+		<!-- get related resources when there is a SPARQL query endpoint -->
+		<xsl:if test="string(//config/sparql/query)">
+			<xsl:call-template name="xeac:relatedResources">
+				<xsl:with-param name="uri" select="concat($url, 'id/', $id)"/>
+				<xsl:with-param name="endpoint" select="//config/sparql/query"/>
+			</xsl:call-template>
+		</xsl:if>
+		
 		<!-- if there is an otherRecordId with a nomisma ID, construction nomisma SPARQL -->
 		<xsl:for-each select="descendant::eac:otherRecordId[contains(., 'nomisma.org')]">
 			<xsl:call-template name="xeac:queryNomisma">

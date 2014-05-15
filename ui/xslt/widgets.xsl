@@ -38,7 +38,7 @@
 	<xsl:template match="res:sparql" mode="queryNomisma">
 		<xsl:if test="count(descendant::res:result) &gt; 0">
 			<div class="objects">
-				<h2>Related objects in Nomisma</h2>
+				<h3>Related objects in Nomisma</h3>
 
 				<!-- choose between between Metis (preferred) or internal links -->
 				<xsl:apply-templates select="descendant::res:result" mode="queryNomisma"/>
@@ -52,6 +52,43 @@
 				<img class="gi" src="{res:binding[@name='revThumb']/res:uri}"/>
 				<img class="gi" src="{res:binding[@name='obvThumb']/res:uri}"/>	
 			</a>			
+		</div>
+	</xsl:template>
+	
+	<xsl:template name="xeac:relatedResources">
+		<xsl:param name="uri"/>
+		<xsl:param name="endpoint"/>
+		
+		<xsl:variable name="query">
+			<![CDATA[ PREFIX rdf:      <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX dcterms:  <http://purl.org/dc/terms/>
+SELECT ?uri ?title WHERE {
+?uri dcterms:creator <URI> ;
+dcterms:title ?title
+}]]>
+		</xsl:variable>
+		<xsl:variable name="service" select="concat($endpoint, '?query=', encode-for-uri(normalize-space(replace($query, 'URI', $uri))), '&amp;output=xml')"/>
+		
+		<xsl:apply-templates select="document($service)/res:sparql[count(descendant::res:result) &gt; 0]" mode="relatedResources"/>
+	</xsl:template>
+	
+	<xsl:template match="res:sparql" mode="relatedResources">
+		<div>
+			<h3>Related Resources</h3>
+			<ul>
+				<xsl:for-each select="descendant::res:result">
+					<li>
+						<b>Creator of: </b>
+						<a href="{res:binding[@name='uri']/res:uri}">
+							<xsl:value-of select="res:binding[@name='title']/res:literal"/>
+							<xsl:text> (</xsl:text>
+							<xsl:value-of select="res:binding[@name='uri']/res:uri"/>
+							<xsl:text>)</xsl:text>
+						</a>
+					</li>
+				</xsl:for-each>
+			</ul>
+			
 		</div>
 	</xsl:template>
 </xsl:stylesheet>
