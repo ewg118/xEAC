@@ -152,9 +152,10 @@
 				<xforms:bind nodeset="url" required="true()"/>
 				<xforms:bind nodeset="solr_published" required="true()"/>
 				<xforms:bind nodeset="sparql">
-					<xforms:bind nodeset="query" as="xs:anyURI"/>
-					<xforms:bind nodeset="store" as="xs:anyURI"/>
-					<xforms:bind nodeset="update" as="xs:anyURI"/>
+					<xforms:bind nodeset="query" type="xs:anyURI"/>
+					<xforms:bind nodeset="store" type="xs:anyURI"/>
+					<xforms:bind nodeset="update" type="xs:anyURI"/>
+					<xforms:bind nodeset="endpoint" type="xs:boolean"/>
 				</xforms:bind>
 				<xforms:bind nodeset="instances/agencyName-list">
 					<xforms:bind nodeset="item" required="true()"/>
@@ -357,12 +358,19 @@
 														<xforms:setvalue ref="update"/>
 														<xforms:setvalue ref="query"/>
 														<xforms:setvalue ref="store"/>
+														<xforms:setvalue ref="endpoint">false</xforms:setvalue>
 													</xforms:action>
 												</xforms:trigger>
 											</xforms:group>
 										</div>
 										<p>Connect xEAC to a SPARQL endpoint for more widespread dissemination and querying.</p>
 										<xforms:group ref=".[string(query) and string(update) and string(store)]">
+											<div>
+												<xforms:input ref="endpoint">
+													<xforms:label>Expose Endpoint</xforms:label>
+													<xforms:alert>Invalid</xforms:alert>
+												</xforms:input>
+											</div>
 											<div>
 												<xforms:output ref="query">
 													<xforms:label>Query Service</xforms:label>
@@ -383,26 +391,6 @@
 								</xforms:group>
 								<div class="section">
 									<h2>API Keys</h2>
-									<!--<h3>flickr</h3>
-										<xforms:group ref=".[instance('flickr-response')/@stat='fail' and string-length(flickr_api_key) &gt; 0]">
-										<div class="ui-widget">
-										<div class="ui-state-error ui-corner-all">
-										<p>
-										<span class="ui-icon ui-icon-alert" style="float: left; margin-right: 0.3em;"/>
-										<strong>Alert:</strong>
-										<xforms:output ref="instance('flickr-response')/err/@msg"/>
-										</p>
-										</div>
-										</div>
-										</xforms:group>
-										<div>
-										<xforms:input ref="flickr_api_key" incremental="true">
-										<xforms:label>Key</xforms:label>
-										<xforms:send submission="test-for-echo" ev:event="xforms-value-changed"/>
-										</xforms:input>
-										<p>A <a href="http://www.flickr.com/services/api/misc.api_keys.html">flickr API key</a> is required in order to take advantage of flickr image linking in
-										Numishare.</p>
-										</div>-->
 									<div class="subsection">
 										<h3>geonames</h3>
 										<div>
@@ -928,7 +916,7 @@
 								</xforms:action>
 							</fr:positive-choice>
 						</fr:alert-dialog>
-						<!--<fr:xforms-inspector id="orbeon-xforms-inspector"/>-->
+						<fr:xforms-inspector id="orbeon-xforms-inspector"/>
 					</div>
 				</div>
 			</div>

@@ -24,29 +24,30 @@
 	<!-- ****************
 	* PUBLIC INTERFACE *
 	***************** -->
-	<!-- public EAC record views -->
+	<!-- **** SERIALIZATIONS **** -->
+	<!-- ID -->
 	<page path-info="/xeac/id/(.*)\.xml" matcher="oxf:perl5-matcher" view="xpl/models/get-id.xpl"/>
 	<page path-info="/xeac/id/(.*)\.kml" matcher="oxf:perl5-matcher" view="xpl/models/get-id.xpl"/>
 	<page path-info="/xeac/id/(.*)\.tei" matcher="oxf:perl5-matcher" model="xpl/models/get-id.xpl" view="xpl/serializations/eac/tei.xpl"/>
 	<page path-info="/xeac/id/(.*)\.solr" matcher="oxf:perl5-matcher" model="xpl/models/get-id.xpl" view="xpl/serializations/eac/solr.xpl"/>
 	<page path-info="/xeac/id/(.*)\.rdf" matcher="oxf:perl5-matcher" model="xpl/models/get-id.xpl" view="xpl/serializations/eac/rdf.xpl"/>
-	<page path-info="/xeac/id/(.*)" matcher="oxf:perl5-matcher" model="xpl/models/get-id.xpl" view="xpl/serializations/eac/html.xpl"/>		
-	<!--<page path-info="/xeac/json/(.*)" matcher="oxf:perl5-matcher" model="xpl/models/get-id.xpl" view="xpl/eac-to-json.xpl"/>-->
+	<page path-info="/xeac/id/(.*)" matcher="oxf:perl5-matcher" model="xpl/models/get-id.xpl" view="xpl/serializations/eac/html.xpl"/>
 	
-	<!-- index -->
-	<page path-info="/xeac/" model="xpl/models/config.xpl" view="xpl/pages/index.xpl"/>
-
-	<!-- public search/browse interface -->
-	<page path-info="/xeac/results/" model="xpl/models/solr-results.xpl" view="xpl/serializations/solr/html.xpl"/>
-	<!--<page path-info="/xeac/search/" model="exist-config.xml" view="xpl/search.xpl"/>-->
-	
-	<!-- Atom feed -->
+	<!-- Solr-->
 	<page path-info="/xeac/feed/" model="xpl/models/solr-feed.xpl" view="xpl/serializations/solr/atom.xpl"/>
+	<page path-info="/xeac/results/" model="xpl/models/solr-results.xpl" view="xpl/serializations/solr/html.xpl"/>
 	
 	<!-- APIs -->
 	<page path-info="/xeac/api/get" model="xpl/models/get-id.xpl" view="xpl/apis/get.xpl"/>
 	
-	<!-- AJAX CALLS -->
+	<!-- SPARQL -->
+	<page path="/xeac/query" view="xpl/serializations/sparql/query.xpl"/>
+	
+	<!-- **** PAGES **** -->	
+	<page path-info="/xeac/" model="xpl/models/config.xpl" view="xpl/pages/index.xpl"/>
+	<page path="/xeac/sparql" view="xpl/pages/sparql.xpl"/>
+	
+	<!-- **** AJAX **** -->
 	<!-- facet results -->
 	<page path-info="/xeac/get_facets/" model="xpl/models/solr-get_facets.xpl" view="xpl/serializations/solr/get_facets.xpl"/>
 	

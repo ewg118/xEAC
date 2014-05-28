@@ -21,6 +21,11 @@
 						<li>
 							<a href="{$display_path}results/">Browse</a>
 						</li>
+						<xsl:if test="//config/sparql/endpoint=true()">
+							<li>
+								<a href="{$display_path}sparql">SPARQL</a>
+							</li>
+						</xsl:if>
 					</ul>
 					<div class="col-sm-3 col-md-3 pull-right">
 						<form class="navbar-form" role="search" action="{$display_path}results/" method="GET">
