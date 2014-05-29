@@ -3,6 +3,7 @@
 	xmlns:xeac="https://github.com/ewg118/xEAC" xmlns:xs="http://www.w3.org/2001/XMLSchema" exclude-result-prefixes="#all" version="2.0">
 	<xsl:include href="../../templates.xsl"/>
 	<xsl:include href="../../widgets.xsl"/>
+	<xsl:include href="../../functions.xsl"/>
 
 	<xsl:param name="mode">
 		<xsl:choose>
@@ -281,14 +282,6 @@
 		<xsl:if test="descendant::eac:resourceRelation[@xlink:role='portrait']">
 			<img src="{descendant::eac:resourceRelation[@xlink:role='portrait']/@xlink:href}" alt="Portrait" style="max-width:100%;"/>
 		</xsl:if>
-
-		<!-- get related resources when there is a SPARQL query endpoint -->
-		<xsl:if test="string(//config/sparql/query)">
-			<xsl:call-template name="xeac:relatedResources">
-				<xsl:with-param name="uri" select="concat($url, 'id/', $id)"/>
-				<xsl:with-param name="endpoint" select="//config/sparql/query"/>
-			</xsl:call-template>
-		</xsl:if>
 		
 		<!-- if there is an otherRecordId with a nomisma ID, construction nomisma SPARQL -->
 		<xsl:for-each select="descendant::eac:otherRecordId[contains(., 'nomisma.org')]">
@@ -436,12 +429,22 @@
 					</xsl:apply-templates>
 				</dl>
 			</xsl:if>
-			<xsl:if test="count(eac:resourceRelation) &gt; 0">
-				<h3>Related Resources</h3>
-				<dl class="dl-horizontal">
-					<xsl:apply-templates select="eac:resourceRelation[not(@xlink:role='portrait')]"/>
-				</dl>
-			</xsl:if>
+			<xsl:choose>
+				<!-- get related resources when there is a SPARQL query endpoint -->
+				<xsl:when test="string(//config/sparql/query)">
+					<xsl:call-template name="xeac:relatedResources">
+						<xsl:with-param name="uri" select="concat($url, 'id/', $id)"/>
+						<xsl:with-param name="endpoint" select="//config/sparql/query"/>
+					</xsl:call-template>
+				</xsl:when>
+				<xsl:when test="count(eac:resourceRelation) &gt; 0">
+					<h3>Related Resources</h3>
+					<dl class="dl-horizontal">
+						<xsl:apply-templates select="eac:resourceRelation[not(@xlink:role='portrait')]"/>
+					</dl>
+				</xsl:when>
+			</xsl:choose>
+			
 		</div>
 	</xsl:template>
 
