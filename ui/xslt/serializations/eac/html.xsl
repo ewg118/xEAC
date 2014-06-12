@@ -326,7 +326,7 @@
 			<xsl:if test="contains(@localType, 'xeac:')">
 				<xsl:text> </xsl:text>
 				<small>
-					<xsl:value-of select="@localtype"/>
+					<xsl:value-of select="@localType"/>
 				</small>
 			</xsl:if>
 		</h3>
