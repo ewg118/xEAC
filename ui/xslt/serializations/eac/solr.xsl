@@ -19,13 +19,19 @@
 				<xsl:value-of select="eac:control/eac:recordId"/>
 			</field>
 			<field name="timestamp">
-				<xsl:variable name="timestamp" select="datetime:dateTime()"/>
 				<xsl:choose>
-					<xsl:when test="contains($timestamp, 'Z')">
-						<xsl:value-of select="$timestamp"/>
+					<xsl:when test="string(descendant::*:maintenanceEvent[last()]/*:eventDateTime/@standardDateTime)">
+						<xsl:choose>
+							<xsl:when test="contains(descendant::*:maintenanceEvent[last()]/*:eventDateTime/@standardDateTime, 'Z')">
+								<xsl:value-of select="descendant::*:maintenanceEvent[last()]/*:eventDateTime/@standardDateTime"/>
+							</xsl:when>
+							<xsl:otherwise>
+								<xsl:value-of select="concat(descendant::*:maintenanceEvent[last()]/*:eventDateTime/@standardDateTime, 'Z')"/>
+							</xsl:otherwise>
+						</xsl:choose>						
 					</xsl:when>
 					<xsl:otherwise>
-						<xsl:value-of select="concat($timestamp, 'Z')"/>
+						<xsl:value-of select="if(contains(datetime:dateTime(), 'Z')) then datetime:dateTime() else concat(datetime:dateTime(), 'Z')"/>
 					</xsl:otherwise>
 				</xsl:choose>
 			</field>
