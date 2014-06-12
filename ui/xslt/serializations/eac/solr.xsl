@@ -80,7 +80,12 @@
 	</xsl:template>
 	
 	<xsl:template match="eac:description">
-		<xsl:apply-templates select="eac:existDates/*"/>		
+		<xsl:apply-templates select="eac:existDates/*"/>
+		<xsl:if test="eac:biogHist/eac:abstract">
+			<field name="abstract_display">
+				<xsl:value-of select="eac:biogHist/eac:abstract"/>
+			</field>
+		</xsl:if>		
 	</xsl:template>
 	
 	<xsl:template match="eac:identity">

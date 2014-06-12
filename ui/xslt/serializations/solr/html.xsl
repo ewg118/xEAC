@@ -135,9 +135,21 @@
 						<xsl:value-of select="str[@name='name_display']"/>
 					</a>
 				</h3>
-				<xsl:if test="str[@name='existDates_display']">
-					<xsl:value-of select="str[@name='existDates_display']"/>
-				</xsl:if>
+				<dl class="dl-horizontal">
+					<xsl:if test="str[@name='existDates_display']">
+						<dt>Exist Dates</dt>
+						<dd>
+							<xsl:value-of select="str[@name='existDates_display']"/>
+						</dd>
+					</xsl:if>
+					<xsl:if test="str[@name='abstract_display']">
+						<dt>Abstract</dt>
+						<dd>
+							<xsl:value-of select="str[@name='abstract_display']"/>
+						</dd>
+					</xsl:if>
+				</dl>
+
 			</div>
 			<div class="col-md-4 right">
 				<xsl:if test="count(arr[@name='thumb_image']/str) &gt; 0">
