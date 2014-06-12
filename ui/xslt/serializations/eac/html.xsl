@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:eac="urn:isbn:1-931666-33-4" xmlns:xlink="http://www.w3.org/1999/xlink"
-	xmlns:xeac="https://github.com/ewg118/xEAC" xmlns:xs="http://www.w3.org/2001/XMLSchema" exclude-result-prefixes="#all" version="2.0">
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:eac="urn:isbn:1-931666-33-4" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xeac="https://github.com/ewg118/xEAC"
+	xmlns:xs="http://www.w3.org/2001/XMLSchema" exclude-result-prefixes="#all" version="2.0">
 	<xsl:include href="../../templates.xsl"/>
 	<xsl:include href="../../widgets.xsl"/>
 	<xsl:include href="../../functions.xsl"/>
@@ -21,7 +21,7 @@
 			</xsl:otherwise>
 		</xsl:choose>
 	</xsl:variable>
-	
+
 	<xsl:variable name="url" select="/content/config/url"/>
 
 	<xsl:variable name="id" select="//eac:eac-cpf/eac:control/eac:recordId"/>
@@ -252,7 +252,7 @@
 			<li>RDF/XML <ul>
 					<li><a href="{$id}.rdf">Default</a></li>
 					<li><a href="{$display_path}api/get?id={$id}&amp;model=cidoc-crm">CIDOC CRM</a></li>
-				<li><a href="{$display_path}api/get?id={$id}&amp;model=snap">SNAP</a></li>
+					<li><a href="{$display_path}api/get?id={$id}&amp;model=snap">SNAP</a></li>
 				</ul></li>
 			<li>
 				<a href="id/{$id}.kml">KML</a>
@@ -282,7 +282,7 @@
 		<xsl:if test="descendant::eac:resourceRelation[@xlink:role='portrait']">
 			<img src="{descendant::eac:resourceRelation[@xlink:role='portrait']/@xlink:href}" alt="Portrait" style="max-width:100%;"/>
 		</xsl:if>
-		
+
 		<!-- if there is an otherRecordId with a nomisma ID, construction nomisma SPARQL -->
 		<xsl:for-each select="descendant::eac:otherRecordId[contains(., 'nomisma.org')]">
 			<xsl:call-template name="xeac:queryNomisma">
@@ -299,13 +299,14 @@
 	<xsl:template match="eac:description">
 		<div id="description">
 			<h2>Description</h2>
+			<xsl:apply-templates select="eac:existDates"/>
 			<xsl:apply-templates select="eac:biogHist"/>
 		</div>
-		<xsl:if test="descendant::eac:date or descendant::eac:dateRange">
+		<xsl:if test="descendant::eac:date[not(parent::eac:existDates)] or descendant::eac:dateRange[not(parent::eac:existDates)]">
 			<div id="chron">
 				<h2>Chronology</h2>
 				<ul>
-					<xsl:apply-templates select="descendant::eac:date[@standardDate]|eac:description/descendant::eac:dateRange[eac:fromDate[@standardDate]]">
+					<xsl:apply-templates select="descendant::eac:date[@standardDate]|eac:description/descendant::eac:dateRange[eac:fromDate[@standardDate]]" mode="chronList">
 						<xsl:sort
 							select="if(local-name()='date') then if (substring(@standardDate, 1, 1) = '-') then (number(tokenize(@standardDate, '-')[2]) * -1) else tokenize(@standardDate, '-')[1] else  if (substring(eac:fromDate/@standardDate, 1, 1) = '-') then (number(tokenize(eac:fromDate/@standardDate, '-')[2]) * -1) else tokenize(eac:fromDate/@standardDate, '-')[1]"/>
 						<xsl:sort
@@ -317,6 +318,21 @@
 				</ul>
 			</div>
 		</xsl:if>
+	</xsl:template>
+
+	<xsl:template match="eac:existDates">
+		<h3>
+			<xsl:text>Exist Dates</xsl:text>
+			<xsl:if test="contains(@localType, 'xeac:')">
+				<xsl:text> </xsl:text>
+				<small>
+					<xsl:value-of select="@localtype"/>
+				</small>
+			</xsl:if>
+		</h3>
+		<p>
+			<xsl:value-of select="string-join(descendant::*[not(child::*)], ' - ')"/>
+		</p>
 	</xsl:template>
 
 	<xsl:template match="eac:biogHist">
@@ -353,23 +369,20 @@
 		</p>
 	</xsl:template>
 
-	<xsl:template match="eac:date|eac:dateRange">
-		<xsl:if test="not(parent::eac:existDates)">
-			<li>
-				<b><xsl:choose>
-						<xsl:when test="local-name()='date'">
-							<xsl:value-of select="."/>
-						</xsl:when>
-						<xsl:when test="local-name()='dateRange'">
-							<xsl:value-of select="eac:fromDate"/>
-							<xsl:text> - </xsl:text>
-							<xsl:value-of select="eac:toDate"/>
-						</xsl:when>
-					</xsl:choose>: </b>
-				<xsl:call-template name="chron-description"/>
-			</li>
-		</xsl:if>
-
+	<xsl:template match="eac:date|eac:dateRange" mode="chronList">
+		<li>
+			<b><xsl:choose>
+					<xsl:when test="local-name()='date'">
+						<xsl:value-of select="."/>
+					</xsl:when>
+					<xsl:when test="local-name()='dateRange'">
+						<xsl:value-of select="eac:fromDate"/>
+						<xsl:text> - </xsl:text>
+						<xsl:value-of select="eac:toDate"/>
+					</xsl:when>
+				</xsl:choose>: </b>
+			<xsl:call-template name="chron-description"/>
+		</li>
 	</xsl:template>
 
 	<xsl:template name="chron-description">
@@ -392,8 +405,7 @@
 				<xsl:value-of select="parent::node()/eac:placeRole"/>
 			</xsl:when>
 			<xsl:when test="parent::node()/eac:placeEntry">
-				<a
-					href="{$display_path}results/?q={if (string(parent::node()/@localType)) then parent::node()/@localType else 'placeEntry'}_facet:&#x022;{parent::node()/eac:placeEntry}&#x022;">
+				<a href="{$display_path}results/?q={if (string(parent::node()/@localType)) then parent::node()/@localType else 'placeEntry'}_facet:&#x022;{parent::node()/eac:placeEntry}&#x022;">
 					<xsl:value-of select="parent::node()/eac:placeEntry"/>
 				</a>
 				<xsl:if test="string(parent::node()/eac:placeEntry/@vocabularySource)">
@@ -444,7 +456,7 @@
 					</dl>
 				</xsl:when>
 			</xsl:choose>
-			
+
 		</div>
 	</xsl:template>
 
