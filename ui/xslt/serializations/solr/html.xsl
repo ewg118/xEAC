@@ -129,7 +129,7 @@
 
 	<xsl:template match="doc">
 		<div class="row result-doc">
-			<div class="col-md-4">
+			<div class="col-md-8">
 				<h3>
 					<a href="{$display_path}id/{str[@name='id']}">
 						<xsl:value-of select="str[@name='name_display']"/>
@@ -139,7 +139,7 @@
 					<xsl:value-of select="str[@name='existDates_display']"/>
 				</xsl:if>
 			</div>
-			<div class="col-md-8 right">
+			<div class="col-md-4 right">
 				<xsl:if test="count(arr[@name='thumb_image']/str) &gt; 0">
 					<a href="{$display_path}id/{str[@name='id']}">
 						<img src="{arr[@name='thumb_image']/str[1]}" alt="Thumbnail" style="max-height:120px;max-width:180px;"/>
