@@ -43,7 +43,8 @@ a > img {
 #footer {
 	background-color: #535e70;
 	border-top:1px solid #F8F8F8;
-	padding:10px 0;
+	padding-top:10px;
+	padding-bottom:10px;
 	color:white;
 }
 #footer a {
