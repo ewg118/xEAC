@@ -113,6 +113,9 @@
 							<xsl:otherwise>false</xsl:otherwise>
 						</xsl:choose>
 					</span>
+					<span id="url">
+						<xsl:value-of select="$url"/>
+					</span>
 					<xsl:call-template name="control-fields"/>
 				</div>
 			</body>

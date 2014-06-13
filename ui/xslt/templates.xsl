@@ -12,7 +12,7 @@
 						<span class="icon-bar"/>
 						<span class="icon-bar"/>
 					</button>
-					<a class="navbar-brand" href="{$display_path}./">
+					<a class="navbar-brand" href="{$url}">
 						<xsl:value-of select="//config/title"/>
 					</a>
 				</div>
