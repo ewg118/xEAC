@@ -10,16 +10,27 @@
  */
 html {
 	background-color: #F8F8F8;
+	background-attachment: scroll;
+	background-image: url("http://numismatics.org/authorities/ui/images/pattern.gif");
+	background-position: center top;
+	background-repeat: repeat;
+}
+body {
+	color: #535e70;
+	font-family: Georgia,"Times New Roman",Times,serif;
+	font-size: 14px;
+	line-height: 18px;	
 }
 .navbar {
 	margin-bottom:0;
+	border-bottom:4px solid black;
 }
 a > img {
 	border:none;
 }
 .highlight {
 	background-color: #F8F8F8;
-	border: 1px solid #E7E7E7;
+	border: 1px solid #F8F8F8;
 	border-radius: 4px;
 	margin:10px;
 	padding: 9px 14px;
@@ -30,10 +41,11 @@ a > img {
   ***************************************
  */
 #footer {
-	background-color: #F8F8F8;
-	border-top:1px solid #E7E7E7;
+	background-color: #535e70;
+	border-top:1px solid #F8F8F8;
 	padding:10px 0;
 	text-align:center;
+	color:white;
 }
 /*
   ****************************************
@@ -63,25 +75,25 @@ a > img {
 	text-align:center;
 }
 .gi {
-	max-width:50%;	
+	max-width:50%;
 }
- /*
+/*
   ***************************************
   SEARCH FORMS
   ***************************************
  */
- .option_container {
+.option_container {
 	width:200px;
 	vertical-align:bottom;
 }
 .option_container select, .option_container input {
 	display:inline;
 }
- .category_list {
+.category_list {
 	width:175px;
 	display:inline;
 }
- .search_text {
+.search_text {
 	width:200px;
 	margin-left:15px;
 	margin-right:5px;
@@ -116,9 +128,9 @@ a > img {
   RESULTS PAGE
   ****************************************
  */
- .result-doc {
- 	margin:10px 0;	
- }
+.result-doc {
+	margin:10px 0;
+}
 .flickr-link {
 	cursor:pointer;
 }
@@ -139,7 +151,7 @@ button.multiselect {
 .stacked_term {
 	padding:2px;
 	margin-bottom:5px;
-	border:1px solid #E7E7E7;
+	border:1px solid #F8F8F8;
 	border-radius:5px;
 	vertical-align:middle;
 }
@@ -164,7 +176,7 @@ button.multiselect {
 	cursor:pointer;
 }
 .right {
-	text-align:right;	
+	text-align:right;
 }
 #backgroundPopup {
 	display:none;

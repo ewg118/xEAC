@@ -41,13 +41,16 @@
 		<div class="jumbotron">
 			<div class="container">
 				<div class="row">
-					<div class="col-md-12">
+					<div class="col-md-8">
 						<h1>
 							<xsl:value-of select="title"/>
 						</h1>
 						<p>
 							<xsl:value-of select="description"/>
 						</p>
+					</div>
+					<div class="col-md-4">
+						<img src="{$display_path}ui/images/ans_large.png"/>
 					</div>
 				</div>
 			</div>
