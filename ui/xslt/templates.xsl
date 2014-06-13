@@ -26,6 +26,9 @@
 								<a href="{$url}sparql">SPARQL</a>
 							</li>
 						</xsl:if>
+						<li>
+							<a href="http://numismatics.org">ANS Home</a>
+						</li>
 					</ul>
 					<div class="col-sm-3 col-md-3 pull-right">
 						<form class="navbar-form" role="search" action="{$url}results/" method="GET">
