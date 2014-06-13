@@ -44,8 +44,11 @@ a > img {
 	background-color: #535e70;
 	border-top:1px solid #F8F8F8;
 	padding:10px 0;
-	text-align:center;
 	color:white;
+}
+#footer a {
+	color:white;
+	text-decoration:underline;	
 }
 /*
   ****************************************
