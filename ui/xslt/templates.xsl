@@ -19,16 +19,16 @@
 				<div class="navbar-collapse collapse">
 					<ul class="nav navbar-nav">
 						<li>
-							<a href="{$display_path}results/">Browse</a>
+							<a href="{$url}results/">Browse</a>
 						</li>
 						<xsl:if test="//config/sparql/endpoint=true()">
 							<li>
-								<a href="{$display_path}sparql">SPARQL</a>
+								<a href="{$url}sparql">SPARQL</a>
 							</li>
 						</xsl:if>
 					</ul>
 					<div class="col-sm-3 col-md-3 pull-right">
-						<form class="navbar-form" role="search" action="{$display_path}results/" method="GET">
+						<form class="navbar-form" role="search" action="{$url}results/" method="GET">
 							<div class="input-group">
 								<input type="text" class="form-control" placeholder="Search" name="q" id="srch-term"/>
 								<div class="input-group-btn">

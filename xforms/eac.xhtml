@@ -871,7 +871,7 @@
 			<!-- ********************* SOLR SUBMISSIONS ********************** -->
 			<!-- access service to read in pre-transformed solr doc -->
 			<xforms:submission id="to-solr" method="get" replace="instance" instance="addIndex" serialization="none"
-				resource="{instance('config')/url}id/{instance('doc')/eac:control/eac:recordId}.solr">
+				resource="/xeac/id/{instance('doc')/eac:control/eac:recordId}.solr">
 				<xforms:message ev:event="xforms-submit-error" level="modal">Error transforming EAC record to Solr document.</xforms:message>
 				<xforms:send ev:event="xforms-submit-done" submission="publish-submission"/>
 			</xforms:submission>
@@ -896,7 +896,7 @@
 
 			<!-- ************** POST RDF TO TRIPLESTORE ***************** -->
 			<xforms:submission id="get-rdf" method="get" replace="instance" instance="rdf" serialization="none"
-				resource="{instance('config')/url}id/{instance('doc')/eac:control/eac:recordId}.rdf">
+				resource="/xeac/id/{instance('doc')/eac:control/eac:recordId}.rdf">
 				<xforms:message ev:event="xforms-submit-error" level="modal">Unable to get RDF/XML serialization.</xforms:message>
 				<xforms:action ev:event="xforms-submit-done">
 					<!-- first remove existing graphs -->

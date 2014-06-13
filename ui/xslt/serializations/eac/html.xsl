@@ -81,17 +81,17 @@
 				<!-- bootstrap -->
 				<link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css"/>
 				<script src="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"/>
-				<link rel="stylesheet" href="{$display_path}ui/css/style.css"/>
-				<script type="text/javascript" src="{$display_path}ui/javascript/display_functions.js"/>
+				<link rel="stylesheet" href="{$url}ui/css/style.css"/>
+				<script type="text/javascript" src="{$url}ui/javascript/display_functions.js"/>
 				<!-- mapping -->
 				<xsl:if test="descendant::eac:placeEntry[string(@vocabularySource)]">
 					<script src="http://www.openlayers.org/api/OpenLayers.js" type="text/javascript"/>
 					<script type="text/javascript" src="http://maps.google.com/maps/api/js?v=3.2&amp;sensor=false"/>
-					<script type="text/javascript" src="{$display_path}ui/javascript/mxn.js"/>
-					<script type="text/javascript" src="{$display_path}ui/javascript/timeline-2.3.0.js"/>
-					<script type="text/javascript" src="{$display_path}ui/javascript/timemap_full.pack.js"/>
-					<script type="text/javascript" src="{$display_path}ui/javascript/param.js"/>
-					<script type="text/javascript" src="{$display_path}ui/javascript/loaders/kml.js"/>
+					<script type="text/javascript" src="{$url}ui/javascript/mxn.js"/>
+					<script type="text/javascript" src="{$url}ui/javascript/timeline-2.3.0.js"/>
+					<script type="text/javascript" src="{$url}ui/javascript/timemap_full.pack.js"/>
+					<script type="text/javascript" src="{$url}ui/javascript/param.js"/>
+					<script type="text/javascript" src="{$url}ui/javascript/loaders/kml.js"/>
 				</xsl:if>
 				<xsl:if test="string(/content/config/google_analytics)">
 					<script type="text/javascript">
@@ -251,11 +251,11 @@
 			</li>
 			<li>RDF/XML <ul>
 					<li><a href="{$id}.rdf">Default</a></li>
-					<li><a href="{$display_path}api/get?id={$id}&amp;model=cidoc-crm">CIDOC CRM</a></li>
-					<li><a href="{$display_path}api/get?id={$id}&amp;model=snap">SNAP</a></li>
+					<li><a href="{$url}api/get?id={$id}&amp;model=cidoc-crm">CIDOC CRM</a></li>
+					<li><a href="{$url}api/get?id={$id}&amp;model=snap">SNAP</a></li>
 				</ul></li>
 			<li>
-				<a href="id/{$id}.kml">KML</a>
+				<a href="{$id}.kml">KML</a>
 			</li>
 		</ul>
 		<!-- display otherRecordIds, create links when applicable -->
@@ -397,7 +397,7 @@
 			</xsl:when>
 			<xsl:when test="parent::node()/eac:term">
 				<a
-					href="{$display_path}results/?q={if (string(parent::node()/@localType)) then parent::node()/@localType else parent::node()/local-name()}_facet:&#x022;{parent::node()/eac:term}&#x022;">
+					href="{$url}results/?q={if (string(parent::node()/@localType)) then parent::node()/@localType else parent::node()/local-name()}_facet:&#x022;{parent::node()/eac:term}&#x022;">
 					<xsl:value-of select="parent::node()/eac:term"/>
 				</a>
 			</xsl:when>
@@ -405,24 +405,24 @@
 				<xsl:value-of select="parent::node()/eac:placeRole"/>
 			</xsl:when>
 			<xsl:when test="parent::node()/eac:placeEntry">
-				<a href="{$display_path}results/?q={if (string(parent::node()/@localType)) then parent::node()/@localType else 'placeEntry'}_facet:&#x022;{parent::node()/eac:placeEntry}&#x022;">
+				<a href="{$url}results/?q={if (string(parent::node()/@localType)) then parent::node()/@localType else 'placeEntry'}_facet:&#x022;{parent::node()/eac:placeEntry}&#x022;">
 					<xsl:value-of select="parent::node()/eac:placeEntry"/>
 				</a>
 				<xsl:if test="string(parent::node()/eac:placeEntry/@vocabularySource)">
 					<a href="{parent::node()/eac:placeEntry/@vocabularySource}" style="margin-left:5px;">
-						<img src="{$display_path}ui/images/external.png" alt="External link"/>
+						<img src="{$url}ui/images/external.png" alt="External link"/>
 					</a>
 				</xsl:if>
 			</xsl:when>
 		</xsl:choose>
 		<xsl:if test="string(parent::node()/eac:placeEntry) and not(parent::eac:place)">
 			<xsl:text>, </xsl:text>
-			<a href="{$display_path}results/?q=placeEntry_facet:&#x022;{parent::node()/eac:placeEntry}&#x022;">
+			<a href="{$url}results/?q=placeEntry_facet:&#x022;{parent::node()/eac:placeEntry}&#x022;">
 				<xsl:value-of select="parent::node()/eac:placeEntry"/>
 			</a>
 			<xsl:if test="string(parent::node()/eac:placeEntry/@vocabularySource)">
 				<a href="{parent::node()/eac:placeEntry/@vocabularySource}" style="margin-left:5px;">
-					<img src="{$display_path}ui/images/external.png" alt="External link"/>
+					<img src="{$url}ui/images/external.png" alt="External link"/>
 				</a>
 			</xsl:if>
 			<xsl:text>.</xsl:text>
@@ -445,7 +445,16 @@
 				<!-- get related resources when there is a SPARQL query endpoint -->
 				<xsl:when test="string(//config/sparql/query)">
 					<xsl:call-template name="xeac:relatedResources">
-						<xsl:with-param name="uri" select="concat($url, 'id/', $id)"/>
+						<xsl:with-param name="uri">
+							<xsl:choose>
+								<xsl:when test="string(//config/uri_space)">
+									<xsl:value-of select="concat(//config/uri_space, $id)"/>
+								</xsl:when>
+								<xsl:otherwise>
+									<xsl:value-of select="concat($url, 'id/', $id)"/>
+								</xsl:otherwise>
+							</xsl:choose>
+						</xsl:with-param>
 						<xsl:with-param name="endpoint" select="//config/sparql/query"/>
 					</xsl:call-template>
 				</xsl:when>
@@ -470,7 +479,18 @@
 					<xsl:choose>
 						<!-- create clickable links to internal documents -->
 						<xsl:when test="string(@xlink:href) and not(contains(@xlink:href, 'http://'))">
-							<a href="{@xlink:href}">
+							<xsl:variable name="recordURI">
+								<xsl:choose>
+									<xsl:when test="string(/content/config/uri_space)">
+										<xsl:value-of select="concat(/content/config/uri_space, @xlink:href)"/>
+									</xsl:when>
+									<xsl:otherwise>
+										<xsl:value-of select="@xlink:href"/>
+									</xsl:otherwise>
+								</xsl:choose>
+							</xsl:variable>
+							
+							<a href="{$recordURI}">
 								<xsl:if test="@xlink:arcrole">
 									<xsl:attribute name="rel" select="@xlink:arcrole"/>
 								</xsl:if>
@@ -484,7 +504,7 @@
 								<xsl:if test="@xlink:arcrole">
 									<xsl:attribute name="rel" select="@xlink:arcrole"/>
 								</xsl:if>
-								<img src="{$display_path}ui/images/external.png" alt="External link"/>
+								<img src="{$url}ui/images/external.png" alt="External link"/>
 							</a>
 						</xsl:when>
 						<xsl:otherwise>

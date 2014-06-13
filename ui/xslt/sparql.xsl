@@ -3,6 +3,7 @@
 	<xsl:include href="templates.xsl"/>
 
 	<xsl:variable name="display_path"/>
+	<xsl:variable name="url" select="//content/url"/>
 
 	<xsl:template match="/">
 		<html lang="en">

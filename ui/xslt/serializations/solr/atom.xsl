@@ -60,12 +60,23 @@
 	</xsl:template>
 
 	<xsl:template match="doc">
+		<xsl:variable name="recordURI">
+			<xsl:choose>
+				<xsl:when test="string(//config/uri_space)">
+					<xsl:value-of select="concat(//config/uri_space, str[@name='id'])"/>
+				</xsl:when>
+				<xsl:otherwise>
+					<xsl:value-of select="concat($url, 'id/', str[@name='id'])"/>
+				</xsl:otherwise>
+			</xsl:choose>
+		</xsl:variable>
+		
 		<entry>
 			<title>
 				<xsl:value-of select="str[@name='name_display']"/>
 			</title>
-			<link href="{$url}id/{str[@name='id']}"/>
-			<link rel="alternate xml" type="text/xml" href="{$url}id/{str[@name='id']}.xml"/>
+			<link href="{$recordURI}"/>
+			<link rel="alternate xml" type="text/xml" href="{$recordURI}.xml"/>
 			<id>
 				<xsl:value-of select="str[@name='id']"/>
 			</id>

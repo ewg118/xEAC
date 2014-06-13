@@ -128,10 +128,21 @@
 	</xsl:template>
 
 	<xsl:template match="doc">
+		<xsl:variable name="recordURI">
+			<xsl:choose>
+				<xsl:when test="string(//config/uri_space)">
+					<xsl:value-of select="concat(//config/uri_space, str[@name='id'])"/>
+				</xsl:when>
+				<xsl:otherwise>
+					<xsl:value-of select="concat($display_path, 'id/', str[@name='id'])"/>
+				</xsl:otherwise>
+			</xsl:choose>
+		</xsl:variable>
+		
 		<div class="row result-doc">
 			<div class="col-md-8">
 				<h3>
-					<a href="{$display_path}id/{str[@name='id']}">
+					<a href="{$recordURI}">
 						<xsl:value-of select="str[@name='name_display']"/>
 					</a>
 				</h3>
@@ -153,7 +164,7 @@
 			</div>
 			<div class="col-md-4 right">
 				<xsl:if test="count(arr[@name='thumb_image']/str) &gt; 0">
-					<a href="{$display_path}id/{str[@name='id']}">
+					<a href="{$recordURI}">
 						<img src="{arr[@name='thumb_image']/str[1]}" alt="Thumbnail" style="max-height:120px;max-width:180px;"/>
 					</a>
 				</xsl:if>

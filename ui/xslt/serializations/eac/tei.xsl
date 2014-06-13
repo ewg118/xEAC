@@ -288,8 +288,35 @@
 				</xsl:otherwise>
 			</xsl:choose>
 		</xsl:variable>
+		<xsl:variable name="active">
+			<xsl:choose>
+				<xsl:when test="string(//config/uri_space)">
+					<xsl:value-of select="concat(//config/uri_space, $id)"/>
+				</xsl:when>
+				<xsl:otherwise>
+					<xsl:value-of select="concat($url, 'id/', $id)"/>
+				</xsl:otherwise>
+			</xsl:choose>
+		</xsl:variable>
+		<xsl:variable name="passive">
+			<xsl:choose>
+				<xsl:when test="contains(@xlink:href, 'http://')">
+					<xsl:value-of select="@xlink:href"/>
+				</xsl:when>
+				<xsl:otherwise>
+					<xsl:choose>
+						<xsl:when test="string(//config/uri_space)">
+							<xsl:value-of select="concat(//config/uri_space, @xlink:href)"/>
+						</xsl:when>
+						<xsl:otherwise>
+							<xsl:value-of select="concat($url, 'id/', @xlink:href)"/>
+						</xsl:otherwise>
+					</xsl:choose>
+				</xsl:otherwise>
+			</xsl:choose>
+		</xsl:variable>
 
-		<relation ref="{$ref}" active="{$url}id/{$id}" passive="{if (contains(@xlink:href, 'http://')) then @xlink:href else concat($url, 'id/', @xlink:href)}">
+		<relation ref="{$ref}" active="{$active}" passive="{$passive}">
 			<desc>
 				<xsl:element name="{if (contains(@xlink:role, 'Person')) then 'persName' else if (contains(@xlink:role, 'Family')) then 'name' else 'orgName'}" namespace="http://www.tei-c.org/ns/1.0">
 					<xsl:if test="@xlink:role">

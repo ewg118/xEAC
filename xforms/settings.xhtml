@@ -149,8 +149,10 @@
 			<!-- ************ BINDINGS *************** -->
 			<xforms:bind nodeset="instance('config')">
 				<xforms:bind nodeset="title" required="true()"/>
-				<xforms:bind nodeset="url" required="true()"/>
-				<xforms:bind nodeset="solr_published" required="true()"/>
+				<xforms:bind nodeset="url" required="true()" type="xs:anyURI"/>
+				<xforms:bind nodeset="uri_space" type="xs:anyURI"/>
+				<xforms:bind nodeset="description" required="true()"/>
+				<xforms:bind nodeset="solr_published" required="true()" type="xs:anyURI"/>
 				<xforms:bind nodeset="sparql">
 					<xforms:bind nodeset="query" type="xs:anyURI"/>
 					<xforms:bind nodeset="store" type="xs:anyURI"/>
@@ -314,11 +316,11 @@
 										<p>The title of the site to be displayed in all web page titles and citations in PDF files.</p>
 									</div>
 									<div>
-										<xforms:input ref="banner_text">
-											<xforms:label>Banner Text</xforms:label>
+										<xforms:input ref="description">
+											<xforms:label>Description</xforms:label>
 											<xforms:alert>Required</xforms:alert>
 										</xforms:input>
-										<p>Appears in the header banner. For more sophisticated control, edit header.xsl.</p>
+										<p>Description provided in data dumps and used in index page jumbotron.</p>
 									</div>
 									<div>
 										<xforms:input ref="url">
@@ -327,6 +329,12 @@
 										</xforms:input>
 										<p>Public URL of the site. Used in citations of and image references in PDF printouts. Changing this to an inactive URL will <b>not</b> break 's core
 											functionality, but web forms may be style-less since the Orbeon applications point to this URL for embedding css files.</p>
+									</div>
+									<div>
+										<xforms:input ref="uri_space">
+											<xforms:label>URI Space</xforms:label>											
+										</xforms:input>
+										<p>URI prefix for all EAC-CPF records in the collection, e.g., ARK URIs at a particular domain name. Note: this should be used in conjunction with Apache ProxyPass.</p>
 									</div>
 									<div>
 										<xforms:textarea ref="google_analytics">

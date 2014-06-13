@@ -2,6 +2,7 @@
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" exclude-result-prefixes="#all" version="2.0">	
 	<xsl:include href="templates.xsl"/>
 	<xsl:variable name="display_path"/>
+	<xsl:variable name="url" select="//content/url"/>
 
 	<xsl:template match="/">
 		<html xml:lang="en" lang="en" prefix="dcterms: http://purl.org/dc/terms/
