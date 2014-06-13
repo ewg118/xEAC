@@ -2,7 +2,7 @@
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" exclude-result-prefixes="#all" version="2.0">
 	<xsl:include href="templates.xsl"/>
 	<xsl:variable name="display_path"/>
-	<xsl:variable name="url" select="//content/url"/>
+	<xsl:variable name="url" select="/config/url"/>
 
 	<xsl:template match="/">
 		<html xml:lang="en" lang="en" prefix="dcterms: http://purl.org/dc/terms/
@@ -17,7 +17,7 @@
 				<link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css"/>
 				<script type="text/javascript" src="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"/>
 				<link rel="stylesheet" href="{$display_path}ui/css/style.css"/>
-				<link rel="xeac:atom" type="application/atom+xml" href="{concat(/config/url, 'feed/')}"/>
+				<link rel="xeac:atom" type="application/atom+xml" href="{concat($url, 'feed/')}"/>
 
 				<xsl:if test="string(/config/google_analytics)">
 					<script type="text/javascript">
