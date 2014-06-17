@@ -296,7 +296,9 @@
 
 	<xsl:template match="eac:cpfDescription">
 		<xsl:apply-templates select="eac:description"/>
-		<xsl:apply-templates select="eac:relations"/>
+		<xsl:if test="eac:relations or string(//config/sparql/query)">
+			<xsl:call-template name="relations"/>
+		</xsl:if>
 	</xsl:template>
 
 	<xsl:template match="eac:description">
@@ -433,13 +435,13 @@
 	</xsl:template>
 
 
-	<xsl:template match="eac:relations">
+	<xsl:template name="relations">
 		<div id="relations">
 			<h2>Relations</h2>
-			<xsl:if test="count(eac:cpfRelation) &gt; 0">
+			<xsl:if test="count(eac:relations/eac:cpfRelation) &gt; 0">
 				<h3>Related Corporate, Personal, and Family Names</h3>
 				<dl class="dl-horizontal">
-					<xsl:apply-templates select="eac:cpfRelation">
+					<xsl:apply-templates select="eac:relations/eac:cpfRelation">
 						<xsl:sort select="@xlink:arcrole"/>
 					</xsl:apply-templates>
 				</dl>
@@ -461,10 +463,10 @@
 						<xsl:with-param name="endpoint" select="//config/sparql/query"/>
 					</xsl:call-template>
 				</xsl:when>
-				<xsl:when test="count(eac:resourceRelation) &gt; 0">
+				<xsl:when test="count(eac:relations/eac:resourceRelation) &gt; 0">
 					<h3>Related Resources</h3>
 					<dl class="dl-horizontal">
-						<xsl:apply-templates select="eac:resourceRelation[not(@xlink:role='portrait')]"/>
+						<xsl:apply-templates select="eac:relations/eac:resourceRelation[not(@xlink:role='portrait')]"/>
 					</dl>
 				</xsl:when>
 			</xsl:choose>
