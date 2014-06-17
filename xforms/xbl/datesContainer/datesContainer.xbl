@@ -8,22 +8,47 @@
 					<xforms:var name="binding" as="node()?">
 						<xxforms:sequence select="." xxbl:scope="outer"/>
 					</xforms:var>
-					<xforms:var name="display_path">../../</xforms:var>
+					<xforms:action ev:event="xforms-enabled" ev:target="#observer" if="string($binding/@localType)">
+						<xforms:setvalue ref="instance('localType')" value="$binding/@localType"/>
+					</xforms:action>
 
 					<xforms:group ref="$binding">
 						<xforms:group ref=".[parent::eac:description]">
-							<h3>Dates of Existence</h3>							
+							<h3>Dates of Existence</h3>
+							<xforms:select1 ref="instance('localType')">								
+								<xforms:item>
+									<xforms:label>Date Type...</xforms:label>
+									<xforms:value/>
+								</xforms:item>
+								<xforms:item>
+									<xforms:label>Life</xforms:label>
+									<xforms:value>xeac:life</xforms:value>
+								</xforms:item>
+								<xforms:item>
+									<xforms:label>Floruit</xforms:label>
+									<xforms:value>xeac:floruit</xforms:value>
+								</xforms:item>
+								<xforms:action ev:event="xforms-value-changed">
+									<xforms:var name="value" select="."/>
+									<xforms:action if="string-length($value) &gt; 0">
+										<xforms:insert context="$binding" origin="xforms:attribute('localType', $value)"/>
+									</xforms:action>
+									<xforms:action if="string-length($value) = 0">
+										<xforms:delete nodeset="$binding/@localType"/>
+									</xforms:action>
+								</xforms:action>
+							</xforms:select1>
 						</xforms:group>
 						<xforms:group ref=".[not(parent::eac:description)]">
-							<h4>Use Dates</h4>							
-						</xforms:group>	
+							<h4>Use Dates</h4>
+						</xforms:group>
 						<xforms:trigger appearance="minimal">
 							<xforms:delete ev:event="DOMActivate" nodeset="."/>
 							<xforms:label>
 								<img src="/xeac/xforms/images/remove.gif"/>
 							</xforms:label>
-						</xforms:trigger>						
-						
+						</xforms:trigger>
+
 						<div class="subsection">
 							<div class="trigger_container">
 								<xforms:group ref=".[count(eac:date) = 0 and count(eac:dateRange) = 0 and count(eac:dateSet) = 0]">
@@ -58,7 +83,7 @@
 							<xforms:group ref="eac:dateRange">
 								<xeac:dateRange/>
 							</xforms:group>
-							
+
 							<xforms:group ref="eac:dateSet">
 								<xeac:dateSet/>
 							</xforms:group>
@@ -82,6 +107,11 @@
 
 						<xforms:instance id="dateSet-template" xxforms:exclude-result-prefixes="#all">
 							<dateSet/>
+						</xforms:instance>
+
+						<!-- control -->
+						<xforms:instance id="localType">
+							<localType/>
 						</xforms:instance>
 					</xforms:model>
 				</xforms:group>

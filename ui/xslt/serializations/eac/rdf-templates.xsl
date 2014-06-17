@@ -58,7 +58,7 @@
 		<!-- relations -->
 		<!-- only process relations with an xlink:arcrole from a defined namespace -->
 		<xsl:apply-templates
-			select="descendant::eac:cpfRelation[contains(@xlink:arcrole, ':') and string(@xlink:href)]|descendant::eac:resourceReslation[contains(@xlink:arcrole, ':') and string(@xlink:href)]"
+			select="descendant::eac:cpfRelation[contains(@xlink:arcrole, ':') and string(@xlink:href)]|descendant::eac:resourceRelation[contains(@xlink:arcrole, ':') and string(@xlink:href)]"
 			mode="default"/>
 
 		<xsl:apply-templates select="descendant::eac:abstract" mode="default"/>
@@ -84,7 +84,6 @@
 		</xsl:variable>
 		<xsl:variable name="prefix" select="substring-before(@xlink:arcrole, ':')"/>
 		<xsl:variable name="namespace" select="ancestor::eac:eac-cpf/eac:control/eac:localTypeDeclaration[eac:abbreviation=$prefix]/eac:citation/@xlink:href"/>
-
 		<xsl:element name="{@xlink:arcrole}" namespace="{$namespace}">
 			<xsl:attribute name="rdf:resource" select="$uri"/>
 		</xsl:element>

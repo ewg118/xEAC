@@ -115,7 +115,7 @@
 							</maintenanceEvent>
 						</maintenanceHistory>
 						<maintenanceStatus>new</maintenanceStatus>
-						<publicationStatus>inProcess</publicationStatus>
+						<publicationStatus>inProcess</publicationStatus>						
 					</control>
 					<cpfDescription>
 						<identity>
@@ -951,6 +951,7 @@
 								if="not(instance('doc')/eac:cpfDescription/eac:description)"/>
 							<xforms:insert context="instance('doc')/eac:cpfDescription/eac:description" origin="instance('existDates-template')"
 								if="not(instance('doc')/eac:cpfDescription/eac:description/eac:existDates)"/>
+							<xforms:insert context="instance('doc')/eac:cpfDescription/eac:description/eac:existDates" origin="xforms:attribute('localType', 'xeac:life')"/>
 							<xforms:insert context="instance('doc')/eac:cpfDescription/eac:description/eac:existDates" origin="instance('dateRange-template')"
 								if="not(instance('doc')/eac:cpfDescription/eac:description/eac:existDates/eac:dateRange)"/>
 							<!-- set @standardDate -->
@@ -1549,6 +1550,7 @@
 																if="not(instance('doc')/eac:cpfDescription/eac:description)"/>
 															<xforms:insert context="instance('doc')/eac:cpfDescription/eac:description" origin="instance('existDates-template')"
 																if="not(instance('doc')/eac:cpfDescription/eac:description/eac:existDates)"/>
+															<xforms:insert context="instance('doc')/eac:cpfDescription/eac:description/eac:existDates" origin="xforms:attribute('localType', 'xeac:life')"/>
 															<xforms:insert context="instance('doc')/eac:cpfDescription/eac:description/eac:existDates" origin="instance('dateRange-template')"
 																if="not(instance('doc')/eac:cpfDescription/eac:description/eac:existDates/eac:dateRange)"/>
 															<!-- set @standardDate -->
@@ -1608,7 +1610,7 @@
 															<xforms:insert context="instance('doc')/eac:cpfDescription/eac:relations/eac:resourceRelation[last()]"
 																origin="xxforms:attribute('xlink:href', $href)"/>
 															<xforms:insert context="instance('doc')/eac:cpfDescription/eac:relations/eac:resourceRelation[last()]"
-																origin="xxforms:attribute('xlink:role', 'portrait')"/>
+																origin="xxforms:attribute('xlink:role', 'foaf:thumbnail')"/>
 															<xforms:setvalue context="instance('doc')/eac:cpfDescription/eac:relations/eac:resourceRelation[last()]/eac:relationEntry">Wikipedia
 																Thumbnail</xforms:setvalue>
 														</xforms:action>
