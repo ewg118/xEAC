@@ -244,6 +244,12 @@
 	</xsl:template>
 
 	<xsl:template name="side-bar">
+		<xsl:if test="descendant::eac:resourceRelation[@xlink:arcrole='foaf:thumbnail']">
+			<p class="text-center">
+				<img src="{descendant::eac:resourceRelation[@xlink:arcrole='foaf:thumbnail']/@xlink:href}" alt="Portrait" style="max-width:100%;"/>
+			</p>			
+		</xsl:if>
+		
 		<h3>Export</h3>
 		<ul>
 			<li>
@@ -280,10 +286,6 @@
 					</li>
 				</xsl:for-each>
 			</ul>
-		</xsl:if>
-
-		<xsl:if test="descendant::eac:resourceRelation[@xlink:role='portrait']">
-			<img src="{descendant::eac:resourceRelation[@xlink:role='portrait']/@xlink:href}" alt="Portrait" style="max-width:100%;"/>
 		</xsl:if>
 
 		<!-- if there is an otherRecordId with a nomisma ID, construction nomisma SPARQL -->
