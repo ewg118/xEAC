@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:skos="http://www.w3.org/2004/02/skos/core#" xmlns:foaf="http://xmlns.com/foaf/0.1/"
-	xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:arch="http://purl.org/archival/vocab/arch#" xmlns:dcterms="http://purl.org/dc/terms/"
-	xmlns:eac="urn:isbn:1-931666-33-4" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:xs="http://www.w3.org/2001/XMLSchema"
-	xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#" xmlns:ecrm="http://erlangen-crm.org/current/" xmlns:lawd="http://snapdrgn.net"
-	exclude-result-prefixes="eac xlink" version="2.0">
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:skos="http://www.w3.org/2004/02/skos/core#" xmlns:foaf="http://xmlns.com/foaf/0.1/" xmlns:xlink="http://www.w3.org/1999/xlink"
+	xmlns:arch="http://purl.org/archival/vocab/arch#" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:eac="urn:isbn:1-931666-33-4" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+	xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#" xmlns:ecrm="http://erlangen-crm.org/current/" xmlns:lawd="http://snapdrgn.net"
+	xmlns:bio="http://purl.org/vocab/bio/0.1/" exclude-result-prefixes="eac xlink" version="2.0">
 
 	<!-- ***** DEFAULT TEMPLATES: used for $id.rdf ***** -->
 	<xsl:template match="eac:eac-cpf" mode="default">
@@ -17,7 +16,7 @@
 				</xsl:otherwise>
 			</xsl:choose>
 		</xsl:variable>
-		
+
 		<rdf:RDF>
 			<xsl:choose>
 				<xsl:when test="descendant::eac:entityType='person'">
@@ -50,28 +49,11 @@
 			</xsl:element>
 		</xsl:for-each>
 
+		<!-- exist dates -->
+		<xsl:apply-templates select="descendant::eac:existDates[@localType='xeac:life']" mode="default"/>
+
 		<!-- related links -->
-		<xsl:for-each select="eac:control/eac:otherRecordId">
-			<xsl:choose>
-				<xsl:when test=". castable as xs:anyURI and contains(., 'http://')">
-					<skos:related rdf:resource="{.}"/>
-				</xsl:when>
-				<xsl:when test=". castable as xs:anyURI and not(contains(., 'http://'))">
-					<xsl:variable name="otherURI">
-						<xsl:choose>
-							<xsl:when test="string(/content/config/uri_space)">
-								<xsl:value-of select="concat(/content/config/uri_space, .)"/>
-							</xsl:when>
-							<xsl:otherwise>
-								<xsl:value-of select="concat($url, 'id/', .)"/>
-							</xsl:otherwise>
-						</xsl:choose>
-					</xsl:variable>
-					
-					<skos:related rdf:resource="{$otherURI}"/>
-				</xsl:when>
-			</xsl:choose>
-		</xsl:for-each>
+		<xsl:apply-templates select="eac:control/eac:otherRecordId" mode="default"/>
 
 		<!-- relations -->
 		<!-- only process relations with an xlink:arcrole from a defined namespace -->
@@ -114,6 +96,100 @@
 		</dcterms:abstract>
 	</xsl:template>
 
+	<xsl:template match="eac:otherRecordId" mode="default">
+		<xsl:variable name="localType" select="@localType"/>
+
+		<xsl:variable name="otherURI">
+			<xsl:choose>
+				<xsl:when test=". castable as xs:anyURI and contains(., 'http://')">
+					<xsl:value-of select="."/>
+				</xsl:when>
+				<xsl:when test=". castable as xs:anyURI and not(contains(., 'http://'))">
+					<xsl:choose>
+						<xsl:when test="string(/content/config/uri_space)">
+							<xsl:value-of select="concat(/content/config/uri_space, .)"/>
+						</xsl:when>
+						<xsl:otherwise>
+							<xsl:value-of select="concat($url, 'id/', .)"/>
+						</xsl:otherwise>
+					</xsl:choose>
+				</xsl:when>
+			</xsl:choose>
+		</xsl:variable>
+
+		<xsl:choose>
+			<!-- exploit the semantic property contained in the localType, if it contains a matching localTypeDeclaration -->
+			<xsl:when test="parent::eac:control/eac:localTypeDeclaration/eac:abbreviation=$localType">
+				<xsl:variable name="property" select="substring-after($localType, ':')"/>
+				<xsl:variable name="namespace" select="substring-before(parent::eac:control/eac:localTypeDeclaration[eac:abbreviation=$localType][1]/eac:citation/@xlink:href, $property)"/>
+
+				<xsl:element name="{$localType}" namespace="{$namespace}">
+					<xsl:attribute name="rdf:resource" select="$otherURI"/>
+				</xsl:element>
+			</xsl:when>
+			<!-- otherwise use skos:relatedMatch for other record IDs that link externally, skos:related for internally linked records -->
+			<xsl:otherwise>
+				<xsl:choose>
+					<xsl:when test=". castable as xs:anyURI and contains(., 'http://')">
+						<skos:relatedMatch rdf:resource="{$otherURI}"/>
+					</xsl:when>
+					<xsl:when test=". castable as xs:anyURI and not(contains(., 'http://'))">
+						<skos:related rdf:resource="{$otherURI}"/>
+					</xsl:when>
+				</xsl:choose>
+			</xsl:otherwise>
+		</xsl:choose>
+	</xsl:template>
+
+	<xsl:template match="eac:existDates[@localType='xeac:life']" mode="default">
+		<xsl:choose>
+			<xsl:when test="eac:dateRange">
+				<bio:birth>
+					<bio:Birth>
+						<xsl:apply-templates select="eac:dateRange/eac:fromDate[@standardDate]" mode="default"/>
+					</bio:Birth>
+				</bio:birth>
+				<bio:death>
+					<bio:Death>
+						<xsl:apply-templates select="eac:dateRange/eac:toDate[@standardDate]" mode="default"/>
+					</bio:Death>
+				</bio:death>
+			</xsl:when>
+			<xsl:when test="eac:date[@standardDate]">
+				<bio:birth>
+					<bio:Birth>
+						<xsl:apply-templates select="eac:date[@standardDate]" mode="default"/>
+					</bio:Birth>
+				</bio:birth>
+				<bio:death>
+					<bio:Death>
+						<xsl:apply-templates select="eac:date[@standardDate]" mode="default"/>
+					</bio:Death>
+				</bio:death>
+			</xsl:when>
+		</xsl:choose>
+	</xsl:template>
+
+	<xsl:template match="eac:date|eac:fromDate|eac:toDate" mode="default">
+		<dcterms:date>
+			<xsl:attribute name="rdf:datatype">
+				<xsl:choose>
+					<xsl:when test="@standardDate castable as xs:date">
+						<xsl:text>http://www.w3.org/2001/XMLSchema#date</xsl:text>
+					</xsl:when>
+					<xsl:when test="@standardDate castable as xs:gYearMonth">
+						<xsl:text>http://www.w3.org/2001/XMLSchema#gYearMonth</xsl:text>
+					</xsl:when>
+					<xsl:when test="@standardDate castable as xs:gYear">
+						<xsl:text>http://www.w3.org/2001/XMLSchema#gYear</xsl:text>
+					</xsl:when>
+				</xsl:choose>
+			</xsl:attribute>
+			<xsl:value-of select="@standardDate"/>
+		</dcterms:date>
+	</xsl:template>
+
+
 	<!-- ***** CIDOC CRM ***** -->
 	<xsl:template match="eac:eac-cpf" mode="crm">
 		<xsl:variable name="recordURI">
@@ -153,10 +229,8 @@
 	</xsl:template>
 
 	<xsl:template match="eac:fromDate|eac:toDate" mode="crm">
-		<xsl:element name="{if(local-name()='fromDate') then 'ecrm:P92i_was_brought_into_existence_by' else 'ecrm:P93_took_out_of_existence'}"
-			namespace="http://erlangen-crm.org/current/">
-			<xsl:element name="{if(local-name()='fromDate') then 'ecrm:E63_Beginning_of_Existence' else 'ecrm:E64_End_of_Existence'}"
-				namespace="http://erlangen-crm.org/current/">
+		<xsl:element name="{if(local-name()='fromDate') then 'ecrm:P92i_was_brought_into_existence_by' else 'ecrm:P93_took_out_of_existence'}" namespace="http://erlangen-crm.org/current/">
+			<xsl:element name="{if(local-name()='fromDate') then 'ecrm:E63_Beginning_of_Existence' else 'ecrm:E64_End_of_Existence'}" namespace="http://erlangen-crm.org/current/">
 				<ecrm:P4_has_time-span>
 					<ecrm:E52_Time-Span>
 						<rdfs:label>
@@ -264,7 +338,7 @@
 				</xsl:otherwise>
 			</xsl:choose>
 		</xsl:variable>
-		
+
 		<rdf:RDF>
 			<lawd:Person rdf:about="{$recordURI}">
 				<dcterms:publisher rdf:resource="{$url}"/>
@@ -284,7 +358,7 @@
 				<xsl:for-each select="eac:control/eac:otherRecordId[. castable as xs:anyURI and contains(., 'http://')]">
 					<dcterms:identifier rdf:resource="{.}"/>
 				</xsl:for-each>
-				
+
 				<xsl:apply-templates
 					select="descendant::eac:cpfRelation[contains(@xlink:arcrole, ':') and string(@xlink:href)]|descendant::eac:resourceReslation[contains(@xlink:arcrole, ':') and string(@xlink:href)]"
 					mode="default"/>
@@ -301,7 +375,7 @@
 					</lawd:primaryForm>
 				</xsl:for-each>
 			</lawd:PersonalName>-->
-			
+
 			<xsl:for-each select="descendant::eac:source">
 				<lawd:Attestation rdf:about="{$recordURI}#attestation{position()}">
 					<lawd:hasCitation rdf:resource="{@xlink:href}"/>
@@ -309,7 +383,7 @@
 			</xsl:for-each>
 		</rdf:RDF>
 	</xsl:template>
-	
+
 	<xsl:template match="eac:existDates/*">
 		<dcterms:date>
 			<xsl:choose>

@@ -27,6 +27,9 @@
 							</li>
 						</xsl:if>
 						<li>
+							<a href="http://numismatics.org/archives/">Archives</a>
+						</li>
+						<li>
 							<a href="http://numismatics.org">ANS Home</a>
 						</li>
 					</ul>

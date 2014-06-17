@@ -57,10 +57,33 @@
 		</div>
 		<div class="container-fluid">
 			<div class="row">
-				<div class="col-md-8">
+				<div class="col-md-3">
+					<h3>Navigation</h3>
+					<ul>
+						<li>
+							<a href="http://numismatics.org/Archives/Research">Conducting Research</a>
+						</li>
+						<li>
+							<a href="http://numismatics.org/Archives/CitationFormat">Citation Format</a>
+						</li>
+						<li>
+							<a href="http://numismatics.org/Archives/ANSPastOfficers">Officers</a>
+						</li>
+						<li>
+							<a href="http://numismatics.org/Archives/Awards">Awards</a>
+						</li>
+						<li>
+							<a href="http://numismatics.org/Archives/GraduateSeminar">Graduate Seminar</a>
+						</li>
+						<li>
+							<a href="http://numismatics.org/Archives/PublicationHistory">Publications Program</a>
+						</li>
+					</ul>
+				</div>
+				<div class="col-md-6">
 					<xsl:copy-of select="index/*"/>
 				</div>
-				<div class="col-md-4">
+				<div class="col-md-3">
 					<div class="highlight">
 						<h3>Share</h3>
 						<div class="addthis_toolbox addthis_default_style addthis_32x32_style">
