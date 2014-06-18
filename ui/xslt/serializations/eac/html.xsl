@@ -465,10 +465,19 @@
 			<xsl:when test="parent::node()/eac:event">
 				<xsl:value-of select="parent::node()/eac:event"/>
 			</xsl:when>
+			<xsl:when test="parent::node()/parent::node()/eac:event">
+				<xsl:value-of select="parent::node()/parent::node()/eac:event"/>
+			</xsl:when>
 			<xsl:when test="parent::node()/eac:term">
 				<a
 					href="{$url}results/?q={if (string(parent::node()/@localType)) then parent::node()/@localType else parent::node()/local-name()}_facet:&#x022;{parent::node()/eac:term}&#x022;">
 					<xsl:value-of select="parent::node()/eac:term"/>
+				</a>
+			</xsl:when>
+			<xsl:when test="parent::node()/parent::node()/eac:term">
+				<a
+					href="{$url}results/?q={if (string(parent::node()/parent::node()/@localType)) then parent::node()/parent::node()/@localType else parent::node()/parent::node()/local-name()}_facet:&#x022;{parent::node()/parent::node()/eac:term}&#x022;">
+					<xsl:value-of select="parent::node()/parent::node()/eac:term"/>
 				</a>
 			</xsl:when>
 			<xsl:when test="parent::node()/eac:placeRole">
