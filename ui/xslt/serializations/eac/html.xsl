@@ -319,7 +319,7 @@
 		</div>
 		<xsl:if test="descendant::eac:date[not(parent::eac:existDates)] or descendant::eac:dateRange[not(parent::eac:existDates)]">
 			<div id="chron">
-				<h2>Chronology</h2>
+				<h3>Chronology</h3>
 				<ul>
 					<xsl:apply-templates select="descendant::eac:date[@standardDate]|descendant::eac:dateRange[eac:fromDate[@standardDate]]" mode="chronList">
 						<xsl:sort
@@ -336,7 +336,7 @@
 		
 		<xsl:if test="descendant::eac:function[not(descendant::*/@standardDate)]|descendant::eac:languageUsed[not(descendant::*/@standardDate)]|descendant::eac:legalStatus[not(descendant::*/@standardDate)]|descendant::eac:localDescription[not(descendant::*/@standardDate)]|descendant::eac:mandate[not(descendant::*/@standardDate)]|descendant::eac:occupation[not(descendant::*/@standardDate)]|descendant::eac:place[not(descendant::*/@standardDate)]">
 			<div id="terms">
-				<h2>Terms</h2>
+				<h3>Terms</h3>
 				<dl class="dl-horizontal">
 					<xsl:apply-templates select="descendant::eac:function[not(descendant::*/@standardDate)]|descendant::eac:languageUsed[not(descendant::*/@standardDate)]|descendant::eac:legalStatus[not(descendant::*/@standardDate)]|descendant::eac:localDescription[not(descendant::*/@standardDate)]|descendant::eac:mandate[not(descendant::*/@standardDate)]|descendant::eac:occupation[not(descendant::*/@standardDate)]|descendant::eac:place[not(descendant::*/@standardDate)]">
 						<xsl:sort select="local-name()"/>
