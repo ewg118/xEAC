@@ -473,12 +473,22 @@
 					href="{$url}results/?q={if (string(parent::node()/@localType)) then parent::node()/@localType else parent::node()/local-name()}_facet:&#x022;{parent::node()/eac:term}&#x022;">
 					<xsl:value-of select="parent::node()/eac:term"/>
 				</a>
+				<xsl:if test="string(parent::node()/eac:term/@vocabularySource)">
+					<a href="{parent::node()/eac:term/@vocabularySource}" style="margin-left:5px;">
+						<img src="{$url}ui/images/external.png" alt="External link"/>
+					</a>
+				</xsl:if>
 			</xsl:when>
 			<xsl:when test="parent::node()/parent::node()/eac:term">
 				<a
 					href="{$url}results/?q={if (string(parent::node()/parent::node()/@localType)) then parent::node()/parent::node()/@localType else parent::node()/parent::node()/local-name()}_facet:&#x022;{parent::node()/parent::node()/eac:term}&#x022;">
 					<xsl:value-of select="parent::node()/parent::node()/eac:term"/>
 				</a>
+				<xsl:if test="string(parent::node()/parent::node()/eac:term/@vocabularySource)">
+					<a href="{parent::node()/parent::node()/eac:term/@vocabularySource}" style="margin-left:5px;">
+						<img src="{$url}ui/images/external.png" alt="External link"/>
+					</a>
+				</xsl:if>
 			</xsl:when>
 			<xsl:when test="parent::node()/eac:placeRole">
 				<xsl:value-of select="parent::node()/eac:placeRole"/>
