@@ -111,7 +111,15 @@
 			</xforms:instance>
 
 			<xforms:instance id="ontology">
-				<rdf:RDF/>
+				<rdf:RDF xmlns=""/>
+			</xforms:instance>
+			
+			<xforms:instance id="load-rdf-config">
+				<config xmlns="">
+					<url/>
+					<content-type>application/xml</content-type>
+					<mode>xml</mode>
+				</config>
 			</xforms:instance>
 			
 			<!-- connecting to a SPARQL endpoint -->
@@ -228,9 +236,9 @@
 				<xforms:message ev:event="xforms-submit-error" level="modal">Upload to temporary directory failed.</xforms:message>
 			</xforms:submission>
 
-			<xforms:submission id="get-ontology" method="get" replace="instance" instance="ontology" serialization="none" action="{instance('file')}">
+			<!--<xforms:submission id="get-ontology" method="get" replace="instance" instance="ontology" serialization="none" action="{substring-before(instance('file'), '?')}" mediatype="application/rdf+xml">
 				<xforms:message ev:event="xforms-submit-error" level="modal">Unable to load file into an XForms instance. Is it an XML document?</xforms:message>
-			</xforms:submission>
+			</xforms:submission>-->
 
 			<!-- query SPARQL endpoint -->
 			<xforms:submission id="query-sparql" serialization="none" method="get"
@@ -724,10 +732,13 @@
 											<xforms:send submission="upload-ontology"/>
 											<!--get the temp file written to disk-->
 											<xforms:action ev:event="xforms-submit-done">
-												<xforms:send submission="get-ontology"/>
+												<xforms:setvalue ref="instance('load-rdf-config')/url" value="substring-before(instance('file'), '?')"/>
+												<xforms:insert nodeset="instance('ontology')"
+													origin="xxforms:call-xpl('oxf:/apps/xeac/xpl/xforms/load-rdf.xpl', 'file', instance('load-rdf-config'), 'data')"/>
+												<!--<xforms:send submission="get-ontology"/>-->
 												<!-- process ontology to extract namespaces -->
 												<xforms:action ev:event="xforms-submit-done">
-													<xforms:action xxforms:iterate="instance('ontology')//*[@rdf:about][rdf:type[@rdf:resource='http://www.w3.org/2002/07/owl#Ontology']]">
+													<xforms:action xxforms:iterate="instance('ontology')/*[@rdf:about][rdf:type[@rdf:resource='http://www.w3.org/2002/07/owl#Ontology'] or name()='owl:Ontology']">
 														<xforms:var name="about" select="data(context()/@rdf:about)"/>
 														<xforms:insert context="instance('control-instance')" nodeset="./child::node()[last()]"
 															origin="xforms:element('namespace', (xforms:attribute('prefix', ''), xforms:attribute('import', true()), $about))"/>
@@ -776,26 +787,26 @@
 											<xforms:var name="uri" select="data(context()/text())"/>
 											<xforms:var name="prefix" select="data(context()/@prefix)"/>
 											<!-- insert relations extracted from RDF -->
-											<xforms:action xxforms:iterate="instance('ontology')//*[contains(@rdf:about, $uri)][rdf:type/@rdf:resource='http://www.w3.org/1999/02/22-rdf-syntax-ns#Property' or rdf:type/@rdf:resource='http://www.w3.org/2002/07/owl#SymmetricProperty']">
+											<xforms:action xxforms:iterate="instance('ontology')/*[contains(@rdf:about, $uri)][rdf:type/@rdf:resource='http://www.w3.org/1999/02/22-rdf-syntax-ns#Property' or rdf:type/@rdf:resource='http://www.w3.org/2002/07/owl#SymmetricProperty' or name()='rdf:Property' or name()='owl:SymmetricProperty' or name()='owl:ObjectProperty']">
 												<xforms:var name="source" select="replace(@rdf:about, $uri, concat($prefix, ':'))"/>
 												<!-- ignore properties which have already been imported -->
 												<xforms:action if="not(instance('config')/relationSemantics/cpfRelations/relation/@from = $source)">
 													<xforms:insert context="instance('config')/relationSemantics/cpfRelations" nodeset="child::node()[last()]" origin="instance('cpfRelation-template')"/>
 													<!-- handle equivalent relationships -->
-													<xforms:action if="rdf:type/@rdf:resource='http://www.w3.org/2002/07/owl#SymmetricProperty'">
+													<xforms:action if="rdf:type/@rdf:resource='http://www.w3.org/2002/07/owl#SymmetricProperty' or name()='owl:SymmetricProperty'">
 														<xforms:setvalue ref="instance('config')/relationSemantics/cpfRelations/relation[last()]/@from" value="$source"/>
 														<xforms:setvalue ref="instance('config')/relationSemantics/cpfRelations/relation[last()]/@to" value="$source"/>
 													</xforms:action>
 													<!-- handle inverse relationships -->
-													<xforms:action if="rdf:type/@rdf:resource='http://www.w3.org/1999/02/22-rdf-syntax-ns#Property'">
+													<xforms:action if="rdf:type/@rdf:resource='http://www.w3.org/1999/02/22-rdf-syntax-ns#Property' or name()='rdf:Property' or name()='owl:ObjectProperty'">
 														<!-- if owl:inverseOf exists -->
-														<xforms:action if="string(context()/owl:inverseOf/@rdf:resource)">
-															<xforms:var name="to" select="replace(context()/owl:inverseOf/@rdf:resource, $uri, concat($prefix, ':'))"/>
+														<xforms:action if="string(context()/owl:inverseOf/@rdf:resource) or string(context()/owl:inverseOf/*/@rdf:about)">															
+															<xforms:var name="to" select="if (string(context()/owl:inverseOf/@rdf:resource)) then replace(context()/owl:inverseOf/@rdf:resource, $uri, concat($prefix, ':')) else replace(context()/owl:inverseOf/*/@rdf:about, $uri, concat($prefix, ':'))"/>
 															<xforms:setvalue ref="instance('config')/relationSemantics/cpfRelations/relation[last()]/@from" value="$source"/>
 															<xforms:setvalue ref="instance('config')/relationSemantics/cpfRelations/relation[last()]/@to" value="$to"/>
 														</xforms:action>
 														<!-- otherwise, insert the same relationship -->
-														<xforms:action if="not(string(context()/owl:inverseOf/@rdf:resource))">															
+														<xforms:action if="not(string(context()/owl:inverseOf/@rdf:resource) or string(context()/owl:inverseOf/*/@rdf:about))">															
 															<xforms:setvalue ref="instance('config')/relationSemantics/cpfRelations/relation[last()]/@from" value="$source"/>
 															<xforms:setvalue ref="instance('config')/relationSemantics/cpfRelations/relation[last()]/@to" value="$source"/>
 														</xforms:action>
@@ -924,7 +935,7 @@
 								</xforms:action>
 							</fr:positive-choice>
 						</fr:alert-dialog>
-						<!--<fr:xforms-inspector id="orbeon-xforms-inspector"/>-->
+						<fr:xforms-inspector id="orbeon-xforms-inspector"/>
 					</div>
 				</div>
 			</div>
