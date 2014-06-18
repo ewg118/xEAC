@@ -321,7 +321,7 @@
 			<div id="chron">
 				<h2>Chronology</h2>
 				<ul>
-					<xsl:apply-templates select="descendant::eac:date[@standardDate]|eac:description/descendant::eac:dateRange[eac:fromDate[@standardDate]]" mode="chronList">
+					<xsl:apply-templates select="descendant::eac:date[@standardDate]|descendant::eac:dateRange[eac:fromDate[@standardDate]]" mode="chronList">
 						<xsl:sort
 							select="if(local-name()='date') then if (substring(@standardDate, 1, 1) = '-') then (number(tokenize(@standardDate, '-')[2]) * -1) else tokenize(@standardDate, '-')[1] else  if (substring(eac:fromDate/@standardDate, 1, 1) = '-') then (number(tokenize(eac:fromDate/@standardDate, '-')[2]) * -1) else tokenize(eac:fromDate/@standardDate, '-')[1]"/>
 						<xsl:sort
@@ -333,6 +333,61 @@
 				</ul>
 			</div>
 		</xsl:if>
+		
+		<xsl:if test="descendant::eac:function[not(descendant::*/@standardDate)]|descendant::eac:languageUsed[not(descendant::*/@standardDate)]|descendant::eac:legalStatus[not(descendant::*/@standardDate)]|descendant::eac:localDescription[not(descendant::*/@standardDate)]|descendant::eac:mandate[not(descendant::*/@standardDate)]|descendant::eac:occupation[not(descendant::*/@standardDate)]|descendant::eac:place[not(descendant::*/@standardDate)]">
+			<div id="terms">
+				<h2>Terms</h2>
+				<dl class="dl-horizontal">
+					<xsl:apply-templates select="descendant::eac:function[not(descendant::*/@standardDate)]|descendant::eac:languageUsed[not(descendant::*/@standardDate)]|descendant::eac:legalStatus[not(descendant::*/@standardDate)]|descendant::eac:localDescription[not(descendant::*/@standardDate)]|descendant::eac:mandate[not(descendant::*/@standardDate)]|descendant::eac:occupation[not(descendant::*/@standardDate)]|descendant::eac:place[not(descendant::*/@standardDate)]">
+						<xsl:sort select="local-name()"/>
+						<xsl:sort select="eac:term or eac:placeEntry"/>
+					</xsl:apply-templates>
+				</dl>
+			</div>
+		</xsl:if>
+	</xsl:template>
+	
+	<xsl:template match="eac:function|eac:languageUsed|eac:legalStatus|eac:localDescription|eac:mandate|eac:occupation|eac:place">
+		<dt>
+			<xsl:value-of select="local-name()"/>
+		</dt>
+		<dd>
+			<xsl:choose>
+				<xsl:when test="eac:term">
+					<a
+						href="{$url}results/?q={if (string(@localType)) then @localType else local-name()}_facet:&#x022;{eac:term}&#x022;">
+						<xsl:value-of select="eac:term"/>
+					</a>
+					<xsl:if test="string(eac:term/@vocabularySource)">
+						<a href="{eac:term/@vocabularySource}" style="margin-left:5px;">
+							<img src="{$url}ui/images/external.png" alt="External link"/>
+						</a>
+					</xsl:if>
+					<xsl:if test="string(eac:placeEntry)">
+						<xsl:text>, </xsl:text>
+						<a href="{$url}results/?q=placeEntry_facet:&#x022;{eac:placeEntry}&#x022;">
+							<xsl:value-of select="eac:placeEntry"/>
+						</a>
+						<xsl:if test="string(eac:placeEntry/@vocabularySource)">
+							<a href="{eac:placeEntry/@vocabularySource}" style="margin-left:5px;">
+								<img src="{$url}ui/images/external.png" alt="External link"/>
+							</a>
+						</xsl:if>
+					</xsl:if>
+				</xsl:when>
+				<xsl:when test="eac:placeEntry">
+					<a href="{$url}results/?q=placeEntry_facet:&#x022;{eac:placeEntry}&#x022;">
+						<xsl:value-of select="eac:placeEntry"/>
+					</a>
+					<xsl:if test="string(eac:placeEntry/@vocabularySource)">
+						<a href="{eac:placeEntry/@vocabularySource}" style="margin-left:5px;">
+							<img src="{$url}ui/images/external.png" alt="External link"/>
+						</a>
+					</xsl:if>
+				</xsl:when>
+			</xsl:choose>
+			
+		</dd>
 	</xsl:template>
 
 	<xsl:template match="eac:existDates">
