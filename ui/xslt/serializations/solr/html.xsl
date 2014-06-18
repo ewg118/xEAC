@@ -25,7 +25,7 @@
 			<xsl:value-of select="doc('input:params')/request/parameters/parameter[name='sort']/value"/>
 		</xsl:if>
 	</xsl:param>
-	<xsl:param name="rows">10</xsl:param>
+	<xsl:param name="rows">20</xsl:param>
 	<xsl:param name="start">
 		<xsl:choose>
 			<xsl:when test="string(doc('input:params')/request/parameters/parameter[name='start']/value)">
