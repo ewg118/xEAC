@@ -244,11 +244,19 @@
 	</xsl:template>
 
 	<xsl:template name="side-bar">
-		<xsl:if test="descendant::eac:resourceRelation[@xlink:arcrole='foaf:thumbnail']">
-			<p class="text-center">
-				<img src="{descendant::eac:resourceRelation[@xlink:arcrole='foaf:thumbnail']/@xlink:href}" alt="Portrait" style="max-width:100%;"/>
-			</p>			
-		</xsl:if>
+		<xsl:choose>
+			<xsl:when test="descendant::eac:resourceRelation[@xlink:arcrole='foaf:thumbnail']">
+				<p class="text-center">
+					<img src="{descendant::eac:resourceRelation[@xlink:arcrole='foaf:thumbnail']/@xlink:href}" alt="Portrait" style="max-width:100%;"/>
+				</p>			
+			</xsl:when>
+			<xsl:when test="descendant::eac:resourceRelation[@xlink:arcrole='foaf:depiction']">
+				<p class="text-center">
+					<img src="{descendant::eac:resourceRelation[@xlink:arcrole='foaf:depiction']/@xlink:href}" alt="Portrait" style="max-width:100%;"/>
+				</p>			
+			</xsl:when>
+		</xsl:choose>
+		
 		
 		<h3>Export</h3>
 		<ul>

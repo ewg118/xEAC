@@ -59,11 +59,18 @@
 					<xsl:value-of select="normalize-space(.)"/>
 				</field>
 			</xsl:for-each>
-			<xsl:for-each select="descendant::eac:resourceRelation[@xlink:role='portrait']">
-				<field name="thumb_image">
-					<xsl:value-of select="@xlink:href"/>
-				</field>
-			</xsl:for-each>
+			<xsl:choose>
+				<xsl:when test="descendant::eac:resourceRelation[@xlink:arcrole='foaf:thumbnail']">
+					<field name="thumb_image">
+						<xsl:value-of select="descendant::eac:resourceRelation[@xlink:arcrole='foaf:thumbnail'][1]/@xlink:href"/>
+					</field>			
+				</xsl:when>
+				<xsl:when test="descendant::eac:resourceRelation[@xlink:arcrole='foaf:depiction']">
+					<field name="thumb_image">
+						<xsl:value-of select="descendant::eac:resourceRelation[@xlink:arcrole='foaf:depiction'][1]/@xlink:href"/>
+					</field>			
+				</xsl:when>
+			</xsl:choose>
 			<field name="fulltext">
 				<xsl:for-each select="descendant-or-self::node()">
 					<xsl:value-of select="text()"/>
