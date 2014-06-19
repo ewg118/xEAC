@@ -54,9 +54,9 @@
 										<xforms:label>From - Textual</xforms:label>
 									</xforms:input>
 									<xforms:trigger appearance="minimal">
-										<xforms:insert  ev:event="DOMActivate"  context="eac:fromDate" origin="xxforms:attribute('standardDate', '')" if="not(eac:fromDate/@standardDate)"/>
+										<xforms:insert  ev:event="DOMActivate"  context="eac:fromDate" origin="xforms:attribute('standardDate', '')" if="not(eac:fromDate/@standardDate)"/>
 										<xforms:label>
-											<img src="{$display_path}/images/add.gif"/>Standard Date</xforms:label>
+											<img src="/xeac/xforms/images/add.gif"/>Standard Date</xforms:label>
 									</xforms:trigger>
 								</div>
 							</xforms:group>
@@ -97,9 +97,9 @@
 										<xforms:label>To - Textual</xforms:label>
 									</xforms:input>
 									<xforms:trigger appearance="minimal">
-										<xforms:insert  ev:event="DOMActivate"  context="eac:toDate" origin="xxforms:attribute('standardDate', '')" if="not(eac:toDate/@standardDate)"/>
+										<xforms:insert  ev:event="DOMActivate"  context="eac:toDate" origin="xforms:attribute('standardDate', '')" if="not(eac:toDate/@standardDate)"/>
 										<xforms:label>
-											<img src="{$display_path}/images/add.gif"/>Standard Date
+											<img src="/xeac/xforms/images/add.gif"/>Standard Date
 										</xforms:label>
 									</xforms:trigger>
 								</div>
