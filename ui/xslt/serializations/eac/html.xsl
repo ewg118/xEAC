@@ -527,6 +527,7 @@
 				<dl class="dl-horizontal">
 					<xsl:apply-templates select="eac:relations/eac:cpfRelation">
 						<xsl:sort select="@xlink:arcrole"/>
+						<xsl:sort select="eac:relationEntry"/>
 					</xsl:apply-templates>
 				</dl>
 			</xsl:if>
