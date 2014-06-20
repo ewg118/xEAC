@@ -439,7 +439,7 @@
 	};
 	m = function (t) {
 		var v = {
-			color: "#FE766A", lineOpacity: 1, lineWeight: 2, fillOpacity: 0.4, eventTextColor: null, eventIconPath: "http://numismatics.org/authorities/ui/images/timemap/images/", eventIconImage: "red-circle.png", classicTape: false, icon: k + "red-dot.png", iconSize:[32, 32], iconShadow: k + "msmarker.shadow.png", iconShadowSize:[59, 32], iconAnchor:[16, 33]
+			color: "#FE766A", lineOpacity: 1, lineWeight: 2, fillOpacity: 0.4, eventTextColor: null, eventIconPath: "timemap/images/", eventIconImage: "red-circle.png", classicTape: false, icon: k + "red-dot.png", iconSize:[32, 32], iconShadow: k + "msmarker.shadow.png", iconShadowSize:[59, 32], iconAnchor:[16, 33]
 		};
 		var u = d.extend(v, t);
 		v = {
