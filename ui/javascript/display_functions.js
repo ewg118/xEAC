@@ -30,7 +30,7 @@ function initialize_timemap(id) {
 		timelineId: "timeline", // Id of timeline div element (required)
 		options: {
 			mapType: "physical",
-			eventIconPath: "../ui/images/timemap/"
+			eventIconPath: "http://numismatics.org/authorities/ui/images/timemap/"
 		},
 		datasets: datasets,
 		bandIntervals:[
