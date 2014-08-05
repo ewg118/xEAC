@@ -1,0 +1,679 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scripts>
+	<script>
+		<name>Afaka</name>
+		<code>Afak</code>
+	</script>
+	<script>
+		<name>Caucasian Albanian</name>
+		<code>Aghb</code>
+	</script>
+	<script>
+		<name>Ahom, Tai Ahom</name>
+		<code>Ahom</code>
+	</script>
+	<script>
+		<name>Arabic</name>
+		<code>Arab</code>
+	</script>
+	<script>
+		<name>Imperial Aramaic</name>
+		<code>Armi</code>
+	</script>
+	<script>
+		<name>Armenian</name>
+		<code>Armn</code>
+	</script>
+	<script>
+		<name>Avestan</name>
+		<code>Avst</code>
+	</script>
+	<script>
+		<name>Balinese</name>
+		<code>Bali</code>
+	</script>
+	<script>
+		<name>Bamum</name>
+		<code>Bamu</code>
+	</script>
+	<script>
+		<name>Bassa Vah</name>
+		<code>Bass</code>
+	</script>
+	<script>
+		<name>Batak</name>
+		<code>Batk</code>
+	</script>
+	<script>
+		<name>Bengali</name>
+		<code>Beng</code>
+	</script>
+	<script>
+		<name>Blissymbols</name>
+		<code>Blis</code>
+	</script>
+	<script>
+		<name>Bopomofo</name>
+		<code>Bopo</code>
+	</script>
+	<script>
+		<name>Brahmi</name>
+		<code>Brah</code>
+	</script>
+	<script>
+		<name>Braille</name>
+		<code>Brai</code>
+	</script>
+	<script>
+		<name>Buginese</name>
+		<code>Bugi</code>
+	</script>
+	<script>
+		<name>Buhid</name>
+		<code>Buhd</code>
+	</script>
+	<script>
+		<name>Chakma</name>
+		<code>Cakm</code>
+	</script>
+	<script>
+		<name>Unified Canadian Aboriginal Syllabics</name>
+		<code>Cans</code>
+	</script>
+	<script>
+		<name>Carian</name>
+		<code>Cari</code>
+	</script>
+	<script>
+		<name>Cham</name>
+		<code>Cham</code>
+	</script>
+	<script>
+		<name>Cherokee</name>
+		<code>Cher</code>
+	</script>
+	<script>
+		<name>Cirth</name>
+		<code>Cirt</code>
+	</script>
+	<script>
+		<name>Coptic</name>
+		<code>Copt</code>
+	</script>
+	<script>
+		<name>Cypriot</name>
+		<code>Cprt</code>
+	</script>
+	<script>
+		<name>Cyrillic</name>
+		<code>Cyrl</code>
+	</script>
+	<script>
+		<name>Cyrillic (Old Church Slavonic variant)</name>
+		<code>Cyrs</code>
+	</script>
+	<script>
+		<name>Devanagari (Nagari)</name>
+		<code>Deva</code>
+	</script>
+	<script>
+		<name>Deseret (Mormon)</name>
+		<code>Dsrt</code>
+	</script>
+	<script>
+		<name>Duployan shorthand, Duployan stenography</name>
+		<code>Dupl</code>
+	</script>
+	<script>
+		<name>Egyptian demotic</name>
+		<code>Egyd</code>
+	</script>
+	<script>
+		<name>Egyptian hieratic</name>
+		<code>Egyh</code>
+	</script>
+	<script>
+		<name>Egyptian hieroglyphs</name>
+		<code>Egyp</code>
+	</script>
+	<script>
+		<name>Elbasan</name>
+		<code>Elba</code>
+	</script>
+	<script>
+		<name>Ethiopic (Geʻez)</name>
+		<code>Ethi</code>
+	</script>
+	<script>
+		<name>Khutsuri (Asomtavruli and Nuskhuri)</name>
+		<code>Geok</code>
+	</script>
+	<script>
+		<name>Georgian (Mkhedruli)</name>
+		<code>Geor</code>
+	</script>
+	<script>
+		<name>Glagolitic</name>
+		<code>Glag</code>
+	</script>
+	<script>
+		<name>Gothic</name>
+		<code>Goth</code>
+	</script>
+	<script>
+		<name>Grantha</name>
+		<code>Gran</code>
+	</script>
+	<script>
+		<name>Greek</name>
+		<code>Grek</code>
+	</script>
+	<script>
+		<name>Gujarati</name>
+		<code>Gujr</code>
+	</script>
+	<script>
+		<name>Gurmukhi</name>
+		<code>Guru</code>
+	</script>
+	<script>
+		<name>Hangul (Hangŭl, Hangeul)</name>
+		<code>Hang</code>
+	</script>
+	<script>
+		<name>Han (Hanzi, Kanji, Hanja)</name>
+		<code>Hani</code>
+	</script>
+	<script>
+		<name>Hanunoo (Hanunóo)</name>
+		<code>Hano</code>
+	</script>
+	<script>
+		<name>Han (Simplified variant)</name>
+		<code>Hans</code>
+	</script>
+	<script>
+		<name>Han (Traditional variant)</name>
+		<code>Hant</code>
+	</script>
+	<script>
+		<name>Hatran</name>
+		<code>Hatr</code>
+	</script>
+	<script>
+		<name>Hebrew</name>
+		<code>Hebr</code>
+	</script>
+	<script>
+		<name>Hiragana</name>
+		<code>Hira</code>
+	</script>
+	<script>
+		<name>Anatolian Hieroglyphs (Luwian Hieroglyphs, Hittite Hieroglyphs)</name>
+		<code>Hluw</code>
+	</script>
+	<script>
+		<name>Pahawh Hmong</name>
+		<code>Hmng</code>
+	</script>
+	<script>
+		<name>Japanese syllabaries (alias for Hiragana + Katakana)</name>
+		<code>Hrkt</code>
+	</script>
+	<script>
+		<name>Old Hungarian (Hungarian Runic)</name>
+		<code>Hung</code>
+	</script>
+	<script>
+		<name>Indus (Harappan)</name>
+		<code>Inds</code>
+	</script>
+	<script>
+		<name>Old Italic (Etruscan, Oscan, etc.)</name>
+		<code>Ital</code>
+	</script>
+	<script>
+		<name>Javanese</name>
+		<code>Java</code>
+	</script>
+	<script>
+		<name>Japanese (alias for Han + Hiragana + Katakana)</name>
+		<code>Jpan</code>
+	</script>
+	<script>
+		<name>Jurchen</name>
+		<code>Jurc</code>
+	</script>
+	<script>
+		<name>Kayah Li</name>
+		<code>Kali</code>
+	</script>
+	<script>
+		<name>Katakana</name>
+		<code>Kana</code>
+	</script>
+	<script>
+		<name>Kharoshthi</name>
+		<code>Khar</code>
+	</script>
+	<script>
+		<name>Khmer</name>
+		<code>Khmr</code>
+	</script>
+	<script>
+		<name>Khojki</name>
+		<code>Khoj</code>
+	</script>
+	<script>
+		<name>Kannada</name>
+		<code>Knda</code>
+	</script>
+	<script>
+		<name>Korean (alias for Hangul + Han)</name>
+		<code>Kore</code>
+	</script>
+	<script>
+		<name>Kpelle</name>
+		<code>Kpel</code>
+	</script>
+	<script>
+		<name>Kaithi</name>
+		<code>Kthi</code>
+	</script>
+	<script>
+		<name>Tai Tham (Lanna)</name>
+		<code>Lana</code>
+	</script>
+	<script>
+		<name>Lao</name>
+		<code>Laoo</code>
+	</script>
+	<script>
+		<name>Latin (Fraktur variant)</name>
+		<code>Latf</code>
+	</script>
+	<script>
+		<name>Latin (Gaelic variant)</name>
+		<code>Latg</code>
+	</script>
+	<script>
+		<name>Latin</name>
+		<code>Latn</code>
+	</script>
+	<script>
+		<name>Lepcha (Róng)</name>
+		<code>Lepc</code>
+	</script>
+	<script>
+		<name>Limbu</name>
+		<code>Limb</code>
+	</script>
+	<script>
+		<name>Linear A</name>
+		<code>Lina</code>
+	</script>
+	<script>
+		<name>Linear B</name>
+		<code>Linb</code>
+	</script>
+	<script>
+		<name>Lisu (Fraser)</name>
+		<code>Lisu</code>
+	</script>
+	<script>
+		<name>Loma</name>
+		<code>Loma</code>
+	</script>
+	<script>
+		<name>Lycian</name>
+		<code>Lyci</code>
+	</script>
+	<script>
+		<name>Lydian</name>
+		<code>Lydi</code>
+	</script>
+	<script>
+		<name>Mahajani</name>
+		<code>Mahj</code>
+	</script>
+	<script>
+		<name>Mandaic, Mandaean</name>
+		<code>Mand</code>
+	</script>
+	<script>
+		<name>Manichaean</name>
+		<code>Mani</code>
+	</script>
+	<script>
+		<name>Mayan hieroglyphs</name>
+		<code>Maya</code>
+	</script>
+	<script>
+		<name>Mende Kikakui</name>
+		<code>Mend</code>
+	</script>
+	<script>
+		<name>Meroitic Cursive</name>
+		<code>Merc</code>
+	</script>
+	<script>
+		<name>Meroitic Hieroglyphs</name>
+		<code>Mero</code>
+	</script>
+	<script>
+		<name>Malayalam</name>
+		<code>Mlym</code>
+	</script>
+	<script>
+		<name>Modi, Moḍī</name>
+		<code>Modi</code>
+	</script>
+	<script>
+		<name>Mongolian</name>
+		<code>Mong</code>
+	</script>
+	<script>
+		<name>Moon (Moon code, Moon script, Moon type)</name>
+		<code>Moon</code>
+	</script>
+	<script>
+		<name>Mro, Mru</name>
+		<code>Mroo</code>
+	</script>
+	<script>
+		<name>Meitei Mayek (Meithei, Meetei)</name>
+		<code>Mtei</code>
+	</script>
+	<script>
+		<name> Multani</name>
+		<code>Mult</code>
+	</script>
+	<script>
+		<name>Myanmar (Burmese)</name>
+		<code>Mymr</code>
+	</script>
+	<script>
+		<name>Old North Arabian (Ancient North Arabian)</name>
+		<code>Narb</code>
+	</script>
+	<script>
+		<name>Nabataean</name>
+		<code>Nbat</code>
+	</script>
+	<script>
+		<name>Nakhi Geba ('Na-'Khi ²Ggŏ-¹baw, Naxi Geba)</name>
+		<code>Nkgb</code>
+	</script>
+	<script>
+		<name>N’Ko</name>
+		<code>Nkoo</code>
+	</script>
+	<script>
+		<name>Nüshu</name>
+		<code>Nshu</code>
+	</script>
+	<script>
+		<name>Ogham</name>
+		<code>Ogam</code>
+	</script>
+	<script>
+		<name>Ol Chiki (Ol Cemet’, Ol, Santali)</name>
+		<code>Olck</code>
+	</script>
+	<script>
+		<name>Old Turkic, Orkhon Runic</name>
+		<code>Orkh</code>
+	</script>
+	<script>
+		<name>Oriya</name>
+		<code>Orya</code>
+	</script>
+	<script>
+		<name>Osmanya</name>
+		<code>Osma</code>
+	</script>
+	<script>
+		<name>Palmyrene</name>
+		<code>Palm</code>
+	</script>
+	<script>
+		<name>Pau Cin Hau</name>
+		<code>Pauc</code>
+	</script>
+	<script>
+		<name>Old Permic</name>
+		<code>Perm</code>
+	</script>
+	<script>
+		<name>Phags-pa</name>
+		<code>Phag</code>
+	</script>
+	<script>
+		<name>Inscriptional Pahlavi</name>
+		<code>Phli</code>
+	</script>
+	<script>
+		<name>Psalter Pahlavi</name>
+		<code>Phlp</code>
+	</script>
+	<script>
+		<name>Book Pahlavi</name>
+		<code>Phlv</code>
+	</script>
+	<script>
+		<name>Phoenician</name>
+		<code>Phnx</code>
+	</script>
+	<script>
+		<name>Miao (Pollard)</name>
+		<code>Plrd</code>
+	</script>
+	<script>
+		<name>Inscriptional Parthian</name>
+		<code>Prti</code>
+	</script>
+	<script>
+		<name>Reserved for private use (start)</name>
+		<code>Qaaa</code>
+	</script>
+	<script>
+		<name>Reserved for private use (end)</name>
+		<code>Qabx</code>
+	</script>
+	<script>
+		<name>Rejang (Redjang, Kaganga)</name>
+		<code>Rjng</code>
+	</script>
+	<script>
+		<name>Rongorongo</name>
+		<code>Roro</code>
+	</script>
+	<script>
+		<name>Runic</name>
+		<code>Runr</code>
+	</script>
+	<script>
+		<name>Samaritan</name>
+		<code>Samr</code>
+	</script>
+	<script>
+		<name>Sarati</name>
+		<code>Sara</code>
+	</script>
+	<script>
+		<name>Old South Arabian</name>
+		<code>Sarb</code>
+	</script>
+	<script>
+		<name>Saurashtra</name>
+		<code>Saur</code>
+	</script>
+	<script>
+		<name>SignWriting</name>
+		<code>Sgnw</code>
+	</script>
+	<script>
+		<name>Shavian (Shaw)</name>
+		<code>Shaw</code>
+	</script>
+	<script>
+		<name>Sharada, Śāradā</name>
+		<code>Shrd</code>
+	</script>
+	<script>
+		<name>Siddham, Siddhaṃ, Siddhamātṛkā</name>
+		<code>Sidd</code>
+	</script>
+	<script>
+		<name>Khudawadi, Sindhi</name>
+		<code>Sind</code>
+	</script>
+	<script>
+		<name>Sinhala</name>
+		<code>Sinh</code>
+	</script>
+	<script>
+		<name>Sora Sompeng</name>
+		<code>Sora</code>
+	</script>
+	<script>
+		<name>Sundanese</name>
+		<code>Sund</code>
+	</script>
+	<script>
+		<name>Syloti Nagri</name>
+		<code>Sylo</code>
+	</script>
+	<script>
+		<name>Syriac</name>
+		<code>Syrc</code>
+	</script>
+	<script>
+		<name>Syriac (Estrangelo variant)</name>
+		<code>Syre</code>
+	</script>
+	<script>
+		<name>Syriac (Western variant)</name>
+		<code>Syrj</code>
+	</script>
+	<script>
+		<name>Syriac (Eastern variant)</name>
+		<code>Syrn</code>
+	</script>
+	<script>
+		<name>Tagbanwa</name>
+		<code>Tagb</code>
+	</script>
+	<script>
+		<name>Takri, Ṭākrī, Ṭāṅkrī</name>
+		<code>Takr</code>
+	</script>
+	<script>
+		<name>Tai Le</name>
+		<code>Tale</code>
+	</script>
+	<script>
+		<name>New Tai Lue</name>
+		<code>Talu</code>
+	</script>
+	<script>
+		<name>Tamil</name>
+		<code>Taml</code>
+	</script>
+	<script>
+		<name>Tangut</name>
+		<code>Tang</code>
+	</script>
+	<script>
+		<name>Tai Viet</name>
+		<code>Tavt</code>
+	</script>
+	<script>
+		<name>Telugu</name>
+		<code>Telu</code>
+	</script>
+	<script>
+		<name>Tengwar</name>
+		<code>Teng</code>
+	</script>
+	<script>
+		<name>Tifinagh (Berber)</name>
+		<code>Tfng</code>
+	</script>
+	<script>
+		<name>Tagalog (Baybayin, Alibata)</name>
+		<code>Tglg</code>
+	</script>
+	<script>
+		<name>Thaana</name>
+		<code>Thaa</code>
+	</script>
+	<script>
+		<name>Thai</name>
+		<code>Thai</code>
+	</script>
+	<script>
+		<name>Tibetan</name>
+		<code>Tibt</code>
+	</script>
+	<script>
+		<name>Tirhuta</name>
+		<code>Tirh</code>
+	</script>
+	<script>
+		<name>Ugaritic</name>
+		<code>Ugar</code>
+	</script>
+	<script>
+		<name>Vai</name>
+		<code>Vaii</code>
+	</script>
+	<script>
+		<name>Visible Speech</name>
+		<code>Visp</code>
+	</script>
+	<script>
+		<name>Warang Citi (Varang Kshiti)</name>
+		<code>Wara</code>
+	</script>
+	<script>
+		<name>Woleai</name>
+		<code>Wole</code>
+	</script>
+	<script>
+		<name>Old Persian</name>
+		<code>Xpeo</code>
+	</script>
+	<script>
+		<name>Cuneiform, Sumero-Akkadian</name>
+		<code>Xsux</code>
+	</script>
+	<script>
+		<name>Yi</name>
+		<code>Yiii</code>
+	</script>
+	<script>
+		<name>Code for inherited script</name>
+		<code>Zinh</code>
+	</script>
+	<script>
+		<name>Mathematical notation</name>
+		<code>Zmth</code>
+	</script>
+	<script>
+		<name>Symbols</name>
+		<code>Zsym</code>
+	</script>
+	<script>
+		<name>Code for unwritten documents</name>
+		<code>Zxxx</code>
+	</script>
+	<script>
+		<name>Code for undetermined script</name>
+		<code>Zyyy</code>
+	</script>
+	<script>
+		<name>Code for uncoded script</name>
+		<code>Zzzz</code>
+	</script>
+</scripts>

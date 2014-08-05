@@ -319,6 +319,12 @@
 					<citation/>
 				</conventionDeclaration>
 			</xforms:instance>
+			<xforms:instance id="languageDeclaration-template" xxforms:exclude-result-prefixes="#all">
+				<languageDeclaration>
+					<language languageCode=""/>
+					<script scriptCode=""/>
+				</languageDeclaration>
+			</xforms:instance>
 			<xforms:instance id="localTypeDeclaration-template" xxforms:exclude-result-prefixes="#all">
 				<localTypeDeclaration>
 					<abbreviation/>
@@ -586,6 +592,15 @@
 						<xforms:bind nodeset="eac:citation" required="true()"
 							readonly="string-length(parent::node()/eac:abbreviation) &gt; 0 and instance('doc')//eac:nameEntry/*[contains(local-name(), 'Form')] = parent::node()/eac:abbreviation"/>
 					</xforms:bind>
+					<xforms:bind nodeset="eac:languageDeclaration">
+						<!-- only allow editing of abbreviation and citation if they are unused by nameEntry -->
+						<xforms:bind nodeset="eac:language" required="true()">
+							<xforms:bind nodeset="@languageCode" constraint="string-length(.) &gt; 0"/>
+						</xforms:bind>
+						<xforms:bind nodeset="eac:script" required="true()">
+							<xforms:bind nodeset="@scriptCode" constraint="string-length(.) &gt; 0"/>
+						</xforms:bind>
+					</xforms:bind>
 					<xforms:bind nodeset="eac:localTypeDeclaration">
 						<!-- only allow editing of abbreviation and citation if they are unused by nameEntry -->
 						<xforms:bind nodeset="eac:abbreviation" required="true()" type="xs:token"/>
@@ -607,6 +622,15 @@
 						<xforms:bind nodeset="eac:biogHist">
 							<xforms:bind nodeset="eac:chronList">
 								<xforms:bind nodeset="eac:chronItem" constraint="count(eac:date) &gt; 0 or count(eac:dateRange) &gt; 0"/>
+							</xforms:bind>
+						</xforms:bind>
+						<xforms:bind nodeset="descendant::eac:languageUsed">
+							<!-- only allow editing of abbreviation and citation if they are unused by nameEntry -->
+							<xforms:bind nodeset="eac:language" required="true()">
+								<xforms:bind nodeset="@languageCode" constraint="string-length(.) &gt; 0"/>
+							</xforms:bind>
+							<xforms:bind nodeset="eac:script" required="true()">
+								<xforms:bind nodeset="@scriptCode" constraint="string-length(.) &gt; 0"/>
 							</xforms:bind>
 						</xforms:bind>
 					</xforms:bind>
@@ -1116,7 +1140,7 @@
 		<xi:include href="xbl/descriptionTermGroup/descriptionTermGroup.xbl" xi:omit-xml-base="true"/>
 		<xi:include href="xbl/descriptiveNote/descriptiveNote.xbl" xi:omit-xml-base="true"/>
 		<xi:include href="xbl/function/function.xbl" xi:omit-xml-base="true"/>
-		<xi:include href="xbl/languageUsed/languageUsed.xbl" xi:omit-xml-base="true"/>
+		<xi:include href="xbl/language/language.xbl" xi:omit-xml-base="true"/>
 		<xi:include href="xbl/level/level.xbl" xi:omit-xml-base="true"/>
 		<xi:include href="xbl/list/list.xbl" xi:omit-xml-base="true"/>
 		<xi:include href="xbl/occupation/occupation.xbl" xi:omit-xml-base="true"/>
@@ -2036,7 +2060,7 @@
 										<xeac:descriptionTermGroup/>
 									</xforms:repeat>
 									<xforms:repeat nodeset="eac:languageUsed">
-										<xeac:languageUsed/>
+										<xeac:language/>
 									</xforms:repeat>
 									<xforms:repeat nodeset="eac:languagesUsed">
 										<xeac:descriptionTermGroup/>
@@ -2352,6 +2376,19 @@
 														<xeac:descriptiveNote/>
 													</xforms:group>
 												</div>
+											</xforms:repeat>
+										</div>
+										<div class="section">
+											<h2>Language Declarations</h2>
+											<div class="trigger_container">
+												<xforms:trigger appearance="minimal">
+													<xforms:label>
+														<img src="/xeac/xforms/images/add.gif"/>Language Declaration</xforms:label>
+													<xforms:insert ev:event="DOMActivate" context="." origin="instance('languageDeclaration-template')" nodeset="./child::node()[last()]"/>
+												</xforms:trigger>
+											</div>
+											<xforms:repeat nodeset="eac:languageDeclaration">
+												<xeac:language/>
 											</xforms:repeat>
 										</div>
 										<div class="section">
