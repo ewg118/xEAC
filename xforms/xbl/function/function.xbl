@@ -172,7 +172,7 @@
 												<xforms:action ev:event="DOMActivate">
 													<xforms:var name="search_query" select="string-join(tokenize(instance('search-query'), ' '), ' AND ')"/>
 													<xforms:setvalue ref="instance('sparqlQuery')" value="normalize-space(replace(instance('sparqlQueryTemplate'), 'SEARCH_QUERY', $search_query))"/>
-													<xforms:send submission="query-aat"/>
+													<xforms:send submission="query-getty"/>
 												</xforms:action>
 												<xforms:label>Search</xforms:label>
 											</xforms:trigger>
@@ -294,9 +294,12 @@ PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
 PREFIX luc: <http://www.ontotext.com/owlim/lucene#>
 SELECT ?c ?label {
 ?c a gvp:Concept; skos:inScheme aat: ;
-gvp:broaderTransitive aat:300054593 ;
+gvp:broaderExtended aat:300054593 ;
 gvp:prefLabelGVP/xl:literalForm ?label ;
+skos:scopeNote/rdf:value ?scopeNote ;
 luc:term "SEARCH_QUERY*"
+FILTER langMatches(lang(?label), "en")
+FILTER langMatches(lang(?scopeNote), "en")
 } LIMIT 25]]>
 							</query>
 						</xforms:instance>
@@ -310,8 +313,16 @@ luc:term "SEARCH_QUERY*"
 						</xforms:instance>
 
 						<!-- ************* SUBMISSIONS **********************-->
-						<xforms:submission id="query-aat" action="http://vocab.getty.edu/sparql?query={encode-for-uri(instance('sparqlQuery'))}&amp;format=xml" ref="instance('sparqlResponse')"
+						<xforms:submission id="query-getty" action="http://vocab.getty.edu/sparql?query={encode-for-uri(instance('sparqlQuery'))}" ref="instance('sparqlResponse')"
 							replace="instance" method="get">
+							<xforms:header>
+								<xforms:name>User-Agent</xforms:name>
+								<xforms:value>XForms/xEAC</xforms:value>
+							</xforms:header>
+							<xforms:header>
+								<xforms:name>Accept</xforms:name>
+								<xforms:value>application/sparql-results+xml</xforms:value>
+							</xforms:header>
 							<xforms:message ev:event="xforms-submit-error" level="modal">SPARQL query failed.</xforms:message>
 						</xforms:submission>
 					</xforms:model>

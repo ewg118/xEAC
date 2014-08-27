@@ -1,6 +1,6 @@
 <xbl:xbl xmlns="http://www.w3.org/1999/xhtml" xmlns:xforms="http://www.w3.org/2002/xforms" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:xxforms="http://orbeon.org/oxf/xml/xforms"
-	xmlns:fr="http://orbeon.org/oxf/xml/form-runner" xmlns:xbl="http://www.w3.org/ns/xbl" xmlns:xxbl="http://orbeon.org/oxf/xml/xbl" xmlns:xeac="https://github.com/ewg118/xEAC"
-	xmlns:atom="http://www.w3.org/2005/Atom" xmlns:rss="http://purl.org/rss/1.0/" xmlns:eac="urn:isbn:1-931666-33-4">
+	xmlns:fr="http://orbeon.org/oxf/xml/form-runner" xmlns:xbl="http://www.w3.org/ns/xbl" xmlns:xxbl="http://orbeon.org/oxf/xml/xbl" xmlns:res="http://www.w3.org/2005/sparql-results#"
+	xmlns:xeac="https://github.com/ewg118/xEAC" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:rss="http://purl.org/rss/1.0/" xmlns:eac="urn:isbn:1-931666-33-4">
 	<xbl:binding id="xeac-placeEntry" element="xeac|placeEntry">
 		<xbl:template>
 			<xforms:group xbl:attr="model context ref bind" xxbl:scope="outer">
@@ -53,7 +53,6 @@
 									</xforms:label>
 								</xforms:trigger>
 							</xforms:group>
-
 							<div style="display:table;width:100%;">
 								<radiogroup>
 									<xforms:select1 ref="instance('interface-type')" appearance="full">
@@ -61,6 +60,10 @@
 										<xforms:item>
 											<xforms:label>Geonames</xforms:label>
 											<xforms:value>geonames</xforms:value>
+										</xforms:item>
+										<xforms:item>
+											<xforms:label>Getty TGN</xforms:label>
+											<xforms:value>tgn</xforms:value>
 										</xforms:item>
 										<xforms:item>
 											<xforms:label>LC Name Authority File</xforms:label>
@@ -80,18 +83,26 @@
 												<xforms:delete context="instance('geonames')/*"/>
 												<xforms:delete context="instance('feed')/*"/>
 												<xforms:setvalue ref="instance('search-query')"/>
-
 												<!-- create attributes, clear $binding text when applicable -->
 												<xforms:setvalue ref="$binding"/>
 												<xforms:insert context="$binding" origin="xxforms:attribute('vocabularySource', '')" if="not($binding/@vocabularySource)"/>
 												<xforms:toggle case="geonames-search"/>
+											</xforms:action>
+											<xforms:action if=". = 'tgn'">
+												<!-- clear temp -->
+												<xforms:setvalue ref="instance('temp')"/>
+												<xforms:setvalue ref="instance('temp')/@vocabularySource"/>
+												<xforms:setvalue ref="instance('search-query')"/>
+												<!-- add attributes -->
+												<xforms:setvalue ref="$binding"/>
+												<xforms:insert context="$binding" origin="xxforms:attribute('vocabularySource', '')" if="not($binding/eac:term/@vocabularySource)"/>
+												<xforms:toggle case="tgn-search"/>
 											</xforms:action>
 											<xforms:action if=". = 'lcnaf'">
 												<!-- remove temporary values, applicable when switching back to geonames from local -->
 												<xforms:delete context="instance('geonames')/*"/>
 												<xforms:delete context="instance('feed')/*"/>
 												<xforms:setvalue ref="instance('search-query')"/>
-
 												<!-- create attributes, clear $binding text when applicable -->
 												<xforms:setvalue ref="$binding"/>
 												<xforms:insert context="$binding" origin="xxforms:attribute('vocabularySource', '')" if="not($binding/@vocabularySource)"/>
@@ -102,7 +113,6 @@
 												<xforms:delete context="instance('geonames')/*"/>
 												<xforms:delete context="instance('feed')/*"/>
 												<xforms:setvalue ref="instance('search-query')"/>
-
 												<!-- create attributes, clear $binding text when applicable -->
 												<xforms:setvalue ref="$binding"/>
 												<xforms:insert context="$binding" origin="xxforms:attribute('vocabularySource', '')" if="not($binding/@vocabularySource)"/>
@@ -139,7 +149,6 @@
 											<xforms:label>Search</xforms:label>
 										</xforms:trigger>
 									</div>
-
 									<xforms:group ref=".[count(instance('geonames')//geoname) &gt; 0]">
 										<xforms:select1 ref="instance('temp')/@vocabularySource" appearance="compact" id="geonames-list" size="10">
 											<xforms:label>Location</xforms:label>
@@ -157,6 +166,55 @@
 										</xforms:trigger>
 									</xforms:group>
 								</xforms:case>
+								<xforms:case id="tgn-search">
+									<div>
+										<xforms:input ref="instance('search-query')">
+											<xforms:label>Search</xforms:label>
+										</xforms:input>
+										<xforms:trigger>
+											<xforms:action ev:event="DOMActivate">
+												<xforms:var name="search_query" select="string-join(tokenize(instance('search-query'), ' '), ' AND ')"/>
+												<xforms:setvalue ref="instance('sparqlQuery')" value="normalize-space(replace(instance('sparqlQueryTemplate'), 'SEARCH_QUERY', $search_query))"/>
+												<xforms:send submission="query-getty"/>
+											</xforms:action>
+											<xforms:label>Search</xforms:label>
+										</xforms:trigger>
+									</div>
+									<xforms:group ref=".[count(instance('getty-response')//res:result) &gt; 0]">
+										<xforms:select1 ref="instance('temp')/@vocabularySource" appearance="compact" length="20">
+											<xforms:label>Location</xforms:label>
+											<xforms:itemset nodeset="instance('getty-response')//res:result">
+												<xforms:label ref="res:binding[@name='label']/res:literal"/>
+												<xforms:value ref="res:binding[@name='c']/res:uri"/>
+											</xforms:itemset>
+											<xforms:action ev:event="xforms-value-changed">
+												<xforms:setvalue ref="instance('description')" value="instance('getty-response')//res:result[res:binding[@name='c']/res:uri =
+													instance('temp')/@vocabularySource]/res:binding[@name='scopeNote']/res:literal"/>
+											</xforms:action>
+										</xforms:select1>
+										<xforms:trigger>
+											<xforms:label>Select</xforms:label>
+											<xforms:action ev:event="DOMActivate">
+												<xforms:setvalue ref="$binding/@vocabularySource" value="instance('temp')/@vocabularySource"/>
+												<xforms:setvalue ref="$binding" value="instance('getty-response')//res:result[res:binding[@name='c']/res:uri =
+													instance('temp')/@vocabularySource]/res:binding[@name='label']/res:literal"/>
+											</xforms:action>
+										</xforms:trigger>
+									</xforms:group>
+									<xforms:group ref=".[string(instance('temp')/@vocabularySource)]">
+										<div>
+											<xforms:output ref="instance('description')">
+												<xforms:label>Description</xforms:label>
+											</xforms:output>
+											<xforms:trigger appearance="xxforms:link">
+												<xforms:label>
+													<img src="/xeac/xforms/images/external.png"/>
+												</xforms:label>
+												<xforms:load ev:event="DOMActivate" show="new" ref="instance('temp')/@vocabularySource"/>
+											</xforms:trigger>
+										</div>
+									</xforms:group>
+								</xforms:case>
 								<xforms:case id="pleiades-search">
 									<div>
 										<xforms:input ref="instance('search-query')">
@@ -170,7 +228,6 @@
 											<xforms:label>Search</xforms:label>
 										</xforms:trigger>
 									</div>
-
 									<xforms:group ref=".[count(instance('feed')//rss:item) &gt; 0]">
 										<xforms:select1 ref="instance('temp')/@vocabularySource" appearance="compact" id="pleiades-list" size="10">
 											<xforms:label>Location</xforms:label>
@@ -190,7 +247,6 @@
 											</xforms:action>
 										</xforms:trigger>
 									</xforms:group>
-
 									<xforms:group ref=".[string(instance('temp')/@vocabularySource)]">
 										<div>
 											<xforms:output ref="instance('description')">
@@ -218,7 +274,6 @@
 											<xforms:label>Search</xforms:label>
 										</xforms:trigger>
 									</div>
-
 									<xforms:group ref=".[count(instance('feed')//atom:entry) &gt; 0]">
 										<xforms:select1 ref="instance('temp')/@vocabularySource" appearance="compact" length="20">
 											<xforms:label>Term</xforms:label>
@@ -231,8 +286,8 @@
 											<xforms:label>Select</xforms:label>
 											<xforms:action ev:event="DOMActivate">
 												<xforms:setvalue ref="$binding/@vocabularySource" value="instance('temp')/@vocabularySource"/>
-												<xforms:setvalue ref="$binding"
-													value="instance('feed')//atom:entry[atom:link[@rel='alternate' and not(@type)]/@href = instance('temp')/@vocabularySource]/atom:title"/>
+												<xforms:setvalue ref="$binding" value="instance('feed')//atom:entry[atom:link[@rel='alternate' and not(@type)]/@href =
+													instance('temp')/@vocabularySource]/atom:title"/>
 											</xforms:action>
 										</xforms:trigger>
 									</xforms:group>
@@ -254,6 +309,7 @@
 								</xforms:case>
 							</xforms:switch>
 						</xforms:group>
+						<!--<fr:xforms-inspector xmlns:fr="http://orbeon.org/oxf/xml/form-runner" />-->
 					</xforms:group>
 					<!-- ********************************************************************** -->
 					<xforms:model id="placeEntry-model" xmlns:xi="http://www.w3.org/2001/XInclude">
@@ -357,11 +413,9 @@
 								</country>
 							</abbreviations>
 						</xforms:instance>
-
 						<xforms:instance id="search-query">
 							<query/>
 						</xforms:instance>
-
 						<!-- geonames specific instances -->
 						<xforms:instance id="geoname-query-response">
 							<geoname/>
@@ -381,27 +435,41 @@
 								<geonameId/>
 							</geoname>
 						</xforms:instance>
-
+						<!-- getty TNG instances -->
+						<xforms:instance id="sparqlQueryTemplate">
+							<query><![CDATA[PREFIX gvp: <http://vocab.getty.edu/ontology#>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+PREFIX luc: <http://www.ontotext.com/owlim/lucene#>
+PREFIX tgn: <http://vocab.getty.edu/tgn/>
+SELECT ?c ?label ?scopeNote WHERE {
+?c a gvp:AdminPlaceConcept; skos:inScheme tgn: ;
+gvp:prefLabelGVP/xl:literalForm ?label ;
+skos:scopeNote/rdf:value ?scopeNote ;
+luc:term "SEARCH_QUERY"} LIMIT 20]]>
+							</query>
+						</xforms:instance>
+						<xforms:instance id="sparqlQuery">
+							<query xmlns=""/>
+						</xforms:instance>
+						<xforms:instance id="getty-response">
+							<sparql xmlns="http://www.w3.org/2005/sparql-results#"/>
+						</xforms:instance>
 						<!-- instances for lcnaf/pleiades -->
 						<xforms:instance id="feed">
 							<feed xmlns=""/>
 						</xforms:instance>
-
 						<xforms:instance id="description">
 							<description xmlns=""/>
 						</xforms:instance>
-
 						<!-- mint type radio button -->
 						<xforms:instance id="interface-type">
 							<interface>geonames</interface>
 						</xforms:instance>
-
 						<!-- ********* SUBMISSIONS ***********-->
 						<xforms:submission id="load-config" serialization="none" method="get" action="{instance('exist-config')/url}xeac/config.xml" replace="instance" instance="config"
 							xxforms:username="{instance('exist-config')/username}" xxforms:password="{instance('exist-config')/password}">
 							<xforms:message ev:event="xforms-submit-error" level="modal">Unable to load config.</xforms:message>
 						</xforms:submission>
-
 						<xforms:submission id="query-pleiades" serialization="none" method="get" action="http://pleiades.stoa.org/search_rss?Title={instance('search-query')}&amp;portal_type=Place"
 							instance="feed" replace="instance">
 							<xforms:header>
@@ -410,7 +478,6 @@
 							</xforms:header>
 							<xforms:message ev:event="xforms-submit-error" level="modal">Unable to communicate with Pleiades RSS feed.</xforms:message>
 						</xforms:submission>
-
 						<xforms:submission id="query-lc" serialization="none" method="get"
 							action="http://id.loc.gov/search/?q={instance('search-query')}%20scheme:http://id.loc.gov/authorities/names%20rdftype:Geographic&amp;start=1&amp;format=atom"
 							instance="feed" replace="instance">
@@ -420,7 +487,6 @@
 							</xforms:header>
 							<xforms:message ev:event="xforms-submit-error" level="modal">Unable to communicate with id.loc.gov Atom feed.</xforms:message>
 						</xforms:submission>
-
 						<!-- search for matching keywords -->
 						<xforms:submission id="query-geonames" serialization="none" method="get"
 							action="http://api.geonames.org/search?q={instance('search-query')}&amp;maxRows=100&amp;lang=en&amp;username={instance('config')/geonames_api_key}&amp;style=full&amp;minChars=2"
@@ -440,12 +506,32 @@
 									<xforms:var name="geonameId" select="geonameId"/>
 									<xforms:var name="fcode" select="fcode"/>
 									<!-- set a value equivalent to AACR2 standard for US, AU, CA, and GB.  This equation deviates from AACR2 for Malaysia since standard abbreviations for territories cannot be found -->
-									<xforms:setvalue ref="instance('geoname-template')/label"
-										value="if ($countryCode = 'US' or $countryCode = 'AU' or $countryCode = 'CA') then if ($fcode = 'ADM1') then $name else concat($name, ' (', instance('abbreviations')/country[@code=$countryCode]/place[. = $adminName1]/@abbr, ')') else if ($countryCode= 'GB') then  if ($fcode = 'ADM1') then $name else concat($name, ' (', $adminName1, ')') else if ($fcode = 'PCLI') then $name else concat($name, ' (', $countryName, ')')"/>
+									<xforms:setvalue ref="instance('geoname-template')/label" value="if ($countryCode = 'US' or $countryCode = 'AU' or $countryCode = 'CA') then if ($fcode = 'ADM1')
+										then $name else concat($name, ' (', instance('abbreviations')/country[@code=$countryCode]/place[. = $adminName1]/@abbr, ')') else if ($countryCode= 'GB') then
+										if ($fcode = 'ADM1') then $name else concat($name, ' (', $adminName1, ')') else if ($fcode = 'PCLI') then $name else concat($name, ' (', $countryName, ')')"/>
 									<xforms:setvalue ref="instance('geoname-template')/geonameId" value="$geonameId"/>
 									<xforms:insert context="instance('geonames')" origin="instance('geoname-template')" nodeset="./child::node()[last()]"/>
 								</xforms:action>
 							</xforms:action>
+						</xforms:submission>
+						<xforms:submission id="query-getty" action="http://vocab.getty.edu/sparql?query={encode-for-uri(instance('sparqlQuery'))}" ref="instance('getty-response')" replace="instance"
+							method="get">
+							<xforms:header>
+								<xforms:name>User-Agent</xforms:name>
+								<xforms:value>XForms/xEAC</xforms:value>
+							</xforms:header>
+							<xforms:header>
+								<xforms:name>Accept</xforms:name>
+								<xforms:value>application/sparql-results+xml</xforms:value>
+							</xforms:header>
+							<xforms:message ev:event="xforms-submit-error" level="modal">SPARQL query failed.</xforms:message>
+							<!--<xforms:action xxforms:iterate="instance('getty-response')//res:result" ev:event="xforms-submit-done">
+								<xforms:var name="link" select="context()/res:binding[@name='c']/res:uri"/>
+								<xforms:var name="title" select="context()/res:binding[@name='label']/res:literal"/>
+								<xforms:var name="scopeNote" select="context()/res:binding[@name='scopeNote']/res:literal"/>
+								<xforms:insert context="instance('getty-options')" nodeset="./child::node()[last()]"
+									origin="xforms:element('option', (xforms:attribute('select', false()), xforms:attribute('link', $link), xforms:attribute('type', 'skos:exactMatch'), xforms:attribute('description', $scopeNote), $title))"/>
+							</xforms:action>-->
 						</xforms:submission>
 					</xforms:model>
 				</xforms:group>
