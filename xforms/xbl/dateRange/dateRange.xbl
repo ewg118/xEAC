@@ -13,7 +13,7 @@
 						<h4>Date Range</h4>
 						<xforms:trigger appearance="minimal">
 							<xforms:delete ev:event="DOMActivate" nodeset="."/>
-							<xforms:label><img src="/xeac/xforms/images/remove.gif"/></xforms:label>
+							<xforms:label><span class="glyphicon glyphicon-remove"/></xforms:label>
 						</xforms:trigger>
 						<div class="subsection">
 							<!-- fromDate -->							
@@ -56,7 +56,7 @@
 									<xforms:trigger appearance="minimal">
 										<xforms:insert  ev:event="DOMActivate"  context="eac:fromDate" origin="xforms:attribute('standardDate', '')" if="not(eac:fromDate/@standardDate)"/>
 										<xforms:label>
-											<img src="/xeac/xforms/images/add.gif"/>Standard Date</xforms:label>
+											<span class="glyphicon glyphicon-plus"/>Standard Date</xforms:label>
 									</xforms:trigger>
 								</div>
 							</xforms:group>
@@ -99,7 +99,7 @@
 									<xforms:trigger appearance="minimal">
 										<xforms:insert  ev:event="DOMActivate"  context="eac:toDate" origin="xforms:attribute('standardDate', '')" if="not(eac:toDate/@standardDate)"/>
 										<xforms:label>
-											<img src="/xeac/xforms/images/add.gif"/>Standard Date
+											<span class="glyphicon glyphicon-plus"/>Standard Date
 										</xforms:label>
 									</xforms:trigger>
 								</div>

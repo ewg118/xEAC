@@ -16,14 +16,14 @@
 							<xforms:trigger appearance="minimal">
 								<xforms:delete ev:event="DOMActivate" nodeset="."/>
 								<xforms:label>
-									<img src="/xeac/xforms/images/remove.gif"/>
+									<span class="glyphicon glyphicon-remove"/>
 								</xforms:label>
 							</xforms:trigger>
 							<div class="trigger_container">								
 								<xforms:group ref=".[count(eac:citation) = 0]">
 									<xforms:trigger appearance="minimal">
 										<xforms:label>
-											<img src="/xeac/xforms/images/add.gif"/>Citation</xforms:label>
+											<span class="glyphicon glyphicon-plus"/>Citation</xforms:label>
 										<xforms:action ev:event="DOMActivate">
 											<xforms:insert context="." nodeset="./child::node()[last()]"  origin="instance('citation-template')"/>
 										</xforms:action>
@@ -32,7 +32,7 @@
 								<xforms:group ref=".[count(eac:list) = 0]">
 									<xforms:trigger appearance="minimal">
 										<xforms:label>
-											<img src="/xeac/xforms/images/add.gif"/>List</xforms:label>
+											<span class="glyphicon glyphicon-plus"/>List</xforms:label>
 										<xforms:action ev:event="DOMActivate">
 											<xforms:insert context="." nodeset="./child::node()[last()]" origin="instance('list-template')"/>
 										</xforms:action>
@@ -41,7 +41,7 @@
 								<xforms:group ref=".[count(eac:outline) = 0]">
 									<xforms:trigger appearance="minimal">
 										<xforms:label>
-											<img src="/xeac/xforms/images/add.gif"/>Outline</xforms:label>
+											<span class="glyphicon glyphicon-plus"/>Outline</xforms:label>
 										<xforms:action ev:event="DOMActivate">
 											<xforms:insert context="." nodeset="./child::node()[last()]"  origin="instance('outline-template')"/>
 										</xforms:action>
@@ -50,7 +50,7 @@
 								<xforms:group ref=".[count(eac:p) = 0]">
 									<xforms:trigger appearance="minimal">
 										<xforms:label>
-											<img src="/xeac/xforms/images/add.gif"/>Paragraph</xforms:label>
+											<span class="glyphicon glyphicon-plus"/>Paragraph</xforms:label>
 										<xforms:action ev:event="DOMActivate">
 											<xforms:insert context="." nodeset="./child::node()[last()]"  origin="instance('p-template')"/>
 										</xforms:action>

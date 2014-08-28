@@ -20,7 +20,7 @@
 									</xforms:input>
 									<xforms:trigger appearance="minimal">
 										<xforms:label>
-											<img src="/xeac/xforms/images/add.gif"/>Level</xforms:label>
+											<span class="glyphicon glyphicon-plus"/>Level</xforms:label>
 										<xforms:action ev:event="DOMActivate">
 											<xforms:insert context="parent::node()" nodeset="./child::node()[last()]" origin="instance('level-template')"/>
 										</xforms:action>

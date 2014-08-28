@@ -12,10 +12,11 @@
 		<title>xEAC Administration</title>
 		<link rel="stylesheet" href="/fr/style/bootstrap/css/bootstrap.css" type="text/css"/>
 		<link rel="stylesheet" href="/fr/style/form-runner-bootstrap-override.css" type="text/css"/>
-		<link rel="stylesheet" href="/config/theme/examples.css" type="text/css" media="all"/>
+		
+		<link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css"/>
+		<script type="text/javascript" src="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"/>
 		<link rel="shortcut icon" href="/ops/images/orbeon-icon-16.ico"/>
 		<link rel="icon" href="/ops/images/orbeon-icon-16.png" type="image/png"/>
-		<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/3.8.0/build/cssgrids/grids-min.css"/>
 		<link rel="stylesheet" type="text/css" href="/apps/xeac/xforms/css/xforms.css"/>
 
 		<xforms:model>
@@ -386,9 +387,9 @@
 
 	<body>
 		<xforms:var name="display_path">../</xforms:var>
-		<div class="yui3-g">
-			<div class="yui3-u-1">
-				<div class="content">
+		<div class="container-fluid">
+			<div class="row">
+				<div class="col-md-12">
 					<div id="form">
 						<xforms:group ref="instance('status')/text()">
 							<div class="success">
@@ -633,7 +634,7 @@
 									</div>
 								</xforms:group>
 								<br/>
-								<table style="width:100%">
+								<table class="table">
 									<thead>
 										<tr>
 											<th>Title</th>
@@ -645,9 +646,8 @@
 									<tbody>
 										<xforms:repeat nodeset="instance('pagination-result')//record">
 											<xforms:var name="id" select="id"/>
-											<xforms:var name="class" select="if (position() mod 2 = 0) then 'even-row' else 'odd-row'"/>
 											<tr>
-												<td class="{$class}">
+												<td>
 													<h4>
 														<a href="edit/?recordId={$id}">
 															<xforms:output ref="title"/>
@@ -660,10 +660,10 @@
 														</xforms:output>
 													</div>
 												</td>
-												<td class="{$class} center">
+												<td class="text-center">
 													<a href="{instance('config')/url}id/{$id}.xml" target="_blank">xml</a> | <a href="{instance('config')/url}id/{$id}" target="_blank">html</a>
 												</td>
-												<td class="{$class} center">
+												<td class="text-center">
 													<!-- only enable publication if the maintenanceStatus allows it -->
 													<xforms:group ref=".[maintenanceStatus='new' or maintenanceStatus='revised' or maintenanceStatus='derived']">
 														<xforms:group ref=".[published = 'true']">
@@ -686,10 +686,10 @@
 														</xforms:group>
 													</xforms:group>
 												</td>
-												<td class="{$class} center">
+												<td class="text-center">
 													<xforms:trigger appearance="minimal">
 														<xforms:label>
-															<img src="/xeac/xforms/images/remove.gif"/>
+															<span class="glyphicon glyphicon-remove"/>
 														</xforms:label>
 														<xforms:action ev:event="DOMActivate">
 															<xforms:setvalue ref="instance('control-instance')/id" value="$id"/>
