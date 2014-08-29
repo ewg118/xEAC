@@ -90,7 +90,7 @@
 
 						<!-- EAC templates -->
 						<xforms:instance id="otherRecordId-template" xxforms:exclude-result-prefixes="#all">
-							<otherRecordId/>
+							<otherRecordId localType="skos:exactMatch"/>
 						</xforms:instance>
 						<xforms:instance id="sources-template" xxforms:exclude-result-prefixes="#all">
 							<sources/>
