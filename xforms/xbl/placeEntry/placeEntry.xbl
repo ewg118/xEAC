@@ -35,7 +35,7 @@
 											<xforms:delete nodeset="."/>
 										</xforms:action>
 										<xforms:label>
-											<img src="/xeac/xforms/images/remove.gif"/>
+											<span class="glyphicon glyphicon-remove"/>
 										</xforms:label>
 									</xforms:trigger>
 								</xforms:group>
@@ -49,7 +49,7 @@
 										<xforms:delete ev:event="DOMActivate" nodeset="."/>
 									</xforms:action>
 									<xforms:label>
-										<img src="/xeac/xforms/images/remove.gif"/>
+										<span class="glyphicon glyphicon-remove"/>
 									</xforms:label>
 								</xforms:trigger>
 							</xforms:group>

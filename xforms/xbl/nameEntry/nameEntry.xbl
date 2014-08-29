@@ -27,7 +27,7 @@
 							<span class="add">
 								<xforms:trigger appearance="minimal">
 									<xforms:label>
-										<img src="/xeac/xforms/images/add.gif"/>
+										<span class="glyphicon glyphicon-plus"/>
 									</xforms:label>
 									<xxforms:show ev:event="DOMActivate" dialog="nameEntry-objects"/>
 								</xforms:trigger>
@@ -36,7 +36,7 @@
 								<xforms:trigger appearance="minimal">
 									<xforms:delete ev:event="DOMActivate" nodeset="."/>
 									<xforms:label>
-										<img src="/xeac/xforms/images/remove.gif"/>
+										<span class="glyphicon glyphicon-remove"/>
 									</xforms:label>
 								</xforms:trigger>
 							</xforms:group>
@@ -44,7 +44,7 @@
 								<xforms:label>Name Entry Objects</xforms:label>
 								<xforms:trigger appearance="minimal">
 									<xforms:label>
-										<img src="/xeac/xforms/images/add.gif"/>Part</xforms:label>
+										<span class="glyphicon glyphicon-plus"/>Part</xforms:label>
 									<xforms:action ev:event="DOMActivate">
 										<xforms:insert context="." origin="instance('part-template')" nodeset="eac:part" position="after"/>
 										<xxforms:hide dialog="nameEntry-objects"/>
@@ -54,7 +54,7 @@
 									<xforms:group ref=".[count(eac:authorizedForm) = 0]">
 										<xforms:trigger appearance="minimal">
 											<xforms:label>
-												<img src="/xeac/xforms/images/add.gif"/>Authorized Form</xforms:label>
+												<span class="glyphicon glyphicon-plus"/>Authorized Form</xforms:label>
 											<xforms:action ev:event="DOMActivate">
 												<xforms:insert context="." origin="instance('authorizedForm-template')" nodeset="./child::node()[last()]"/>
 												<xxforms:hide dialog="nameEntry-objects"/>
@@ -65,7 +65,7 @@
 									<xforms:group ref=".[count(eac:alternativeForm) = 0]">
 										<xforms:trigger appearance="minimal">
 											<xforms:label>
-												<img src="/xeac/xforms/images/add.gif"/>Alternative Form</xforms:label>
+												<span class="glyphicon glyphicon-plus"/>Alternative Form</xforms:label>
 											<xforms:action ev:event="DOMActivate">
 												<xforms:insert context="." origin="instance('alternativeForm-template')" nodeset="./child::node()[last()]"/>
 												<xxforms:hide dialog="nameEntry-objects"/>
@@ -76,7 +76,7 @@
 								<xforms:group ref=".[count(eac:preferredForm) = 0]">
 									<xforms:trigger appearance="minimal">
 										<xforms:label>
-											<img src="/xeac/xforms/images/add.gif"/>Preferred Form</xforms:label>
+											<span class="glyphicon glyphicon-plus"/>Preferred Form</xforms:label>
 										<xforms:action ev:event="DOMActivate">
 											<xforms:insert context="." origin="instance('preferredForm-template')" nodeset="./child::node()[last()]"/>
 											<xxforms:hide dialog="nameEntry-objects"/>
@@ -86,7 +86,7 @@
 								<xforms:group ref=".[count(eac:useDates) = 0]">
 									<xforms:trigger appearance="minimal">
 										<xforms:label>
-											<img src="/xeac/xforms/images/add.gif"/>Use Dates</xforms:label>
+											<span class="glyphicon glyphicon-plus"/>Use Dates</xforms:label>
 										<xforms:action ev:event="DOMActivate">
 											<xforms:insert context="." origin="instance('useDates-template')" nodeset="./child::node()[last()]"/>
 											<xxforms:hide dialog="nameEntry-objects"/>
@@ -105,7 +105,7 @@
 										<xforms:trigger appearance="minimal">
 											<xforms:delete ev:event="DOMActivate" nodeset="."/>
 											<xforms:label>
-												<img src="/xeac/xforms/images/remove.gif"/>
+												<span class="glyphicon glyphicon-remove"/>
 											</xforms:label>
 										</xforms:trigger>
 									</xforms:group>
@@ -129,7 +129,7 @@
 									<xforms:trigger appearance="minimal">
 										<xforms:delete ev:event="DOMActivate" nodeset="."/>
 										<xforms:label>
-											<img src="/xeac/xforms/images/remove.gif"/>
+											<span class="glyphicon glyphicon-remove"/>
 										</xforms:label>
 									</xforms:trigger>
 								</div>
@@ -152,7 +152,7 @@
 									<xforms:trigger appearance="minimal">
 										<xforms:delete ev:event="DOMActivate" nodeset="."/>
 										<xforms:label>
-											<img src="/xeac/xforms/images/remove.gif"/>
+											<span class="glyphicon glyphicon-remove"/>
 										</xforms:label>
 									</xforms:trigger>
 								</div>
@@ -175,7 +175,7 @@
 									<xforms:trigger appearance="minimal">
 										<xforms:delete ev:event="DOMActivate" nodeset="."/>
 										<xforms:label>
-											<img src="/xeac/xforms/images/remove.gif"/>
+											<span class="glyphicon glyphicon-remove"/>
 										</xforms:label>
 									</xforms:trigger>
 								</div>

@@ -6,10 +6,11 @@
 		<title>xEAC Application Settings</title>
 		<link rel="stylesheet" href="/fr/style/bootstrap/css/bootstrap.css" type="text/css"/>
 		<link rel="stylesheet" href="/fr/style/form-runner-bootstrap-override.css" type="text/css"/>
-		<link rel="stylesheet" href="/config/theme/examples.css" type="text/css" media="all"/>
+		
+		<link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css"/>
+		<script type="text/javascript" src="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"/>
 		<link rel="shortcut icon" href="/ops/images/orbeon-icon-16.ico"/>
 		<link rel="icon" href="/ops/images/orbeon-icon-16.png" type="image/png"/>
-		<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/3.8.0/build/cssgrids/grids-min.css"/>
 		<link rel="stylesheet" type="text/css" href="/apps/xeac/xforms/css/xforms.css"/>
 
 		<xforms:model>
@@ -291,22 +292,24 @@
 		<!--<xi:include href="xbl/descriptiveNote/descriptiveNote.xbl" xi:omit-xml-base="true"/>-->
 	</head>
 	<body>
-		<div class="yui3-g">
-			<div class="yui3-u-1">
-				<div class="content">
+		<div class="container-fluid">
+			<div class="row">
+				<div class="col-md-12">
 					<div id="form">
 						<h1>Edit Settings</h1>
-						<p>
-							<a href="../">&lt; Return</a>
-						</p>
-						<xforms:group ref="instance('status')/text()">
-							<div class="success">
-								<xforms:output ref="instance('status')"/>
+						<p><a href="../"><span class="glyphicon glyphicon-arrow-left"/>Return to Admin</a></p>
+						<xforms:group ref=".[string-length(instance('status')) &gt; 0]">
+							<div class="bg-info alert">
+								<p>
+									<span class="glyphicon glyphicon-info-sign"/>
+									<strong>Status:</strong>
+									<xforms:output ref="instance('status')"/>
+								</p>
 							</div>
 						</xforms:group>
 						<div class="submission">
-							<xforms:trigger>
-								<xforms:label><img src="/xeac/xforms/images/save.gif" alt="Save"/> Save</xforms:label>
+							<xforms:trigger appareance="minimal">
+								<xforms:label><span class="glyphicon glyphicon-floppy-disk"/>Save</xforms:label>
 								<xforms:send ev:event="DOMActivate" submission="save-config"/>
 							</xforms:trigger>
 						</div>
@@ -422,7 +425,7 @@
 										<h2>Agency Names</h2>
 										<xforms:trigger appearance="minimal">
 											<xforms:label>
-												<img src="/xeac/xforms/images/add.gif"/>Agency</xforms:label>
+												<span class="glyphicon glyphicon-plus"/>Agency</xforms:label>
 											<xforms:insert ev:event="DOMActivate" context="." nodeset="./child::node()[last()]" origin="instance('agencyName-template')"/>
 										</xforms:trigger>
 										<xforms:repeat nodeset="item">
@@ -436,7 +439,7 @@
 													<xforms:trigger appearance="minimal">
 														<xforms:delete ev:event="DOMActivate" nodeset="."/>
 														<xforms:label>
-															<img src="/xeac/xforms/images/remove.gif"/>
+															<span class="glyphicon glyphicon-remove"/>
 														</xforms:label>
 													</xforms:trigger>
 												</xforms:group>
@@ -454,7 +457,7 @@
 											<h3>CPF Relations</h3>
 											<span class="add">
 												<xforms:trigger appearance="minimal">
-													<xforms:label><img src="/xeac/xforms/images/add.gif"/>Import</xforms:label>
+													<xforms:label><span class="glyphicon glyphicon-plus"/>Import</xforms:label>
 													<xforms:action ev:event="DOMActivate">
 														<xforms:setvalue ref="instance('eXist-xquery')/exist:text" value="instance('xqueries')/query[@id='gather-cpfRelations']"/>
 														<xforms:send submission="xquery-collection"/>
@@ -462,7 +465,7 @@
 													</xforms:action>
 												</xforms:trigger>
 												<xforms:trigger appearance="minimal">
-													<xforms:label><img src="/xeac/xforms/images/add.gif"/>Upload RDF/XML Ontology</xforms:label>
+													<xforms:label><span class="glyphicon glyphicon-plus"/>Upload RDF/XML Ontology</xforms:label>
 													<xxforms:show ev:event="DOMActivate" dialog="upload-ontology-dialog"/>
 												</xforms:trigger>
 											</span>
@@ -478,7 +481,7 @@
 															</xforms:output>
 															<xforms:group ref=".[not(instance('config')/relationSemantics/cpfRelations/relation/@from = $val)]">
 																<xforms:trigger appearance="minimal">
-																	<xforms:label><img src="/xeac/xforms/images/add.gif"/>Add</xforms:label>
+																	<xforms:label><span class="glyphicon glyphicon-plus"/>Add</xforms:label>
 																	<xforms:action ev:event="DOMActivate">
 																		<xforms:insert context="instance('config')/relationSemantics/cpfRelations" nodeset="./child::node()[last()]"
 																			origin="instance('cpfRelation-template')"/>
@@ -494,7 +497,7 @@
 												<h4>Controlled Template</h4>
 												<span class="add">
 													<xforms:trigger appearance="minimal">
-														<xforms:label><img src="/xeac/xforms/images/add.gif"/>Add New</xforms:label>
+														<xforms:label><span class="glyphicon glyphicon-plus"/>Add New</xforms:label>
 														<xforms:action ev:event="DOMActivate">
 															<xforms:insert nodeset="./child::node()[last()]" origin="instance('cpfRelation-template')"/>
 														</xforms:action>
@@ -540,7 +543,7 @@
 																		<xforms:trigger appearance="minimal">
 																			<xforms:delete ev:event="DOMActivate" nodeset="."/>
 																			<xforms:label>
-																				<img src="/xeac/xforms/images/remove.gif"/>
+																				<span class="glyphicon glyphicon-remove"/>
 																			</xforms:label>
 																		</xforms:trigger>
 																	</td>
@@ -557,7 +560,7 @@
 											<h3>Resource Relations</h3>
 											<span class="add">
 												<xforms:trigger appearance="minimal">
-													<xforms:label><img src="/xeac/xforms/images/add.gif"/>Import</xforms:label>
+													<xforms:label><span class="glyphicon glyphicon-plus"/>Import</xforms:label>
 													<xforms:action ev:event="DOMActivate">
 														<xforms:setvalue ref="instance('eXist-xquery')/exist:text" value="instance('xqueries')/query[@id='gather-resourceRelations']"/>
 														<xforms:send submission="xquery-collection"/>
@@ -577,7 +580,7 @@
 															</xforms:output>
 															<xforms:group ref=".[not(instance('config')/relationSemantics/resourceRelations/relation/@from = $val)]">
 																<xforms:trigger appearance="minimal">
-																	<xforms:label><img src="/xeac/xforms/images/add.gif"/>Add</xforms:label>
+																	<xforms:label><span class="glyphicon glyphicon-plus"/>Add</xforms:label>
 																	<xforms:action ev:event="DOMActivate">
 																		<xforms:insert context="instance('config')/relationSemantics/resourceRelations" nodeset="./child::node()[last()]"
 																			origin="instance('cpfRelation-template')"/>
@@ -593,7 +596,7 @@
 												<h4>Controlled Template</h4>
 												<span class="add">
 													<xforms:trigger appearance="minimal">
-														<xforms:label><img src="/xeac/xforms/images/add.gif"/>Add New</xforms:label>
+														<xforms:label><span class="glyphicon glyphicon-plus"/>Add New</xforms:label>
 														<xforms:action ev:event="DOMActivate">
 															<xforms:insert nodeset="./child::node()[last()]" origin="instance('cpfRelation-template')"/>
 														</xforms:action>
@@ -629,7 +632,7 @@
 																		<xforms:trigger appearance="minimal">
 																			<xforms:delete ev:event="DOMActivate" nodeset="."/>
 																			<xforms:label>
-																				<img src="/xeac/xforms/images/remove.gif"/>
+																				<span class="glyphicon glyphicon-remove"/>
 																			</xforms:label>
 																		</xforms:trigger>
 																	</td>
@@ -646,7 +649,7 @@
 										<span class="add">
 											<xforms:trigger appearance="minimal">
 												<xforms:label>
-													<img src="/xeac/xforms/images/add.gif"/>Local Type Declaration</xforms:label>
+													<span class="glyphicon glyphicon-plus"/>Local Type Declaration</xforms:label>
 												<xforms:insert context="instance('config')/localTypeDeclarations" nodeset="./child::node()[last()]" origin="instance('localTypeDeclaration-template')"
 													ev:event="DOMActivate"/>
 											</xforms:trigger>
@@ -657,14 +660,14 @@
 												<xforms:trigger appearance="minimal">
 													<xforms:delete ev:event="DOMActivate" nodeset="."/>
 													<xforms:label>
-														<img src="/xeac/xforms/images/remove.gif"/>
+														<span class="glyphicon glyphicon-remove"/>
 													</xforms:label>
 												</xforms:trigger>
 												<!--<div class="trigger_container">
 													<xforms:group ref=".[count(descriptiveNote) = 0]">
 														<xforms:trigger appearance="minimal">
 															<xforms:label>
-																<img src="/xeac/xforms/images/add.gif"/>Descriptive Note</xforms:label>
+																<span class="glyphicon glyphicon-plus"/>Descriptive Note</xforms:label>
 															<xforms:insert context="." nodeset="./child::node()[last()]" origin="instance('descriptiveNote-template')" ev:event="DOMActivate"/>
 														</xforms:trigger>
 													</xforms:group>

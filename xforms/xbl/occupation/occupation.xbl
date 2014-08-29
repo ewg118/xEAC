@@ -31,7 +31,7 @@
 							<span class="add">
 								<xforms:trigger appearance="minimal">
 									<xforms:label>
-										<img src="/xeac/xforms/images/add.gif"/>
+										<span class="glyphicon glyphicon-plus"/>
 									</xforms:label>
 									<xxforms:show ev:event="DOMActivate" dialog="occupation-objects"/>
 								</xforms:trigger>
@@ -39,7 +39,7 @@
 							<xforms:trigger appearance="minimal">
 								<xforms:delete ev:event="DOMActivate" nodeset="."/>
 								<xforms:label>
-									<img src="/xeac/xforms/images/remove.gif"/>
+									<span class="glyphicon glyphicon-remove"/>
 								</xforms:label>
 							</xforms:trigger>
 							<xxforms:dialog id="occupation-objects" appearance="full" level="modal" close="true" draggable="true" visible="false">
@@ -47,7 +47,7 @@
 								<xforms:group ref=".[count(eac:citation) = 0]">
 									<xforms:trigger appearance="minimal">
 										<xforms:label>
-											<img src="/xeac/xforms/images/add.gif"/>Citation</xforms:label>
+											<span class="glyphicon glyphicon-plus"/>Citation</xforms:label>
 										<xforms:action ev:event="DOMActivate">
 											<xforms:insert context="." origin="instance('citation-template')"/>
 											<xxforms:hide dialog="occupation-objects"/>
@@ -57,7 +57,7 @@
 								<xforms:group ref=".[count(eac:date) = 0 and count(eac:dateRange) = 0 and count(eac:dateSet) = 0]">
 									<xforms:trigger appearance="minimal">
 										<xforms:label>
-											<img src="/xeac/xforms/images/add.gif"/>Date</xforms:label>
+											<span class="glyphicon glyphicon-plus"/>Date</xforms:label>
 										<xforms:action ev:event="DOMActivate">
 											<xforms:insert context="." origin="instance('date-template')"/>
 											<xxforms:hide dialog="occupation-objects"/>
@@ -65,7 +65,7 @@
 									</xforms:trigger>
 									<xforms:trigger appearance="minimal">
 										<xforms:label>
-											<img src="/xeac/xforms/images/add.gif"/>Date Range</xforms:label>
+											<span class="glyphicon glyphicon-plus"/>Date Range</xforms:label>
 										<xforms:action ev:event="DOMActivate">
 											<xforms:insert context="." origin="instance('dateRange-template')"/>
 											<xxforms:hide dialog="occupation-objects"/>
@@ -73,7 +73,7 @@
 									</xforms:trigger>
 									<xforms:trigger appearance="minimal">
 										<xforms:label>
-											<img src="/xeac/xforms/images/add.gif"/>Date Set</xforms:label>
+											<span class="glyphicon glyphicon-plus"/>Date Set</xforms:label>
 										<xforms:action ev:event="DOMActivate">
 											<xforms:insert context="." origin="instance('dateSet-template')"/>
 											<xxforms:hide dialog="occupation-objects"/>
@@ -83,7 +83,7 @@
 								<xforms:group ref=".[count(eac:descriptiveNote) = 0]">
 									<xforms:trigger appearance="minimal">
 										<xforms:label>
-											<img src="/xeac/xforms/images/add.gif"/>Descriptive Note</xforms:label>
+											<span class="glyphicon glyphicon-plus"/>Descriptive Note</xforms:label>
 										<xforms:action ev:event="DOMActivate">
 											<xforms:insert context="." origin="instance('descriptiveNote-template')"/>
 											<xxforms:hide dialog="occupation-objects"/>
@@ -93,7 +93,7 @@
 								<xforms:group ref=".[count(eac:placeEntry) = 0]">
 									<xforms:trigger appearance="minimal">
 										<xforms:label>
-											<img src="/xeac/xforms/images/add.gif"/>Place Entry</xforms:label>
+											<span class="glyphicon glyphicon-plus"/>Place Entry</xforms:label>
 										<xforms:action ev:event="DOMActivate">
 											<xforms:insert context="." origin="instance('placeEntry-template')"/>
 											<xxforms:hide dialog="occupation-objects"/>
@@ -121,7 +121,7 @@
 											<xforms:delete nodeset="."/>
 										</xforms:action>
 										<xforms:label>
-											<img src="/apps/xeac/xforms/images/remove.gif"/>
+											<span class="glyphicon glyphicon-remove"/>
 										</xforms:label>
 									</xforms:trigger>
 								</div>
