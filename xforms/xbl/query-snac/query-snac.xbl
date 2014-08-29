@@ -16,7 +16,6 @@
 						</xforms:action>
 					</xforms:trigger>
 
-
 					<xxforms:dialog id="snac-dialog" appearance="full" level="modal" close="true" draggable="true" visible="false">
 						<xforms:label>Query SNAC</xforms:label>
 						<div>
@@ -90,7 +89,7 @@
 
 						<!-- EAC templates -->
 						<xforms:instance id="otherRecordId-template" xxforms:exclude-result-prefixes="#all">
-							<otherRecordId/>
+							<otherRecordId localType="skos:exactMatch"/>
 						</xforms:instance>
 						<xforms:instance id="sources-template" xxforms:exclude-result-prefixes="#all">
 							<sources/>
