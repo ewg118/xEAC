@@ -279,7 +279,9 @@
 				<sources/>
 			</xforms:instance>
 			<xforms:instance id="source-template" xxforms:exclude-result-prefixes="#all">
-				<source xlink:type="simple" xlink:href=""/>
+				<source xlink:type="simple" xlink:href="">
+					<sourceEntry/>
+				</source>
 			</xforms:instance>
 			<!-- cpfDescription -->
 			<xforms:instance id="description-template" xxforms:exclude-result-prefixes="#all">
@@ -499,7 +501,7 @@
 			<xforms:bind id="identity-tab" nodeset="instance('doc')/eac:cpfDescription/eac:identity"/>
 			<xforms:bind id="description-tab" nodeset="instance('doc')/eac:cpfDescription/eac:description"/>
 			<xforms:bind id="relations-tab" nodeset="instance('doc')/eac:cpfDescription/eac:relations"/>
-			
+
 			<!-- EAC-CPF bindings -->
 			<xforms:bind nodeset="instance('doc')">
 				<xforms:bind nodeset="eac:control">
@@ -534,6 +536,12 @@
 						<!-- only allow editing of abbreviation and citation if they are unused by nameEntry -->
 						<xforms:bind nodeset="eac:abbreviation" required="true()" type="xs:token"/>
 						<xforms:bind nodeset="eac:citation" required="true()"/>
+					</xforms:bind>
+					<xforms:bind nodeset="eac:sources">
+						<!-- only allow editing of abbreviation and citation if they are unused by nameEntry -->
+						<xforms:bind nodeset="eac:source">
+							<xforms:bind nodeset="eac:sourceEntry" required="true()"/>
+						</xforms:bind>
 					</xforms:bind>
 				</xforms:bind>
 				<xforms:bind nodeset="eac:cpfDescription">
@@ -1019,7 +1027,6 @@
 									</li>
 								</xforms:group>
 							</ul>
-							
 							<div class="trigger_container">
 								<xforms:group ref="instance('doc')[count(eac:cpfDescription/eac:description) = 0]">
 									<xforms:trigger appearance="minimal">
@@ -1912,11 +1919,60 @@
 											</div>
 										</xforms:repeat>
 									</div>
-									<xforms:group ref="eac:sources">
-										<div class="section">
-											<h2>Sources</h2>
-										</div>
-									</xforms:group>
+									<div class="section">
+										<h2>Sources</h2>
+										<xforms:trigger appearance="minimal">
+											<xforms:label>
+												<span class="glyphicon glyphicon-plus"/>Source</xforms:label>
+											<xforms:action ev:event="DOMActivate">
+												<xforms:insert context="." origin="instance('sources-template')" nodeset="./child::node()[last()]" if="not(eac:sources)"/>
+												<xforms:insert context="eac:sources" origin="instance('source-template')" nodeset="./child::node()[last()]"/>
+											</xforms:action>
+										</xforms:trigger>
+										<xforms:repeat nodeset="eac:sources/eac:source">
+											<div>
+												<h3>Source</h3>
+												<xforms:trigger appearance="minimal">
+													<xforms:delete context="." ev:event="DOMActivate"/>
+													<xforms:label>
+														<span class="glyphicon glyphicon-remove"/>
+													</xforms:label>
+												</xforms:trigger>
+												<div class="trigger_container">
+													<xforms:group ref=".[count(eac:descriptiveNote) = 0]">
+														<xforms:trigger appearance="minimal">
+															<xforms:label>
+																<span class="glyphicon glyphicon-plus"/>Descriptive Note</xforms:label>
+															<xforms:insert ev:event="DOMActivate" context="." origin="instance('descriptiveNote-template')"
+																nodeset="./child::node()[last()]"/>
+														</xforms:trigger>
+													</xforms:group>
+												</div>
+												<div>
+													<xforms:input ref="eac:sourceEntry">
+														<xforms:label>Source Entry</xforms:label>
+														<xforms:alert>Required</xforms:alert>
+													</xforms:input>
+												</div>
+												<xforms:group ref="@xlink:href">
+													<div>
+														<xforms:input ref=".">
+															<xforms:label>URL</xforms:label>
+														</xforms:input>
+														<xforms:trigger appearance="minimal">
+															<xforms:delete context="." ev:event="DOMActivate"/>
+															<xforms:label>
+																<span class="glyphicon glyphicon-remove"/>
+															</xforms:label>
+														</xforms:trigger>
+													</div>
+												</xforms:group>
+												<xforms:group ref="eac:descriptiveNote">
+													<xeac:descriptiveNote/>
+												</xforms:group>
+											</div>	
+										</xforms:repeat>
+									</div>
 								</div>
 								<!-- alert for removal of conventionDeclaration -->
 								<fr:alert-dialog id="remove-conventionDeclaration">
