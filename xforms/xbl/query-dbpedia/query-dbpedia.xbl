@@ -88,10 +88,12 @@
 											<xforms:setvalue ref="$binding/eac:otherRecordId[1]" value="$resource"/>
 										</xforms:action>
 										<!-- insert source for dbpedia URI, if it doesn't exist -->
-										<xforms:action if="not($binding/eac:sources/eac:source = $resource)">
+										<xforms:action if="not($binding/eac:sources/eac:source/@xlink:href = $resource)">
 											<xforms:insert context="$binding" nodeset="./child::node()[last()]" origin="instance('sources-template')"
 												if="count($binding/eac:sources) = 0"/>
 											<xforms:insert context="$binding/eac:sources" nodeset="./child::node()[last()]" origin="instance('source-template')"/>
+											<xforms:setvalue ref="$binding/eac:sources/eac:source[last()]/eac:sourceEntry">DBpedia</xforms:setvalue>
+											<xforms:setvalue ref="$binding/eac:sources/eac:source[last()]/eac:descriptiveNote/eac:p">Programmatically linked this record to DBpedia with xEAC.</xforms:setvalue>
 											<xforms:setvalue ref="$binding/eac:sources/eac:source[last()]/@xlink:href" value="$resource"/>
 										</xforms:action>
 										<!-- import names -->
@@ -386,7 +388,12 @@
 							<sources/>
 						</xforms:instance>
 						<xforms:instance id="source-template" xxforms:exclude-result-prefixes="#all">
-							<source xlink:type="simple" xlink:href=""/>
+							<source xlink:type="simple" xlink:href="">
+								<sourceEntry/>
+								<descriptiveNote>
+									<p/>
+								</descriptiveNote>
+							</source>
 						</xforms:instance>
 						<xforms:instance id="conventionDeclaration-template" xxforms:exclude-result-prefixes="#all">
 							<conventionDeclaration>

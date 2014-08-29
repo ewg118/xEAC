@@ -16,6 +16,7 @@
 						</xforms:action>
 					</xforms:trigger>
 
+
 					<xxforms:dialog id="snac-dialog" appearance="full" level="modal" close="true" draggable="true" visible="false">
 						<xforms:label>Query SNAC</xforms:label>
 						<div>
@@ -55,7 +56,8 @@
 										<xforms:insert context="$binding" nodeset="./child::node()[last()]" origin="instance('sources-template')"
 											if="count($binding/eac:sources) = 0"/>
 										<xforms:insert context="$binding/eac:sources" nodeset="./child::node()[last()]" origin="instance('source-template')"/>
-										<xforms:setvalue ref="$binding/eac:sources/eac:source[last()]" value="instance('temp')/@href"/>
+										<xforms:setvalue ref="$binding/eac:sources/eac:source[last()]/eac:sourceEntry">SNAC</xforms:setvalue>
+										<xforms:setvalue ref="$binding/eac:sources/eac:source[last()]/eac:descriptiveNote/eac:p">Programmatically linked this record to SNAC with xEAC.</xforms:setvalue>
 										<xforms:setvalue ref="$binding/eac:sources/eac:source[last()]/@xlink:href" value="instance('temp')/@href"/>
 									</xforms:action>
 									<xxforms:hide dialog="snac-dialog"/>
@@ -95,7 +97,12 @@
 							<sources/>
 						</xforms:instance>
 						<xforms:instance id="source-template" xxforms:exclude-result-prefixes="#all">
-							<source xlink:type="simple" xlink:href=""/>
+							<source xlink:type="simple" xlink:href="">
+								<sourceEntry/>
+								<descriptiveNote>
+									<p/>
+								</descriptiveNote>
+							</source>
 						</xforms:instance>
 
 						<!-- submissions -->
