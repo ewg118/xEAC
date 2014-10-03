@@ -20,7 +20,7 @@
 	</p:processor>
 	
 	<p:processor name="oxf:pipeline">
-		<p:input name="config" href="config.xpl"/>		
+		<p:input name="config" href="../config.xpl"/>		
 		<p:output name="data" id="config"/>
 	</p:processor>
 

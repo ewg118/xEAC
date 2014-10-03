@@ -21,14 +21,14 @@
 	</p:processor>
 	
 	<p:processor name="oxf:pipeline">
-		<p:input name="config" href="../../models/config.xpl"/>		
+		<p:input name="config" href="../../../models/config.xpl"/>		
 		<p:output name="data" id="config"/>
 	</p:processor>
 	
 	<p:processor name="oxf:unsafe-xslt">
 		<p:input name="params" href="#params"/>				
 		<p:input name="data" href="aggregate('content', #data, #config)"/>		
-		<p:input name="config" href="../../../ui/xslt/serializations/solr/html.xsl"/>
+		<p:input name="config" href="../../../../ui/xslt/serializations/solr/html.xsl"/>
 		<p:output name="data" ref="data"/>
 	</p:processor>
 </p:config>
