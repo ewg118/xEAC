@@ -31,14 +31,16 @@
 	<page path-info="/xeac/id/(.*)\.tei" matcher="oxf:perl5-matcher" model="xpl/models/object/get-id.xpl" view="xpl/views/serializations/eac/tei.xpl"/>
 	<page path-info="/xeac/id/(.*)\.solr" matcher="oxf:perl5-matcher" model="xpl/models/object/get-id.xpl" view="xpl/views/serializations/eac/solr.xpl"/>
 	<page path-info="/xeac/id/(.*)\.rdf" matcher="oxf:perl5-matcher" model="xpl/models/object/get-id.xpl" view="xpl/views/serializations/eac/rdf.xpl"/>
-	<page path-info="/xeac/id/(.*)" matcher="oxf:perl5-matcher" model="xpl/models/object/get-id.xpl" view="xpl/views/serializations/eac/html.xpl"/>
+	<page path-info="/xeac/id/(.*)\.ttl" matcher="oxf:perl5-matcher" model="xpl/models/object/get-id.xpl" view="xpl/views/serializations/rdf/ttl.xpl"/>
+	<page path-info="/xeac/id/(.*)\.jsonld" matcher="oxf:perl5-matcher" model="xpl/models/object/get-id.xpl" view="xpl/views/serializations/rdf/json-ld.xpl"/>
+	<page path-info="/xeac/id/(.*)" matcher="oxf:perl5-matcher" model="xpl/models/object/get-id.xpl" view="xpl/controllers/conneg-id.xpl"/>
 	
 	<!-- Solr-->
 	<page path-info="/xeac/feed/" model="xpl/models/solr/feed.xpl" view="xpl/views/serializations/solr/atom.xpl"/>
-	<page path-info="/xeac/results/" model="xpl/models/solr/results.xpl" view="xpl/views/serializations/solr/html.xpl"/>
+	<page path-info="/xeac/results/" model="xpl/models/solr/results.xpl" view="xpl/controllers/conneg-results.xpl"/>
 	
 	<!-- APIs -->
-	<page path-info="/xeac/api/get" model="xpl/models/get-id.xpl" view="xpl/views/apis/get.xpl"/>
+	<page path-info="/xeac/api/get" model="xpl/models/object/get-id.xpl" view="xpl/views/apis/get.xpl"/>
 	
 	<!-- SPARQL -->
 	<page path="/xeac/query" view="xpl/views/serializations/sparql/query.xpl"/>

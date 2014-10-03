@@ -33,6 +33,9 @@
 							</xsl:when>
 							<xsl:otherwise>								
 								<xsl:choose>
+									<xsl:when test="substring($basename, string-length($basename) - 6) = '.jsonld'">
+										<xsl:value-of select="substring-before($basename, '.jsonld')"/>
+									</xsl:when>
 									<xsl:when test="substring($basename, string-length($basename) - 3) = '.kml'">
 										<xsl:value-of select="substring-before($basename, '.kml')"/>
 									</xsl:when>
@@ -41,6 +44,9 @@
 									</xsl:when>
 									<xsl:when test="substring($basename, string-length($basename) - 3) = '.tei'">
 										<xsl:value-of select="substring-before($basename, '.tei')"/>
+									</xsl:when>
+									<xsl:when test="substring($basename, string-length($basename) - 3) = '.ttl'">
+										<xsl:value-of select="substring-before($basename, '.ttl')"/>
 									</xsl:when>
 									<xsl:when test="substring($basename, string-length($basename) - 3) = '.xml'">
 										<xsl:value-of select="substring-before($basename, '.xml')"/>
