@@ -26,30 +26,30 @@
 	***************** -->
 	<!-- **** SERIALIZATIONS **** -->
 	<!-- ID -->
-	<page path-info="/xeac/id/(.*)\.xml" matcher="oxf:perl5-matcher" view="xpl/models/get-id.xpl"/>
-	<page path-info="/xeac/id/(.*)\.kml" matcher="oxf:perl5-matcher" view="xpl/models/get-id.xpl"/>
-	<page path-info="/xeac/id/(.*)\.tei" matcher="oxf:perl5-matcher" model="xpl/models/get-id.xpl" view="xpl/serializations/eac/tei.xpl"/>
-	<page path-info="/xeac/id/(.*)\.solr" matcher="oxf:perl5-matcher" model="xpl/models/get-id.xpl" view="xpl/serializations/eac/solr.xpl"/>
-	<page path-info="/xeac/id/(.*)\.rdf" matcher="oxf:perl5-matcher" model="xpl/models/get-id.xpl" view="xpl/serializations/eac/rdf.xpl"/>
-	<page path-info="/xeac/id/(.*)" matcher="oxf:perl5-matcher" model="xpl/models/get-id.xpl" view="xpl/serializations/eac/html.xpl"/>
+	<page path-info="/xeac/id/(.*)\.xml" matcher="oxf:perl5-matcher" view="xpl/models/object/get-id.xpl"/>
+	<page path-info="/xeac/id/(.*)\.kml" matcher="oxf:perl5-matcher" view="xpl/models/object/get-id.xpl"/>
+	<page path-info="/xeac/id/(.*)\.tei" matcher="oxf:perl5-matcher" model="xpl/models/object/get-id.xpl" view="xpl/views/serializations/eac/tei.xpl"/>
+	<page path-info="/xeac/id/(.*)\.solr" matcher="oxf:perl5-matcher" model="xpl/models/object/get-id.xpl" view="xpl/views/serializations/eac/solr.xpl"/>
+	<page path-info="/xeac/id/(.*)\.rdf" matcher="oxf:perl5-matcher" model="xpl/models/object/get-id.xpl" view="xpl/views/serializations/eac/rdf.xpl"/>
+	<page path-info="/xeac/id/(.*)" matcher="oxf:perl5-matcher" model="xpl/models/object/get-id.xpl" view="xpl/views/serializations/eac/html.xpl"/>
 	
 	<!-- Solr-->
-	<page path-info="/xeac/feed/" model="xpl/models/solr-feed.xpl" view="xpl/serializations/solr/atom.xpl"/>
-	<page path-info="/xeac/results/" model="xpl/models/solr-results.xpl" view="xpl/serializations/solr/html.xpl"/>
+	<page path-info="/xeac/feed/" model="xpl/models/solr/feed.xpl" view="xpl/views/serializations/solr/atom.xpl"/>
+	<page path-info="/xeac/results/" model="xpl/models/solr/results.xpl" view="xpl/views/serializations/solr/html.xpl"/>
 	
 	<!-- APIs -->
-	<page path-info="/xeac/api/get" model="xpl/models/get-id.xpl" view="xpl/apis/get.xpl"/>
+	<page path-info="/xeac/api/get" model="xpl/models/get-id.xpl" view="xpl/views/apis/get.xpl"/>
 	
 	<!-- SPARQL -->
-	<page path="/xeac/query" view="xpl/serializations/sparql/query.xpl"/>
+	<page path="/xeac/query" view="xpl/views/serializations/sparql/query.xpl"/>
 	
 	<!-- **** PAGES **** -->	
-	<page path-info="/xeac/" model="xpl/models/config.xpl" view="xpl/pages/index.xpl"/>
-	<page path="/xeac/sparql" view="xpl/pages/sparql.xpl"/>
+	<page path-info="/xeac/" model="xpl/models/config.xpl" view="xpl/views/pages/index.xpl"/>
+	<page path="/xeac/sparql" view="xpl/views/pages/sparql.xpl"/>
 	
 	<!-- **** AJAX **** -->
 	<!-- facet results -->
-	<page path-info="/xeac/get_facets/" model="xpl/models/solr-get_facets.xpl" view="xpl/serializations/solr/get_facets.xpl"/>
+	<page path-info="/xeac/get_facets/" model="xpl/models/solr/get_facets.xpl" view="xpl/views/ajax/get_facets.xpl"/>
 	
 
 	<epilogue url="oxf:/config/epilogue.xpl"/>

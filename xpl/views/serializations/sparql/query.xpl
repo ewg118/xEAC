@@ -17,7 +17,7 @@
 	</p:processor>
 	
 	<p:processor name="oxf:pipeline">
-		<p:input name="config" href="../../models/config.xpl"/>		
+		<p:input name="config" href="../../../models/config.xpl"/>		
 		<p:output name="data" id="config"/>
 	</p:processor>
 
@@ -87,7 +87,7 @@
 			<!-- Extract the message -->
 			<p:processor name="oxf:xslt">
 				<p:input name="data" href="aggregate('content', #config, #url-data-checked)"/>
-				<p:input name="config" href="../../../ui/xslt/exception.xsl"/>
+				<p:input name="config" href="../../../../ui/xslt/exception.xsl"/>
 				<p:output name="data" id="model"/>
 			</p:processor>
 			
@@ -141,7 +141,7 @@
 					<p:processor name="oxf:unsafe-xslt">
 						<p:input name="request" href="#request"/>
 						<p:input name="data" href="aggregate('content', #model, #config)"/>
-						<p:input name="config" href="../../../ui/xslt/serializations/sparql/html.xsl"/>
+						<p:input name="config" href="../../../../ui/xslt/serializations/sparql/html.xsl"/>
 						<p:output name="data" id="sparql-to-html"/>
 					</p:processor>
 					
