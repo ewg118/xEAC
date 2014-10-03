@@ -83,6 +83,14 @@
 				<script src="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"/>
 				<link rel="stylesheet" href="{$url}ui/css/style.css"/>
 				<script type="text/javascript" src="{$url}ui/javascript/display_functions.js"/>
+				<!-- other content types -->
+				<link rel="alternate" type="application/xml" href="{$url}id/{$id}.xml"/>
+				<link rel="alternate" type="application/rdf+xml" href="{$url}id/{$id}.rdf"/>
+				<link rel="alternate" type="text/turtle" href="{$url}id/{$id}.ttl"/>
+				<link rel="alternate" type="application/json" href="{$url}id/{$id}.jsonld"/>
+				<link rel="alternate" type="application/tei+xml" href="{$url}id/{$id}.tei"/>
+				<link rel="alternate" type="application/vnd.google-earth.kml+xml" href="{$url}id/{$id}.kml"/>
+
 				<!-- mapping -->
 				<xsl:if test="descendant::eac:placeEntry[string(@vocabularySource)]">
 					<script src="http://www.openlayers.org/api/OpenLayers.js" type="text/javascript"/>
@@ -105,7 +113,7 @@
 				<xsl:call-template name="footer"/>
 				<div style="display:none">
 					<span id="id">
-						<xsl:value-of select="//eac:recordId"/>
+						<xsl:value-of select="$id"/>
 					</span>
 					<span id="mappable">
 						<xsl:choose>
@@ -132,7 +140,7 @@
 		</xsl:variable>
 
 
-		<div class="container-fluid" typeof="{$typeof}" about="{//eac:recordId}">
+		<div class="container-fluid" typeof="{$typeof}" about="{$id}">
 			<div class="row">
 				<div class="col-md-12">
 					<h1>
@@ -244,58 +252,67 @@
 	</xsl:template>
 
 	<xsl:template name="side-bar">
-		<xsl:choose>
-			<xsl:when test="descendant::eac:resourceRelation[@xlink:arcrole='foaf:thumbnail']">
-				<p class="text-center">
-					<img src="{descendant::eac:resourceRelation[@xlink:arcrole='foaf:thumbnail']/@xlink:href}" alt="Portrait" style="max-width:100%;"/>
-				</p>			
-			</xsl:when>
-			<xsl:when test="descendant::eac:resourceRelation[@xlink:arcrole='foaf:depiction']">
-				<p class="text-center">
-					<img src="{descendant::eac:resourceRelation[@xlink:arcrole='foaf:depiction']/@xlink:href}" alt="Portrait" style="max-width:100%;"/>
-				</p>			
-			</xsl:when>
-		</xsl:choose>
-		
-		
-		<h3>Export</h3>
-		<ul>
-			<li>
-				<a href="{$id}.xml">EAC-CPF</a>
-			</li>
-			<li>
-				<a href="{$id}.tei">TEI</a>
-			</li>
-			<li>RDF/XML <ul>
+		<div>
+			<xsl:choose>
+				<xsl:when test="descendant::eac:resourceRelation[@xlink:arcrole='foaf:thumbnail']">
+					<p class="text-center">
+						<img src="{descendant::eac:resourceRelation[@xlink:arcrole='foaf:thumbnail']/@xlink:href}" alt="Portrait" style="max-width:100%;"/>
+					</p>
+				</xsl:when>
+				<xsl:when test="descendant::eac:resourceRelation[@xlink:arcrole='foaf:depiction']">
+					<p class="text-center">
+						<img src="{descendant::eac:resourceRelation[@xlink:arcrole='foaf:depiction']/@xlink:href}" alt="Portrait" style="max-width:100%;"/>
+					</p>
+				</xsl:when>
+			</xsl:choose>
+		</div>
+		<!-- display otherRecordIds, create links when applicable -->
+		<xsl:if test="count(eac:control/eac:otherRecordId) &gt; 0">
+			<div>
+				<h3>Associated Identifiers</h3>
+				<ul>
+					<xsl:for-each select="eac:control/eac:otherRecordId">
+						<li>
+							<xsl:choose>
+								<xsl:when test="contains(., 'http://')">
+									<a href="{.}" rel="skos:related">
+										<xsl:value-of select="."/>
+									</a>
+								</xsl:when>
+								<xsl:otherwise>
+									<xsl:value-of select="."/>
+								</xsl:otherwise>
+							</xsl:choose>
+						</li>
+					</xsl:for-each>
+				</ul>
+			</div>
+		</xsl:if>
+		<div>
+			<h3>Export</h3>
+			<ul>
+				<li>
+					<a href="{$id}.xml">EAC-CPF</a>
+				</li>
+				<li>
+					<a href="{$id}.tei">TEI</a>
+				</li>
+				<li>RDF/XML <ul>
 					<li><a href="{$id}.rdf">Default</a></li>
 					<li><a href="{$url}api/get?id={$id}&amp;model=cidoc-crm">CIDOC CRM</a></li>
 					<li><a href="{$url}api/get?id={$id}&amp;model=snap">SNAP</a></li>
 				</ul></li>
-			<li>
-				<a href="{$id}.kml">KML</a>
-			</li>
-		</ul>
-		<!-- display otherRecordIds, create links when applicable -->
-		<xsl:if test="count(eac:control/eac:otherRecordId) &gt; 0">
-			<h3>Associated Identifiers</h3>
-			<ul>
-				<xsl:for-each select="eac:control/eac:otherRecordId">
-					<li>
-						<xsl:choose>
-							<xsl:when test="contains(., 'http://')">
-								<a href="{.}" rel="skos:related">
-									<xsl:value-of select="."/>
-								</a>
-							</xsl:when>
-							<xsl:otherwise>
-								<xsl:value-of select="."/>
-							</xsl:otherwise>
-						</xsl:choose>
-					</li>
-				</xsl:for-each>
+				<li><a href="{$id}.ttl">Turtle</a></li>
+				<li>
+					<a href="{$id}.jsonld">JSON-LD</a>
+				</li>
+				<li>
+					<a href="{$id}.kml">KML</a>
+				</li>
+				<p>Content negotiation supports the following types: <code>text/html</code>, <code>application/xml</code>, <code>application/tei+xml</code>,
+					<code>application/vnd.google-earth.kml+xml</code>, <code>application/rdf+xml</code>, <code>application/json</code>, <code>text/turtle</code></p>
 			</ul>
-		</xsl:if>
-
+		</div>
 		<!-- if there is an otherRecordId with a nomisma ID, construction nomisma SPARQL -->
 		<xsl:for-each select="descendant::eac:otherRecordId[contains(., 'nomisma.org')]">
 			<xsl:call-template name="xeac:queryNomisma">
@@ -322,23 +339,25 @@
 				<h3>Chronology</h3>
 				<ul>
 					<xsl:apply-templates select="descendant::eac:date[@standardDate]|descendant::eac:dateRange[eac:fromDate[@standardDate]]" mode="chronList">
-						<xsl:sort
-							select="if(local-name()='date') then if (substring(@standardDate, 1, 1) = '-') then (number(tokenize(@standardDate, '-')[2]) * -1) else tokenize(@standardDate, '-')[1] else  if (substring(eac:fromDate/@standardDate, 1, 1) = '-') then (number(tokenize(eac:fromDate/@standardDate, '-')[2]) * -1) else tokenize(eac:fromDate/@standardDate, '-')[1]"/>
-						<xsl:sort
-							select="if(local-name()='date') then if (substring(@standardDate, 1, 1) = '-') then number(tokenize(@standardDate, '-')[3]) else tokenize(@standardDate, '-')[2] else  if (substring(eac:fromDate/@standardDate, 1, 1) = '-') then number(tokenize(eac:fromDate/@standardDate, '-')[3]) else tokenize(eac:fromDate/@standardDate, '-')[2]"/>
-						<xsl:sort
-							select="if(local-name()='date') then if (substring(@standardDate, 1, 1) = '-') then number(tokenize(@standardDate, '-')[4]) else tokenize(@standardDate, '-')[3] else  if (substring(eac:fromDate/@standardDate, 1, 1) = '-') then number(tokenize(eac:fromDate/@standardDate, '-')[4]) else tokenize(eac:fromDate/@standardDate, '-')[3]"
-						/>
+						<xsl:sort select="if(local-name()='date') then if (substring(@standardDate, 1, 1) = '-') then (number(tokenize(@standardDate, '-')[2]) * -1) else tokenize(@standardDate,
+							'-')[1] else  if (substring(eac:fromDate/@standardDate, 1, 1) = '-') then (number(tokenize(eac:fromDate/@standardDate, '-')[2]) * -1) else
+							tokenize(eac:fromDate/@standardDate, '-')[1]"/>
+						<xsl:sort select="if(local-name()='date') then if (substring(@standardDate, 1, 1) = '-') then number(tokenize(@standardDate, '-')[3]) else tokenize(@standardDate, '-')[2] else
+							if (substring(eac:fromDate/@standardDate, 1, 1) = '-') then number(tokenize(eac:fromDate/@standardDate, '-')[3]) else tokenize(eac:fromDate/@standardDate, '-')[2]"/>
+						<xsl:sort select="if(local-name()='date') then if (substring(@standardDate, 1, 1) = '-') then number(tokenize(@standardDate, '-')[4]) else tokenize(@standardDate, '-')[3] else
+							if (substring(eac:fromDate/@standardDate, 1, 1) = '-') then number(tokenize(eac:fromDate/@standardDate, '-')[4]) else tokenize(eac:fromDate/@standardDate, '-')[3]"/>
 					</xsl:apply-templates>
 				</ul>
 			</div>
 		</xsl:if>
-		
-		<xsl:if test="descendant::eac:function[not(descendant::*/@standardDate)]|descendant::eac:languageUsed[not(descendant::*/@standardDate)]|descendant::eac:legalStatus[not(descendant::*/@standardDate)]|descendant::eac:localDescription[not(descendant::*/@standardDate)]|descendant::eac:mandate[not(descendant::*/@standardDate)]|descendant::eac:occupation[not(descendant::*/@standardDate)]|descendant::eac:place[not(descendant::*/@standardDate)]">
+
+		<xsl:if
+			test="descendant::eac:function[not(descendant::*/@standardDate)]|descendant::eac:languageUsed[not(descendant::*/@standardDate)]|descendant::eac:legalStatus[not(descendant::*/@standardDate)]|descendant::eac:localDescription[not(descendant::*/@standardDate)]|descendant::eac:mandate[not(descendant::*/@standardDate)]|descendant::eac:occupation[not(descendant::*/@standardDate)]|descendant::eac:place[not(descendant::*/@standardDate)]">
 			<div id="terms">
 				<h3>Terms</h3>
 				<dl class="dl-horizontal">
-					<xsl:apply-templates select="descendant::eac:function[not(descendant::*/@standardDate)]|descendant::eac:languageUsed[not(descendant::*/@standardDate)]|descendant::eac:legalStatus[not(descendant::*/@standardDate)]|descendant::eac:localDescription[not(descendant::*/@standardDate)]|descendant::eac:mandate[not(descendant::*/@standardDate)]|descendant::eac:occupation[not(descendant::*/@standardDate)]|descendant::eac:place[not(descendant::*/@standardDate)]">
+					<xsl:apply-templates
+						select="descendant::eac:function[not(descendant::*/@standardDate)]|descendant::eac:languageUsed[not(descendant::*/@standardDate)]|descendant::eac:legalStatus[not(descendant::*/@standardDate)]|descendant::eac:localDescription[not(descendant::*/@standardDate)]|descendant::eac:mandate[not(descendant::*/@standardDate)]|descendant::eac:occupation[not(descendant::*/@standardDate)]|descendant::eac:place[not(descendant::*/@standardDate)]">
 						<xsl:sort select="local-name()"/>
 						<xsl:sort select="eac:term or eac:placeEntry"/>
 					</xsl:apply-templates>
@@ -346,7 +365,7 @@
 			</div>
 		</xsl:if>
 	</xsl:template>
-	
+
 	<xsl:template match="eac:function|eac:languageUsed|eac:legalStatus|eac:localDescription|eac:mandate|eac:occupation|eac:place">
 		<dt>
 			<xsl:value-of select="local-name()"/>
@@ -354,8 +373,7 @@
 		<dd>
 			<xsl:choose>
 				<xsl:when test="eac:term">
-					<a
-						href="{$url}results/?q={if (string(@localType)) then @localType else local-name()}_facet:&#x022;{eac:term}&#x022;">
+					<a href="{$url}results/?q={if (string(@localType)) then @localType else local-name()}_facet:&#x022;{eac:term}&#x022;">
 						<xsl:value-of select="eac:term"/>
 					</a>
 					<xsl:if test="string(eac:term/@vocabularySource)">
@@ -386,7 +404,7 @@
 					</xsl:if>
 				</xsl:when>
 			</xsl:choose>
-			
+
 		</dd>
 	</xsl:template>
 
@@ -469,8 +487,7 @@
 				<xsl:value-of select="parent::node()/parent::node()/eac:event"/>
 			</xsl:when>
 			<xsl:when test="parent::node()/eac:term">
-				<a
-					href="{$url}results/?q={if (string(parent::node()/@localType)) then parent::node()/@localType else parent::node()/local-name()}_facet:&#x022;{parent::node()/eac:term}&#x022;">
+				<a href="{$url}results/?q={if (string(parent::node()/@localType)) then parent::node()/@localType else parent::node()/local-name()}_facet:&#x022;{parent::node()/eac:term}&#x022;">
 					<xsl:value-of select="parent::node()/eac:term"/>
 				</a>
 				<xsl:if test="string(parent::node()/eac:term/@vocabularySource)">
@@ -480,8 +497,8 @@
 				</xsl:if>
 			</xsl:when>
 			<xsl:when test="parent::node()/parent::node()/eac:term">
-				<a
-					href="{$url}results/?q={if (string(parent::node()/parent::node()/@localType)) then parent::node()/parent::node()/@localType else parent::node()/parent::node()/local-name()}_facet:&#x022;{parent::node()/parent::node()/eac:term}&#x022;">
+				<a href="{$url}results/?q={if (string(parent::node()/parent::node()/@localType)) then parent::node()/parent::node()/@localType else
+					parent::node()/parent::node()/local-name()}_facet:&#x022;{parent::node()/parent::node()/eac:term}&#x022;">
 					<xsl:value-of select="parent::node()/parent::node()/eac:term"/>
 				</a>
 				<xsl:if test="string(parent::node()/parent::node()/eac:term/@vocabularySource)">
@@ -579,7 +596,7 @@
 									</xsl:otherwise>
 								</xsl:choose>
 							</xsl:variable>
-							
+
 							<a href="{$recordURI}">
 								<xsl:if test="@xlink:arcrole">
 									<xsl:attribute name="rel" select="@xlink:arcrole"/>

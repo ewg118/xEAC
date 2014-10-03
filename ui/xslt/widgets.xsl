@@ -8,27 +8,37 @@
 		<xsl:variable name="endpoint">http://nomisma.org/query</xsl:variable>
 
 		<xsl:variable name="query">
-			<![CDATA[ 
-			PREFIX rdf:      <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-			PREFIX dcterms:  <http://purl.org/dc/terms/>
-			PREFIX nm:       <http://nomisma.org/id/>			
-			SELECT DISTINCT ?object ?title ?identifier ?publisher ?obvThumb ?revThumb WHERE {
-			{?type ?p <URI>.
-			?object nm:type_series_item ?type.
-			?object a nm:coin.
-			?object dcterms:publisher ?publisher.
-			?object dcterms:title ?title.
-			?object nm:obverseThumbnail ?obvThumb.
-			?object nm:reverseThumbnail ?revThumb.
-			OPTIONAL { ?object dcterms:identifier ?identifier }}
-			UNION {?object ?p <URI>.
-			?object a nm:coin.
-			?object dcterms:title ?title.
-			?object dcterms:publisher ?publisher.
-			?object nm:obverseThumbnail ?obvThumb.
-			?object nm:reverseThumbnail ?revThumb.
-			OPTIONAL { ?object dcterms:identifier ?identifier }}
-			} LIMIT 5]]>
+			<![CDATA[PREFIX rdf:      <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX dcterms:  <http://purl.org/dc/terms/>
+PREFIX nm:       <http://nomisma.org/id/>			
+PREFIX foaf:	<http://xmlns.com/foaf/0.1/>
+PREFIX skos:      <http://www.w3.org/2004/02/skos/core#>
+
+SELECT DISTINCT ?object ?title ?identifier ?collection ?obvThumb ?revThumb WHERE {
+{?type ?p <URI>.
+?object nm:type_series_item ?type.
+?object a nm:coin.
+?object dcterms:title ?title.
+OPTIONAL { ?object nm:collection ?colUri .
+?colUri skos:prefLabel ?collection 
+FILTER(langMatches(lang(?collection), "EN"))}
+?object nm:obverse ?obverse .
+?obverse foaf:thumbnail ?obvThumb .
+?object nm:reverse ?reverse .
+?reverse foaf:thumbnail ?revThumb.
+OPTIONAL { ?object dcterms:identifier ?identifier }}
+UNION {?object ?p <URI>.
+?object a nm:coin.
+?object dcterms:title ?title.
+OPTIONAL { ?object nm:collection ?colUri .
+?colUri skos:prefLabel ?collection 
+FILTER(langMatches(lang(?collection), "EN"))}
+?object nm:obverse ?obverse .
+?obverse foaf:thumbnail ?obvThumb .
+?object nm:reverse ?reverse .
+?reverse foaf:thumbnail ?revThumb.
+OPTIONAL { ?object dcterms:identifier ?identifier }}
+} LIMIT 5]]>
 		</xsl:variable>
 		<xsl:variable name="service" select="concat($endpoint, '?query=', encode-for-uri(normalize-space(replace($query, 'URI', $uri))), '&amp;output=xml')"/>
 
@@ -48,7 +58,7 @@
 
 	<xsl:template match="res:result" mode="queryNomisma">
 		<div class="g_doc">
-			<a href="{res:binding[@name='object']/res:uri}" title="{concat(res:binding[@name='publisher']/res:literal, ': ', res:binding[@name='identifier']/res:literal)}">
+			<a href="{res:binding[@name='object']/res:uri}" title="{concat(res:binding[@name='collection']/res:literal, ': ', res:binding[@name='identifier']/res:literal)}">
 				<img class="gi" src="{res:binding[@name='revThumb']/res:uri}"/>
 				<img class="gi" src="{res:binding[@name='obvThumb']/res:uri}"/>
 			</a>
