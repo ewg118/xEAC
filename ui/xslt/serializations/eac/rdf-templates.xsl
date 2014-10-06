@@ -19,6 +19,9 @@
 	<xsl:template match="eac:eac-cpf" mode="default">
 
 		<rdf:RDF>
+			<xsl:for-each select="descendant::eac:localTypeDeclaration[eac:citation[@xlink:role='semantic']][not(contains(eac:abbreviation, ':'))]">
+				<xsl:namespace name="{eac:abbreviation}" select="eac:citation/@xlink:href"/>
+			</xsl:for-each>
 			<xsl:choose>
 				<xsl:when test="descendant::eac:entityType='person'">
 					<foaf:Person rdf:about="{$recordURI}">
