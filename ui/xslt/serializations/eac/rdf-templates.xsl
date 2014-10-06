@@ -7,10 +7,10 @@
 	<xsl:variable name="recordURI">
 		<xsl:choose>
 			<xsl:when test="string(/content/config/uri_space)">
-				<xsl:value-of select="concat(/content/config/uri_space, eac:control/eac:recordId)"/>
+				<xsl:value-of select="concat(/content/config/uri_space, //eac:recordId)"/>
 			</xsl:when>
 			<xsl:otherwise>
-				<xsl:value-of select="concat($url, 'id/', eac:control/eac:recordId)"/>
+				<xsl:value-of select="concat($url, 'id/', //eac:recordId)"/>
 			</xsl:otherwise>
 		</xsl:choose>
 	</xsl:variable>
@@ -38,18 +38,18 @@
 			</xsl:choose>
 			<xsl:choose>
 				<xsl:when test="descendant::eac:existDates[@localType='xeac:life']/eac:dateRange">
-					<xsl:apply-templates select="eac:dateRange/eac:fromDate[@standardDate]" mode="default">
+					<xsl:apply-templates select="descendant::eac:existDates[@localType='xeac:life']/eac:dateRange/eac:fromDate[@standardDate]" mode="default">
 						<xsl:with-param name="type">Birth</xsl:with-param>
 					</xsl:apply-templates>
-					<xsl:apply-templates select="eac:dateRange/eac:fromDate[@standardDate]" mode="default">
+					<xsl:apply-templates select="descendant::eac:existDates[@localType='xeac:life']/eac:dateRange/eac:fromDate[@standardDate]" mode="default">
 						<xsl:with-param name="type">Death</xsl:with-param>
 					</xsl:apply-templates>
 				</xsl:when>
 				<xsl:when test="descendant::eac:existDates[@localType='xeac:life']/eac:date[@standardDate]">
-					<xsl:apply-templates select="eac:date[@standardDate]" mode="default">
+					<xsl:apply-templates select="descendant::eac:existDates[@localType='xeac:life']/eac:date[@standardDate]" mode="default">
 						<xsl:with-param name="type">Birth</xsl:with-param>
 					</xsl:apply-templates>
-					<xsl:apply-templates select="eac:date[@standardDate]" mode="default">
+					<xsl:apply-templates select="descendant::eac:existDates[@localType='xeac:life']/eac:date[@standardDate]" mode="default">
 						<xsl:with-param name="type">Death</xsl:with-param>
 					</xsl:apply-templates>
 				</xsl:when>
