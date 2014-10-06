@@ -299,12 +299,10 @@
 						<h1>Edit Settings</h1>
 						<p><a href="../"><span class="glyphicon glyphicon-arrow-left"/>Return to Admin</a></p>
 						<xforms:group ref=".[string-length(instance('status')) &gt; 0]">
-							<div class="bg-info alert">
-								<p>
-									<span class="glyphicon glyphicon-info-sign"/>
-									<strong>Status:</strong>
-									<xforms:output ref="instance('status')"/>
-								</p>
+							<div class="bg-info alert-box">
+								<span class="glyphicon glyphicon-info-sign"/>
+								<strong>Status:</strong>
+								<xforms:output ref="instance('status')"/>
 							</div>
 						</xforms:group>
 						<div class="submission">

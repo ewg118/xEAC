@@ -9,10 +9,13 @@
 	text-align:center;
 	width:50%;
 }
-.alert {
+.alert-box {
 	width:50%;
 	margin:20px auto;
 	padding:5px;
+	border-radius:5px;
+	border:1px solid gray;
+	color:gray;
 }
 .result_metadata {
 	border:0;
@@ -93,12 +96,6 @@
 }
 .xbl-component {
 	margin:5px 0;
-}
-.ui-state-error, .ui-state-highlight {
-	padding: 0pt 0.7em;
-	margin:20px auto;
-	width:400px;
-	font-size:12px;
 }
 /*
   ****************************************

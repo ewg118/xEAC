@@ -8,7 +8,7 @@
 	xmlns:xxforms="http://orbeon.org/oxf/xml/xforms" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:fr="http://orbeon.org/oxf/xml/form-runner"
 	xmlns:xeac="https://github.com/ewg118/xEAC" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xxi="http://orbeon.org/oxf/xml/xinclude" xmlns:eac="urn:isbn:1-931666-33-4"
 	xmlns:xxbl="http://orbeon.org/oxf/xml/xbl" xmlns:exf="http://www.exforms.org/exf/1-0" xmlns:saxon="http://saxon.sf.net/" xmlns:oxf="http://www.orbeon.com/oxf/processors"
-	xmlns:xbl="http://www.w3.org/ns/xbl">
+	xmlns:xbl="http://www.w3.org/ns/xbl" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
 
 	<head>
 		<title>xEAC: Edit EAC-CPF Record</title>
@@ -988,7 +988,9 @@
 			<div class="row">
 				<div class="col-md-12">
 					<xforms:group ref="instance('status')/text()">
-						<div class="success">
+						<div class="bg-info alert-box">
+							<span class="glyphicon glyphicon-info-sign"/>
+							<strong>Status:</strong>
 							<xforms:output ref="instance('status')"/>
 						</div>
 					</xforms:group>
