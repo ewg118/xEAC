@@ -718,7 +718,7 @@
 								<xforms:setvalue ref="instance('control-instance')/publicationStatus">approved</xforms:setvalue>
 								<xforms:send submission="load-doc"/>
 								<!-- create kml -->
-								<xforms:insert nodeset="instance('kml')" origin="xxforms:call-xpl('oxf:/apps/xeac/xpl/serializations/eac/kml.xpl', 'data', instance('doc'), 'data')"/>
+								<xforms:insert nodeset="instance('kml')" origin="xxforms:call-xpl('oxf:/apps/xeac/xpl/views/serializations/eac/kml.xpl', 'data', instance('doc'), 'data')"/>
 								<xforms:send submission="save-kml"/>
 								<!-- publish to solr -->
 								<xforms:setvalue ref="instance('control-instance')/solr-core" value="instance('config')/solr_published"/>
@@ -824,7 +824,7 @@
 									<xforms:send submission="load-doc"/>
 									<!-- create kml -->
 									<xforms:action ev:event="xforms-submit-done">
-										<xforms:insert nodeset="instance('kml')" origin="xxforms:call-xpl('oxf:/apps/xeac/xpl/serializations/eac/kml.xpl', 'data', instance('doc'), 'data')"/>
+										<xforms:insert nodeset="instance('kml')" origin="xxforms:call-xpl('oxf:/apps/xeac/xpl/views/serializations/eac/kml.xpl', 'data', instance('doc'), 'data')"/>
 										<xforms:send submission="save-kml"/>
 									</xforms:action>
 								</xforms:action>

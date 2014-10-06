@@ -729,7 +729,7 @@
 					<xforms:setvalue ref="instance('status')">EAC record saved.</xforms:setvalue>
 
 					<!-- generate KML -->
-					<xforms:insert nodeset="instance('kml')" origin="xxforms:call-xpl('oxf:/apps/xeac/xpl/serializations/eac/kml.xpl', 'data', instance('doc'), 'data')"/>
+					<xforms:insert nodeset="instance('kml')" origin="xxforms:call-xpl('oxf:/apps/xeac/xpl/views/serializations/eac/kml.xpl', 'data', instance('doc'), 'data')"/>
 					<xforms:send submission="save-kml"/>
 					<!-- *************** PROCESS RELATIONS **************** -->
 					<!-- generate post-edit list on Save -->
