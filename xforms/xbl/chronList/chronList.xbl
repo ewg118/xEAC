@@ -1,5 +1,6 @@
-<xbl:xbl xmlns="http://www.w3.org/1999/xhtml" xmlns:xforms="http://www.w3.org/2002/xforms" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:xxforms="http://orbeon.org/oxf/xml/xforms"
-	xmlns:xbl="http://www.w3.org/ns/xbl" xmlns:xxbl="http://orbeon.org/oxf/xml/xbl" xmlns:xeac="https://github.com/ewg118/xEAC" xmlns:eac="urn:isbn:1-931666-33-4">
+<xbl:xbl xmlns="http://www.w3.org/1999/xhtml" xmlns:xforms="http://www.w3.org/2002/xforms" xmlns:ev="http://www.w3.org/2001/xml-events"
+	xmlns:xxforms="http://orbeon.org/oxf/xml/xforms" xmlns:xbl="http://www.w3.org/ns/xbl" xmlns:xxbl="http://orbeon.org/oxf/xml/xbl" xmlns:xeac="https://github.com/ewg118/xEAC"
+	xmlns:eac="urn:isbn:1-931666-33-4">
 	<xbl:binding id="xeac-chronList" element="xeac|chronList">
 		<xbl:template>
 			<xforms:group xbl:attr="model context ref bind" xxbl:scope="outer">
@@ -44,7 +45,7 @@
 								<xforms:group ref=".[preceding-sibling::eac:chronItem[1]//@standardDate[1] &gt;= $date]">
 									<xforms:trigger appearance="minimal">
 										<xforms:label>
-											<img alt="up" src="/xeac/xforms/images/up.gif"/>
+											<span class="glyphicon glyphicon-chevron-up"/>
 										</xforms:label>
 										<xforms:action ev:event="DOMActivate">
 											<xforms:insert origin="$binding/*[$position]" context="instance('copy')"/>
@@ -57,7 +58,7 @@
 								<xforms:group ref=".[following-sibling::eac:chronItem[1]//@standardDate[1] &lt;= $date]">
 									<xforms:trigger appearance="minimal">
 										<xforms:label>
-											<img alt="down" src="/xeac/xforms/images/down.gif"/>
+											<span class="glyphicon glyphicon-chevron-down"/>
 										</xforms:label>
 										<xforms:action ev:event="DOMActivate">
 											<xforms:insert origin="$binding/*[$position]" context="instance('copy')"/>
@@ -69,13 +70,9 @@
 								</xforms:group>
 
 								<xforms:group ref=".[count(eac:date) = 0 and count(eac:dateRange) = 0]">
-									<div class="ui-widget">
-										<div class="ui-state-highlight ui-corner-all">
-											<p>
-												<span class="ui-icon ui-icon-info" style="float: left; margin-right: .3em;"/>
-												<strong>Warning </strong> Date or Date Range Required</p>
-										</div>
-									</div>
+									<div class="alert-box bg-danger">
+										<span class="glyphicon glyphicon-exclamation-sign"/>
+										<strong>Warning:</strong> Date or Date Range Required</div>
 								</xforms:group>
 
 								<div class="trigger_container">
