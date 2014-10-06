@@ -4,18 +4,19 @@
 	xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#" xmlns:ecrm="http://erlangen-crm.org/current/" xmlns:lawd="http://snapdrgn.net"
 	xmlns:bio="http://purl.org/vocab/bio/0.1/" xmlns:owl="http://www.w3.org/2002/07/owl#" exclude-result-prefixes="eac xlink xs" version="2.0">
 
+	<xsl:variable name="recordURI">
+		<xsl:choose>
+			<xsl:when test="string(/content/config/uri_space)">
+				<xsl:value-of select="concat(/content/config/uri_space, eac:control/eac:recordId)"/>
+			</xsl:when>
+			<xsl:otherwise>
+				<xsl:value-of select="concat($url, 'id/', eac:control/eac:recordId)"/>
+			</xsl:otherwise>
+		</xsl:choose>
+	</xsl:variable>
+
 	<!-- ***** DEFAULT TEMPLATES: used for $id.rdf ***** -->
 	<xsl:template match="eac:eac-cpf" mode="default">
-		<xsl:variable name="recordURI">
-			<xsl:choose>
-				<xsl:when test="string(/content/config/uri_space)">
-					<xsl:value-of select="concat(/content/config/uri_space, eac:control/eac:recordId)"/>
-				</xsl:when>
-				<xsl:otherwise>
-					<xsl:value-of select="concat($url, 'id/', eac:control/eac:recordId)"/>
-				</xsl:otherwise>
-			</xsl:choose>
-		</xsl:variable>
 
 		<rdf:RDF>
 			<xsl:choose>
@@ -33,6 +34,24 @@
 					<arch:Family rdf:about="{$recordURI}">
 						<xsl:call-template name="rdf-body"/>
 					</arch:Family>
+				</xsl:when>
+			</xsl:choose>
+			<xsl:choose>
+				<xsl:when test="descendant::eac:existDates[@localType='xeac:life']/eac:dateRange">
+					<xsl:apply-templates select="eac:dateRange/eac:fromDate[@standardDate]" mode="default">
+						<xsl:with-param name="type">Birth</xsl:with-param>
+					</xsl:apply-templates>
+					<xsl:apply-templates select="eac:dateRange/eac:fromDate[@standardDate]" mode="default">
+						<xsl:with-param name="type">Death</xsl:with-param>
+					</xsl:apply-templates>
+				</xsl:when>
+				<xsl:when test="descendant::eac:existDates[@localType='xeac:life']/eac:date[@standardDate]">
+					<xsl:apply-templates select="eac:date[@standardDate]" mode="default">
+						<xsl:with-param name="type">Birth</xsl:with-param>
+					</xsl:apply-templates>
+					<xsl:apply-templates select="eac:date[@standardDate]" mode="default">
+						<xsl:with-param name="type">Death</xsl:with-param>
+					</xsl:apply-templates>
 				</xsl:when>
 			</xsl:choose>
 		</rdf:RDF>
@@ -143,49 +162,39 @@
 	<xsl:template match="eac:existDates[@localType='xeac:life']" mode="default">
 		<xsl:choose>
 			<xsl:when test="eac:dateRange">
-				<bio:birth>
-					<bio:Birth>
-						<xsl:apply-templates select="eac:dateRange/eac:fromDate[@standardDate]" mode="default"/>
-					</bio:Birth>
-				</bio:birth>
-				<bio:death>
-					<bio:Death>
-						<xsl:apply-templates select="eac:dateRange/eac:toDate[@standardDate]" mode="default"/>
-					</bio:Death>
-				</bio:death>
+				<bio:birth rdf:resource="{$recordURI}#birth"/>
+				<bio:death rdf:resource="{$recordURI}#death"/>
 			</xsl:when>
 			<xsl:when test="eac:date[@standardDate]">
-				<bio:birth>
-					<bio:Birth>
-						<xsl:apply-templates select="eac:date[@standardDate]" mode="default"/>
-					</bio:Birth>
-				</bio:birth>
-				<bio:death>
-					<bio:Death>
-						<xsl:apply-templates select="eac:date[@standardDate]" mode="default"/>
-					</bio:Death>
-				</bio:death>
+				<bio:birth rdf:resource="{$recordURI}#birth"/>
+				<bio:death rdf:resource="{$recordURI}#death"/>
 			</xsl:when>
 		</xsl:choose>
 	</xsl:template>
 
 	<xsl:template match="eac:date|eac:fromDate|eac:toDate" mode="default">
-		<dcterms:date>
-			<xsl:attribute name="rdf:datatype">
-				<xsl:choose>
-					<xsl:when test="@standardDate castable as xs:date">
-						<xsl:text>http://www.w3.org/2001/XMLSchema#date</xsl:text>
-					</xsl:when>
-					<xsl:when test="@standardDate castable as xs:gYearMonth">
-						<xsl:text>http://www.w3.org/2001/XMLSchema#gYearMonth</xsl:text>
-					</xsl:when>
-					<xsl:when test="@standardDate castable as xs:gYear">
-						<xsl:text>http://www.w3.org/2001/XMLSchema#gYear</xsl:text>
-					</xsl:when>
-				</xsl:choose>
-			</xsl:attribute>
-			<xsl:value-of select="@standardDate"/>
-		</dcterms:date>
+		<xsl:param name="type"/>
+		
+		<xsl:element name="bio:{$type}" namespace="http://purl.org/vocab/bio/0.1/">
+			<xsl:attribute name="rdf:about" select="concat($recordURI, '#', lower-case($type))"/>
+			<dcterms:date>
+				<xsl:attribute name="rdf:datatype">
+					<xsl:choose>
+						<xsl:when test="@standardDate castable as xs:date">
+							<xsl:text>http://www.w3.org/2001/XMLSchema#date</xsl:text>
+						</xsl:when>
+						<xsl:when test="@standardDate castable as xs:gYearMonth">
+							<xsl:text>http://www.w3.org/2001/XMLSchema#gYearMonth</xsl:text>
+						</xsl:when>
+						<xsl:when test="@standardDate castable as xs:gYear">
+							<xsl:text>http://www.w3.org/2001/XMLSchema#gYear</xsl:text>
+						</xsl:when>
+					</xsl:choose>
+				</xsl:attribute>
+				<xsl:value-of select="@standardDate"/>
+			</dcterms:date>
+		</xsl:element>
+		
 	</xsl:template>
 
 
