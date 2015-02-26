@@ -29,6 +29,6 @@
 		If 'null' (or absent), cores will not be manageable via REST
 	-->
 	<cores adminPath="/admin/cores">
-		<core name="xeac-published" instanceDir="4.6"/>
+		<core name="xeac-published" instanceDir="1.5/main"/>
 	</cores>
 </solr>
