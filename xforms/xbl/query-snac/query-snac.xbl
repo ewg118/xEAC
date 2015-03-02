@@ -8,67 +8,68 @@
 					<xforms:var name="binding" as="node()?">
 						<xxforms:sequence select="." xxbl:scope="outer"/>
 					</xforms:var>
-					<xforms:trigger appearance="minimal">
-						<xforms:label><span class="glyphicon glyphicon-plus"/>SNAC Lookup</xforms:label>
-						<xforms:action ev:event="DOMActivate">
-							<xforms:setvalue ref="instance('entityType')" value="$binding/parent::node()/eac:cpfDescription/eac:identity/eac:entityType"/>
-							<xxforms:show dialog="snac-dialog"/>
-						</xforms:action>
-					</xforms:trigger>
-
-
-					<xxforms:dialog id="snac-dialog" appearance="full" level="modal" close="true" draggable="true" visible="false">
-						<xforms:label>Query SNAC</xforms:label>
-						<div>
-							<xforms:input ref="instance('search-query')">
-								<xforms:label>Search</xforms:label>
-							</xforms:input>
-							<xforms:trigger>
-								<xforms:action ev:event="DOMActivate">
-									<xforms:delete context="instance('snac-response')/*"/>
-									<xforms:send submission="query-snac"/>
-								</xforms:action>
-								<xforms:label>Search</xforms:label>
-							</xforms:trigger>
-						</div>
-						<xforms:group ref=".[number(instance('snac-response')/@totalDocs) &gt; 0]">
-							<xforms:output ref="instance('search-results')"/>
-							<br/>
-							<xforms:select1 ref="instance('temp')/@href" appearance="compact">
-								<xforms:label>Name</xforms:label>
-								<xforms:itemset nodeset="instance('snac-response')//docHit">
-									<xforms:label ref="meta/identity[1]"/>
-									<xforms:value
-										ref="concat('http://socialarchive.iath.virginia.edu/ark:/', substring-after(tokenize(@path, '-')[1], ':'), '/', substring-before(tokenize(@path, '-')[2], '.xml'))"
-									/>
-								</xforms:itemset>
-							</xforms:select1>
-							<xforms:trigger>
-								<xforms:label>Select</xforms:label>
-								<xforms:action ev:event="DOMActivate">
-									<!-- insert otherRecordId if it doesn't already exist -->
-									<xforms:action if="not(instance('temp')/@href = $binding/eac:otherRecordId)">
-										<xforms:insert context="$binding" nodeset="eac:recordId" position="after" origin="instance('otherRecordId-template')"/>
-										<xforms:setvalue ref="$binding/eac:otherRecordId[1]" value="instance('temp')/@href"/>
+					
+					<xforms:group ref="$binding">
+						<xforms:trigger appearance="minimal">
+							<xforms:label><span class="glyphicon glyphicon-plus"/>SNAC Lookup</xforms:label>
+							<xforms:action ev:event="DOMActivate">
+								<xforms:setvalue ref="instance('entityType')" value="eac:cpfDescription/eac:identity/eac:entityType"/>
+								<xxforms:show dialog="snac-dialog"/>
+							</xforms:action>
+						</xforms:trigger>
+						<xxforms:dialog id="snac-dialog" appearance="full" level="modal" close="true" draggable="true" visible="false">
+							<xforms:label>Query SNAC</xforms:label>
+							<div>
+								<xforms:input ref="instance('search-query')">
+									<xforms:label>Search</xforms:label>
+								</xforms:input>
+								<xforms:trigger>
+									<xforms:action ev:event="DOMActivate">
+										<xforms:delete context="instance('snac-response')/*"/>
+										<xforms:send submission="query-snac"/>
 									</xforms:action>
-									<!-- insert source for URI -->
-									<xforms:action if="not(instance('temp')/@href = $binding//eac:source/@xlink:href)">
-										<xforms:insert context="$binding" nodeset="./child::node()[last()]" origin="instance('sources-template')"
-											if="count($binding/eac:sources) = 0"/>
-										<xforms:insert context="$binding/eac:sources" nodeset="./child::node()[last()]" origin="instance('source-template')"/>
-										<xforms:setvalue ref="$binding/eac:sources/eac:source[last()]/eac:sourceEntry">SNAC</xforms:setvalue>
-										<xforms:setvalue ref="$binding/eac:sources/eac:source[last()]/eac:descriptiveNote/eac:p">Programmatically linked this record to SNAC with
-											xEAC.</xforms:setvalue>
-										<xforms:setvalue ref="$binding/eac:sources/eac:source[last()]/@xlink:href" value="instance('temp')/@href"/>
+									<xforms:label>Search</xforms:label>
+								</xforms:trigger>
+							</div>
+							<xforms:group ref=".[number(instance('snac-response')/@totalDocs) &gt; 0]">
+								<xforms:output ref="instance('search-results')"/>
+								<br/>
+								<xforms:select1 ref="instance('temp')/@href" appearance="compact">
+									<xforms:label>Name</xforms:label>
+									<xforms:itemset nodeset="instance('snac-response')//docHit">
+										<xforms:label ref="meta/identity[1]"/>
+										<xforms:value
+											ref="concat('http://socialarchive.iath.virginia.edu/ark:/', substring-after(tokenize(@path, '-')[1], ':'), '/', substring-before(tokenize(@path, '-')[2], '.xml'))"
+										/>
+									</xforms:itemset>
+								</xforms:select1>
+								<xforms:trigger>
+									<xforms:label>Select</xforms:label>
+									<xforms:action ev:event="DOMActivate">
+										<!-- insert entityId if it doesn't already exist -->
+										<xforms:action if="not(instance('temp')/@href = eac:cpfDescription/eac:identity/eac:entityId)">
+											<xforms:insert context=" eac:cpfDescription/eac:identity" nodeset="./child::node()[last()]" origin="instance('entityId-template')"/>
+											<xforms:setvalue ref=" eac:cpfDescription/eac:identity/eac:entityId[last()]" value="instance('temp')/@href"/>
+										</xforms:action>
+										<!-- insert source for URI -->
+										<xforms:action if="not(instance('temp')/@href = eac:control/eac:source/@xlink:href)">
+											<xforms:insert context="eac:control" nodeset="./child::node()[last()]" origin="instance('sources-template')"
+												if="count(eac:control/eac:sources) = 0"/>
+											<xforms:insert context="eac:control/eac:sources" nodeset="./child::node()[last()]" origin="instance('source-template')"/>
+											<xforms:setvalue ref="eac:control/eac:sources/eac:source[last()]/eac:sourceEntry">SNAC</xforms:setvalue>
+											<xforms:setvalue ref="eac:control/eac:sources/eac:source[last()]/eac:descriptiveNote/eac:p">Programmatically linked this record to SNAC with
+												xEAC.</xforms:setvalue>
+											<xforms:setvalue ref="eac:control/eac:sources/eac:source[last()]/@xlink:href" value="instance('temp')/@href"/>
+										</xforms:action>
+										
+										<!-- insert skos localTypeDeclaration for skos if there isn't one already -->
+										<xforms:insert context="eac:control" nodeset="./child::node()[last()]" origin="instance('localTypeDeclaration-template')" if="not(eac:control/eac:control/eac:localTypeDeclaration[eac:abbreviation='skos'])"/>
+										<xxforms:hide dialog="snac-dialog"/>
 									</xforms:action>
-									
-									<!-- insert owl:sameAs localTypeDeclaration for owl:sameAs if there isn't one already -->
-									<xforms:insert context="$binding" nodeset="./child::node()[last()]" origin="instance('localTypeDeclaration-template')" if="not($binding/eac:localTypeDeclaration[eac:abbreviation='owl:sameAs'])"/>
-									<xxforms:hide dialog="snac-dialog"/>
-								</xforms:action>
-							</xforms:trigger>
-						</xforms:group>
-					</xxforms:dialog>
+								</xforms:trigger>
+							</xforms:group>
+						</xxforms:dialog>
+					</xforms:group>
 
 					<!-- ***************** MODEL ***************-->
 					<xforms:model id="query-snac-model" xmlns="urn:isbn:1-931666-33-4">
@@ -94,8 +95,8 @@
 						</xforms:instance>
 
 						<!-- EAC templates -->
-						<xforms:instance id="otherRecordId-template" xxforms:exclude-result-prefixes="#all">
-							<otherRecordId localType="owl:sameAs"/>
+						<xforms:instance id="entityId-template" xxforms:exclude-result-prefixes="#all">
+							<entityId localType="skos:exactMatch"/>
 						</xforms:instance>
 						<xforms:instance id="sources-template" xxforms:exclude-result-prefixes="#all">
 							<sources/>
@@ -110,9 +111,9 @@
 						</xforms:instance>
 						<xforms:instance id="localTypeDeclaration-template" xxforms:exclude-result-prefixes="#all">
 							<localTypeDeclaration>
-								<abbreviation>owl:sameAs</abbreviation>
-								<citation xlink:type="simple" xlink:role="semantic" xlink:href="http://www.w3.org/2002/07/owl#sameAs"
-									>http://www.w3.org/2002/07/owl#sameAs</citation>
+								<abbreviation>skos</abbreviation>
+								<citation xlink:type="simple" xlink:role="semantic" xlink:href="http://www.w3.org/2004/02/skos/core#"
+									>http://www.w3.org/2004/02/skos/core#</citation>
 							</localTypeDeclaration>
 						</xforms:instance>
 

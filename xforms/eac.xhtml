@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-    Copyright (C) 2012 Ethan Gruber
     xEAC: https://github.com/ewg118/xEAC
+    This is the XForms application for editing EAC-CPF records.
     Apache License 2.0
 -->
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:xforms="http://www.w3.org/2002/xforms" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ev="http://www.w3.org/2001/xml-events"
@@ -1010,20 +1010,20 @@
 					</div>
 					<div id="form">
 						<h1>Edit EAC-CPF Record</h1>
-						<xforms:group ref="instance('doc')/eac:control">
+						<xforms:group ref="instance('doc')">
 							<ul class="list-unstyled list-inline">
-								<xforms:group ref=".[count(eac:sources/eac:source[contains(@xlink:href, 'viaf.org')]) = 0]">
+								<xforms:group ref=".[count(eac:control/eac:sources/eac:source[contains(@xlink:href, 'viaf.org')]) = 0]">
 									<li>
 										<xeac:query-viaf/>
 									</li>
 								</xforms:group>
-								<xforms:group ref=".[count(eac:sources/eac:source[contains(@xlink:href, 'dbpedia.org')]) = 0]">
+								<xforms:group ref=".[count(eac:control/eac:sources/eac:source[contains(@xlink:href, 'dbpedia.org')]) = 0]">
 									<li>
 										<xeac:query-dbpedia/>
 									</li>
 								</xforms:group>
 								<xforms:group
-									ref=".[count(eac:sources/eac:source[contains(@xlink:href, 'http://socialarchive.iath.virginia.edu')]) = 0 and string(instance('doc')/eac:cpfDescription/eac:identity/eac:entityType)]">
+									ref=".[count(eac:control/eac:sources/eac:source[contains(@xlink:href, 'http://socialarchive.iath.virginia.edu')]) = 0 and string(eac:cpfDescription/eac:identity/eac:entityType)]">
 									<li>
 										<xeac:query-snac/>
 									</li>
@@ -1081,13 +1081,11 @@
 												<xforms:insert ev:event="DOMActivate" context="." origin="instance('nameEntry-template')"
 													nodeset="if (count(eac:nameEntry) &gt; 0) then eac:nameEntry[last()] else eac:entityType" position="after"/>
 											</xforms:trigger>
-											<xforms:group ref=".[count(eac:entityId) = 0]">
-												<xforms:trigger appearance="minimal">
-													<xforms:label>
-														<span class="glyphicon glyphicon-plus"/>Entity Id</xforms:label>
-													<xforms:insert ev:event="DOMActivate" context="." origin="instance('entityId-template')" nodeset="./child::node()[last()]"/>
-												</xforms:trigger>
-											</xforms:group>
+											<xforms:trigger appearance="minimal">
+												<xforms:label>
+													<span class="glyphicon glyphicon-plus"/>Entity Id</xforms:label>
+												<xforms:insert ev:event="DOMActivate" context="." origin="instance('entityId-template')" nodeset="./child::node()[last()]"/>
+											</xforms:trigger>
 											<xforms:group ref=".[count(eac:descriptiveNote) = 0]">
 												<xforms:trigger appearance="minimal">
 													<xforms:label>
@@ -1224,7 +1222,7 @@
 												</xforms:group>
 											</div>
 										</xforms:repeat>
-										<xforms:group ref="eac:entityId">
+										<xforms:repeat ref="eac:entityId">
 											<div>
 												<xforms:input ref=".">
 													<xforms:label>Entity Id</xforms:label>
@@ -1237,7 +1235,7 @@
 													</xforms:label>
 												</xforms:trigger>
 											</div>
-										</xforms:group>
+										</xforms:repeat>
 										<xforms:group ref="eac:descriptiveNote">
 											<xeac:descriptiveNote/>
 										</xforms:group>

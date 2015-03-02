@@ -17,13 +17,15 @@
 					<xforms:group ref="$binding">
 						<div class="subsection">
 							<h3>Name Entry</h3>
-							<xforms:trigger appearance="minimal">
-								<xforms:label>(set as default)</xforms:label>
-								<xforms:action ev:event="DOMActivate">
-									<xforms:insert origin="$binding" context="parent::node()"/>
-									<xforms:delete nodeset="."/>
-								</xforms:action>
-							</xforms:trigger>
+							<xforms:group ref=".[not(position()=1]">
+								<xforms:trigger appearance="minimal">
+									<xforms:label>(set as default)</xforms:label>
+									<xforms:action ev:event="DOMActivate">
+										<xforms:insert origin="$binding" context="parent::node()"/>
+										<xforms:delete nodeset="."/>
+									</xforms:action>
+								</xforms:trigger>
+							</xforms:group>							
 							<span class="add">
 								<xforms:trigger appearance="minimal">
 									<xforms:label>
