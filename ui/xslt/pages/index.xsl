@@ -38,7 +38,7 @@
 	</xsl:template>
 	
 	<xsl:template match="config">
-		<div class="jumbotron">
+		<!--<div class="jumbotron">
 			<div class="container">
 				<div class="row">
 					<div class="col-md-8">
@@ -54,8 +54,9 @@
 					</div>
 				</div>
 			</div>
-		</div>
-		<div class="container-fluid">
+		</div>-->
+		<img src="{$display_path}ui/images/banner.jpg" style="width:100%"/>
+		<div class="container-fluid content">
 			<div class="row">
 				<div class="col-md-3">
 					<h3>Navigation</h3>

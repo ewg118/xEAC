@@ -21,6 +21,9 @@ body {
 	font-size: 14px;
 	line-height: 18px;	
 }
+.content {
+	padding-top:20px;
+}
 .navbar {
 	margin-bottom:0;
 	border-bottom:4px solid black;
