@@ -90,15 +90,12 @@
 
 											<!-- insert skos localTypeDeclaration for skos if there isn't one already -->
 											<xforms:insert context="eac:control" nodeset="./child::node()[last()]" origin="instance('localTypeDeclaration-template')"
-												if="not(eac:control/eac:control/eac:localTypeDeclaration[eac:abbreviation='skos'])"/>
+												if="not(eac:control/eac:localTypeDeclaration[eac:abbreviation='skos'])"/>
 										</xforms:action>
 										<!-- insert source for dbpedia URI, if it doesn't exist -->
 										<xforms:action if="not(eac:control/eac:sources/eac:source/@xlink:href = $resource)">
 											<xforms:insert context="eac:control" nodeset="./child::node()[last()]" origin="instance('sources-template')" if="count(eac:control/eac:sources) = 0"/>
 											<xforms:insert context="eac:control/eac:sources" nodeset="./child::node()[last()]" origin="instance('source-template')"/>
-											<xforms:setvalue ref="eac:control/eac:sources/eac:source[last()]/eac:sourceEntry">DBpedia</xforms:setvalue>
-											<xforms:setvalue ref="eac:control/eac:sources/eac:source[last()]/eac:descriptiveNote/eac:p">Programmatically linked this record to DBpedia with
-												xEAC.</xforms:setvalue>
 											<xforms:setvalue ref="eac:control/eac:sources/eac:source[last()]/@xlink:href" value="$resource"/>
 										</xforms:action>
 										<!-- import names -->
@@ -372,9 +369,9 @@
 						</xforms:instance>
 						<xforms:instance id="source-template" xxforms:exclude-result-prefixes="#all">
 							<source xlink:type="simple" xlink:href="">
-								<sourceEntry/>
+								<sourceEntry>DBpedia</sourceEntry>
 								<descriptiveNote>
-									<p/>
+									<p>Programmatically linked this record to DBpedia with xEAC.</p>
 								</descriptiveNote>
 							</source>
 						</xforms:instance>

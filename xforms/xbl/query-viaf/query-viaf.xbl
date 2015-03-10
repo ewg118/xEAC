@@ -52,15 +52,12 @@
 
 												<!-- insert skos localTypeDeclaration for skos if there isn't one already -->
 												<xforms:insert context="eac:control" nodeset="./child::node()[last()]" origin="instance('localTypeDeclaration-template')"
-													if="not(eac:control/eac:control/eac:localTypeDeclaration[eac:abbreviation='skos'])"/>
+													if="not(eac:control/eac:localTypeDeclaration[eac:abbreviation='skos'])"/>
 											</xforms:action>
 											<!-- insert source for VIAF URI -->
 											<xforms:action if="not(eac:control/eac:sources/eac:source/@xlink:href = instance('viaf-id'))">
 												<xforms:insert context="eac:control" nodeset="./child::node()[last()]" origin="instance('sources-template')" if="count(eac:control/eac:sources) = 0"/>
 												<xforms:insert context="eac:control/eac:sources" nodeset="./child::node()[last()]" origin="instance('source-template')"/>
-												<xforms:setvalue ref="eac:control/eac:sources/eac:source[last()]/eac:sourceEntry">VIAF</xforms:setvalue>
-												<xforms:setvalue ref="eac:control/eac:sources/eac:source[last()]/eac:descriptiveNote/eac:p">Programmatically linked this record to VIAF with
-													xEAC.</xforms:setvalue>
 												<xforms:setvalue ref="eac:control/eac:sources/eac:source[last()]/@xlink:href" value="instance('viaf-id')"/>
 											</xforms:action>
 
@@ -243,9 +240,9 @@
 						</xforms:instance>
 						<xforms:instance id="source-template" xxforms:exclude-result-prefixes="#all">
 							<source xlink:type="simple" xlink:href="">
-								<sourceEntry/>
+								<sourceEntry>VIAF</sourceEntry>
 								<descriptiveNote>
-									<p/>
+									<p>Programmatically linked this record to VIAF with xEAC.</p>
 								</descriptiveNote>
 							</source>
 						</xforms:instance>

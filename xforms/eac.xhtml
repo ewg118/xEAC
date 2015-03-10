@@ -1030,7 +1030,7 @@
 								</xforms:group>
 							</ul>
 							<div class="trigger_container">
-								<xforms:group ref="instance('doc')[count(eac:cpfDescription/eac:description) = 0]">
+								<xforms:group ref=".[count(eac:cpfDescription/eac:description) = 0]">
 									<xforms:trigger appearance="minimal">
 										<xforms:label>
 											<span class="glyphicon glyphicon-plus"/>Description</xforms:label>
@@ -1038,7 +1038,7 @@
 											nodeset="eac:identity" position="after"/>
 									</xforms:trigger>
 								</xforms:group>
-								<xforms:group ref="instance('doc')[count(eac:cpfDescription/eac:relations) = 0]">
+								<xforms:group ref=".[count(eac:cpfDescription/eac:relations) = 0]">
 									<xforms:trigger appearance="minimal">
 										<xforms:label>
 											<span class="glyphicon glyphicon-plus"/>Relations</xforms:label>
@@ -1048,13 +1048,13 @@
 								</xforms:group>
 							</div>
 							<div>
-								<xforms:input ref="eac:recordId">
+								<xforms:input ref="eac:control/eac:recordId">
 									<xforms:label>Record ID</xforms:label>
 									<xforms:alert>The id is required</xforms:alert>
 								</xforms:input>
 							</div>
 							<div>
-								<xforms:select1 ref="eac:publicationStatus">
+								<xforms:select1 ref="eac:control/eac:publicationStatus">
 									<xforms:label>Publication Status</xforms:label>
 									<xforms:item>
 										<xforms:label>inProcess</xforms:label>

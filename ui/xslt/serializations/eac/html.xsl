@@ -266,16 +266,16 @@
 				</xsl:when>
 			</xsl:choose>
 		</div>
-		<!-- display otherRecordIds, create links when applicable -->
-		<xsl:if test="count(eac:control/eac:otherRecordId) &gt; 0">
+		<!-- display entityIds, create links when applicable -->
+		<xsl:if test="count(eac:cpfDescription/eac:identity/eac:entityId) &gt; 0">
 			<div>
 				<h3>Associated Identifiers</h3>
 				<ul>
-					<xsl:for-each select="eac:control/eac:otherRecordId">
+					<xsl:for-each select="eac:cpfDescription/eac:identity/eac:entityId">
 						<li>
 							<xsl:choose>
 								<xsl:when test="contains(., 'http://')">
-									<a href="{.}" rel="skos:related">
+									<a href="{.}" rel="{@localType}">
 										<xsl:value-of select="."/>
 									</a>
 								</xsl:when>
@@ -313,8 +313,8 @@
 					<code>application/vnd.google-earth.kml+xml</code>, <code>application/rdf+xml</code>, <code>application/json</code>, <code>text/turtle</code></p>
 			</ul>
 		</div>
-		<!-- if there is an otherRecordId with a nomisma ID, construction nomisma SPARQL -->
-		<xsl:for-each select="descendant::eac:otherRecordId[contains(., 'nomisma.org')]">
+		<!-- if there is an entityId with a nomisma ID, construction nomisma SPARQL -->
+		<xsl:for-each select="descendant::eac:entityId[contains(., 'nomisma.org')]">
 			<xsl:call-template name="xeac:queryNomisma">
 				<xsl:with-param name="uri" select="."/>
 			</xsl:call-template>
