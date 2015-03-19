@@ -221,7 +221,7 @@
 												<!-- insert and set attribute values -->
 												<xforms:insert context="$binding/eac:cpfDescription/eac:relations/eac:cpfRelation[last()]" origin="xforms:attribute('xlink:arcrole', $arcrole)"/>
 												<xforms:insert context="$binding/eac:cpfDescription/eac:relations/eac:cpfRelation[last()]" origin="xforms:attribute('xlink:role',
-													'http://RDVocab.info/uri/schema/FRBRentitiesRDA/Person')"/>
+													'foaf:Person')"/>
 												<xforms:insert context="$binding/eac:cpfDescription/eac:relations/eac:cpfRelation[last()]" origin="xforms:attribute('xlink:href', $about)" if="string($about)"/>
 												<!-- set relationEntry with label delivered from RDF -->
 												<xforms:setvalue ref="instance('temp-dbpedia-id')" value="$about"/>
@@ -243,8 +243,8 @@
 												<xforms:var name="href" select="@rdf:resource"/>
 												<xforms:var name="arcrole" select="if (local-name()='parent') then 'childOf' else if (local-name()='successor') then 'predecessorOf' else if
 													(local-name()='predecessor') then 'successorOf' else if (local-name()='spouse') then 'spouseOf' else 'belongsToDynasty'"/>
-												<xforms:var name="role" select="if (local-name() = 'house' or local-name() = 'dynasty') then 'http://rdvocab.info/uri/schema/FRBRentitiesRDA/Family'
-													else 'http://rdvocab.info/uri/schema/FRBRentitiesRDA/Person'"/>
+												<xforms:var name="role" select="if (local-name() = 'house' or local-name() = 'dynasty') then 'arch:Family'
+													else 'foaf:Person'"/>
 												<!-- insert cpfRelation element -->
 												<xforms:insert context="eac:cpfDescription" nodeset="./child::node()[last()]" origin="instance('relations-template')"
 													if="not(eac:cpfDescription/eac:relations)"/>

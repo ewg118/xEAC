@@ -28,12 +28,12 @@
 
 	<xsl:variable name="namespaces" as="item()*">
 		<namespaces>
+			<namespace prefix="bio">http://purl.org/vocab/bio/0.1/</namespace>
 			<namespace prefix="dcterms">http://purl.org/dc/terms/</namespace>
 			<namespace prefix="foaf">http://xmlns.com/foaf/0.1/</namespace>
 			<namespace prefix="geo">http://www.w3.org/2003/01/geo/wgs84_pos#</namespace>
+			<namespace prefix="org">http://www.w3.org/ns/org#</namespace>
 			<namespace prefix="owl">http://www.w3.org/2002/07/owl#</namespace>
-			<namespace prefix="rdfs">http://www.w3.org/2000/01/rdf-schema#</namespace>
-			<namespace prefix="rdfa">http://www.w3.org/ns/rdfa#</namespace>
 			<namespace prefix="rdf">http://www.w3.org/1999/02/22-rdf-syntax-ns#</namespace>
 			<namespace prefix="skos">http://www.w3.org/2004/02/skos/core#</namespace>
 		</namespaces>
@@ -134,7 +134,7 @@
 		<xsl:variable name="typeof">
 			<xsl:choose>
 				<xsl:when test="descendant::eac:entityType='person'">foaf:Person</xsl:when>
-				<xsl:when test="descendant::eac:entityType='corporateBody'">foaf:Organization</xsl:when>
+				<xsl:when test="descendant::eac:entityType='corporateBody'">org:Organization</xsl:when>
 				<xsl:when test="descendant::eac:entityType='family'">arch:Family</xsl:when>
 			</xsl:choose>
 		</xsl:variable>

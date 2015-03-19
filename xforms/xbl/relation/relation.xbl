@@ -214,9 +214,9 @@
 
 						<xforms:instance id="role-list">
 							<list xmlns="">
-								<item role="http://RDVocab.info/uri/schema/FRBRentitiesRDA/CorporateBody">Corporate Body</item>
-								<item role="http://RDVocab.info/uri/schema/FRBRentitiesRDA/Person">Person</item>
-								<item role="http://RDVocab.info/uri/schema/FRBRentitiesRDA/Family">Family</item>
+								<item role="org:Organization">Corporate Body</item>
+								<item role="foaf:Person">Person</item>
+								<item role="arch:Family">Family</item>
 							</list>
 						</xforms:instance>
 

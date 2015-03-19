@@ -342,40 +342,40 @@ function getRelations($dxpath, $resource, $end, $lang, $options){
 			if ($relation->parentNode->getAttribute('rdf:about') == $resource && in_array($localname, $mainAttr)){
 				switch ($localname){
 					case 'house':
-						$xlink = array('arcrole'=>'belongsToDynasty', 'role'=>'http://RDVocab.info/uri/schema/FRBRentitiesRDA/Family');
+						$xlink = array('arcrole'=>'belongsToDynasty', 'role'=>'arch:Family');
 						break;
 					case 'dynasty':
-						$xlink = array('arcrole'=>'belongsToDynasty', 'role'=>'http://RDVocab.info/uri/schema/FRBRentitiesRDA/Family');
+						$xlink = array('arcrole'=>'belongsToDynasty', 'role'=>'arch:Family');
 						break;
 					case 'royalHouse':
-						$xlink = array('arcrole'=>'belongsToDynasty', 'role'=>'http://RDVocab.info/uri/schema/FRBRentitiesRDA/Family');
+						$xlink = array('arcrole'=>'belongsToDynasty', 'role'=>'arch:Family');
 						break;
 					case 'parent':
-						$xlink = array('arcrole'=>'childOf', 'role'=>'http://RDVocab.info/uri/schema/FRBRentitiesRDA/Person');
+						$xlink = array('arcrole'=>'childOf', 'role'=>'foaf:Person');
 						break;
 					case 'mother':
-						$xlink = array('arcrole'=>'childOf', 'role'=>'http://RDVocab.info/uri/schema/FRBRentitiesRDA/Person');
+						$xlink = array('arcrole'=>'childOf', 'role'=>'foaf:Person');
 						break;
 					case 'father':
-						$xlink = array('arcrole'=>'childOf', 'role'=>'http://RDVocab.info/uri/schema/FRBRentitiesRDA/Person');
+						$xlink = array('arcrole'=>'childOf', 'role'=>'foaf:Person');
 						break;
 					case 'spouse':
-						$xlink = array('arcrole'=>'spouseOf', 'role'=>'http://RDVocab.info/uri/schema/FRBRentitiesRDA/Person');
+						$xlink = array('arcrole'=>'spouseOf', 'role'=>'foaf:Person');
 						break;
 					case 'successor':
-						$xlink = array('arcrole'=>'predecessorOf', 'role'=>'http://RDVocab.info/uri/schema/FRBRentitiesRDA/Person');
+						$xlink = array('arcrole'=>'predecessorOf', 'role'=>'foaf:Person');
 						break;
 					case 'predecessor':
-						$xlink = array('arcrole'=>'successorOf', 'role'=>'http://RDVocab.info/uri/schema/FRBRentitiesRDA/Person');
+						$xlink = array('arcrole'=>'successorOf', 'role'=>'foaf:Person');
 						break;
 					case 'influenced':
-						$xlink = array('arcrole'=>'influenced', 'role'=>'http://RDVocab.info/uri/schema/FRBRentitiesRDA/Person');
+						$xlink = array('arcrole'=>'influenced', 'role'=>'foaf:Person');
 						break;
 					case 'influencedBy':
-						$xlink = array('arcrole'=>'influencedBy', 'role'=>'http://RDVocab.info/uri/schema/FRBRentitiesRDA/Person');
+						$xlink = array('arcrole'=>'influencedBy', 'role'=>'foaf:Person');
 						break;
 					default:
-						$xlink = array('arcrole'=>'NULL1', 'role'=>'http://RDVocab.info/uri/schema/FRBRentitiesRDA/Person');
+						$xlink = array('arcrole'=>'NULL1', 'role'=>'foaf:Person');
 						break;
 				}
 				
@@ -415,22 +415,22 @@ function getRelations($dxpath, $resource, $end, $lang, $options){
 			} elseif ($relation->parentNode->getAttribute('rdf:about') != $resource) {
 				switch ($localname){
 					case 'parent':
-						$xlink = array('arcrole'=>'parentOf', 'role'=>'http://RDVocab.info/uri/schema/FRBRentitiesRDA/Person');
+						$xlink = array('arcrole'=>'parentOf', 'role'=>'foaf:Person');
 						break;
 					case 'house':
-						$xlink = array('arcrole'=>'dynastyOf', 'role'=>'http://RDVocab.info/uri/schema/FRBRentitiesRDA/Person');
+						$xlink = array('arcrole'=>'dynastyOf', 'role'=>'foaf:Person');
 						break;
 					case 'dynasty':
-						$xlink = array('arcrole'=>'dynastyOf', 'role'=>'http://RDVocab.info/uri/schema/FRBRentitiesRDA/Person');
+						$xlink = array('arcrole'=>'dynastyOf', 'role'=>'foaf:Person');
 						break;
 					case 'royalHouse':
-						$xlink = array('arcrole'=>'dynastyOf', 'role'=>'http://RDVocab.info/uri/schema/FRBRentitiesRDA/Person');
+						$xlink = array('arcrole'=>'dynastyOf', 'role'=>'foaf:Person');
 						break;
 					case 'influenced':
-						$xlink = array('arcrole'=>'influencedBy', 'role'=>'http://RDVocab.info/uri/schema/FRBRentitiesRDA/Person');
+						$xlink = array('arcrole'=>'influencedBy', 'role'=>'foaf:Person');
 						break;
 					default:
-						$xlink = array('arcrole'=>'NULL2', 'role'=>'http://RDVocab.info/uri/schema/FRBRentitiesRDA/Person');
+						$xlink = array('arcrole'=>'NULL2', 'role'=>'foaf:Person');
 						break;
 				}
 				$url = $relation->parentNode->getAttribute('rdf:about');

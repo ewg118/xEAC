@@ -160,7 +160,7 @@
 										<xforms:trigger>
 											<xforms:label>Select</xforms:label>
 											<xforms:action ev:event="DOMActivate">
-												<xforms:setvalue ref="$binding/@vocabularySource" value="concat('http://www.geonames.org/', instance('temp')/@vocabularySource, '/')"/>
+												<xforms:setvalue ref="$binding/@vocabularySource" value="concat('http://www.geonames.org/', instance('temp')/@vocabularySource)"/>
 												<xforms:setvalue ref="$binding" value="instance('geonames')//geoname[contains(instance('temp')/@vocabularySource, geonameId)]/label"/>
 											</xforms:action>
 										</xforms:trigger>
