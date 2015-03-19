@@ -2,7 +2,7 @@
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:skos="http://www.w3.org/2004/02/skos/core#" xmlns:foaf="http://xmlns.com/foaf/0.1/" xmlns:xlink="http://www.w3.org/1999/xlink"
 	xmlns:arch="http://purl.org/archival/vocab/arch#" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:eac="urn:isbn:1-931666-33-4" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
 	xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#" xmlns:crm="http://erlangen-crm.org/current/"
-	xmlns:org="http://www.w3.org/ns/org#" xmlns:lawd="http://lawd.info/ontology/" xmlns:snap="http://onto.snapdrgn.net/snap#" xmlns:bio="http://purl.org/vocab/bio/0.1/"
+	xmlns:org="http://www.w3.org/ns/org#" xmlns:lawd="http://lawd.info/ontology/" xmlns:snap="http://onto.snapdrgn.net/snap#" xmlns:bio="http://purl.org/vocab/bio/0.1/" xmlns:xeac="https://github.com/ewg118/xEAC#"
 	xmlns:owl="http://www.w3.org/2002/07/owl#" xmlns:edm="http://www.europeana.eu/schemas/edm/" exclude-result-prefixes="eac xlink xs" version="2.0">
 
 
@@ -203,8 +203,10 @@
 				<xsl:variable name="prefix" select="substring-before(@xlink:arcrole, ':')"/>
 				<xsl:variable name="namespace" select="ancestor::eac:eac-cpf/eac:control/eac:localTypeDeclaration[eac:abbreviation=$prefix]/eac:citation/@xlink:href"/>
 
-				<!-- insert relationship property -->
-				<xsl:element name="{@xlink:arcrole}" namespace="{$namespace}">
+				<!-- relationship as a type -->
+				<xeac:relationshipType rdf:resource="{concat($namespace, substring-after(@xlink:arcrole, ':'))}"/>
+				
+				<bio:participant>
 					<xsl:choose>
 						<xsl:when test="@xlink:href">
 							<xsl:variable name="uri">
@@ -231,7 +233,7 @@
 							<xsl:value-of select="normalize-space(eac:relationEntry)"/>
 						</xsl:otherwise>
 					</xsl:choose>
-				</xsl:element>
+				</bio:participant>
 
 				<!-- dates: only date and dateRange are current handled -->
 				<xsl:choose>
