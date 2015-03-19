@@ -50,17 +50,23 @@
 		<xsl:choose>
 			<xsl:when test="descendant::eac:entityType='person'">
 				<foaf:Person rdf:about="{$recordURI}">
-					<xsl:call-template name="thing-body"/>
+					<xsl:call-template name="thing-body">
+						<xsl:with-param name="recordURI" select="$recordURI"/>
+					</xsl:call-template>
 				</foaf:Person>
 			</xsl:when>
 			<xsl:when test="descendant::eac:entityType='corporateBody'">
 				<org:Organization rdf:about="{$recordURI}">
-					<xsl:call-template name="thing-body"/>
+					<xsl:call-template name="thing-body">
+						<xsl:with-param name="recordURI" select="$recordURI"/>
+					</xsl:call-template>
 				</org:Organization>
 			</xsl:when>
 			<xsl:when test="descendant::eac:entityType='family'">
 				<arch:Family rdf:about="{$recordURI}">
-					<xsl:call-template name="thing-body"/>
+					<xsl:call-template name="thing-body">
+						<xsl:with-param name="recordURI" select="$recordURI"/>
+					</xsl:call-template>
 				</arch:Family>
 			</xsl:when>
 		</xsl:choose>
@@ -129,11 +135,15 @@
 	<!-- ***** BIOGRAPHICAL TEMPLATES FOR THING ***** -->
 
 	<xsl:template name="thing-body">
+		<xsl:param name="recordURI"/>
+		
 		<!-- default name is foaf:name -->
 		<foaf:name>
 			<xsl:value-of select="descendant::eac:nameEntry[1]/eac:part"/>
 		</foaf:name>
-		<xsl:apply-templates select="descendant::eac:existDates[@localType='xeac:life']" mode="bio-predicates"/>
+		<xsl:apply-templates select="descendant::eac:existDates[@localType='xeac:life']" mode="bio-predicates">
+			<xsl:with-param name="recordURI" select="$recordURI"/>
+		</xsl:apply-templates>
 		<xsl:apply-templates select="descendant::eac:cpfRelation[substring-before(@xlink:arcrole, ':') = //eac:localTypeDeclaration/eac:abbreviation]" mode="bio"/>
 	</xsl:template>
 
@@ -147,21 +157,27 @@
 
 	<!-- objects -->
 	<xsl:template match="eac:existDates[@localType='xeac:life']" mode="bio-objects">
+		<xsl:param name="recordURI"/>
+		
 		<xsl:choose>
 			<xsl:when test="eac:dateRange">
 				<xsl:apply-templates select="eac:dateRange/eac:fromDate[@standardDate]" mode="bio">
 					<xsl:with-param name="type">Birth</xsl:with-param>
+					<xsl:with-param name="recordURI" select="$recordURI"/>
 				</xsl:apply-templates>
 				<xsl:apply-templates select="eac:dateRange/eac:toDate[@standardDate]" mode="bio">
 					<xsl:with-param name="type">Death</xsl:with-param>
+					<xsl:with-param name="recordURI" select="$recordURI"/>
 				</xsl:apply-templates>
 			</xsl:when>
 			<xsl:when test="eac:date[@standardDate]">
 				<xsl:apply-templates select="eac:date[@standardDate]" mode="bio">
 					<xsl:with-param name="type">Birth</xsl:with-param>
+					<xsl:with-param name="recordURI" select="$recordURI"/>
 				</xsl:apply-templates>
 				<xsl:apply-templates select="eac:date[@standardDate]" mode="bio">
 					<xsl:with-param name="type">Death</xsl:with-param>
+					<xsl:with-param name="recordURI" select="$recordURI"/>
 				</xsl:apply-templates>
 			</xsl:when>
 		</xsl:choose>
