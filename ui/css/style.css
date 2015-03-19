@@ -8,23 +8,23 @@
   GLOBAL
   ***************************************
  */
-html {
-	background-color: #F8F8F8;
+html{
+	background-color:#F8F8F8;
 }
-.navbar {
+.navbar{
 	margin-bottom:0;
 }
-a > img {
+a > img{
 	border:none;
 }
-.highlight {
-	background-color: #F8F8F8;
-	border: 1px solid #E7E7E7;
-	border-radius: 4px;
+.highlight{
+	background-color:#F8F8F8;
+	border:1px solid #E7E7E7;
+	border-radius:4px;
 	margin:10px;
-	padding: 9px 14px;
+	padding:9px 14px;
 }
-.data-options a {
+.data-options a{
 	margin-right:5px;
 }
 /*
@@ -32,8 +32,8 @@ a > img {
   FOOTER
   ***************************************
  */
-#footer {
-	background-color: #F8F8F8;
+#footer{
+	background-color:#F8F8F8;
 	border-top:1px solid #E7E7E7;
 	padding:10px 0;
 	text-align:center;
@@ -43,19 +43,26 @@ a > img {
   EAC DISPLAY STYLING
   ****************************************
  */
-.submenu {
+.submenu{
 	width:100%;
 	display:table;
 }
-.icon {
+.icon{
 	float:right;
 	border-left:1px solid silver;
 	margin-left:10px;
 	padding-left:10px;
 }
-#names, #wiki-names {
+#names,
+#wiki-names{
 	margin-bottom:25px;
 }
+#network{
+	height:600px;
+	border:1px solid lightgray;
+	width:100%;
+}
+
 /*
   ***************************************
   SPARQL
@@ -87,56 +94,59 @@ a > img {
   XEAC WIDGETS
   ****************************************
  */
-.xeac-widget {
+.xeac-widget{
 	margin:10px 0;
 	text-align:center;
 }
-.gi {
-	max-width:50%;	
+.gi{
+	max-width:50%;
 }
- /*
+/*
   ***************************************
   SEARCH FORMS
   ***************************************
  */
- .option_container {
+.option_container{
 	width:200px;
 	vertical-align:bottom;
 }
-.option_container select, .option_container input {
+.option_container select,
+.option_container input{
 	display:inline;
 }
- .category_list {
+.category_list{
 	width:175px;
 	display:inline;
 }
- .search_text {
+.search_text{
 	width:200px;
 	margin-left:15px;
 	margin-right:5px;
 	display:inline;
 }
-.from_date,.to_date {
+.from_date,
+.to_date{
 	width:75px;
 	margin-left:0px;
 	margin-right:5px;
 	display:inline;
 }
-.from_era,.to_era {
+.from_era,
+.to_era{
 	width:100px;
 	margin-left:0px;
 	margin-right:5px;
 	display:inline;
 }
-.year_range {
+.year_range{
 	margin-left:15px;
 	margin-right:5px;
 	width:150px;
 }
-#searchItemTemplate {
+#searchItemTemplate{
 	display:none;
 }
-.searchItemTemplate {
+.searchItemTemplate{
 	padding-top:5px;
 	padding-bottom:5px;
 }
@@ -145,27 +155,28 @@ a > img {
   RESULTS PAGE
   ****************************************
  */
- .result-doc {
- 	margin:10px 0;	
- }
-.flickr-link {
-	cursor:pointer;
-}
-button.multiselect {
+.result-doc{
 	margin:10px 0;
 }
-.thumbImage, .flickrthumb {
+.flickr-link{
+	cursor:pointer;
+}
+button.multiselect{
+	margin:10px 0;
+}
+.thumbImage,
+.flickrthumb{
 	margin:5px;
 }
-.thumbImage>img {
+.thumbImage > img{
 	max-width:120px;
 }
-#qs_text {
+#qs_text{
 	width:50%;
 	display:inline;
 	margin-right:20px;
 }
-.stacked_term {
+.stacked_term{
 	padding:2px;
 	margin-bottom:5px;
 	border:1px solid #E7E7E7;
@@ -173,39 +184,39 @@ button.multiselect {
 	vertical-align:middle;
 }
 /* Date (century/decade) facet styling */
-.date-div {
+.date-div{
 	margin-top:-10px;
 }
-.century-multiselect-checkboxes {
+.century-multiselect-checkboxes{
 	display:table;
 	width:100%;
 }
-.decades-list {
+.decades-list{
 	margin:0 0 0 25px;
 }
-.close {
+.close{
 	float:right;
 	text-decoration:underline;
 	padding-right:10px;
 }
-.close:hover {
+.close:hover{
 	font-weight:bold;
 	cursor:pointer;
 }
-.right {
-	text-align:right;	
+.right{
+	text-align:right;
 }
-#backgroundPopup {
+#backgroundPopup{
 	display:none;
 	position:fixed;
 	_position:absolute;
-/* hack for internet explorer 6 */
+	/* hack for internet explorer 6 */
 	height:100%;
 	width:100%;
 	top:0;
 	left:0;
 	z-index:2001;
-/*
+	/*
   background-color:black;
   opacity:0.6;
  */
@@ -215,18 +226,19 @@ button.multiselect {
   PAGINATION
   ****************************************
  */
-.paging_div {
+.paging_div{
 	padding:10px 0;
 	vertical-align:baseline;
 }
-.page-nos {
+.page-nos{
 	text-align:right;
 }
-.pagination {
+.pagination{
 	margin:0;
 	padding:0;
 }
-.pagination a, .pagination button {
+.pagination a,
+.pagination button{
 	height:32px;
 }
 /*
@@ -234,55 +246,55 @@ button.multiselect {
   Timemap CSS
   ***************************************
  */
-div#timelinecontainer {
-	height: 300px;
+div#timelinecontainer{
+	height:300px;
 }
-div#mapcontainer {
-	height: 300px;
+div#mapcontainer{
+	height:300px;
 }
-div.olFramedCloudPopupContent {
-	width: 300px;
+div.olFramedCloudPopupContent{
+	width:300px;
 }
-div#help {
-	font-size: 12px;
-	width: 45em;
-	padding: 1em;
+div#help{
+	font-size:12px;
+	width:45em;
+	padding:1em;
 }
 /*
   div#timemap {
   padding: 1em;
   }
  */
-div#timelinecontainer {
-	width: 100%;
-	height: 200px;
+div#timelinecontainer{
+	width:100%;
+	height:200px;
 }
-div#timeline {
-	width: 100%;
-	height: 100%;
-	font-size: 12px;
-	background: #CCCCCC;
+div#timeline{
+	width:100%;
+	height:100%;
+	font-size:12px;
+	background:#CCCCCC;
 }
-div#mapcontainer {
-	width: 100%;
-	height: 400px;
+div#mapcontainer{
+	width:100%;
+	height:400px;
 }
-div#map {
-	width: 100%;
-	height: 100%;
-	background: #EEEEEE;
+div#map{
+	width:100%;
+	height:100%;
+	background:#EEEEEE;
 }
-div.infotitle {
-	font-size: 14px;
-	font-weight: bold;
+div.infotitle{
+	font-size:14px;
+	font-weight:bold;
 }
-div.infodescription {
-	font-size: 14px;
-	font-style: italic;
+div.infodescription{
+	font-size:14px;
+	font-style:italic;
 }
-div.custominfostyle {
-	font-family: Georgia, Garamond, serif;
-	font-size: 1.5em;
-	font-style: italic;
-	width: 20em;
+div.custominfostyle{
+	font-family:Georgia, Garamond, serif;
+	font-size:1.5em;
+	font-style:italic;
+	width:20em;
 }

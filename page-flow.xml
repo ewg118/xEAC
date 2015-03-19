@@ -41,6 +41,8 @@
 	
 	<!-- APIs -->
 	<page path-info="/xeac/api/get" model="xpl/models/object/get-id.xpl" view="xpl/views/apis/get.xpl"/>
+	<page path-info="/xeac/api/nodes" model="xpl/models/sparql/graph.xpl" view="xpl/views/serializations/sparql/nodes.xpl"/>
+	<page path-info="/xeac/api/edges" model="xpl/models/sparql/graph.xpl" view="xpl/views/serializations/sparql/edges.xpl"/>
 	
 	<!-- SPARQL -->
 	<page path="/xeac/query" view="xpl/views/serializations/sparql/query.xpl"/>

@@ -101,6 +101,14 @@
 					<script type="text/javascript" src="{$url}ui/javascript/param.js"/>
 					<script type="text/javascript" src="{$url}ui/javascript/loaders/kml.js"/>
 				</xsl:if>
+				
+				<!-- semantic relations -->
+				<xsl:if test="string(//config/sparql/query) and descendant::eac:cpfRelation[@xlink:arcrole and @xlink:role]">
+					<script type="text/javascript" src="{$url}ui/javascript/vis.min.js"/>
+					<script type="text/javascript" src="{$url}ui/javascript/vis_functions.js"/>
+					<script type="text/javascript" src="{$url}ui/css/vis.min.css"/>
+				</xsl:if>
+				
 				<xsl:if test="string(/content/config/google_analytics)">
 					<script type="text/javascript">
 						<xsl:value-of select="/content/config/google_analytics"/>
@@ -547,6 +555,9 @@
 						<xsl:sort select="eac:relationEntry"/>
 					</xsl:apply-templates>
 				</dl>
+				<xsl:if test="string(//config/sparql/query) and descendant::eac:cpfRelation[@xlink:arcrole and @xlink:role]">
+					<div id="network"/>
+				</xsl:if>
 			</xsl:if>
 			<xsl:choose>
 				<!-- get related resources when there is a SPARQL query endpoint -->

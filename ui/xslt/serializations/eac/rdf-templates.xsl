@@ -230,7 +230,12 @@
 							<xsl:attribute name="rdf:resource" select="$uri"/>
 						</xsl:when>
 						<xsl:otherwise>
-							<xsl:value-of select="normalize-space(eac:relationEntry)"/>
+							<xsl:element name="{@xlink:role}">
+								<foaf:name>
+									<xsl:value-of select="normalize-space(eac:relationEntry)"/>
+								</foaf:name>
+							</xsl:element>
+							
 						</xsl:otherwise>
 					</xsl:choose>
 				</bio:participant>
