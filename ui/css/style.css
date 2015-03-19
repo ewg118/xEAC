@@ -24,6 +24,9 @@ a > img {
 	margin:10px;
 	padding: 9px 14px;
 }
+.data-options a {
+	margin-right:5px;
+}
 /*
   ***************************************
   FOOTER

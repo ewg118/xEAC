@@ -58,10 +58,13 @@
 					<xsl:copy-of select="index/*"/>
 				</div>
 				<div class="col-md-4">
-					<div class="highlight">
+					<div class="highlight data-options">
 						<h3>Export Options</h3>
 						<a href="feed/">
 							<img src="{$display_path}ui/images/atom-large.png" title="Atom" alt="Atom"/>
+						</a>
+						<a href="data.rdf">
+							<img src="{$display_path}ui/images/rdf-large.gif" title="RDF" alt="RDF"/>
 						</a>
 					</div>
 				</div>

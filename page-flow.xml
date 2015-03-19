@@ -53,6 +53,8 @@
 	<!-- facet results -->
 	<page path-info="/xeac/get_facets/" model="xpl/models/solr/get_facets.xpl" view="xpl/views/ajax/get_facets.xpl"/>
 	
+	<!-- **** DATA EXPORTS **** -->
+	<page path-info="/xeac/data.rdf" model="xpl/models/xquery/aggregate-all.xpl" view="xpl/views/serializations/eac/rdf.xpl"/>
 
 	<epilogue url="oxf:/config/epilogue.xpl"/>
 </config>

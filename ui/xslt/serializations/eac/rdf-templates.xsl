@@ -5,31 +5,39 @@
 	xmlns:org="http://www.w3.org/ns/org#" xmlns:lawd="http://lawd.info/ontology/" xmlns:snap="http://onto.snapdrgn.net/snap#" xmlns:bio="http://purl.org/vocab/bio/0.1/"
 	xmlns:owl="http://www.w3.org/2002/07/owl#" xmlns:edm="http://www.europeana.eu/schemas/edm/" exclude-result-prefixes="eac xlink xs" version="2.0">
 
-	<xsl:variable name="recordURI">
-		<xsl:choose>
-			<xsl:when test="string(/content/config/uri_space)">
-				<xsl:value-of select="concat(/content/config/uri_space, //eac:recordId)"/>
-			</xsl:when>
-			<xsl:otherwise>
-				<xsl:value-of select="concat($url, 'id/', //eac:recordId)"/>
-			</xsl:otherwise>
-		</xsl:choose>
-	</xsl:variable>
+
 
 	<xsl:template match="eac:eac-cpf" mode="default">
-		<rdf:RDF>
-			<xsl:for-each select="descendant::eac:localTypeDeclaration[eac:citation[@xlink:role='semantic']][not(contains(eac:abbreviation, ':'))]">
-				<xsl:namespace name="{eac:abbreviation}" select="eac:citation/@xlink:href"/>
-			</xsl:for-each>
-			<xsl:call-template name="concept"/>
-			<xsl:call-template name="thing"/>
+		<xsl:variable name="recordURI">
+			<xsl:choose>
+				<xsl:when test="string(/content/config/uri_space)">
+					<xsl:value-of select="concat(/content/config/uri_space, eac:control/eac:recordId)"/>
+				</xsl:when>
+				<xsl:otherwise>
+					<xsl:value-of select="concat($url, 'id/', eac:control/eac:recordId)"/>
+				</xsl:otherwise>
+			</xsl:choose>
+		</xsl:variable>
 
-			<xsl:apply-templates select="descendant::eac:existDates[@localType='xeac:life']" mode="bio-objects"/>
-			<xsl:apply-templates select="descendant::eac:cpfRelation[substring-before(@xlink:arcrole, ':') = descendant::eac:localTypeDeclaration/eac:abbreviation]" mode="bio-predicates"/>
-		</rdf:RDF>
+
+		<xsl:call-template name="concept">
+			<xsl:with-param name="recordURI" select="$recordURI"/>
+		</xsl:call-template>
+		<xsl:call-template name="thing">
+			<xsl:with-param name="recordURI" select="$recordURI"/>
+		</xsl:call-template>
+
+		<xsl:apply-templates select="descendant::eac:existDates[@localType='xeac:life']" mode="bio-objects">
+			<xsl:with-param name="recordURI" select="$recordURI"/>
+		</xsl:apply-templates>
+		<xsl:apply-templates select="descendant::eac:cpfRelation[substring-before(@xlink:arcrole, ':') = descendant::eac:localTypeDeclaration/eac:abbreviation]" mode="bio-predicates">
+			<xsl:with-param name="recordURI" select="$recordURI"/>
+		</xsl:apply-templates>
 	</xsl:template>
 
 	<xsl:template name="concept">
+		<xsl:param name="recordURI"/>
+
 		<skos:Concept rdf:about="{$recordURI}#concept">
 			<foaf:focus rdf:resource="{$recordURI}"/>
 			<xsl:call-template name="concept-body"/>
@@ -37,6 +45,8 @@
 	</xsl:template>
 
 	<xsl:template name="thing">
+		<xsl:param name="recordURI"/>
+
 		<xsl:choose>
 			<xsl:when test="descendant::eac:entityType='person'">
 				<foaf:Person rdf:about="{$recordURI}">
@@ -129,6 +139,8 @@
 
 	<!-- predicates/properties which appear in the Agent Object -->
 	<xsl:template match="eac:existDates[@localType='xeac:life']" mode="bio-predicates">
+		<xsl:param name="recordURI"/>
+
 		<bio:birth rdf:resource="{$recordURI}#birth"/>
 		<bio:death rdf:resource="{$recordURI}#death"/>
 	</xsl:template>
@@ -157,6 +169,7 @@
 
 	<xsl:template match="eac:date|eac:fromDate|eac:toDate" mode="bio">
 		<xsl:param name="type"/>
+		<xsl:param name="recordURI"/>
 
 		<xsl:element name="bio:{$type}" namespace="http://purl.org/vocab/bio/0.1/">
 			<xsl:attribute name="rdf:about" select="concat($recordURI, '#', lower-case($type))"/>
@@ -180,10 +193,10 @@
 						<xsl:when test="@xlink:href">
 							<xsl:variable name="uri">
 								<xsl:choose>
-									<xsl:when test=". castable as xs:anyURI and contains(@xlink:href, 'http://')">
-										<xsl:value-of select="."/>
+									<xsl:when test="@xlink:href castable as xs:anyURI and contains(@xlink:href, 'http://')">
+										<xsl:value-of select="@xlink:href"/>
 									</xsl:when>
-									<xsl:when test=". castable as xs:anyURI and not(contains(@xlink:href, 'http://'))">
+									<xsl:when test="@xlink:href castable as xs:anyURI and not(contains(@xlink:href, 'http://'))">
 										<xsl:choose>
 											<xsl:when test="string(/content/config/uri_space)">
 												<xsl:value-of select="concat(/content/config/uri_space,@xlink:href)"/>
@@ -199,7 +212,7 @@
 							<xsl:attribute name="rdf:resource" select="$uri"/>
 						</xsl:when>
 						<xsl:otherwise>
-							<xsl:value-of select="eac:relationEntry"/>
+							<xsl:value-of select="normalize-space(eac:relationEntry)"/>
 						</xsl:otherwise>
 					</xsl:choose>
 				</xsl:element>
@@ -218,12 +231,12 @@
 							<edm:TimeSpan>
 								<edm:begin>
 									<xsl:call-template name="normalizeDate">
-										<xsl:with-param name="standardDate" select="eac:fromDate/@standardDate"/>
+										<xsl:with-param name="standardDate" select="eac:dateRange/eac:fromDate/@standardDate"/>
 									</xsl:call-template>
 								</edm:begin>
 								<edm:end>
 									<xsl:call-template name="normalizeDate">
-										<xsl:with-param name="standardDate" select="eac:toDate/@standardDate"/>
+										<xsl:with-param name="standardDate" select="eac:dateRange/eac:toDate/@standardDate"/>
 									</xsl:call-template>
 								</edm:end>
 							</edm:TimeSpan>
@@ -260,6 +273,18 @@
 
 	<!-- ***** CIDOC CRM ***** -->
 	<xsl:template match="eac:eac-cpf" mode="crm">
+		<xsl:variable name="recordURI">
+			<xsl:choose>
+				<xsl:when test="string(/content/config/uri_space)">
+					<xsl:value-of select="concat(/content/config/uri_space, eac:control/eac:recordId)"/>
+				</xsl:when>
+				<xsl:otherwise>
+					<xsl:value-of select="concat($url, 'id/', eac:control/eac:recordId)"/>
+				</xsl:otherwise>
+			</xsl:choose>
+		</xsl:variable>
+
+
 		<xsl:variable name="entityType" select="descendant::eac:entityType"/>
 
 		<xsl:element name="{if ($entityType='person') then 'crm:E21_Person' else 'crm:E74_Group'}" namespace="http://erlangen-crm.org/current/">
@@ -388,6 +413,17 @@
 
 	<!-- *************** SNAP RDF ***************** -->
 	<xsl:template match="eac:eac-cpf" mode="snap">
+		<xsl:variable name="recordURI">
+			<xsl:choose>
+				<xsl:when test="string(/content/config/uri_space)">
+					<xsl:value-of select="concat(/content/config/uri_space, eac:control/eac:recordId)"/>
+				</xsl:when>
+				<xsl:otherwise>
+					<xsl:value-of select="concat($url, 'id/', eac:control/eac:recordId)"/>
+				</xsl:otherwise>
+			</xsl:choose>
+		</xsl:variable>
+
 		<rdf:RDF>
 			<lawd:Person rdf:about="{$recordURI}">
 				<dcterms:publisher rdf:resource="{$url}"/>
