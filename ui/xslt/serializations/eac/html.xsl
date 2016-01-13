@@ -555,14 +555,28 @@
 						<xsl:sort select="eac:relationEntry"/>
 					</xsl:apply-templates>
 				</dl>
-				<xsl:if test="string(//config/sparql/query) and descendant::eac:cpfRelation[@xlink:arcrole and @xlink:role]">
+				<!--<xsl:if test="string(//config/sparql/query) and descendant::eac:cpfRelation[@xlink:arcrole and @xlink:role]">
 					<div id="network"/>
-				</xsl:if>
+				</xsl:if>-->
 			</xsl:if>
 			<xsl:choose>
 				<!-- get related resources when there is a SPARQL query endpoint -->
 				<xsl:when test="string(//config/sparql/query)">
 					<xsl:call-template name="xeac:relatedResources">
+						<xsl:with-param name="uri">
+							<xsl:choose>
+								<xsl:when test="string(//config/uri_space)">
+									<xsl:value-of select="concat(//config/uri_space, $id)"/>
+								</xsl:when>
+								<xsl:otherwise>
+									<xsl:value-of select="concat($url, 'id/', $id)"/>
+								</xsl:otherwise>
+							</xsl:choose>
+						</xsl:with-param>
+						<xsl:with-param name="endpoint" select="//config/sparql/query"/>
+					</xsl:call-template>
+					
+					<xsl:call-template name="xeac:annotations">
 						<xsl:with-param name="uri">
 							<xsl:choose>
 								<xsl:when test="string(//config/uri_space)">

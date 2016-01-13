@@ -38,6 +38,7 @@ PREFIX crm:	<http://erlangen-crm.org/current/>
 PREFIX dcterms:	<http://purl.org/dc/terms/>
 PREFIX edm:	<http://www.europeana.eu/schemas/edm/>
 PREFIX foaf:	<http://xmlns.com/foaf/0.1/>
+PREFIX oa:	<http://www.w3.org/ns/oa#>
 PREFIX org:	<http://www.w3.org/ns/org#>
 PREFIX rel:	<http://purl.org/vocab/relationship/>
 PREFIX skos:	<http://www.w3.org/2004/02/skos/core#>
