@@ -337,7 +337,7 @@
 	</xsl:template>
 
 	<xsl:template match="eac:description">
-		<div id="description">
+		<div id="description" class="eac-section">
 			<h2>Description</h2>
 			<xsl:apply-templates select="eac:existDates"/>
 			<xsl:apply-templates select="eac:biogHist"/>
@@ -545,7 +545,7 @@
 
 
 	<xsl:template name="relations">
-		<div id="relations">
+		<div id="relations" class="eac-section">
 			<h2>Relations</h2>
 			<xsl:if test="count(eac:relations/eac:cpfRelation) &gt; 0">
 				<h3>Related Corporate, Personal, and Family Names</h3>

@@ -62,7 +62,9 @@ a > img{
 	border:1px solid lightgray;
 	width:100%;
 }
-
+.eac-section {
+	margin-bottom:20px;
+}
 /*
   ***************************************
   SPARQL
