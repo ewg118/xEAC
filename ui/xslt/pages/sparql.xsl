@@ -14,6 +14,11 @@
 				<!-- bootstrap -->
 				<link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css"/>
 				<script type="text/javascript" src="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"/>
+				<script type="text/javascript" src="{$display_path}ui/javascript/codemirror.js"/>
+				<script type="text/javascript" src="{$display_path}ui/javascript/matchbrackets.js"/>
+				<script type="text/javascript" src="{$display_path}ui/javascript/sparql.js"/>
+				<script type="text/javascript" src="{$display_path}ui/javascript/sparql_functions.js"/>
+				<link rel="stylesheet" href="{$display_path}ui/css/codemirror.css"/>
 				<link rel="stylesheet" href="{$display_path}ui/css/style.css"/>
 			</head>
 			<body>
@@ -27,13 +32,18 @@
 
 	<xsl:template name="body">
 		<xsl:variable name="default-query"><![CDATA[PREFIX rdf:	<http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-PREFIX dcterms:	<http://purl.org/dc/terms/>
-PREFIX skos:	<http://www.w3.org/2004/02/skos/core#>
-PREFIX owl:	<http://www.w3.org/2002/07/owl#>
-PREFIX foaf:	<http://xmlns.com/foaf/0.1/>
-PREFIX ecrm:	<http://erlangen-crm.org/current/>
-PREFIX geo:	<http://www.w3.org/2003/01/geo/wgs84_pos#>
 PREFIX arch:	<http://purl.org/archival/vocab/arch#>
+PREFIX bio:	<http://purl.org/vocab/bio/0.1/>
+PREFIX crm:	<http://erlangen-crm.org/current/>
+PREFIX dcterms:	<http://purl.org/dc/terms/>
+PREFIX edm:	<http://www.europeana.eu/schemas/edm/>
+PREFIX foaf:	<http://xmlns.com/foaf/0.1/>
+PREFIX oa:	<http://www.w3.org/ns/oa#>
+PREFIX org:	<http://www.w3.org/ns/org#>
+PREFIX rel:	<http://purl.org/vocab/relationship/>
+PREFIX skos:	<http://www.w3.org/2004/02/skos/core#>
+PREFIX xeac:	<https://github.com/ewg118/xEAC#>
+PREFIX xsd:	<http://www.w3.org/2001/XMLSchema#>
 
 SELECT * WHERE {
 ?s ?p ?o
@@ -45,7 +55,7 @@ SELECT * WHERE {
 					<h1>SPARQL Query</h1>
 
 					<form role="form" id="sparqlForm" action="{$display_path}query" method="GET" accept-charset="UTF-8">
-						<textarea name="query" rows="20" class="form-control">
+						<textarea name="query" rows="20" class="form-control" id="code">
 							<xsl:value-of select="$default-query"/>
 						</textarea>
 						<br/>

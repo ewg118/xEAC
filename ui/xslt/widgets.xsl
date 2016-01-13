@@ -64,6 +64,8 @@ OPTIONAL { ?object dcterms:identifier ?identifier }}
 			</a>
 		</div>
 	</xsl:template>
+	
+	<!-- **************** RELATED RESOURCES **************** -->
 
 	<xsl:template name="xeac:relatedResources">
 		<xsl:param name="uri"/>
@@ -146,4 +148,65 @@ OPTIONAL {?uri foaf:thumbnail ?thumbnail}} ORDER BY ASC(?role)]]>
 			</div>
 		</div>
 	</xsl:template>
+	
+	<!-- **************** OPEN ANNOTATIONS **************** -->
+	<xsl:template name="xeac:annotations">
+		<xsl:param name="uri"/>
+		<xsl:param name="endpoint"/>
+		
+		<xsl:variable name="query">
+			<![CDATA[ PREFIX rdf:      <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX dcterms:  <http://purl.org/dc/terms/>
+PREFIX foaf:  <http://xmlns.com/foaf/0.1/>
+PREFIX oa:	<http://www.w3.org/ns/oa#>
+SELECT ?target ?title ?bookTitle ?source WHERE {
+?s oa:hasBody <URI> ;
+   oa:hasTarget ?target . 
+  ?target dcterms:source ?source ;
+          dcterms:title ?title .
+  ?source dcterms:title ?bookTitle}]]>
+		</xsl:variable>
+		<xsl:variable name="service" select="concat($endpoint, '?query=', encode-for-uri(normalize-space(replace($query, 'URI', $uri))), '&amp;output=xml')"/>
+		
+		<xsl:apply-templates select="document($service)/res:sparql[count(descendant::res:result) &gt; 0]" mode="annotations"/>
+	</xsl:template>
+	
+	<xsl:template match="res:sparql" mode="annotations">
+		<xsl:variable name="sources" select="distinct-values(descendant::res:result/res:binding[@name='source']/res:uri)"/>
+		<xsl:variable name="results" as="element()*">
+			<xsl:copy-of select="res:results"/>
+		</xsl:variable>
+		
+		<div>
+			<h3>Annotations</h3>
+			<xsl:for-each select="$sources">
+				<xsl:variable name="uri" select="."/>
+				
+				
+				<div class="row">
+					<div class="col-md-12">
+						<h4>
+							<xsl:value-of select="position()"/>
+							<xsl:text>. </xsl:text>
+							<a href="{$uri}">
+								<xsl:value-of select="$results/res:result[res:binding[@name='source']/res:uri = $uri][1]/res:binding[@name='bookTitle']/res:literal"/>
+							</a>
+						</h4>
+					</div>
+				</div>
+				
+				<xsl:apply-templates select="$results/res:result[res:binding[@name='source']/res:uri = $uri]" mode="annotations"/>
+			</xsl:for-each>			
+		</div>
+	</xsl:template>
+	
+	<xsl:template match="res:result" mode="annotations">		
+		<a href="{res:binding[@name='target']/res:uri}">
+			<xsl:value-of select="res:binding[@name='title']/res:literal"/>
+		</a>
+		<xsl:if test="not(position()=last())">
+			<xsl:text>, </xsl:text>
+		</xsl:if>
+	</xsl:template>
+	
 </xsl:stylesheet>

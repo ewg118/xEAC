@@ -28,12 +28,12 @@
 
 	<xsl:variable name="namespaces" as="item()*">
 		<namespaces>
+			<namespace prefix="bio">http://purl.org/vocab/bio/0.1/</namespace>
 			<namespace prefix="dcterms">http://purl.org/dc/terms/</namespace>
 			<namespace prefix="foaf">http://xmlns.com/foaf/0.1/</namespace>
 			<namespace prefix="geo">http://www.w3.org/2003/01/geo/wgs84_pos#</namespace>
+			<namespace prefix="org">http://www.w3.org/ns/org#</namespace>
 			<namespace prefix="owl">http://www.w3.org/2002/07/owl#</namespace>
-			<namespace prefix="rdfs">http://www.w3.org/2000/01/rdf-schema#</namespace>
-			<namespace prefix="rdfa">http://www.w3.org/ns/rdfa#</namespace>
 			<namespace prefix="rdf">http://www.w3.org/1999/02/22-rdf-syntax-ns#</namespace>
 			<namespace prefix="skos">http://www.w3.org/2004/02/skos/core#</namespace>
 		</namespaces>
@@ -101,6 +101,14 @@
 					<script type="text/javascript" src="{$url}ui/javascript/param.js"/>
 					<script type="text/javascript" src="{$url}ui/javascript/loaders/kml.js"/>
 				</xsl:if>
+				
+				<!-- semantic relations -->
+				<xsl:if test="string(//config/sparql/query) and descendant::eac:cpfRelation[@xlink:arcrole and @xlink:role]">
+					<script type="text/javascript" src="{$url}ui/javascript/vis.min.js"/>
+					<script type="text/javascript" src="{$url}ui/javascript/vis_functions.js"/>
+					<script type="text/javascript" src="{$url}ui/css/vis.min.css"/>
+				</xsl:if>
+				
 				<xsl:if test="string(/content/config/google_analytics)">
 					<script type="text/javascript">
 						<xsl:value-of select="/content/config/google_analytics"/>
@@ -134,7 +142,7 @@
 		<xsl:variable name="typeof">
 			<xsl:choose>
 				<xsl:when test="descendant::eac:entityType='person'">foaf:Person</xsl:when>
-				<xsl:when test="descendant::eac:entityType='corporateBody'">foaf:Organization</xsl:when>
+				<xsl:when test="descendant::eac:entityType='corporateBody'">org:Organization</xsl:when>
 				<xsl:when test="descendant::eac:entityType='family'">arch:Family</xsl:when>
 			</xsl:choose>
 		</xsl:variable>
@@ -266,16 +274,16 @@
 				</xsl:when>
 			</xsl:choose>
 		</div>
-		<!-- display otherRecordIds, create links when applicable -->
-		<xsl:if test="count(eac:control/eac:otherRecordId) &gt; 0">
+		<!-- display entityIds, create links when applicable -->
+		<xsl:if test="count(eac:cpfDescription/eac:identity/eac:entityId) &gt; 0">
 			<div>
 				<h3>Associated Identifiers</h3>
 				<ul>
-					<xsl:for-each select="eac:control/eac:otherRecordId">
+					<xsl:for-each select="eac:cpfDescription/eac:identity/eac:entityId">
 						<li>
 							<xsl:choose>
 								<xsl:when test="contains(., 'http://')">
-									<a href="{.}" rel="skos:related">
+									<a href="{.}" rel="{@localType}">
 										<xsl:value-of select="."/>
 									</a>
 								</xsl:when>
@@ -313,8 +321,8 @@
 					<code>application/vnd.google-earth.kml+xml</code>, <code>application/rdf+xml</code>, <code>application/json</code>, <code>text/turtle</code></p>
 			</ul>
 		</div>
-		<!-- if there is an otherRecordId with a nomisma ID, construction nomisma SPARQL -->
-		<xsl:for-each select="descendant::eac:otherRecordId[contains(., 'nomisma.org')]">
+		<!-- if there is an entityId with a nomisma ID, construction nomisma SPARQL -->
+		<xsl:for-each select="descendant::eac:entityId[contains(., 'nomisma.org')]">
 			<xsl:call-template name="xeac:queryNomisma">
 				<xsl:with-param name="uri" select="."/>
 			</xsl:call-template>
@@ -329,7 +337,7 @@
 	</xsl:template>
 
 	<xsl:template match="eac:description">
-		<div id="description">
+		<div id="description" class="eac-section">
 			<h2>Description</h2>
 			<xsl:apply-templates select="eac:existDates"/>
 			<xsl:apply-templates select="eac:biogHist"/>
@@ -537,7 +545,7 @@
 
 
 	<xsl:template name="relations">
-		<div id="relations">
+		<div id="relations" class="eac-section">
 			<h2>Relations</h2>
 			<xsl:if test="count(eac:relations/eac:cpfRelation) &gt; 0">
 				<h3>Related Corporate, Personal, and Family Names</h3>
@@ -547,11 +555,28 @@
 						<xsl:sort select="eac:relationEntry"/>
 					</xsl:apply-templates>
 				</dl>
+				<!--<xsl:if test="string(//config/sparql/query) and descendant::eac:cpfRelation[@xlink:arcrole and @xlink:role]">
+					<div id="network"/>
+				</xsl:if>-->
 			</xsl:if>
 			<xsl:choose>
 				<!-- get related resources when there is a SPARQL query endpoint -->
 				<xsl:when test="string(//config/sparql/query)">
 					<xsl:call-template name="xeac:relatedResources">
+						<xsl:with-param name="uri">
+							<xsl:choose>
+								<xsl:when test="string(//config/uri_space)">
+									<xsl:value-of select="concat(//config/uri_space, $id)"/>
+								</xsl:when>
+								<xsl:otherwise>
+									<xsl:value-of select="concat($url, 'id/', $id)"/>
+								</xsl:otherwise>
+							</xsl:choose>
+						</xsl:with-param>
+						<xsl:with-param name="endpoint" select="//config/sparql/query"/>
+					</xsl:call-template>
+					
+					<xsl:call-template name="xeac:annotations">
 						<xsl:with-param name="uri">
 							<xsl:choose>
 								<xsl:when test="string(//config/uri_space)">
@@ -572,7 +597,6 @@
 					</dl>
 				</xsl:when>
 			</xsl:choose>
-
 		</div>
 	</xsl:template>
 
