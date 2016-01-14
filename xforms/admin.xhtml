@@ -856,6 +856,11 @@
 								</xforms:action>
 								<!-- commit index -->
 								<xforms:send submission="commit"></xforms:send>
+								
+								<!-- post to SPARQL endpoint, if it exists -->
+								<xforms:send submission="get-rdf" if="string(instance('config')/sparql/update)"></xforms:send>
+								<xforms:send submission="post-rdf" if="string(instance('config')/sparql/store)" ev:event="xforms-submit-done"></xforms:send>
+								
 								<!-- reload table -->
 								<xforms:setvalue ref="instance('eXist-xquery')/exist:text" value="replace(instance('xqueries')/query[@id='get-objects'], 'START', '1')"></xforms:setvalue>
 								<xforms:send submission="xquery-pagination"></xforms:send>
