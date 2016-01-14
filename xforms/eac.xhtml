@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-    Copyright (C) 2012 Ethan Gruber
     xEAC: https://github.com/ewg118/xEAC
+    This is the XForms application for editing EAC-CPF records.
     Apache License 2.0
 -->
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:xforms="http://www.w3.org/2002/xforms" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ev="http://www.w3.org/2001/xml-events"
@@ -149,6 +149,7 @@
 
 			<xforms:instance id="control-instance">
 				<control xmlns="">
+					<entityType/>
 					<pos/>
 					<id/>
 					<publicationStatus/>
@@ -163,6 +164,7 @@
 					<identifier/>
 					<href/>
 					<arcrole/>
+					<role/>
 					<relationEntry/>
 				</id>
 			</xforms:instance>
@@ -214,7 +216,7 @@
 				<relations xmlns=""/>
 			</xforms:instance>
 			<xforms:instance id="rel-template" xxforms:exclude-result-prefixes="#all">
-				<relation xlink:href="" xlink:arcrole="" xmlns=""/>
+				<relation xlink:href="" xlink:arcrole="" xlink:role="" xmlns=""/>
 			</xforms:instance>
 			<xforms:instance id="identifier">
 				<identifer/>
@@ -226,7 +228,7 @@
 				<action source="" dest="" xmlns=""/>
 			</xforms:instance>
 			<xforms:instance id="action-add" xxforms:exclude-result-prefixes="#all">
-				<add xlink:arcrole="" relationEntry="" xmlns=""/>
+				<add xlink:arcrole="" xlink:role="" relationEntry="" xmlns=""/>
 			</xforms:instance>
 			<xforms:instance id="action-remove" xxforms:exclude-result-prefixes="#all">
 				<remove xmlns=""/>
@@ -572,12 +574,18 @@
 						</xforms:bind>
 					</xforms:bind>
 					<xforms:bind nodeset="eac:relations">
+						<xforms:bind nodeset="eac:cpfRelation/@xlink:role" constraint="string-length(.) &gt; 0"/>
+						<xforms:bind nodeset="eac:cpfRelation/@xlink:arcrole" constraint="string-length(.) &gt; 0"/>
 						<xforms:bind nodeset="descendant::eac:relationEntry" required="true()"/>
 					</xforms:bind>
 				</xforms:bind>
 				<!-- bind standardDate and standardDateTime anywhere -->
 				<xforms:bind nodeset="//@standardDate" type="m.data.standardDate"/>
 				<xforms:bind nodeset="//@standardDateTime" type="m.data.standardDateTime"/>
+			</xforms:bind>
+			
+			<xforms:bind nodeset="instance('control-instance')">
+				<xforms:bind nodeset="entityType" required="true()"/>
 			</xforms:bind>
 			<!-- ******************* SUBMISSIONS ****************** -->
 			<!-- load preliminary instances -->
@@ -591,6 +599,8 @@
 				<xforms:action ev:event="xforms-submit-done">
 					<!-- set publicationStatus in control-instance -->
 					<xforms:setvalue ref="instance('control-instance')/publicationStatus" value="instance('doc')/eac:control/eac:publicationStatus"/>
+					<!-- set entityType in control-instance -->
+					<xforms:setvalue ref="instance('control-instance')/entityType" value="instance('doc')/eac:cpfDescription/eac:identity/eac:entityType"/>
 					<!-- set maintenanceStatus to revised if it is new -->
 					<xforms:setvalue ref="instance('doc')/eac:control/eac:maintenanceStatus" if="instance('doc')/eac:control/eac:maintenanceStatus = 'new'"
 						>revised</xforms:setvalue>
@@ -671,6 +681,8 @@
 						<xforms:insert context="instance('temp-doc')/eac:cpfDescription/eac:relations/eac:cpfRelation[last()]"
 							origin="xforms:attribute('xlink:href', instance('temp-id')/href)"/>
 						<xforms:insert context="instance('temp-doc')/eac:cpfDescription/eac:relations/eac:cpfRelation[last()]"
+							origin="xforms:attribute('xlink:role', instance('temp-id')/role)"/>
+						<xforms:insert context="instance('temp-doc')/eac:cpfDescription/eac:relations/eac:cpfRelation[last()]"
 							origin="xforms:attribute('xlink:arcrole', instance('temp-id')/arcrole)"/>
 						<xforms:setvalue ref="instance('temp-doc')/eac:cpfDescription/eac:relations/eac:cpfRelation[last()]/eac:relationEntry"
 							value="instance('temp-id')/relationEntry"/>
@@ -706,13 +718,12 @@
 					<xforms:setvalue ref="instance('eac-template')/eac:cpfDescription/eac:identity/eac:nameEntry/eac:part"
 						value="instance('doc')//eac:cpfRelation[@xlink:href=$id]/eac:relationEntry"/>
 					<xforms:setvalue ref="instance('eac-template')/eac:cpfDescription/eac:identity/eac:entityType"
-						value="if ($role='http://RDVocab.info/uri/schema/FRBRentitiesRDA/Person') then 'person' else 'corporateBody'"/>
+						value="if ($role='foaf:Person') then 'person' else if ($role='org:Organization') then 'corporateBody' else 'family'"/>
 					<!-- set cpfRelation with current doc info -->
 					<xforms:var name="entityType" select="instance('doc')/eac:cpfDescription/eac:identity/eac:entityType"/>
 					<xforms:setvalue ref="instance('eac-template')/eac:cpfDescription/eac:relations/eac:cpfRelation/eac:relationEntry" value="instance('temp-id')/relationEntry"/>
 					<xforms:setvalue ref="instance('eac-template')/eac:cpfDescription/eac:relations/eac:cpfRelation/@xlink:href" value="instance('doc')/eac:control/eac:recordId"/>
-					<xforms:setvalue ref="instance('eac-template')/eac:cpfDescription/eac:relations/eac:cpfRelation/@xlink:role"
-						value="if ($entityType = 'person') then 'http://RDVocab.info/uri/schema/FRBRentitiesRDA/Person' else 'http://RDVocab.info/uri/schema/FRBRentitiesRDA/CorporateBody'"/>
+					<xforms:setvalue ref="instance('eac-template')/eac:cpfDescription/eac:relations/eac:cpfRelation/@xlink:role" value="instance('temp-id')/role"/>
 					<xforms:setvalue ref="instance('eac-template')/eac:cpfDescription/eac:relations/eac:cpfRelation/@xlink:arcrole" value="instance('temp-id')/arcrole"/>
 					<!-- set current dateTime -->
 					<xforms:setvalue ref="instance('eac-template')/eac:control/eac:maintenanceHistory/eac:maintenanceEvent/eac:eventDateTime/@standardDateTime"
@@ -753,6 +764,7 @@
 							<!-- insert add action -->
 							<xforms:insert context="instance('action-list')/action[last()]" origin="instance('action-add')"/>
 							<xforms:setvalue ref="instance('action-list')/action[last()]/add/@xlink:arcrole" value="context()/@xlink:arcrole"/>
+							<xforms:setvalue ref="instance('action-list')/action[last()]/add/@xlink:role" value="context()/@xlink:role"/>
 							<!-- set @relationEntry as the WIKIPEDIA preferredForm, otherwise the first eac:nameEntry in the document -->
 							<xforms:setvalue ref="instance('action-list')/action[last()]/add/@relationEntry"
 								value="if (instance('doc')/eac:cpfDescription/eac:identity/eac:nameEntry[eac:preferredForm='WIKIPEDIA']) then instance('doc')/eac:cpfDescription/eac:identity/eac:nameEntry[eac:preferredForm='WIKIPEDIA']/eac:part else instance('doc')/eac:cpfDescription/eac:identity/eac:nameEntry[1]/eac:part"
@@ -778,6 +790,7 @@
 						<xforms:setvalue ref="instance('temp-id')/identifier" value="context()/@dest"/>
 						<xforms:setvalue ref="instance('temp-id')/href" value="context()/@source"/>
 						<xforms:setvalue ref="instance('temp-id')/arcrole" value="context()/add/@xlink:arcrole"/>
+						<xforms:setvalue ref="instance('temp-id')/role" value="context()/add/@xlink:role"/>
 						<xforms:setvalue ref="instance('temp-id')/relationEntry" value="context()/add/@relationEntry"/>
 						<xforms:send submission="load-temp-doc"/>
 					</xforms:action>
@@ -786,6 +799,7 @@
 						<xforms:setvalue ref="instance('temp-id')/identifier" value="context()/@dest"/>
 						<xforms:setvalue ref="instance('temp-id')/href" value="context()/@source"/>
 						<xforms:setvalue ref="instance('temp-id')/arcrole"/>
+						<xforms:setvalue ref="instance('temp-id')/role"/>
 						<xforms:setvalue ref="instance('temp-id')/relationEntry"/>
 						<xforms:send submission="load-temp-doc"/>
 					</xforms:action>
@@ -1010,27 +1024,27 @@
 					</div>
 					<div id="form">
 						<h1>Edit EAC-CPF Record</h1>
-						<xforms:group ref="instance('doc')/eac:control">
+						<xforms:group ref="instance('doc')">
 							<ul class="list-unstyled list-inline">
-								<xforms:group ref=".[count(eac:sources/eac:source[contains(@xlink:href, 'viaf.org')]) = 0]">
+								<xforms:group ref=".[count(eac:control/eac:sources/eac:source[contains(@xlink:href, 'viaf.org')]) = 0]">
 									<li>
 										<xeac:query-viaf/>
 									</li>
 								</xforms:group>
-								<xforms:group ref=".[count(eac:sources/eac:source[contains(@xlink:href, 'dbpedia.org')]) = 0]">
+								<xforms:group ref=".[count(eac:control/eac:sources/eac:source[contains(@xlink:href, 'dbpedia.org')]) = 0]">
 									<li>
 										<xeac:query-dbpedia/>
 									</li>
 								</xforms:group>
 								<xforms:group
-									ref=".[count(eac:sources/eac:source[contains(@xlink:href, 'http://socialarchive.iath.virginia.edu')]) = 0 and string(instance('doc')/eac:cpfDescription/eac:identity/eac:entityType)]">
+									ref=".[count(eac:control/eac:sources/eac:source[contains(@xlink:href, 'http://socialarchive.iath.virginia.edu')]) = 0 and string(eac:cpfDescription/eac:identity/eac:entityType)]">
 									<li>
 										<xeac:query-snac/>
 									</li>
 								</xforms:group>
 							</ul>
 							<div class="trigger_container">
-								<xforms:group ref="instance('doc')[count(eac:cpfDescription/eac:description) = 0]">
+								<xforms:group ref=".[count(eac:cpfDescription/eac:description) = 0]">
 									<xforms:trigger appearance="minimal">
 										<xforms:label>
 											<span class="glyphicon glyphicon-plus"/>Description</xforms:label>
@@ -1038,7 +1052,7 @@
 											nodeset="eac:identity" position="after"/>
 									</xforms:trigger>
 								</xforms:group>
-								<xforms:group ref="instance('doc')[count(eac:cpfDescription/eac:relations) = 0]">
+								<xforms:group ref=".[count(eac:cpfDescription/eac:relations) = 0]">
 									<xforms:trigger appearance="minimal">
 										<xforms:label>
 											<span class="glyphicon glyphicon-plus"/>Relations</xforms:label>
@@ -1048,13 +1062,38 @@
 								</xforms:group>
 							</div>
 							<div>
-								<xforms:input ref="eac:recordId">
+								<xforms:input ref="eac:control/eac:recordId">
 									<xforms:label>Record ID</xforms:label>
 									<xforms:alert>The id is required</xforms:alert>
 								</xforms:input>
 							</div>
 							<div>
-								<xforms:select1 ref="eac:publicationStatus">
+								<xforms:select1 ref="instance('control-instance')/entityType">
+									<xforms:label>Entity Type</xforms:label>
+									<xforms:alert>Required</xforms:alert>
+									<xforms:item>
+										<xforms:label>Select...</xforms:label>
+										<xforms:value/>
+									</xforms:item>
+									<xforms:itemset nodeset="instance('entityType-list')/item">
+										<xforms:label ref="."/>
+										<xforms:value ref="."/>
+									</xforms:itemset>
+									<xforms:action ev:event="xforms-value-changed">
+										<xforms:var name="val" select="."/>
+										<!-- set the value of the entityType in the EAC record when it is blank or there are no cpfRelations -->
+										<xforms:action if="not(instance('doc')/descendant::eac:cpfRelation)">
+											<xforms:setvalue ref="instance('doc')/eac:cpfDescription/eac:identity/eac:entityType" value="$val"/>
+										</xforms:action>
+										<!-- if there is a string in eac:entityType already, display a warning about changing -->
+										<xforms:action if="instance('doc')/descendant::eac:cpfRelation and not(instance('doc')/eac:cpfDescription/eac:identity/eac:entityType = $val)">
+											<xforms:dispatch target="change-entityType-dialog" name="fr-show"/>
+										</xforms:action>
+									</xforms:action>
+								</xforms:select1>
+							</div>
+							<div>
+								<xforms:select1 ref="eac:control/eac:publicationStatus">
 									<xforms:label>Publication Status</xforms:label>
 									<xforms:item>
 										<xforms:label>inProcess</xforms:label>
@@ -1081,13 +1120,11 @@
 												<xforms:insert ev:event="DOMActivate" context="." origin="instance('nameEntry-template')"
 													nodeset="if (count(eac:nameEntry) &gt; 0) then eac:nameEntry[last()] else eac:entityType" position="after"/>
 											</xforms:trigger>
-											<xforms:group ref=".[count(eac:entityId) = 0]">
-												<xforms:trigger appearance="minimal">
-													<xforms:label>
-														<span class="glyphicon glyphicon-plus"/>Entity Id</xforms:label>
-													<xforms:insert ev:event="DOMActivate" context="." origin="instance('entityId-template')" nodeset="./child::node()[last()]"/>
-												</xforms:trigger>
-											</xforms:group>
+											<xforms:trigger appearance="minimal">
+												<xforms:label>
+													<span class="glyphicon glyphicon-plus"/>Entity Id</xforms:label>
+												<xforms:insert ev:event="DOMActivate" context="." origin="instance('entityId-template')" nodeset="./child::node()[last()]"/>
+											</xforms:trigger>
 											<xforms:group ref=".[count(eac:descriptiveNote) = 0]">
 												<xforms:trigger appearance="minimal">
 													<xforms:label>
@@ -1096,21 +1133,7 @@
 														nodeset="./child::node()[last()]"/>
 												</xforms:trigger>
 											</xforms:group>
-										</div>
-										<div>
-											<xforms:select1 ref="eac:entityType">
-												<xforms:label>Entity Type</xforms:label>
-												<xforms:alert>Required</xforms:alert>
-												<xforms:item>
-													<xforms:label>Select...</xforms:label>
-													<xforms:value/>
-												</xforms:item>
-												<xforms:itemset nodeset="instance('entityType-list')/item">
-													<xforms:label ref="."/>
-													<xforms:value ref="."/>
-												</xforms:itemset>
-											</xforms:select1>
-										</div>
+										</div>										
 										<xforms:repeat nodeset="eac:nameEntry">
 											<div class="subsection">
 												<h3>Name Entry</h3>
@@ -1224,7 +1247,7 @@
 												</xforms:group>
 											</div>
 										</xforms:repeat>
-										<xforms:group ref="eac:entityId">
+										<xforms:repeat ref="eac:entityId">
 											<div>
 												<xforms:input ref=".">
 													<xforms:label>Entity Id</xforms:label>
@@ -1237,7 +1260,7 @@
 													</xforms:label>
 												</xforms:trigger>
 											</div>
-										</xforms:group>
+										</xforms:repeat>
 										<xforms:group ref="eac:descriptiveNote">
 											<xeac:descriptiveNote/>
 										</xforms:group>
@@ -1998,13 +2021,30 @@
 								</fr:alert-dialog>
 							</fr:tab>
 							<!--**************************************** END CONTROL **********************************-->
-							<!--<fr:tab id="preview">
+							<fr:tab id="preview">
 								<fr:label>XML Preview</fr:label>
 								<h1>XML Preview</h1>
 								<fr:xforms-inspector id="orbeon-xforms-inspector"/>
-							</fr:tab>-->
+							</fr:tab>
 						</fr:tabview>
 					</div>
+					
+					<fr:alert-dialog id="change-entityType-dialog">
+						<fr:label>Change entityType</fr:label>
+						<fr:message>Changing the entityType will have ramifications on CPF Relations. Continue?</fr:message>
+						<fr:negative-choice>
+							<fr:label>No</fr:label>	
+							<xforms:action ev:event="DOMActivate">
+								<xforms:setvalue ref="instance('control-instance')/entityType" value="instance('doc')/eac:cpfDescription/eac:identity/eac:entityType"/>
+							</xforms:action>
+						</fr:negative-choice>
+						<fr:positive-choice>
+							<fr:label>Yes</fr:label>
+							<xforms:action ev:event="DOMActivate">
+								<xforms:setvalue ref="instance('doc')/eac:cpfDescription/eac:identity/eac:entityType" value="instance('control-instance')/entityType"/>
+							</xforms:action>
+						</fr:positive-choice>
+					</fr:alert-dialog>
 				</div>
 			</div>
 		</div>

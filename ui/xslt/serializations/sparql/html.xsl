@@ -3,7 +3,7 @@
 	exclude-result-prefixes="#all" version="2.0">
 	<xsl:include href="../../templates.xsl"/>
 	<xsl:variable name="display_path"/>
-	<xsl:variable name="url" select="//content/url"/>
+	<xsl:variable name="url" select="//config/url"/>
 
 	<xsl:template match="/">
 		<html lang="en">
@@ -60,6 +60,9 @@
 			<xsl:choose>
 				<xsl:when test="res:uri">
 					<a href="{res:uri}"><xsl:value-of select="res:uri"/></a>
+				</xsl:when>
+				<xsl:when test="res:bnode">
+					<emph>_:</emph>
 				</xsl:when>
 				<xsl:otherwise>
 					<xsl:value-of select="res:literal"/>

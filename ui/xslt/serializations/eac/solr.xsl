@@ -71,7 +71,7 @@
 					</field>			
 				</xsl:when>
 			</xsl:choose>
-			<field name="fulltext">
+			<field name="text">
 				<xsl:for-each select="descendant-or-self::node()">
 					<xsl:value-of select="text()"/>
 					<xsl:text> </xsl:text>

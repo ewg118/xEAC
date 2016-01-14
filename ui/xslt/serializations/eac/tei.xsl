@@ -91,7 +91,7 @@
 							<xsl:attribute name="type" select="child::*[contains(name(), 'Form')]/local-name()"/>
 						</xsl:if>
 						<xsl:if test="$elements//l3='name'">
-							<xsl:attribute name="ref">http://rdvocab.info/uri/schema/FRBRentitiesRDA/Family</xsl:attribute>
+							<xsl:attribute name="ref">arch:Family</xsl:attribute>
 						</xsl:if>
 						<xsl:value-of select="eac:part"/>
 					</xsl:element>

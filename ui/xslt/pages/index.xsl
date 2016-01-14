@@ -38,10 +38,10 @@
 	</xsl:template>
 	
 	<xsl:template match="config">
-		<!--<div class="jumbotron">
+		<div class="jumbotron">
 			<div class="container">
 				<div class="row">
-					<div class="col-md-8">
+					<div class="col-md-12">
 						<h1>
 							<xsl:value-of select="title"/>
 						</h1>
@@ -49,58 +49,22 @@
 							<xsl:value-of select="description"/>
 						</p>
 					</div>
-					<div class="col-md-4">
-						<img src="{$display_path}ui/images/ans_large.png"/>
-					</div>
 				</div>
 			</div>
-		</div>-->
-		<img src="{$display_path}ui/images/banner.jpg" style="width:100%"/>
-		<div class="container-fluid content">
+		</div>
+		<div class="container-fluid">
 			<div class="row">
-				<div class="col-md-3">
-					<h3>Navigation</h3>
-					<ul>
-						<li>
-							<a href="http://numismatics.org/Archives/Research">Conducting Research</a>
-						</li>
-						<li>
-							<a href="http://numismatics.org/Archives/CitationFormat">Citation Format</a>
-						</li>
-						<li>
-							<a href="http://numismatics.org/Archives/ANSPastOfficers">Officers</a>
-						</li>
-						<li>
-							<a href="http://numismatics.org/Archives/Awards">Awards</a>
-						</li>
-						<li>
-							<a href="http://numismatics.org/Archives/GraduateSeminar">Graduate Seminar</a>
-						</li>
-						<li>
-							<a href="http://numismatics.org/Archives/PublicationHistory">Publications Program</a>
-						</li>
-					</ul>
-				</div>
-				<div class="col-md-6">
+				<div class="col-md-8">
 					<xsl:copy-of select="index/*"/>
 				</div>
-				<div class="col-md-3">
-					<div class="highlight">
-						<h3>Share</h3>
-						<div class="addthis_toolbox addthis_default_style addthis_32x32_style">
-							<a class="addthis_button_preferred_1"/>
-							<a class="addthis_button_preferred_2"/>
-							<a class="addthis_button_preferred_3"/>
-							<a class="addthis_button_preferred_4"/>
-							<a class="addthis_button_compact"/>
-							<a class="addthis_counter addthis_bubble_style"/>
-						</div>
-						<script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#pubid=xa-4da715d011c943c2"/>
-					</div>
-					<div class="highlight">
+				<div class="col-md-4">
+					<div class="highlight data-options">
 						<h3>Export Options</h3>
 						<a href="feed/">
 							<img src="{$display_path}ui/images/atom-large.png" title="Atom" alt="Atom"/>
+						</a>
+						<a href="data.rdf">
+							<img src="{$display_path}ui/images/rdf-large.gif" title="RDF" alt="RDF"/>
 						</a>
 					</div>
 				</div>

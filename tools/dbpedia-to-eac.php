@@ -91,9 +91,6 @@ function generate_eac($resource, $end, $lang, $options){
 	$xml .= '<control>';
 	$xml .= '<recordId>' . strtolower($id) . '</recordId>';
 	
-	//add other records
-	$xml .= '<otherRecordId>' . $resource . '</otherRecordId>';
-	
 	//get viaf RDF, if it exists
 	$viafId = '';
 	$viafIds = $dxpath->query('//dbpprop:viaf');
@@ -106,17 +103,8 @@ function generate_eac($resource, $end, $lang, $options){
 		$vxpath = new DOMXPath($viafRDF);
 		$vxpath->registerNamespace('rdf', "http://www.w3.org/1999/02/22-rdf-syntax-ns#");
 		$vxpath->registerNamespace('owl', "http://www.w3.org/2002/07/owl#");
-		$vxpath->registerNamespace('rdaGr2', "http://rdvocab.info/ElementsGr2/");
-	}
-	
-	//get other records from VIAF
-	if (strlen($viafId) > 0){
-		foreach ($vxpath->query("//rdf:Description[rdf:type/@rdf:resource='http://xmlns.com/foaf/0.1/Person']/owl:sameAs") as $ele){
-			if (!strstr($ele->getAttribute('rdf:resource'), 'dbpedia')){
-				$xml .= '<otherRecordId>' . $ele->getAttribute('rdf:resource') . '</otherRecordId>';
-			}
-		}
-	}
+		$vxpath->registerNamespace('schema', "http://schema.org/");
+	}	
 	
 	$xml .= '<maintenanceAgency><agencyName>Agency Name</agencyName></maintenanceAgency>';
 	$xml .= '<maintenanceHistory><maintenanceEvent><eventType>created</eventType><eventDateTime standardDateTime="' . date(DATE_W3C) . '"/><agentType>machine</agentType><agent>xEAC dbpedia PHP</agent></maintenanceEvent></maintenanceHistory>';
@@ -137,6 +125,18 @@ function generate_eac($resource, $end, $lang, $options){
 		$xml .= '<entityType>person</entityType>';
 	} else {
 		$xml .= '<entityType>family</entityType>';
+	}
+	
+	//other entityIDs
+	$xml .= '<entityId>' . $resource . '</entityId>';
+	
+	//get other records from VIAF
+	if (strlen($viafId) > 0){
+		foreach ($vxpath->query("//rdf:Description[rdf:type/@rdf:resource='http://xmlns.com/foaf/0.1/Person']/schema:sameAs") as $ele){
+			if (!strstr($ele->getAttribute('rdf:resource'), 'dbpedia')){
+				$xml .= '<entityId>' . $ele->getAttribute('rdf:resource') . '</entityId>';
+			}
+		}
 	}
 	
 	foreach ($dxpath->query('//rdfs:label') as $ele){
@@ -162,7 +162,7 @@ function generate_eac($resource, $end, $lang, $options){
 	
 	//existDates, get from VIAF by default, if available
 	if (strlen($viafId) > 0){
-		$xml .= getExistDates($vxpath->query('//rdaGr2:dateOfBirth')->item(0)->nodeValue, $vxpath->query('//rdaGr2:dateOfDeath')->item(0)->nodeValue);
+		$xml .= getExistDates($vxpath->query('//schema:birthDate')->item(0)->nodeValue, $vxpath->query('//schema:deathDate')->item(0)->nodeValue);
 	} else {
 		//else get from dbpedia (inconsistent)
 		$startDates = $dxpath->query('//*[local-name()="birthDate"][@rdf:datatype="http://www.w3.org/2001/XMLSchema#date"]');
@@ -207,7 +207,7 @@ function generate_eac($resource, $end, $lang, $options){
 			
 			//add date for birth or death, if available
 			if (strlen($viafId) > 0){
-				$query = ($localname == 'birthPlace') ? '//rdaGr2:dateOfBirth' : '//rdaGr2:dateOfDeath';
+				$query = ($localname == 'birthPlace') ? '//schema:birthDate' : '//schema:deathDate';
 				$gDate = normalizeDate($vxpath->query($query)->item(0)->nodeValue);
 				$xml .= '<date standardDate="' . $gDate . '">' . getDateTextual($gDate) . '</date>';
 			} else {
@@ -342,40 +342,40 @@ function getRelations($dxpath, $resource, $end, $lang, $options){
 			if ($relation->parentNode->getAttribute('rdf:about') == $resource && in_array($localname, $mainAttr)){
 				switch ($localname){
 					case 'house':
-						$xlink = array('arcrole'=>'belongsToDynasty', 'role'=>'http://RDVocab.info/uri/schema/FRBRentitiesRDA/Family');
+						$xlink = array('arcrole'=>'belongsToDynasty', 'role'=>'arch:Family');
 						break;
 					case 'dynasty':
-						$xlink = array('arcrole'=>'belongsToDynasty', 'role'=>'http://RDVocab.info/uri/schema/FRBRentitiesRDA/Family');
+						$xlink = array('arcrole'=>'belongsToDynasty', 'role'=>'arch:Family');
 						break;
 					case 'royalHouse':
-						$xlink = array('arcrole'=>'belongsToDynasty', 'role'=>'http://RDVocab.info/uri/schema/FRBRentitiesRDA/Family');
+						$xlink = array('arcrole'=>'belongsToDynasty', 'role'=>'arch:Family');
 						break;
 					case 'parent':
-						$xlink = array('arcrole'=>'childOf', 'role'=>'http://RDVocab.info/uri/schema/FRBRentitiesRDA/Person');
+						$xlink = array('arcrole'=>'childOf', 'role'=>'foaf:Person');
 						break;
 					case 'mother':
-						$xlink = array('arcrole'=>'childOf', 'role'=>'http://RDVocab.info/uri/schema/FRBRentitiesRDA/Person');
+						$xlink = array('arcrole'=>'childOf', 'role'=>'foaf:Person');
 						break;
 					case 'father':
-						$xlink = array('arcrole'=>'childOf', 'role'=>'http://RDVocab.info/uri/schema/FRBRentitiesRDA/Person');
+						$xlink = array('arcrole'=>'childOf', 'role'=>'foaf:Person');
 						break;
 					case 'spouse':
-						$xlink = array('arcrole'=>'spouseOf', 'role'=>'http://RDVocab.info/uri/schema/FRBRentitiesRDA/Person');
+						$xlink = array('arcrole'=>'spouseOf', 'role'=>'foaf:Person');
 						break;
 					case 'successor':
-						$xlink = array('arcrole'=>'predecessorOf', 'role'=>'http://RDVocab.info/uri/schema/FRBRentitiesRDA/Person');
+						$xlink = array('arcrole'=>'predecessorOf', 'role'=>'foaf:Person');
 						break;
 					case 'predecessor':
-						$xlink = array('arcrole'=>'successorOf', 'role'=>'http://RDVocab.info/uri/schema/FRBRentitiesRDA/Person');
+						$xlink = array('arcrole'=>'successorOf', 'role'=>'foaf:Person');
 						break;
 					case 'influenced':
-						$xlink = array('arcrole'=>'influenced', 'role'=>'http://RDVocab.info/uri/schema/FRBRentitiesRDA/Person');
+						$xlink = array('arcrole'=>'influenced', 'role'=>'foaf:Person');
 						break;
 					case 'influencedBy':
-						$xlink = array('arcrole'=>'influencedBy', 'role'=>'http://RDVocab.info/uri/schema/FRBRentitiesRDA/Person');
+						$xlink = array('arcrole'=>'influencedBy', 'role'=>'foaf:Person');
 						break;
 					default:
-						$xlink = array('arcrole'=>'NULL1', 'role'=>'http://RDVocab.info/uri/schema/FRBRentitiesRDA/Person');
+						$xlink = array('arcrole'=>'NULL1', 'role'=>'foaf:Person');
 						break;
 				}
 				
@@ -415,22 +415,22 @@ function getRelations($dxpath, $resource, $end, $lang, $options){
 			} elseif ($relation->parentNode->getAttribute('rdf:about') != $resource) {
 				switch ($localname){
 					case 'parent':
-						$xlink = array('arcrole'=>'parentOf', 'role'=>'http://RDVocab.info/uri/schema/FRBRentitiesRDA/Person');
+						$xlink = array('arcrole'=>'parentOf', 'role'=>'foaf:Person');
 						break;
 					case 'house':
-						$xlink = array('arcrole'=>'dynastyOf', 'role'=>'http://RDVocab.info/uri/schema/FRBRentitiesRDA/Person');
+						$xlink = array('arcrole'=>'dynastyOf', 'role'=>'foaf:Person');
 						break;
 					case 'dynasty':
-						$xlink = array('arcrole'=>'dynastyOf', 'role'=>'http://RDVocab.info/uri/schema/FRBRentitiesRDA/Person');
+						$xlink = array('arcrole'=>'dynastyOf', 'role'=>'foaf:Person');
 						break;
 					case 'royalHouse':
-						$xlink = array('arcrole'=>'dynastyOf', 'role'=>'http://RDVocab.info/uri/schema/FRBRentitiesRDA/Person');
+						$xlink = array('arcrole'=>'dynastyOf', 'role'=>'foaf:Person');
 						break;
 					case 'influenced':
-						$xlink = array('arcrole'=>'influencedBy', 'role'=>'http://RDVocab.info/uri/schema/FRBRentitiesRDA/Person');
+						$xlink = array('arcrole'=>'influencedBy', 'role'=>'foaf:Person');
 						break;
 					default:
-						$xlink = array('arcrole'=>'NULL2', 'role'=>'http://RDVocab.info/uri/schema/FRBRentitiesRDA/Person');
+						$xlink = array('arcrole'=>'NULL2', 'role'=>'foaf:Person');
 						break;
 				}
 				$url = $relation->parentNode->getAttribute('rdf:about');

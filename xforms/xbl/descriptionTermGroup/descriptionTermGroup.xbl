@@ -123,7 +123,7 @@
 								</xforms:repeat>
 
 								<xforms:repeat nodeset="eac:languageUsed">
-									<xeac:languageUsed/>
+									<xeac:language/>
 								</xforms:repeat>
 
 								<xforms:repeat nodeset="eac:legalStatus">

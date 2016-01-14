@@ -1,66 +1,80 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:skos="http://www.w3.org/2004/02/skos/core#" xmlns:foaf="http://xmlns.com/foaf/0.1/" xmlns:xlink="http://www.w3.org/1999/xlink"
 	xmlns:arch="http://purl.org/archival/vocab/arch#" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:eac="urn:isbn:1-931666-33-4" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-	xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#" xmlns:ecrm="http://erlangen-crm.org/current/" xmlns:lawd="http://snapdrgn.net"
-	xmlns:bio="http://purl.org/vocab/bio/0.1/" xmlns:owl="http://www.w3.org/2002/07/owl#" exclude-result-prefixes="eac xlink xs" version="2.0">
+	xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#" xmlns:crm="http://erlangen-crm.org/current/"
+	xmlns:org="http://www.w3.org/ns/org#" xmlns:lawd="http://lawd.info/ontology/" xmlns:snap="http://onto.snapdrgn.net/snap#" xmlns:bio="http://purl.org/vocab/bio/0.1/" xmlns:xeac="https://github.com/ewg118/xEAC#"
+	xmlns:owl="http://www.w3.org/2002/07/owl#" xmlns:edm="http://www.europeana.eu/schemas/edm/" exclude-result-prefixes="eac xlink xs" version="2.0">
 
-	<xsl:variable name="recordURI">
-		<xsl:choose>
-			<xsl:when test="string(/content/config/uri_space)">
-				<xsl:value-of select="concat(/content/config/uri_space, //eac:recordId)"/>
-			</xsl:when>
-			<xsl:otherwise>
-				<xsl:value-of select="concat($url, 'id/', //eac:recordId)"/>
-			</xsl:otherwise>
-		</xsl:choose>
-	</xsl:variable>
 
-	<!-- ***** DEFAULT TEMPLATES: used for $id.rdf ***** -->
+
 	<xsl:template match="eac:eac-cpf" mode="default">
+		<xsl:variable name="recordURI">
+			<xsl:choose>
+				<xsl:when test="string(/content/config/uri_space)">
+					<xsl:value-of select="concat(/content/config/uri_space, eac:control/eac:recordId)"/>
+				</xsl:when>
+				<xsl:otherwise>
+					<xsl:value-of select="concat($url, 'id/', eac:control/eac:recordId)"/>
+				</xsl:otherwise>
+			</xsl:choose>
+		</xsl:variable>
 
-		<rdf:RDF>
-			<xsl:for-each select="descendant::eac:localTypeDeclaration[eac:citation[@xlink:role='semantic']][not(contains(eac:abbreviation, ':'))]">
-				<xsl:namespace name="{eac:abbreviation}" select="eac:citation/@xlink:href"/>
-			</xsl:for-each>
-			<xsl:choose>
-				<xsl:when test="descendant::eac:entityType='person'">
-					<foaf:Person rdf:about="{$recordURI}">
-						<xsl:call-template name="rdf-body"/>
-					</foaf:Person>
-				</xsl:when>
-				<xsl:when test="descendant::eac:entityType='corporateBody'">
-					<foaf:Organization rdf:about="{$recordURI}">
-						<xsl:call-template name="rdf-body"/>
-					</foaf:Organization>
-				</xsl:when>
-				<xsl:when test="descendant::eac:entityType='family'">
-					<arch:Family rdf:about="{$recordURI}">
-						<xsl:call-template name="rdf-body"/>
-					</arch:Family>
-				</xsl:when>
-			</xsl:choose>
-			<xsl:choose>
-				<xsl:when test="descendant::eac:existDates[@localType='xeac:life']/eac:dateRange">
-					<xsl:apply-templates select="descendant::eac:existDates[@localType='xeac:life']/eac:dateRange/eac:fromDate[@standardDate]" mode="default">
-						<xsl:with-param name="type">Birth</xsl:with-param>
-					</xsl:apply-templates>
-					<xsl:apply-templates select="descendant::eac:existDates[@localType='xeac:life']/eac:dateRange/eac:fromDate[@standardDate]" mode="default">
-						<xsl:with-param name="type">Death</xsl:with-param>
-					</xsl:apply-templates>
-				</xsl:when>
-				<xsl:when test="descendant::eac:existDates[@localType='xeac:life']/eac:date[@standardDate]">
-					<xsl:apply-templates select="descendant::eac:existDates[@localType='xeac:life']/eac:date[@standardDate]" mode="default">
-						<xsl:with-param name="type">Birth</xsl:with-param>
-					</xsl:apply-templates>
-					<xsl:apply-templates select="descendant::eac:existDates[@localType='xeac:life']/eac:date[@standardDate]" mode="default">
-						<xsl:with-param name="type">Death</xsl:with-param>
-					</xsl:apply-templates>
-				</xsl:when>
-			</xsl:choose>
-		</rdf:RDF>
+
+		<xsl:call-template name="concept">
+			<xsl:with-param name="recordURI" select="$recordURI"/>
+		</xsl:call-template>
+		<xsl:call-template name="thing">
+			<xsl:with-param name="recordURI" select="$recordURI"/>
+		</xsl:call-template>
+
+		<xsl:apply-templates select="descendant::eac:existDates[@localType='xeac:life']" mode="bio-objects">
+			<xsl:with-param name="recordURI" select="$recordURI"/>
+		</xsl:apply-templates>
+		<xsl:apply-templates select="descendant::eac:cpfRelation[substring-before(@xlink:arcrole, ':') = descendant::eac:localTypeDeclaration/eac:abbreviation]" mode="bio-predicates">
+			<xsl:with-param name="recordURI" select="$recordURI"/>
+		</xsl:apply-templates>
 	</xsl:template>
 
-	<xsl:template name="rdf-body">
+	<xsl:template name="concept">
+		<xsl:param name="recordURI"/>
+
+		<skos:Concept rdf:about="{$recordURI}#concept">
+			<foaf:focus rdf:resource="{$recordURI}"/>
+			<xsl:call-template name="concept-body"/>
+		</skos:Concept>
+	</xsl:template>
+
+	<xsl:template name="thing">
+		<xsl:param name="recordURI"/>
+
+		<xsl:choose>
+			<xsl:when test="descendant::eac:entityType='person'">
+				<foaf:Person rdf:about="{$recordURI}">
+					<xsl:call-template name="thing-body">
+						<xsl:with-param name="recordURI" select="$recordURI"/>
+					</xsl:call-template>
+				</foaf:Person>
+			</xsl:when>
+			<xsl:when test="descendant::eac:entityType='corporateBody'">
+				<org:Organization rdf:about="{$recordURI}">
+					<xsl:call-template name="thing-body">
+						<xsl:with-param name="recordURI" select="$recordURI"/>
+					</xsl:call-template>
+				</org:Organization>
+			</xsl:when>
+			<xsl:when test="descendant::eac:entityType='family'">
+				<arch:Family rdf:about="{$recordURI}">
+					<xsl:call-template name="thing-body">
+						<xsl:with-param name="recordURI" select="$recordURI"/>
+					</xsl:call-template>
+				</arch:Family>
+			</xsl:when>
+		</xsl:choose>
+		<!--<xsl:apply-templates select="self::node()" mode="crm"/>-->
+	</xsl:template>
+
+	<!-- ***** SKOS:CONCEPT TEMPLATES ***** -->
+	<xsl:template name="concept-body">
 		<!-- labels -->
 		<xsl:for-each select="descendant::eac:nameEntry">
 			<xsl:element name="{if (string(eac:preferredForm)) then 'skos:prefLabel' else 'skos:altLabel'}" namespace="http://www.w3.org/2004/02/skos/core#">
@@ -71,53 +85,21 @@
 			</xsl:element>
 		</xsl:for-each>
 
-		<!-- exist dates -->
-		<xsl:apply-templates select="descendant::eac:existDates[@localType='xeac:life']" mode="default"/>
-
 		<!-- related links -->
-		<xsl:apply-templates select="eac:control/eac:otherRecordId" mode="default"/>
+		<xsl:apply-templates select="descendant::eac:entityId[contains(@localType, ':')]" mode="concept"/>
+		<xsl:apply-templates select="descendant::eac:abstract" mode="concept"/>
 
-		<!-- relations -->
-		<!-- only process relations with an xlink:arcrole from a defined namespace -->
-		<xsl:apply-templates
-			select="descendant::eac:cpfRelation[contains(@xlink:arcrole, ':') and string(@xlink:href)]|descendant::eac:resourceRelation[contains(@xlink:arcrole, ':') and string(@xlink:href)]"
-			mode="default"/>
-
-		<xsl:apply-templates select="descendant::eac:abstract" mode="default"/>
+		<!-- thumbnail -->
+		<xsl:apply-templates select="descendant::eac:resourceRelation[@xlink:arcrole='foaf:thumbnail'][@xlink:href]"/>
 	</xsl:template>
 
-	<xsl:template match="eac:cpfRelation|eac:resourceRelation" mode="default">
-		<xsl:variable name="uri">
-			<xsl:choose>
-				<xsl:when test="contains(@xlink:href, 'http://')">
-					<xsl:value-of select="@xlink:href"/>
-				</xsl:when>
-				<xsl:otherwise>
-					<xsl:choose>
-						<xsl:when test="string(/content/config/uri_space)">
-							<xsl:value-of select="concat(/content/config/uri_space, @xlink:href)"/>
-						</xsl:when>
-						<xsl:otherwise>
-							<xsl:value-of select="concat($url, 'id/', @xlink:href)"/>
-						</xsl:otherwise>
-					</xsl:choose>
-				</xsl:otherwise>
-			</xsl:choose>
-		</xsl:variable>
-		<xsl:variable name="prefix" select="substring-before(@xlink:arcrole, ':')"/>
-		<xsl:variable name="namespace" select="ancestor::eac:eac-cpf/eac:control/eac:localTypeDeclaration[eac:abbreviation=$prefix]/eac:citation/@xlink:href"/>
-		<xsl:element name="{@xlink:arcrole}" namespace="{$namespace}">
-			<xsl:attribute name="rdf:resource" select="$uri"/>
-		</xsl:element>
-	</xsl:template>
-
-	<xsl:template match="eac:abstract" mode="default">
+	<xsl:template match="eac:abstract" mode="concept">
 		<dcterms:abstract>
 			<xsl:value-of select="."/>
 		</dcterms:abstract>
 	</xsl:template>
 
-	<xsl:template match="eac:otherRecordId" mode="default">
+	<xsl:template match="eac:entityId|eac:otherRecordId" mode="concept">
 		<xsl:variable name="localType" select="@localType"/>
 
 		<xsl:variable name="otherURI">
@@ -138,68 +120,179 @@
 			</xsl:choose>
 		</xsl:variable>
 
-		<xsl:choose>
-			<!-- exploit the semantic property contained in the localType, if it contains a matching localTypeDeclaration -->
-			<xsl:when test="parent::eac:control/eac:localTypeDeclaration/eac:abbreviation=$localType">
-				<xsl:variable name="property" select="substring-after($localType, ':')"/>
-				<xsl:variable name="namespace" select="substring-before(parent::eac:control/eac:localTypeDeclaration[eac:abbreviation=$localType][1]/eac:citation/@xlink:href, $property)"/>
+		<xsl:variable name="prefix" select="substring-before($localType, ':')"/>
+		<xsl:variable name="namespace" select="ancestor::eac:eac-cpf/eac:control/eac:localTypeDeclaration[eac:abbreviation=$prefix]/eac:citation/@xlink:href"/>
 
-				<xsl:element name="{$localType}" namespace="{$namespace}">
-					<xsl:attribute name="rdf:resource" select="$otherURI"/>
-				</xsl:element>
-			</xsl:when>
-			<!-- otherwise use skos:relatedMatch for other record IDs that link externally, skos:related for internally linked records -->
-			<xsl:otherwise>
-				<xsl:choose>
-					<xsl:when test=". castable as xs:anyURI and contains(., 'http://')">
-						<skos:relatedMatch rdf:resource="{$otherURI}"/>
-					</xsl:when>
-					<xsl:when test=". castable as xs:anyURI and not(contains(., 'http://'))">
-						<skos:related rdf:resource="{$otherURI}"/>
-					</xsl:when>
-				</xsl:choose>
-			</xsl:otherwise>
-		</xsl:choose>
+		<xsl:element name="{$localType}" namespace="{$namespace}">
+			<xsl:attribute name="rdf:resource" select="$otherURI"/>
+		</xsl:element>
 	</xsl:template>
 
-	<xsl:template match="eac:existDates[@localType='xeac:life']" mode="default">
+	<xsl:template match="eac:resourceRelation[@xlink:arcrole='foaf:thumbnail']">
+		<foaf:thumbnail rdf:resource="{@xlink:href}"/>
+	</xsl:template>
+
+	<!-- ***** BIOGRAPHICAL TEMPLATES FOR THING ***** -->
+
+	<xsl:template name="thing-body">
+		<xsl:param name="recordURI"/>
+		
+		<!-- default name is foaf:name -->
+		<foaf:name>
+			<xsl:value-of select="descendant::eac:nameEntry[1]/eac:part"/>
+		</foaf:name>
+		<xsl:apply-templates select="descendant::eac:existDates[@localType='xeac:life']" mode="bio-predicates">
+			<xsl:with-param name="recordURI" select="$recordURI"/>
+		</xsl:apply-templates>
+		<xsl:apply-templates select="descendant::eac:cpfRelation[substring-before(@xlink:arcrole, ':') = //eac:localTypeDeclaration/eac:abbreviation]" mode="bio"/>
+	</xsl:template>
+
+	<!-- predicates/properties which appear in the Agent Object -->
+	<xsl:template match="eac:existDates[@localType='xeac:life']" mode="bio-predicates">
+		<xsl:param name="recordURI"/>
+
+		<bio:birth rdf:resource="{$recordURI}#birth"/>
+		<bio:death rdf:resource="{$recordURI}#death"/>
+	</xsl:template>
+
+	<!-- objects -->
+	<xsl:template match="eac:existDates[@localType='xeac:life']" mode="bio-objects">
+		<xsl:param name="recordURI"/>
+		
 		<xsl:choose>
 			<xsl:when test="eac:dateRange">
-				<bio:birth rdf:resource="{$recordURI}#birth"/>
-				<bio:death rdf:resource="{$recordURI}#death"/>
+				<xsl:apply-templates select="eac:dateRange/eac:fromDate[@standardDate]" mode="bio">
+					<xsl:with-param name="type">Birth</xsl:with-param>
+					<xsl:with-param name="recordURI" select="$recordURI"/>
+				</xsl:apply-templates>
+				<xsl:apply-templates select="eac:dateRange/eac:toDate[@standardDate]" mode="bio">
+					<xsl:with-param name="type">Death</xsl:with-param>
+					<xsl:with-param name="recordURI" select="$recordURI"/>
+				</xsl:apply-templates>
 			</xsl:when>
 			<xsl:when test="eac:date[@standardDate]">
-				<bio:birth rdf:resource="{$recordURI}#birth"/>
-				<bio:death rdf:resource="{$recordURI}#death"/>
+				<xsl:apply-templates select="eac:date[@standardDate]" mode="bio">
+					<xsl:with-param name="type">Birth</xsl:with-param>
+					<xsl:with-param name="recordURI" select="$recordURI"/>
+				</xsl:apply-templates>
+				<xsl:apply-templates select="eac:date[@standardDate]" mode="bio">
+					<xsl:with-param name="type">Death</xsl:with-param>
+					<xsl:with-param name="recordURI" select="$recordURI"/>
+				</xsl:apply-templates>
 			</xsl:when>
 		</xsl:choose>
 	</xsl:template>
 
-	<xsl:template match="eac:date|eac:fromDate|eac:toDate" mode="default">
+	<xsl:template match="eac:date|eac:fromDate|eac:toDate" mode="bio">
 		<xsl:param name="type"/>
-		
+		<xsl:param name="recordURI"/>
+
 		<xsl:element name="bio:{$type}" namespace="http://purl.org/vocab/bio/0.1/">
 			<xsl:attribute name="rdf:about" select="concat($recordURI, '#', lower-case($type))"/>
-			<dcterms:date>
-				<xsl:attribute name="rdf:datatype">
-					<xsl:choose>
-						<xsl:when test="@standardDate castable as xs:date">
-							<xsl:text>http://www.w3.org/2001/XMLSchema#date</xsl:text>
-						</xsl:when>
-						<xsl:when test="@standardDate castable as xs:gYearMonth">
-							<xsl:text>http://www.w3.org/2001/XMLSchema#gYearMonth</xsl:text>
-						</xsl:when>
-						<xsl:when test="@standardDate castable as xs:gYear">
-							<xsl:text>http://www.w3.org/2001/XMLSchema#gYear</xsl:text>
-						</xsl:when>
-					</xsl:choose>
-				</xsl:attribute>
-				<xsl:value-of select="@standardDate"/>
-			</dcterms:date>
+			<bio:date>
+				<xsl:call-template name="normalizeDate">
+					<xsl:with-param name="standardDate" select="@standardDate"/>
+				</xsl:call-template>
+			</bio:date>
 		</xsl:element>
-		
 	</xsl:template>
 
+	<xsl:template match="eac:cpfRelation" mode="bio">
+		<bio:relationship>
+			<bio:Relationship>
+				<xsl:variable name="prefix" select="substring-before(@xlink:arcrole, ':')"/>
+				<xsl:variable name="namespace" select="ancestor::eac:eac-cpf/eac:control/eac:localTypeDeclaration[eac:abbreviation=$prefix]/eac:citation/@xlink:href"/>
+
+				<!-- relationship as a type -->
+				<xeac:relationshipType rdf:resource="{concat($namespace, substring-after(@xlink:arcrole, ':'))}"/>
+				
+				<bio:participant>
+					<xsl:choose>
+						<xsl:when test="@xlink:href">
+							<xsl:variable name="uri">
+								<xsl:choose>
+									<xsl:when test="@xlink:href castable as xs:anyURI and contains(@xlink:href, 'http://')">
+										<xsl:value-of select="@xlink:href"/>
+									</xsl:when>
+									<xsl:when test="@xlink:href castable as xs:anyURI and not(contains(@xlink:href, 'http://'))">
+										<xsl:choose>
+											<xsl:when test="string(/content/config/uri_space)">
+												<xsl:value-of select="concat(/content/config/uri_space,@xlink:href)"/>
+											</xsl:when>
+											<xsl:otherwise>
+												<xsl:value-of select="concat($url, 'id/',@xlink:href)"/>
+											</xsl:otherwise>
+										</xsl:choose>
+									</xsl:when>
+								</xsl:choose>
+							</xsl:variable>
+
+							<xsl:attribute name="rdf:resource" select="$uri"/>
+						</xsl:when>
+						<xsl:otherwise>
+							<xsl:element name="{@xlink:role}">
+								<foaf:name>
+									<xsl:value-of select="normalize-space(eac:relationEntry)"/>
+								</foaf:name>
+							</xsl:element>
+							
+						</xsl:otherwise>
+					</xsl:choose>
+				</bio:participant>
+
+				<!-- dates: only date and dateRange are current handled -->
+				<xsl:choose>
+					<xsl:when test="eac:date[@standardDate]">
+						<bio:date>
+							<xsl:call-template name="normalizeDate">
+								<xsl:with-param name="standardDate" select="@standardDate"/>
+							</xsl:call-template>
+						</bio:date>
+					</xsl:when>
+					<xsl:when test="eac:dateRange[eac:fromDate[@standardDate] and eac:toDate[@standardDate]]">
+						<bio:date>
+							<edm:TimeSpan>
+								<edm:begin>
+									<xsl:call-template name="normalizeDate">
+										<xsl:with-param name="standardDate" select="eac:dateRange/eac:fromDate/@standardDate"/>
+									</xsl:call-template>
+								</edm:begin>
+								<edm:end>
+									<xsl:call-template name="normalizeDate">
+										<xsl:with-param name="standardDate" select="eac:dateRange/eac:toDate/@standardDate"/>
+									</xsl:call-template>
+								</edm:end>
+							</edm:TimeSpan>
+						</bio:date>
+					</xsl:when>
+				</xsl:choose>
+
+				<!-- handle placeEntry if there is an xlink:href -->
+				<xsl:if test="eac:placeEntry[@vocabularySource]">
+					<bio:place rdf:resource="{eac:placeEntry/@vocabularySource}"/>
+				</xsl:if>
+			</bio:Relationship>
+		</bio:relationship>
+	</xsl:template>
+
+	<xsl:template name="normalizeDate">
+		<xsl:param name="standardDate"/>
+
+		<xsl:attribute name="rdf:datatype">
+			<xsl:choose>
+				<xsl:when test="$standardDate castable as xs:date">
+					<xsl:text>http://www.w3.org/2001/XMLSchema#date</xsl:text>
+				</xsl:when>
+				<xsl:when test="$standardDate castable as xs:gYearMonth">
+					<xsl:text>http://www.w3.org/2001/XMLSchema#gYearMonth</xsl:text>
+				</xsl:when>
+				<xsl:when test="$standardDate castable as xs:gYear">
+					<xsl:text>http://www.w3.org/2001/XMLSchema#gYear</xsl:text>
+				</xsl:when>
+			</xsl:choose>
+		</xsl:attribute>
+		<xsl:value-of select="$standardDate"/>
+	</xsl:template>
 
 	<!-- ***** CIDOC CRM ***** -->
 	<xsl:template match="eac:eac-cpf" mode="crm">
@@ -213,37 +306,41 @@
 				</xsl:otherwise>
 			</xsl:choose>
 		</xsl:variable>
+
+
 		<xsl:variable name="entityType" select="descendant::eac:entityType"/>
 
-		<rdf:RDF>
-			<xsl:element name="{if ($entityType='person') then 'ecrm:E21_Person' else 'ecrm:E74_Group'}" namespace="http://erlangen-crm.org/current/">
-				<xsl:attribute name="rdf:about" select="$recordURI"/>
-				<xsl:for-each select="descendant::eac:nameEntry">
-					<ecrm:P131_is_identified_by>
-						<xsl:if test="@xml:lang">
-							<xsl:attribute name="xml:lang" select="@xml:lang"/>
-						</xsl:if>
-						<ecrm:E82_Actor_Appellation>
-							<rdf:value>
-								<xsl:value-of select="eac:part"/>
-							</rdf:value>
-						</ecrm:E82_Actor_Appellation>
-					</ecrm:P131_is_identified_by>
-				</xsl:for-each>
-				<xsl:apply-templates select="eac:cpfDescription/eac:description/eac:existDates" mode="crm"/>
-			</xsl:element>
-		</rdf:RDF>
+		<xsl:element name="{if ($entityType='person') then 'crm:E21_Person' else 'crm:E74_Group'}" namespace="http://erlangen-crm.org/current/">
+			<xsl:attribute name="rdf:about" select="$recordURI"/>
+			<!--<xsl:for-each select="descendant::eac:nameEntry">
+				<crm:P131_is_identified_by>					
+					<crm:E82_Actor_Appellation>
+						<rdfs:label>
+							<xsl:if test="@xml:lang">
+								<xsl:attribute name="xml:lang" select="@xml:lang"/>
+							</xsl:if>
+							<xsl:value-of select="eac:part"/>
+						</rdfs:label>
+					</crm:E82_Actor_Appellation>
+				</crm:P131_is_identified_by>
+			</xsl:for-each>-->
+			<xsl:apply-templates select="eac:cpfDescription/eac:description/eac:existDates[@localType='xeac:life']" mode="crm"/>
+		</xsl:element>
+
+		<!-- relations -->
+		<!-- only process relations with an xlink:arcrole from a defined namespace -->
+		<xsl:apply-templates select="descendant::eac:cpfRelation[contains(@xlink:arcrole, ':') and string(@xlink:href)]" mode="snap"/>
 	</xsl:template>
 
-	<xsl:template match="eac:existDates" mode="crm">
+	<xsl:template match="eac:existDates[@localType='xeac:life']" mode="crm">
 		<xsl:apply-templates select="eac:dateRange/eac:fromDate|eac:dateRange/eac:toDate" mode="crm"/>
 	</xsl:template>
 
 	<xsl:template match="eac:fromDate|eac:toDate" mode="crm">
-		<xsl:element name="{if(local-name()='fromDate') then 'ecrm:P92i_was_brought_into_existence_by' else 'ecrm:P93_took_out_of_existence'}" namespace="http://erlangen-crm.org/current/">
-			<xsl:element name="{if(local-name()='fromDate') then 'ecrm:E63_Beginning_of_Existence' else 'ecrm:E64_End_of_Existence'}" namespace="http://erlangen-crm.org/current/">
-				<ecrm:P4_has_time-span>
-					<ecrm:E52_Time-Span>
+		<xsl:element name="{if(local-name()='fromDate') then 'crm:P92i_was_brought_into_existence_by' else 'crm:P93_took_out_of_existence'}" namespace="http://erlangen-crm.org/current/">
+			<xsl:element name="{if(local-name()='fromDate') then 'crm:E63_Beginning_of_Existence' else 'crm:E64_End_of_Existence'}" namespace="http://erlangen-crm.org/current/">
+				<crm:P4_has_time-span>
+					<crm:E52_Time-Span>
 						<rdfs:label>
 							<xsl:value-of select="."/>
 						</rdfs:label>
@@ -274,8 +371,8 @@
 								</xsl:choose>
 							</xsl:when>
 						</xsl:choose>
-					</ecrm:E52_Time-Span>
-				</ecrm:P4_has_time-span>
+					</crm:E52_Time-Span>
+				</crm:P4_has_time-span>
 			</xsl:element>
 		</xsl:element>
 	</xsl:template>
@@ -286,7 +383,7 @@
 		<xsl:param name="type"/>
 
 		<xsl:variable name="element">
-			<xsl:text>ecrm:P82a_</xsl:text>
+			<xsl:text>crm:P82a_</xsl:text>
 			<xsl:text>TYPE</xsl:text>
 			<xsl:text>_of_the_</xsl:text>
 			<xsl:value-of select="if ($parent='fromDate') then 'begin' else 'end'"/>
@@ -370,9 +467,7 @@
 					<dcterms:identifier rdf:resource="{.}"/>
 				</xsl:for-each>
 
-				<xsl:apply-templates
-					select="descendant::eac:cpfRelation[contains(@xlink:arcrole, ':') and string(@xlink:href)]|descendant::eac:resourceReslation[contains(@xlink:arcrole, ':') and string(@xlink:href)]"
-					mode="default"/>
+				<xsl:apply-templates select="descendant::eac:cpfRelation[contains(@xlink:arcrole, ':') and string(@xlink:href)]" mode="snap"/>
 			</lawd:Person>
 
 			<!--<lawd:PersonalName rdf:about="{$recordURI}#name">
@@ -393,6 +488,36 @@
 				</lawd:Attestation>
 			</xsl:for-each>
 		</rdf:RDF>
+	</xsl:template>
+
+	<xsl:template match="eac:cpfRelation" mode="snap">
+		<xsl:variable name="uri">
+			<xsl:choose>
+				<xsl:when test="contains(@xlink:href, 'http://')">
+					<xsl:value-of select="@xlink:href"/>
+				</xsl:when>
+				<xsl:otherwise>
+					<xsl:choose>
+						<xsl:when test="string(/content/config/uri_space)">
+							<xsl:value-of select="concat(/content/config/uri_space, @xlink:href)"/>
+						</xsl:when>
+						<xsl:otherwise>
+							<xsl:value-of select="concat($url, 'id/', @xlink:href)"/>
+						</xsl:otherwise>
+					</xsl:choose>
+				</xsl:otherwise>
+			</xsl:choose>
+		</xsl:variable>
+		<xsl:variable name="prefix" select="substring-before(@xlink:arcrole, ':')"/>
+
+		<snap:Bond>
+			<rdf:type rdf:resource="{concat(ancestor::eac:eac-cpf/eac:control/eac:localTypeDeclaration[eac:abbreviation=$prefix]/eac:citation/@xlink:href, substring-after(@xlink:arcrole, ':'))}"/>
+		</snap:Bond>
+		<!--
+		<xsl:variable name="namespace" select="ancestor::eac:eac-cpf/eac:control/eac:localTypeDeclaration[eac:abbreviation=$prefix]/eac:citation/@xlink:href"/>
+		<xsl:element name="{@xlink:arcrole}" namespace="{$namespace}">
+			<xsl:attribute name="rdf:resource" select="$uri"/>
+		</xsl:element>-->
 	</xsl:template>
 
 	<xsl:template match="eac:existDates/*">

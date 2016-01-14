@@ -55,7 +55,7 @@
 			</xforms:instance>
 
 			<xforms:instance id="cpfRelation-template" xxforms:exclude-result-prefixes="#all">
-				<relation from="" to="" xmlns=""/>
+				<relation from="" to="" domain="" range="" xmlns=""/>
 			</xforms:instance>
 
 			<xforms:instance id="resourceRelation-template" xxforms:exclude-result-prefixes="#all">
@@ -179,6 +179,8 @@
 					<xforms:bind nodeset="descendant::relation">
 						<xforms:bind nodeset="@from" required="true()" constraint="if (contains(., ':')) then substring-before(., ':') = instance('config')//abbreviation else string-length(.) &gt; 0"/>
 						<xforms:bind nodeset="@to" required="true()"/>
+						<xforms:bind nodeset="@domain" required="true()"/>
+						<xforms:bind nodeset="@range" required="true()"/>
 					</xforms:bind>
 				</xforms:bind>
 				<xforms:bind nodeset="localTypeDeclarations">
@@ -491,7 +493,7 @@
 													</xforms:repeat>
 												</div>
 											</xforms:group>
-											<div class="subsection">
+											<div>
 												<h4>Controlled Template</h4>
 												<span class="add">
 													<xforms:trigger appearance="minimal">
@@ -502,12 +504,14 @@
 													</xforms:trigger>
 												</span>
 												<xforms:group ref=".[count(relation) &gt; 0]">
-													<table>
+													<table class="table">
 														<thead>
 															<tr>
-																<th>Relation</th>
-																<th>Inverse</th>
-																<th>Delete</th>
+																<th class="text-center">Relation</th>
+																<th class="text-center">Inverse</th>
+																<th class="text-center">Domain</th>
+																<th class="text-center">Range</th>
+																<th class="text-center">Delete</th>
 															</tr>
 														</thead>
 														<tbody>
@@ -538,6 +542,48 @@
 																		</xforms:select1>
 																	</td>
 																	<td>
+																		<xforms:select1 ref="@domain">
+																			<xforms:item>
+																				<xforms:label>Select...</xforms:label>
+																				<xforms:value/>
+																			</xforms:item>
+																			<xforms:item>
+																				<xforms:label>Person</xforms:label>
+																				<xforms:value>foaf:Person</xforms:value>
+																			</xforms:item>
+																			<xforms:item>
+																				<xforms:label>Organization</xforms:label>
+																				<xforms:value>org:Organization</xforms:value>
+																			</xforms:item>
+																			<xforms:item>
+																				<xforms:label>Family</xforms:label>
+																				<xforms:value>arch:Family</xforms:value>
+																			</xforms:item>
+																			<xforms:alert>Required</xforms:alert>
+																		</xforms:select1>
+																	</td>
+																	<td>
+																		<xforms:select1 ref="@range">
+																			<xforms:item>
+																				<xforms:label>Select...</xforms:label>
+																				<xforms:value/>
+																			</xforms:item>
+																			<xforms:item>
+																				<xforms:label>Person</xforms:label>
+																				<xforms:value>foaf:Person</xforms:value>
+																			</xforms:item>
+																			<xforms:item>
+																				<xforms:label>Organization</xforms:label>
+																				<xforms:value>org:Organization</xforms:value>
+																			</xforms:item>
+																			<xforms:item>
+																				<xforms:label>Family</xforms:label>
+																				<xforms:value>arch:Family</xforms:value>
+																			</xforms:item>
+																			<xforms:alert>Required</xforms:alert>
+																		</xforms:select1>
+																	</td>
+																	<td class="text-center">
 																		<xforms:trigger appearance="minimal">
 																			<xforms:delete ev:event="DOMActivate" nodeset="."/>
 																			<xforms:label>
@@ -567,7 +613,7 @@
 												</xforms:trigger>
 											</span>
 											<xforms:group ref="instance('resourceRelations-list')[count(//relation) &gt; 0]">
-												<div class="subsection">
+												<div>
 													<h4>Available Relationships</h4>
 													<p>The following semantic relationships are already employed in this EAC-CPF collection.</p>
 													<xforms:repeat nodeset="relation">
