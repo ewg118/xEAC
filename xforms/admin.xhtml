@@ -853,13 +853,15 @@
 									<xforms:var name="id" select="context()"></xforms:var>
 									<xforms:setvalue ref="instance('control-instance')/id" value="$id"></xforms:setvalue>
 									<xforms:send submission="eac-to-solr"></xforms:send>
+									
+									<xforms:action ev:event="xforms-submit-done">
+										<!-- post to SPARQL endpoint, if it exists -->								
+										<xforms:send submission="get-rdf" if="string(instance('config')/sparql/update)"></xforms:send>
+										<xforms:send submission="post-rdf" if="string(instance('config')/sparql/store)" ev:event="xforms-submit-done"></xforms:send>
+									</xforms:action>
 								</xforms:action>
 								<!-- commit index -->
 								<xforms:send submission="commit"></xforms:send>
-								
-								<!-- post to SPARQL endpoint, if it exists -->
-								<xforms:send submission="get-rdf" if="string(instance('config')/sparql/update)"></xforms:send>
-								<xforms:send submission="post-rdf" if="string(instance('config')/sparql/store)" ev:event="xforms-submit-done"></xforms:send>
 								
 								<!-- reload table -->
 								<xforms:setvalue ref="instance('eXist-xquery')/exist:text" value="replace(instance('xqueries')/query[@id='get-objects'], 'START', '1')"></xforms:setvalue>
