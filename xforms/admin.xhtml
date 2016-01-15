@@ -200,17 +200,38 @@
 			<xforms:instance id="xqueries">
 				<queries xmlns="">
 					<query id="collection-count">&lt;report&gt;{count(collection())}&lt;/report&gt;</query>
-					<query id="get-objects"> declare namespace eac="urn:isbn:1-931666-33-4"; &lt;report> { for $record in subsequence(collection(), START, 20) return &lt;record>
-						&lt;maintenanceStatus&gt; {$record/eac:eac-cpf/eac:control/eac:maintenanceStatus/text()}&lt;/maintenanceStatus&gt; &lt;id>{data($record//eac:recordId) }&lt;/id> &lt;title>{ if
-						(string($record//*:nameEntry[@xml:lang='en'][string(*:preferredForm)][1]/*:part/text())) then $record//*:nameEntry[@xml:lang='en'][string(*:preferredForm)][1]/*:part/text()
-						else $record//*:nameEntry[1]/*:part[1]/text() }&lt;/title> &lt;published/&gt; &lt;/record> } &lt;/report> </query>
+					<query id="get-objects">
+						<![CDATA[declare namespace eac="urn:isbn:1-931666-33-4";
+						<report> { for $record in subsequence(collection(), START, 20) return
+							<record>
+								<maintenanceStatus>{ data($record/eac:eac-cpf/eac:control/eac:maintenanceStatus) }</maintenanceStatus>
+								<publicationStatus>{ data($record/eac:eac-cpf/eac:control/eac:publicationStatus) }</publicationStatus>
+								<id>{ data($record//eac:recordId) }</id>
+								<title>{ if (string($record//eac:nameEntry[@xml:lang='en'][string(eac:preferredForm)][1]/eac:part/text())) then $record//eac:nameEntry[@xml:lang='en'][string(eac:preferredForm)][1]/eac:part/text()
+									else $record//eac:nameEntry[1]/eac:part[1]/text() }
+								</title>
+								<published>false</published>
+							</record>
+						} </report>]]></query>
 					<query id="create-collection">xmldb:create-collection('/db/xeac', 'records')</query>
-					<query id="publish-all">&lt;report> { for $foo in collection()[descendant::*:publicationStatus='approved'] return &lt;id> { $foo//*:recordId/text() } &lt;/id> }
-						&lt;/report></query>
-					<query id="query-objects"> &lt;report> { for $record in collection() return if ($record//*:recordId[contains(., 'QUERY')] or $record//*:nameEntry/*:part[matches(., 'QUERY', 'i')])
-						then &lt;record> &lt;id>{ $record//*:recordId/text() }&lt;/id> &lt;title>{ if (string($record//*:nameEntry[@xml:lang='en'][string(*:preferredForm)][1]/*:part/text())) then
-						$record//*:nameEntry[@xml:lang='en'][string(*:preferredForm)][1]/*:part/text() else $record//*:nameEntry[1]/*:part[1]/text() }&lt;/title> &lt;maintenanceStatus&gt;
-						{$record/eac:eac-cpf/eac:control/eac:maintenanceStatus/text()}&lt;/maintenanceStatus&gt;&lt;published/&gt; &lt;/record> else '' } &lt;/report> </query>
+					<query id="publish-all"><![CDATA[declare namespace eac="urn:isbn:1-931666-33-4";
+						<report> { for $record in collection()[descendant::eac:publicationStatus='approved'] return 
+							<id> { data($record//eac:recordId) } </id>
+						} </report>]]></query>
+					<query id="query-objects">
+						<![CDATA[declare namespace eac="urn:isbn:1-931666-33-4";
+						<report> { for $record in collection() return
+							if ($record//eac:recordId[contains(., 'QUERY')] or $record//eac:nameEntry/eac:part[matches(., 'QUERY', 'i')]) then
+							<record>
+								<maintenanceStatus>{ data($record/eac:eac-cpf/eac:control/eac:maintenanceStatus) }</maintenanceStatus>
+								<publicationStatus>{ data($record/eac:eac-cpf/eac:control/eac:publicationStatus) }</publicationStatus>
+								<id>{ data($record//eac:recordId) }</id>
+								<title>{ if (string($record//eac:nameEntry[@xml:lang='en'][string(eac:preferredForm)][1]/eac:part/text())) then $record//eac:nameEntry[@xml:lang='en'][string(eac:preferredForm)][1]/eac:part/text()
+									else $record//eac:nameEntry[1]/eac:part[1]/text() }
+								</title>
+								<published>false</published>
+							</record> else ''
+						} </report>]]></query>
 				</queries>
 			</xforms:instance>
 
@@ -263,20 +284,51 @@
 			</xforms:instance>
 
 			<xforms:instance id="sparqlUpdate-template">
-				<query>
-					<![CDATA[DELETE {?s ?p ?o} WHERE { <URI> ?p ?o . ?s ?p ?o . FILTER (?s = <URI>) }]]>
-				</query>
+				<queries xmlns="">
+					<query id="delete-entity"><![CDATA[PREFIX rdf:	<http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX bio:	<http://purl.org/vocab/bio/0.1/>
+PREFIX foaf:	<http://xmlns.com/foaf/0.1/>
+PREFIX skos:	<http://www.w3.org/2004/02/skos/core#>
+DELETE {?s ?p ?o} WHERE { 
+{ <URI> bio:relationship ?rel . ?rel bio:date ?s . ?s ?p ?o }
+UNION { <URI> bio:relationship ?s . ?s ?p ?o }
+UNION { <URI> bio:birth ?s . ?s ?p ?o }
+UNION { <URI> bio:death ?s . ?s ?p ?o }
+UNION { ?s foaf:focus <URI> . ?s ?p ?o }
+UNION { <URI> ?p ?o . ?s ?p ?o . FILTER (?s = <URI>) }}]]>
+					</query>
+					<query id="delete-all"><![CDATA[PREFIX rdf:	<http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX bio:	<http://purl.org/vocab/bio/0.1/>
+PREFIX foaf:	<http://xmlns.com/foaf/0.1/>
+PREFIX skos:	<http://www.w3.org/2004/02/skos/core#>
+DELETE {?s ?p ?o} WHERE { 
+{ ?rel rdf:type bio:Relationship ; bio:date ?s . ?s ?p ?o }
+UNION { ?s rdf:type bio:Relationship . ?s ?p ?o }
+UNION { ?s rdf:type bio:Birth . ?s ?p ?o }
+UNION { ?s rdf:type bio:Death . ?s ?p ?o }
+UNION { ?concept rdf:type skos:Concept ; 
+	foaf:focus ?s . ?s ?p ?o }
+UNION { ?s rdf:type skos:Concept ; foaf:focus ?entity . ?s ?p ?o }}]]>
+					</query>
+				</queries>
 			</xforms:instance>
 
 			<xforms:instance id="sparqlUpdate">
 				<query></query>
 			</xforms:instance>
 
+			<!-- ************* BINDINGS ************* -->
 			<xforms:bind nodeset="instance('control-instance')">
 				<xforms:bind nodeset="firstrun" type="xs:boolean"></xforms:bind>
 			</xforms:bind>
 
-			<!-- submissions -->
+			<xforms:bind nodeset="instance('pagination-result')">
+				<xforms:bind nodeset="//record">
+					<xforms:bind nodeset="published" type="xs:boolean"></xforms:bind>
+				</xforms:bind>
+			</xforms:bind>
+
+			<!-- ************* SUBMISSIONS ************* -->
 			<xforms:submission id="load-config" serialization="none" method="get" action="{instance('exist-config')/url}xeac/config.xml" replace="instance" instance="config"
 				xxforms:username="{instance('exist-config')/username}" xxforms:password="{instance('exist-config')/password}">
 				<xforms:action ev:event="xforms-submit-done">
@@ -329,17 +381,12 @@
 				<xforms:setvalue ref="instance('control-instance')/error" ev:event="xforms-submit-error">Error querying eXist database.</xforms:setvalue>
 			</xforms:submission>
 
-			<!--<xforms:submission id="temp-query" ref="instance('temp-xquery')" action="{instance('exist-config')/url}xeac/records/" method="post" replace="instance" instance="temp-result"
-				xxforms:username="{instance('exist-config')/username}" xxforms:password="{instance('exist-config')/password}">
-				<xforms:setvalue ref="instance('control-instance')/error" ev:event="xforms-submit-error">Error querying eXist database.</xforms:setvalue>
-			</xforms:submission>-->
-
 			<!-- submission to query solr to see if the document is published -->
 			<xforms:submission id="query-solr-for-publication" serialization="none" method="get" action="{instance('control-instance')/solr-core}select/?q=id:{instance('control-instance')/id}"
 				replace="instance" instance="published-response">
 				<!-- if the document is found in solr, get the updated solr doc -->
 				<xforms:setvalue ev:event="xforms-submit-done" if="instance('published-response')/result[@name='response']/@numFound = '1'"
-					ref="instance('pagination-result')//record[id=instance('control-instance')/id]/published" value="'true'"></xforms:setvalue>
+					ref="instance('pagination-result')//record[id=instance('control-instance')/id]/published" value="true()"></xforms:setvalue>
 			</xforms:submission>
 
 
@@ -407,16 +454,14 @@
 			</xforms:submission>
 
 			<!-- *********** ADD/DELETE TRIPLES FROM ENDPOINT ***************** -->
+			<xforms:submission id="get-rdf-dump" method="get" replace="instance" instance="rdf" serialization="none" resource="/xeac/data.rdf">
+				<xforms:message ev:event="xforms-submit-error" level="modal">Unable to get RDF/XML serialization.</xforms:message>
+				<xforms:send submission="post-rdf" ev:event="xforms-submit-done"></xforms:send>
+			</xforms:submission>
+
 			<xforms:submission id="get-rdf" method="get" replace="instance" instance="rdf" serialization="none" resource="/xeac/id/{instance('control-instance')/id}.rdf">
 				<xforms:message ev:event="xforms-submit-error" level="modal">Unable to get RDF/XML serialization.</xforms:message>
-				<xforms:action ev:event="xforms-submit-done">
-					<!-- first remove existing graphs -->
-					<xforms:action xxforms:iterate="instance('rdf')//@rdf:about">
-						<xforms:var name="uri" select="."></xforms:var>
-						<xforms:setvalue ref="instance('sparqlUpdate')" value="replace(instance('sparqlUpdate-template'), 'URI', $uri)"></xforms:setvalue>
-						<xforms:send submission="delete-graph"></xforms:send>
-					</xforms:action>
-				</xforms:action>
+				<xforms:send submission="post-rdf" ev:event="xforms-submit-done"></xforms:send>
 			</xforms:submission>
 
 			<xforms:submission id="post-rdf" action="{instance('config')/sparql/store}?default" ref="instance('rdf')" replace="none" method="post" mediatype="application/rdf+xml">
@@ -427,9 +472,7 @@
 
 			<xforms:submission id="delete-graph" action="{instance('config')/sparql/update}" ref="instance('sparqlUpdate')" serialization="text/plain" replace="none" method="post"
 				mediatype="application/sparql-update">
-				<xforms:action ev:event="xforms-submit-error">
-					<xforms:message level="modal">SPARQL update failed.</xforms:message>
-				</xforms:action>
+				<xforms:message level="modal" ev:event="xforms-submit-error">SPARQL update failed.</xforms:message>
 			</xforms:submission>
 			<!-- load xeac config file on xforms construction -->
 			<xforms:action ev:event="xforms-model-construct-done">
@@ -444,11 +487,11 @@
 			<div class="row">
 				<div class="col-md-12">
 					<div id="form">
-						<xforms:group ref="instance('status')/text()">
+						<xforms:group ref="instance('control-instance')/status/text()">
 							<div class="bg-info alert-box">
 								<span class="glyphicon glyphicon-info-sign"></span>
 								<strong>Status:</strong>
-								<xforms:output ref="instance('status')"></xforms:output>
+								<xforms:output ref="instance('control-instance')/status"></xforms:output>
 							</div>
 						</xforms:group>
 						<h1>xEAC Administration</h1>
@@ -719,26 +762,58 @@
 													<a href="{instance('config')/url}id/{$id}.xml" target="_blank">xml</a> | <a href="{instance('config')/url}id/{$id}" target="_blank">html</a>
 												</td>
 												<td class="text-center">
-													<!-- only enable publication if the maintenanceStatus allows it -->
 													<xforms:group ref=".[maintenanceStatus='new' or maintenanceStatus='revised' or maintenanceStatus='derived']">
-														<xforms:group ref=".[published = 'true']">
-															<xforms:trigger appearance="minimal">
-																<xforms:label>unpublish</xforms:label>
-																<xforms:action ev:event="DOMActivate">
+														<xforms:input ref="published">
+															<xforms:action ev:event="xforms-value-changed">
+																<xforms:var name="val" select="." as="xs:boolean"></xforms:var>
+																<!-- publish the record if the box is checked -->
+																<xforms:action if="$val = true()">
 																	<xforms:setvalue ref="instance('control-instance')/id" value="$id"></xforms:setvalue>
-																	<xforms:dispatch target="unpublish" name="fr-show"></xforms:dispatch>
+																	<!-- update publicationStatus -->
+																	<xforms:setvalue ref="instance('control-instance')/publicationStatus">approved</xforms:setvalue>
+																	<xforms:send submission="load-doc"></xforms:send>
+																	<!-- create kml -->
+																	<xforms:insert nodeset="instance('kml')"
+																		origin="xxforms:call-xpl('oxf:/apps/xeac/xpl/views/serializations/eac/kml.xpl', 'data', instance('doc'), 'data')"></xforms:insert>
+																	<xforms:send submission="save-kml"></xforms:send>
+																	<!-- publish to solr -->
+																	<xforms:setvalue ref="instance('control-instance')/solr-core" value="instance('config')/solr_published"></xforms:setvalue>
+																	<xforms:send submission="eac-to-solr"></xforms:send>
+																	<xforms:send submission="commit" ev:event="xforms-submit-done"></xforms:send>
+																	<!-- post to SPARQL endpoint, if it exists -->
+																	<xforms:action if="string(instance('config')/sparql/update) and string(instance('config')/sparql/store)">
+																		<xforms:var name="uri"
+																			select="if (string(instance('config')/uri_space)) then concat(instance('config')/uri_space, instance('control-instance')/id) else concat(instance('config')/url, 'id/', instance('control-instance')/id)"></xforms:var>
+																		<!-- first clear existing triples -->
+																		<xforms:setvalue ref="instance('sparqlUpdate')"
+																			value="replace(instance('sparqlUpdate-template')/query[@id='delete-entity'], 'URI', $uri)"></xforms:setvalue>
+																		<xforms:send submission="delete-graph"></xforms:send>
+																		<!-- get RDF for entity and re-post it -->
+																		<xforms:send submission="get-rdf" ev:event="xforms-submit-done"></xforms:send>
+																	</xforms:action>
 																</xforms:action>
-															</xforms:trigger>
-														</xforms:group>
-														<xforms:group ref=".[published != 'true']">
-															<xforms:trigger appearance="minimal">
-																<xforms:label>publish</xforms:label>
-																<xforms:action ev:event="DOMActivate">
+																<!-- unpublish the record if the box is unchecked -->
+																<xforms:action if="$val = false()">
 																	<xforms:setvalue ref="instance('control-instance')/id" value="$id"></xforms:setvalue>
-																	<xforms:dispatch target="publish" name="fr-show"></xforms:dispatch>
+																	<!-- update publicationStatus -->
+																	<xforms:setvalue ref="instance('control-instance')/publicationStatus">inProcess</xforms:setvalue>
+																	<xforms:send submission="load-doc"></xforms:send>
+																	<!-- delete from Solr -->
+																	<xforms:setvalue ref="instance('deleteId')/query" value="concat('recordId:&#x022;', instance('control-instance')/id, '&#x022;')"></xforms:setvalue>
+																	<xforms:setvalue ref="instance('control-instance')/solr-core" value="instance('config')/solr_published"></xforms:setvalue>
+																	<xforms:send submission="delete-solr-doc"></xforms:send>
+																	<!-- delete from triplestore -->
+																	<xforms:action if="string(instance('config')/sparql/update)">
+																		<xforms:var name="uri"
+																			select="if (string(instance('config')/uri_space)) then concat(instance('config')/uri_space, instance('control-instance')/id) else concat(instance('config')/url, 'id/', instance('control-instance')/id)"></xforms:var>
+																		<!-- first clear existing triples -->
+																		<xforms:setvalue ref="instance('sparqlUpdate')"
+																			value="replace(instance('sparqlUpdate-template')/query[@id='delete-entity'], 'URI', $uri)"></xforms:setvalue>
+																		<xforms:send submission="delete-graph"></xforms:send>
+																	</xforms:action>
 																</xforms:action>
-															</xforms:trigger>
-														</xforms:group>
+															</xforms:action>
+														</xforms:input>
 													</xforms:group>
 												</td>
 												<td class="text-center">
@@ -762,203 +837,152 @@
 							</xforms:group>
 						</xforms:group>
 					</div>
-					<!-- dialogs -->
-					<fr:alert-dialog id="publish">
-						<fr:label>Publish</fr:label>
-						<fr:message>Do you want to publish this object to the search index?</fr:message>
-						<fr:negative-choice></fr:negative-choice>
-						<fr:positive-choice>
-							<xforms:action ev:event="DOMActivate">
-								<!-- update publicationStatus -->
-								<xforms:setvalue ref="instance('control-instance')/publicationStatus">approved</xforms:setvalue>
-								<xforms:send submission="load-doc"></xforms:send>
-								<!-- create kml -->
-								<xforms:insert nodeset="instance('kml')" origin="xxforms:call-xpl('oxf:/apps/xeac/xpl/views/serializations/eac/kml.xpl', 'data', instance('doc'), 'data')"></xforms:insert>
-								<xforms:send submission="save-kml"></xforms:send>
-								<!-- publish to solr -->
-								<xforms:setvalue ref="instance('control-instance')/solr-core" value="instance('config')/solr_published"></xforms:setvalue>
-								<xforms:send submission="eac-to-solr"></xforms:send>
-								<xforms:send submission="commit" ev:event="xforms-submit-done"></xforms:send>
-								<!-- post to SPARQL endpoint, if it exists -->
-								<xforms:send submission="get-rdf" if="string(instance('config')/sparql/update)"></xforms:send>
-								<xforms:send submission="post-rdf" if="string(instance('config')/sparql/store)" ev:event="xforms-submit-done"></xforms:send>
-								<!-- reload table -->
-								<xforms:var name="page" select="number(instance('control-instance')/page)"></xforms:var>
-								<xforms:var name="start" select="(($page - 1) * 20) + 1"></xforms:var>
-								<xforms:setvalue ref="instance('eXist-xquery')/exist:text" value="replace(instance('xqueries')/query[@id='get-objects'], 'START', string($start))"></xforms:setvalue>
-								<xforms:send submission="xquery-pagination"></xforms:send>
-							</xforms:action>
-						</fr:positive-choice>
-					</fr:alert-dialog>
-					<fr:alert-dialog id="unpublish">
-						<fr:label>Unpublish</fr:label>
-						<fr:message>Do you want to remove this object from the search index?</fr:message>
-						<fr:negative-choice></fr:negative-choice>
-						<fr:positive-choice>
-							<xforms:action ev:event="DOMActivate">
-								<!-- update publicationStatus -->
-								<xforms:setvalue ref="instance('control-instance')/publicationStatus">inProcess</xforms:setvalue>
-								<xforms:send submission="load-doc"></xforms:send>
-								<!-- delete from Solr -->
-								<xforms:setvalue ref="instance('deleteId')/query" value="concat('recordId:&#x022;', instance('control-instance')/id, '&#x022;')"></xforms:setvalue>
-								<xforms:setvalue ref="instance('control-instance')/solr-core" value="instance('config')/solr_published"></xforms:setvalue>
-								<xforms:send submission="delete-solr-doc"></xforms:send>
-								<!-- delete from triplestore -->
-								<xforms:send submission="get-rdf" if="string(instance('config')/sparql/update)"></xforms:send>
-								<!-- reload table -->
-								<xforms:var name="page" select="number(instance('control-instance')/page)"></xforms:var>
-								<xforms:var name="start" select="(($page - 1) * 20) + 1"></xforms:var>
-								<xforms:setvalue ref="instance('eXist-xquery')/exist:text" value="replace(instance('xqueries')/query[@id='get-objects'], 'START', string($start))"></xforms:setvalue>
-								<xforms:send submission="xquery-pagination"></xforms:send>
-							</xforms:action>
-						</fr:positive-choice>
-					</fr:alert-dialog>
-					<fr:alert-dialog id="delete">
-						<fr:label>Delete</fr:label>
-						<fr:message>Are you sure you want to delete this object?</fr:message>
-						<fr:negative-choice></fr:negative-choice>
-						<fr:positive-choice>
-							<xforms:action ev:event="DOMActivate">
-								<xforms:send submission="delete-doc"></xforms:send>
-								<xforms:send submission="delete-kml"></xforms:send>
-								<xforms:setvalue ref="instance('deleteId')/query" value="concat('recordId:&#x022;', instance('control-instance')/id, '&#x022;')"></xforms:setvalue>
-								<xforms:setvalue ref="instance('control-instance')/solr-core" value="instance('config')/solr_published"></xforms:setvalue>
-								<xforms:send submission="delete-solr-doc"></xforms:send>
-								<!-- delete from triplestore -->
-								<xforms:send submission="get-rdf" if="string(instance('config')/sparql/update)"></xforms:send>
-								<!-- get new numCount -->
-								<xforms:setvalue ref="instance('eXist-xquery')/exist:text" value="instance('xqueries')/query[@id='collection-count']"></xforms:setvalue>
-								<xforms:send submission="xquery-collection"></xforms:send>
-								<!-- reload table -->
-								<xforms:var name="page" select="number(instance('control-instance')/page)"></xforms:var>
-								<xforms:var name="start" select="(($page - 1) * 20) + 1"></xforms:var>
-								<xforms:var name="end" select="$page * 20"></xforms:var>
-								<xforms:setvalue ref="instance('eXist-xquery')/exist:text" value="replace(instance('xqueries')/query[@id='get-objects'], 'START', string($start))"></xforms:setvalue>
-								<xforms:send submission="xquery-pagination"></xforms:send>
-							</xforms:action>
-						</fr:positive-choice>
-					</fr:alert-dialog>
-					<!-- mass publication dialogs -->
-					<fr:alert-dialog id="publish-all">
-						<fr:label>Publish All</fr:label>
-						<fr:message>Do you want to publish all records? This may take several minutes.</fr:message>
-						<fr:negative-choice></fr:negative-choice>
-						<fr:positive-choice>
-							<xforms:action ev:event="DOMActivate">
-								<xforms:setvalue ref="instance('eXist-xquery')/exist:text" value="instance('xqueries')/query[@id='publish-all']"></xforms:setvalue>
-								<xforms:send submission="xquery-collection"></xforms:send>
-								<xforms:setvalue ref="instance('control-instance')/solr-core" value="instance('config')/solr_published"></xforms:setvalue>
-								<xforms:action xxforms:iterate="instance('xquery-result')/report/id">
-									<!-- publish to solr -->
-									<xforms:var name="id" select="context()"></xforms:var>
-									<xforms:setvalue ref="instance('control-instance')/id" value="$id"></xforms:setvalue>
-									<xforms:send submission="eac-to-solr"></xforms:send>
-								</xforms:action>
-								<!-- commit index -->
-								<xforms:send submission="commit"></xforms:send>
-								
-								<!-- post to SPARQL endpoint, if it exists -->
-								<xforms:send submission="get-rdf" if="string(instance('config')/sparql/update)"></xforms:send>
-								<xforms:send submission="post-rdf" if="string(instance('config')/sparql/store)" ev:event="xforms-submit-done"></xforms:send>
-								
-								<!-- reload table -->
-								<xforms:setvalue ref="instance('eXist-xquery')/exist:text" value="replace(instance('xqueries')/query[@id='get-objects'], 'START', '1')"></xforms:setvalue>
-								<xforms:send submission="xquery-pagination"></xforms:send>
-							</xforms:action>
-						</fr:positive-choice>
-					</fr:alert-dialog>
-					<fr:alert-dialog id="generate-kml">
-						<fr:label>Generate KML</fr:label>
-						<fr:message>This will generate KML documents for all records. It may take several minutes. Proceed?</fr:message>
-						<fr:negative-choice>
-							<fr:label>No</fr:label>
-						</fr:negative-choice>
-						<fr:positive-choice>
-							<fr:label>Yes</fr:label>
-							<xforms:action ev:event="DOMActivate">
-								<xforms:setvalue ref="instance('eXist-xquery')/exist:text" value="instance('xqueries')/query[@id='publish-all']"></xforms:setvalue>
-								<xforms:send submission="xquery-collection"></xforms:send>
-								<xforms:action xxforms:iterate="instance('xquery-result')/report/id">
-									<xforms:var name="id" select="context()"></xforms:var>
-									<xforms:setvalue ref="instance('control-instance')/id" value="$id"></xforms:setvalue>
-									<xforms:send submission="load-doc"></xforms:send>
-									<!-- create kml -->
-									<xforms:action ev:event="xforms-submit-done">
-										<xforms:insert nodeset="instance('kml')" origin="xxforms:call-xpl('oxf:/apps/xeac/xpl/views/serializations/eac/kml.xpl', 'data', instance('doc'), 'data')"></xforms:insert>
-										<xforms:send submission="save-kml"></xforms:send>
-									</xforms:action>
-								</xforms:action>
-								<xforms:setvalue ref="instance('status')">Process complete: KML files generated.</xforms:setvalue>
-							</xforms:action>
-						</fr:positive-choice>
-					</fr:alert-dialog>
-					<fr:alert-dialog id="unpublish-all">
-						<fr:label>Unpublish All</fr:label>
-						<fr:message>Do you want to unpublish all records?</fr:message>
-						<fr:negative-choice></fr:negative-choice>
-						<fr:positive-choice>
-							<xforms:action ev:event="DOMActivate">
-								<xforms:setvalue ref="instance('control-instance')/solr-core" value="instance('config')/solr_published"></xforms:setvalue>
-								<xforms:setvalue ref="instance('deleteAll')/query">*:*</xforms:setvalue>
-								<xforms:send submission="delete-all" ev:event="DOMActivate"></xforms:send>
-								<!-- optimize index -->
-								<xforms:send submission="optimize"></xforms:send>
-								<!-- reload table -->
-								<xforms:setvalue ref="instance('eXist-xquery')/exist:text" value="replace(instance('xqueries')/query[@id='get-objects'], 'START', '1')"></xforms:setvalue>
-								<xforms:send submission="xquery-pagination"></xforms:send>
-							</xforms:action>
-						</fr:positive-choice>
-					</fr:alert-dialog>
-					<fr:alert-dialog id="republish-dialog">
-						<fr:label>Republish</fr:label>
-						<fr:message>Do you want to reindex currently published records?</fr:message>
-						<fr:negative-choice></fr:negative-choice>
-						<fr:positive-choice>
-							<xforms:action ev:event="DOMActivate">
-								<xforms:setvalue ref="instance('control-instance')/solr-core" value="instance('config')/solr_published"></xforms:setvalue>
-								<xforms:send submission="republish"></xforms:send>
-								<xforms:send submission="optimize" ev:event="xforms-submit-done"></xforms:send>
-							</xforms:action>
-						</fr:positive-choice>
-					</fr:alert-dialog>
-					<!--<fr:xforms-inspector id="orbeon-xforms-inspector"/>-->
+					<fr:xforms-inspector id="orbeon-xforms-inspector"></fr:xforms-inspector>
 				</div>
 			</div>
 		</div>
+
+		<!-- *************** DIALOGS ***************-->
+		<fr:alert-dialog id="delete">
+			<fr:label>Delete</fr:label>
+			<fr:message>Are you sure you want to delete this object?</fr:message>
+			<fr:negative-choice></fr:negative-choice>
+			<fr:positive-choice>
+				<xforms:action ev:event="DOMActivate">
+					<xforms:send submission="delete-doc"></xforms:send>
+					<xforms:send submission="delete-kml"></xforms:send>
+					<xforms:setvalue ref="instance('deleteId')/query" value="concat('recordId:&#x022;', instance('control-instance')/id, '&#x022;')"></xforms:setvalue>
+					<xforms:setvalue ref="instance('control-instance')/solr-core" value="instance('config')/solr_published"></xforms:setvalue>
+					<xforms:send submission="delete-solr-doc"></xforms:send>
+
+					<!-- delete from triplestore -->
+					<!-- delete from triplestore -->
+					<xforms:action if="string(instance('config')/sparql/update)">
+						<xforms:var name="uri"
+							select="if (string(instance('config')/uri_space)) then concat(instance('config')/uri_space, instance('control-instance')/id) else concat(instance('config')/url, 'id/', instance('control-instance')/id)"></xforms:var>
+						<!-- first clear existing triples -->
+						<xforms:setvalue ref="instance('sparqlUpdate')" value="replace(instance('sparqlUpdate-template')/query[@id='delete-entity'], 'URI', $uri)"></xforms:setvalue>
+						<xforms:send submission="delete-graph"></xforms:send>
+					</xforms:action>
+
+					<!-- get new numCount -->
+					<xforms:setvalue ref="instance('eXist-xquery')/exist:text" value="instance('xqueries')/query[@id='collection-count']"></xforms:setvalue>
+					<xforms:send submission="xquery-collection"></xforms:send>
+					<!-- reload table -->
+					<xforms:var name="page" select="number(instance('control-instance')/page)"></xforms:var>
+					<xforms:var name="start" select="(($page - 1) * 20) + 1"></xforms:var>
+					<xforms:var name="end" select="$page * 20"></xforms:var>
+					<xforms:setvalue ref="instance('eXist-xquery')/exist:text" value="replace(instance('xqueries')/query[@id='get-objects'], 'START', string($start))"></xforms:setvalue>
+					<xforms:send submission="xquery-pagination"></xforms:send>
+				</xforms:action>
+			</fr:positive-choice>
+		</fr:alert-dialog>
+
+		<!-- mass publication dialogs -->
+		<fr:alert-dialog id="publish-all">
+			<fr:label>Publish All</fr:label>
+			<fr:message>Do you want to publish all records? This may take several minutes.</fr:message>
+			<fr:negative-choice></fr:negative-choice>
+			<fr:positive-choice>
+				<xforms:action ev:event="DOMActivate">
+					<xforms:setvalue ref="instance('eXist-xquery')/exist:text" value="instance('xqueries')/query[@id='publish-all']"></xforms:setvalue>
+					<xforms:send submission="xquery-collection"></xforms:send>
+					<xforms:setvalue ref="instance('control-instance')/solr-core" value="instance('config')/solr_published"></xforms:setvalue>
+					<xforms:action xxforms:iterate="instance('xquery-result')/report/id">
+						<!-- publish to solr -->
+						<xforms:var name="id" select="context()"></xforms:var>
+						<xforms:setvalue ref="instance('control-instance')/id" value="$id"></xforms:setvalue>
+						<xforms:send submission="eac-to-solr"></xforms:send>
+					</xforms:action>
+					<!-- commit index -->
+					<xforms:send submission="commit"></xforms:send>
+
+					<!-- post to SPARQL endpoint, if it exists -->
+					<xforms:action if="string(instance('config')/sparql/update) and string(instance('config')/sparql/store)">
+						<!-- first clear existing triples -->
+						<xforms:setvalue ref="instance('sparqlUpdate')" value="instance('sparqlUpdate-template')/query[@id='delete-all']"></xforms:setvalue>
+						<xforms:send submission="delete-graph"></xforms:send>
+						<!-- then get RDF data dump for the entire collection and post it -->
+						<xforms:send submission="get-rdf-dump" ev:event="xforms-submit-done"></xforms:send>
+					</xforms:action>
+
+					<!-- reload table -->
+					<xforms:setvalue ref="instance('eXist-xquery')/exist:text" value="replace(instance('xqueries')/query[@id='get-objects'], 'START', '1')"></xforms:setvalue>
+					<xforms:send submission="xquery-pagination"></xforms:send>
+				</xforms:action>
+			</fr:positive-choice>
+		</fr:alert-dialog>
+
+		<fr:alert-dialog id="generate-kml">
+			<fr:label>Generate KML</fr:label>
+			<fr:message>This will generate KML documents for all records. It may take several minutes. Proceed?</fr:message>
+			<fr:negative-choice>
+				<fr:label>No</fr:label>
+			</fr:negative-choice>
+			<fr:positive-choice>
+				<fr:label>Yes</fr:label>
+				<xforms:action ev:event="DOMActivate">
+					<xforms:setvalue ref="instance('eXist-xquery')/exist:text" value="instance('xqueries')/query[@id='publish-all']"></xforms:setvalue>
+					<xforms:send submission="xquery-collection"></xforms:send>
+					<xforms:action xxforms:iterate="instance('xquery-result')/report/id">
+						<xforms:var name="id" select="context()"></xforms:var>
+						<xforms:setvalue ref="instance('control-instance')/id" value="$id"></xforms:setvalue>
+						<xforms:send submission="load-doc"></xforms:send>
+						<!-- create kml -->
+						<xforms:action ev:event="xforms-submit-done">
+							<xforms:insert nodeset="instance('kml')" origin="xxforms:call-xpl('oxf:/apps/xeac/xpl/views/serializations/eac/kml.xpl', 'data', instance('doc'), 'data')"></xforms:insert>
+							<xforms:send submission="save-kml"></xforms:send>
+						</xforms:action>
+					</xforms:action>
+					<xforms:setvalue ref="instance('control-instance')/status">Process complete: KML files generated.</xforms:setvalue>
+				</xforms:action>
+			</fr:positive-choice>
+		</fr:alert-dialog>
+
+		<fr:alert-dialog id="unpublish-all">
+			<fr:label>Unpublish All</fr:label>
+			<fr:message>Do you want to unpublish all records?</fr:message>
+			<fr:negative-choice></fr:negative-choice>
+			<fr:positive-choice>
+				<xforms:action ev:event="DOMActivate">
+					<xforms:setvalue ref="instance('control-instance')/solr-core" value="instance('config')/solr_published"></xforms:setvalue>
+					<xforms:setvalue ref="instance('deleteAll')/query">*:*</xforms:setvalue>
+					<xforms:send submission="delete-all" ev:event="DOMActivate"></xforms:send>
+					<!-- optimize index -->
+					<xforms:send submission="optimize"></xforms:send>
+
+					<!-- purge triples from SPARQL endpoint, if it exists -->
+					<xforms:action if="string(instance('config')/sparql/update) and string(instance('config')/sparql/store)">
+						<!-- first clear existing triples -->
+						<xforms:setvalue ref="instance('sparqlUpdate')" value="instance('sparqlUpdate-template')/query[@id='delete-all']"></xforms:setvalue>
+						<xforms:send submission="delete-graph"></xforms:send>
+					</xforms:action>
+
+					<!-- reload table -->
+					<xforms:setvalue ref="instance('eXist-xquery')/exist:text" value="replace(instance('xqueries')/query[@id='get-objects'], 'START', '1')"></xforms:setvalue>
+					<xforms:send submission="xquery-pagination"></xforms:send>
+				</xforms:action>
+			</fr:positive-choice>
+		</fr:alert-dialog>
+
+		<fr:alert-dialog id="republish-dialog">
+			<fr:label>Republish</fr:label>
+			<fr:message>Do you want to reindex currently published records?</fr:message>
+			<fr:negative-choice></fr:negative-choice>
+			<fr:positive-choice>
+				<xforms:action ev:event="DOMActivate">
+					<xforms:setvalue ref="instance('control-instance')/solr-core" value="instance('config')/solr_published"></xforms:setvalue>
+					<xforms:send submission="republish"></xforms:send>
+					<xforms:send submission="optimize" ev:event="xforms-submit-done"></xforms:send>
+				</xforms:action>
+			</fr:positive-choice>
+		</fr:alert-dialog>
 
 		<!-- *************** FIRST RUN ***************-->
 		<!-- handle the creation of new collections when a new role has successfull logged in -->
 		<xforms:action ev:event="xforms-enabled" if="instance('control-instance')/firstrun = true()">
 			<xxforms:show dialog="firstrun"></xxforms:show>
 		</xforms:action>
-
-		<!--<xxforms:dialog id="create-collection" appearance="full" level="modal" close="false" draggable="true" visible="false">
-			<xforms:label>Welcome to Numishare</xforms:label>
-			<p>Please create a collection for your authenticated group.</p>
-			<xforms:group ref="instance('collections-list')">
-				<h3>
-					<xforms:output ref="instance('control-instance')/request-security/role"/>
-				</h3>
-				<div>
-					<xforms:input ref="collection[@role=instance('control-instance')/request-security/role]/@name">
-						<xforms:label>Collection Name</xforms:label>
-						<xforms:alert>Required</xforms:alert>
-					</xforms:input>
-				</div>
-			</xforms:group>
-			<xforms:trigger>
-				<xforms:label>Save</xforms:label>
-				<xforms:action ev:event="DOMActivate">
-					<xforms:setvalue ref="instance('control-instance')/collection-name" value="instance('collections-list')/collection[@role=instance('control-instance')/request-security/role]/@name"/>
-					<!-\- set exist collection value for creating new collection-\->
-					<xforms:setvalue ref="instance('xqueries')/query[@id='create-collection']"
-						value="concat(&quot;xmldb:create-collection(&#x0027;/db/xeac/&quot;, instance(&quot;control-instance&quot;)/collection-name, &quot;&#x0027;, &#x0027;guides&#x0027;)&quot;)"/>
-					<xforms:send submission="save-collections"/>
-					<xxforms:hide dialog="create-collection"/>
-					<xxforms:show dialog="firstrun"/>
-				</xforms:action>
-			</xforms:trigger>
-		</xxforms:dialog>-->
 
 		<!-- if this is the first time that xEAC has ever been run, show a dialog that enables the user to set the title and URLs -->
 		<xxforms:dialog id="firstrun" appearance="full" level="modal" close="false" draggable="true" visible="false">
