@@ -45,7 +45,7 @@
 	<page path-info="/xeac/api/edges" model="xpl/models/sparql/graph.xpl" view="xpl/views/serializations/sparql/edges.xpl"/>
 	
 	<!-- SPARQL -->
-	<page path="/xeac/query" view="xpl/views/serializations/sparql/query.xpl"/>
+	<page path="/xeac/query" view="xpl/controllers/conneg-sparql.xpl"/>
 	
 	<!-- **** PAGES **** -->	
 	<page path-info="/xeac/" model="xpl/models/config.xpl" view="xpl/views/pages/index.xpl"/>
