@@ -67,6 +67,9 @@
 	width: 20em;
 	margin-bottom: 2px;
 }
+.orbeon .xforms-type-boolean input {
+	width:0;
+}
 .orbeon .xforms-repeat-selected-item-1 .form-td {
 	background-color: #f5f5f5
 }
