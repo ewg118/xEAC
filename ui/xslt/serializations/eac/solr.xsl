@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?cocoon-disable-caching?>
-<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:datetime="http://exslt.org/dates-and-times" xmlns:xs="http://www.w3.org/2001/XMLSchema"
-	xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:eac="urn:isbn:1-931666-33-4" version="2.0">
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:eac="urn:isbn:1-931666-33-4" version="2.0">
 	<xsl:output method="xml" encoding="UTF-8"/>
 
 	<xsl:template match="/">
@@ -19,19 +18,22 @@
 				<xsl:value-of select="eac:control/eac:recordId"/>
 			</field>
 			<field name="timestamp">
+				<xsl:variable name="modified" select="descendant::eac:maintenanceEvent[last()]/eac:eventDateTime/@standardDateTime"/>
+
 				<xsl:choose>
-					<xsl:when test="string(descendant::*:maintenanceEvent[last()]/*:eventDateTime/@standardDateTime)">
+					<xsl:when test="string($modified)">
+						<!-- if the timezone modifier is already the last character of the @standardDateTime-->
 						<xsl:choose>
-							<xsl:when test="contains(descendant::*:maintenanceEvent[last()]/*:eventDateTime/@standardDateTime, 'Z')">
-								<xsl:value-of select="descendant::*:maintenanceEvent[last()]/*:eventDateTime/@standardDateTime"/>
+							<xsl:when test="substring($modified, string-length($modified), 1) = 'Z'">
+								<xsl:value-of select="$modified"/>
 							</xsl:when>
 							<xsl:otherwise>
-								<xsl:value-of select="concat(descendant::*:maintenanceEvent[last()]/*:eventDateTime/@standardDateTime, 'Z')"/>
+								<xsl:value-of select="concat($modified, 'Z')"/>
 							</xsl:otherwise>
-						</xsl:choose>						
+						</xsl:choose>
 					</xsl:when>
 					<xsl:otherwise>
-						<xsl:value-of select="if(contains(datetime:dateTime(), 'Z')) then datetime:dateTime() else concat(datetime:dateTime(), 'Z')"/>
+						<xsl:value-of select="if(contains(string(current-dateTime()), 'Z')) then current-dateTime() else concat(string(current-dateTime()), 'Z')"/>
 					</xsl:otherwise>
 				</xsl:choose>
 			</field>
@@ -63,12 +65,12 @@
 				<xsl:when test="descendant::eac:resourceRelation[@xlink:arcrole='foaf:thumbnail']">
 					<field name="thumb_image">
 						<xsl:value-of select="descendant::eac:resourceRelation[@xlink:arcrole='foaf:thumbnail'][1]/@xlink:href"/>
-					</field>			
+					</field>
 				</xsl:when>
 				<xsl:when test="descendant::eac:resourceRelation[@xlink:arcrole='foaf:depiction']">
 					<field name="thumb_image">
 						<xsl:value-of select="descendant::eac:resourceRelation[@xlink:arcrole='foaf:depiction'][1]/@xlink:href"/>
-					</field>			
+					</field>
 				</xsl:when>
 			</xsl:choose>
 			<field name="text">
@@ -79,22 +81,22 @@
 			</field>
 		</doc>
 	</xsl:template>
-	
+
 	<xsl:template match="eac:cpfDescription">
 		<xsl:apply-templates select="eac:identity"/>
 		<xsl:apply-templates select="eac:relations"/>
 		<xsl:apply-templates select="eac:description"/>
 	</xsl:template>
-	
+
 	<xsl:template match="eac:description">
 		<xsl:apply-templates select="eac:existDates/*"/>
 		<xsl:if test="eac:biogHist/eac:abstract">
 			<field name="abstract_display">
 				<xsl:value-of select="eac:biogHist/eac:abstract"/>
 			</field>
-		</xsl:if>		
+		</xsl:if>
 	</xsl:template>
-	
+
 	<xsl:template match="eac:identity">
 		<field name="entityType_facet">
 			<xsl:value-of select="eac:entityType"/>
@@ -102,7 +104,7 @@
 		<field name="entityType_display">
 			<xsl:value-of select="eac:entityType"/>
 		</field>
-		
+
 		<xsl:for-each select="eac:nameEntry">
 			<field name="name_text">
 				<xsl:value-of select="eac:part"/>
@@ -127,10 +129,10 @@
 			</xsl:otherwise>
 		</xsl:choose>
 	</xsl:template>
-	
+
 	<!-- relations not yet posted to Solr -->
 	<xsl:template match="eac:relations"/>
-	
+
 	<xsl:template match="eac:existDates/*">
 		<field name="existDates_display">
 			<xsl:choose>
