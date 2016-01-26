@@ -11,6 +11,8 @@
 			<xsl:otherwise>public</xsl:otherwise>
 		</xsl:choose>
 	</xsl:param>
+	<xsl:param name="sparql" select="/content/sparql" as="xs:boolean"/>
+	
 	<xsl:variable name="display_path">
 		<xsl:choose>
 			<xsl:when test="$mode='private'">
@@ -117,7 +119,7 @@
 			</head>
 			<body>
 				<xsl:call-template name="header"/>
-				<xsl:call-template name="display"/>
+				<xsl:call-template name="display"/>	
 				<xsl:call-template name="footer"/>
 				<div style="display:none">
 					<span id="id">
@@ -252,7 +254,7 @@
 				<div class="col-md-{if (descendant::eac:placeEntry[string(@vocabularySource)] or (string(//config/sparql/query) and descendant::eac:cpfRelation[@xlink:arcrole and @xlink:role])) then '6' else '12'}">
 					<xsl:call-template name="body"/>
 				</div>
-				<xsl:if test="descendant::eac:placeEntry[string(@vocabularySource)] or (string(//config/sparql/query) and descendant::eac:cpfRelation[@xlink:arcrole and @xlink:role])">
+				<xsl:if test="descendant::eac:placeEntry[string(@vocabularySource)] or ($sparql = true() and descendant::eac:cpfRelation[@xlink:arcrole and @xlink:role])">
 					<div class="col-md-6">
 						<div id="visualizations">
 							<xsl:if test="descendant::eac:placeEntry[string(@vocabularySource)]">
@@ -265,19 +267,16 @@
 									</div>
 								</div>					
 							</xsl:if>
-							<xsl:if test="descendant::eac:placeEntry[string(@vocabularySource)] or (string(//config/sparql/query) and descendant::eac:cpfRelation[@xlink:arcrole and @xlink:role])">
+							<xsl:if test="descendant::eac:placeEntry[string(@vocabularySource)] or ($sparql = true() and descendant::eac:cpfRelation[@xlink:arcrole and @xlink:role])">
 								<br/>
 							</xsl:if>
-							<xsl:if test="string(//config/sparql/query) and descendant::eac:cpfRelation[@xlink:arcrole and @xlink:role]">
+							<xsl:if test="$sparql = true() and descendant::eac:cpfRelation[@xlink:arcrole and @xlink:role]">
 								<div id="network"/>
 								<br/>
 							</xsl:if>
 						</div>
 					</div>
 				</xsl:if>
-				<!--<div class="col-md-3">
-					<xsl:call-template name="side-bar"/>
-				</div>-->
 			</div>
 		</div>
 	</xsl:template>
@@ -604,7 +603,7 @@
 			</xsl:if>
 			<xsl:choose>
 				<!-- get related resources when there is a SPARQL query endpoint -->
-				<xsl:when test="string(//config/sparql/query)">
+				<xsl:when test="$sparql = true()">
 					<xsl:call-template name="xeac:relatedResources">
 						<xsl:with-param name="uri">
 							<xsl:choose>

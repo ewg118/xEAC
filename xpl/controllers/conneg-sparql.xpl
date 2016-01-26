@@ -135,12 +135,19 @@
 	</p:processor>
 	
 	<p:choose href="#url-data-checked">
+		<p:when test="/exceptions">
+			<p:processor name="oxf:pipeline">
+				<p:input name="data" href="#url-data-checked"/>
+				<p:input name="config" href="error.xpl"/>		
+				<p:output name="data" ref="data"/>
+			</p:processor>
+		</p:when>	
 		<p:when test="//*/@status-code != '200'">
 			<p:processor name="oxf:pipeline">
 				<p:input name="data" href="#url-data"/>
 				<p:input name="config" href="error.xpl"/>		
 				<p:output name="data" ref="data"/>
-			</p:processor>			
+			</p:processor>
 		</p:when>
 		<p:otherwise>
 			<!-- Just return the document -->
