@@ -12,7 +12,7 @@
 		</xsl:choose>
 	</xsl:param>
 	<xsl:param name="sparql" select="/content/sparql" as="xs:boolean"/>
-	
+
 	<xsl:variable name="display_path">
 		<xsl:choose>
 			<xsl:when test="$mode='private'">
@@ -105,8 +105,8 @@
 				</xsl:if>
 
 				<!-- semantic relations -->
-				<xsl:if test="string(//config/sparql/query) and descendant::eac:cpfRelation[@xlink:arcrole and @xlink:role]">
-					<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/vis/4.12.0/vis.min.js"/>					
+				<xsl:if test="$sparql = true() and descendant::eac:cpfRelation[@xlink:arcrole and @xlink:role]">
+					<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/vis/4.12.0/vis.min.js"/>
 					<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/vis/4.12.0/vis.min.css"/>
 					<script type="text/javascript" src="{$url}ui/javascript/vis_functions.js"/>
 				</xsl:if>
@@ -119,7 +119,7 @@
 			</head>
 			<body>
 				<xsl:call-template name="header"/>
-				<xsl:call-template name="display"/>	
+				<xsl:call-template name="display"/>
 				<xsl:call-template name="footer"/>
 				<div style="display:none">
 					<span id="id">
@@ -170,7 +170,7 @@
 							</li>
 							<li>
 								<a href="#relations">Relations</a>
-							</li>							
+							</li>
 							<li>
 								<a href="#export">Export</a>
 							</li>
@@ -251,7 +251,8 @@
 				</div>
 			</div>
 			<div class="row">
-				<div class="col-md-{if (descendant::eac:placeEntry[string(@vocabularySource)] or (string(//config/sparql/query) and descendant::eac:cpfRelation[@xlink:arcrole and @xlink:role])) then '6' else '12'}">
+				<div class="col-md-{if (descendant::eac:placeEntry[string(@vocabularySource)] or (string(//config/sparql/query) and descendant::eac:cpfRelation[@xlink:arcrole and @xlink:role])) then
+					'6' else '12'}">
 					<xsl:call-template name="body"/>
 				</div>
 				<xsl:if test="descendant::eac:placeEntry[string(@vocabularySource)] or ($sparql = true() and descendant::eac:cpfRelation[@xlink:arcrole and @xlink:role])">
@@ -265,7 +266,7 @@
 									<div id="timelinecontainer">
 										<div id="timeline"/>
 									</div>
-								</div>					
+								</div>
 							</xsl:if>
 							<xsl:if test="descendant::eac:placeEntry[string(@vocabularySource)] or ($sparql = true() and descendant::eac:cpfRelation[@xlink:arcrole and @xlink:role])">
 								<br/>
@@ -283,7 +284,7 @@
 
 	<xsl:template name="body">
 		<xsl:apply-templates select="eac:cpfDescription"/>
-		
+
 		<!-- export -->
 		<div id="export" class="row">
 			<div class="col-md-12">
@@ -391,7 +392,8 @@
 			<div id="chron">
 				<h3>Chronology</h3>
 				<ul>
-					<xsl:apply-templates select="descendant::eac:date[@standardDate]|descendant::eac:dateRange[eac:fromDate[@standardDate]]" mode="chronList">
+					<xsl:apply-templates select="descendant::eac:date[@standardDate][not(parent::eac:existDates)]|descendant::eac:dateRange[eac:fromDate[@standardDate]][not(parent::eac:existDates)]"
+						mode="chronList">
 						<xsl:sort select="if(local-name()='date') then if (substring(@standardDate, 1, 1) = '-') then (number(tokenize(@standardDate, '-')[2]) * -1) else tokenize(@standardDate,
 							'-')[1] else  if (substring(eac:fromDate/@standardDate, 1, 1) = '-') then (number(tokenize(eac:fromDate/@standardDate, '-')[2]) * -1) else
 							tokenize(eac:fromDate/@standardDate, '-')[1]"/>

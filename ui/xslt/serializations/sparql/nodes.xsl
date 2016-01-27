@@ -17,7 +17,11 @@
 				<title>
 					<xsl:value-of select="descendant::res:result[1]/res:binding[@name='sourceName']/res:literal"/>
 				</title>
-				<shape>ellipse</shape>
+				<value>
+					<xsl:value-of select="count(descendant::res:result)"/>
+				</value>
+				<clickable>0</clickable>
+				<shape>box</shape>
 			</structure>
 		</xsl:variable>
 		<xsl:variable name="line">
@@ -55,10 +59,22 @@
 				<title>
 					<xsl:value-of select="res:binding[@name='name']/res:literal"/>
 				</title>
+				<value>1</value>
 				<shape>box</shape>
+				<clickable>
+					<xsl:choose>
+						<xsl:when test="res:binding[@name='target']/res:bnode">0</xsl:when>
+						<xsl:otherwise>1</xsl:otherwise>
+					</xsl:choose>
+				</clickable>
 				<color>
 					<xsl:choose>
-						<xsl:when test="res:binding[@name='class']/res:uri = 'http://xmlns.com/foaf/0.1/Person'">#97C2FC</xsl:when>
+						<xsl:when test="res:binding[@name='class']/res:uri = 'http://xmlns.com/foaf/0.1/Person'">
+							<xsl:choose>
+								<xsl:when test="res:binding[@name='target']/res:bnode">#D2E5FF</xsl:when>
+								<xsl:otherwise>#97C2FC</xsl:otherwise>
+							</xsl:choose>
+						</xsl:when>
 						<xsl:when test="res:binding[@name='class']/res:uri = 'http://www.w3.org/ns/org#Organization'">#FB7E81</xsl:when>
 						<xsl:when test="res:binding[@name='class']/res:uri = 'http://purl.org/archival/vocab/arch#'">#FB7E81</xsl:when>
 					</xsl:choose>

@@ -33,16 +33,28 @@ $(document).ready(function () {
 				hover: true
 			}
 		};
+		
 		network = new vis.Network(container, data, options);
 		
 		//expand node on click
 		network.on("selectNode", function (params) {
 			var id = params.nodes[0];
-			expandNodes(data, id);
-			expandEdges(data, id);
-			network.stabilize();
+			var clickable;
+			var nodes = data.nodes._data;
+			$.each(nodes, function (i, node) {
+				if (node.id == id) {
+					clickable = node.clickable;
+				}
+			});
+			
+			if (clickable == true) {
+				expandNodes(data, id);
+				expandEdges(data, id);
+				network.stabilize();
+			}
 		});
 	}
+	
 	
 	function expandNodes(data, id) {
 		nodesObj = JSON.parse($.ajax({
@@ -60,7 +72,11 @@ $(document).ready(function () {
 					nodes.add({
 						id: node.id,
 						label: node.label,
-						title: node.title
+						title: node.title,
+						clickable: node.clickable,
+						shape: node.shape,
+						color: node.color,
+						value: node.value
 					});
 				}
 				catch (err) {
@@ -79,13 +95,26 @@ $(document).ready(function () {
 		
 		//iterate through each new node in the response, and only add new nodes
 		$.each (edgesObj, function (i, edge) {
-			var edgeExists = validateEdge(data, edge.from, edge.to);
+			var edgeExists = validateEdge(data, edge.from, edge.to, edge.label, edge.id);
 			if (edgeExists == false) {
 				try {
 					edges.add({
+						id: edge.id,
 						from: edge.from,
 						to: edge.to,
-						label: edge.label
+						label: edge.label,
+						color: edge.color,
+						arrows: 'to'
+					});
+				}
+				catch (err) {
+					alert(err);
+				}
+			} else {
+				try {
+					edges.update({
+						id: edge.id,
+						arrows: 'to, from'
 					});
 				}
 				catch (err) {
@@ -106,27 +135,15 @@ $(document).ready(function () {
 		return exists;
 	}
 	
-	function validateEdge(data, from, to) {
+	function validateEdge(data, from, to, label, id) {
 		var exists = false;
 		var edges = data.edges._data;
 		$.each(edges, function (i, edge) {
-			if (edge.from == from && edge.to == to) {
+			//ignore adding edges to self-click
+			if (id == edge.id && label == edge.label) {
 				exists = true;
 			}
 		});
 		return exists;
 	}
-	
-	/*function addEdge() {
-	try {
-	edges.add({
-	from: 'newell',
-	to: 'noe',
-	label: 'xeac:correspondedWith'
-	});
-	}
-	catch (err) {
-	alert(err);
-	}
-	}*/
 });
