@@ -2,12 +2,13 @@
 
 $(document).ready(function () {
 	var url = $('#url').text();
+	var type = $('#class').text();
 	var nodes, edges, network;
 	
 	//load nodes and edges asynchronously
 	nodesObj = JSON.parse($.ajax({
 		type: "GET",
-		url: url + 'api/nodes?id=' + $('#id').text(),
+		url: url + 'api/nodes?id=' + $('#id').text() + '&class=' + type,
 		async: false
 	}).responseText);
 	edgesObj = JSON.parse($.ajax({
@@ -61,7 +62,7 @@ $(document).ready(function () {
 	function expandNodes(data, id) {
 		nodesObj = JSON.parse($.ajax({
 			type: "GET",
-			url: url + 'api/nodes?id=' + id,
+			url: url + 'api/nodes?id=' + id + '&class=' + type,
 			async: false
 		}).responseText);
 		

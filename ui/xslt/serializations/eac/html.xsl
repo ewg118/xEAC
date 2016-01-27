@@ -40,6 +40,14 @@
 			<namespace prefix="skos">http://www.w3.org/2004/02/skos/core#</namespace>
 		</namespaces>
 	</xsl:variable>
+	
+	<xsl:variable name="class">
+		<xsl:choose>
+			<xsl:when test="descendant::eac:entityType='person'">foaf:Person</xsl:when>
+			<xsl:when test="descendant::eac:entityType='corporateBody'">org:Organization</xsl:when>
+			<xsl:when test="descendant::eac:entityType='family'">arch:Family</xsl:when>
+		</xsl:choose>
+	</xsl:variable>
 
 	<xsl:template match="/">
 		<xsl:apply-templates select="/content/eac:eac-cpf"/>
@@ -134,6 +142,9 @@
 					<span id="url">
 						<xsl:value-of select="$url"/>
 					</span>
+					<span id="class">
+						<xsl:value-of select="$class"/>
+					</span>
 					<xsl:call-template name="control-fields"/>
 				</div>
 			</body>
@@ -141,16 +152,7 @@
 	</xsl:template>
 
 	<xsl:template name="display">
-		<xsl:variable name="typeof">
-			<xsl:choose>
-				<xsl:when test="descendant::eac:entityType='person'">foaf:Person</xsl:when>
-				<xsl:when test="descendant::eac:entityType='corporateBody'">org:Organization</xsl:when>
-				<xsl:when test="descendant::eac:entityType='family'">arch:Family</xsl:when>
-			</xsl:choose>
-		</xsl:variable>
-
-
-		<div class="container-fluid" typeof="{$typeof}" about="{$id}">
+		<div class="container-fluid" typeof="{$class}" about="{$id}">
 			<div class="row">
 				<div class="col-md-12">
 					<h1>
