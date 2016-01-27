@@ -3,6 +3,7 @@
 	version="2.0">
 
 	<xsl:param name="id" select="doc('input:request')/request/parameters/parameter[name='id']/value"/>
+	<xsl:param name="class" select="doc('input:request')/request/parameters/parameter[name='class']/value"/>
 
 	<xsl:template match="/">
 		<xsl:variable name="structure" as="element()*">
@@ -22,6 +23,13 @@
 				</value>
 				<clickable>0</clickable>
 				<shape>box</shape>
+				<color>
+					<xsl:choose>
+						<xsl:when test="$class = 'foaf:Person'">#97C2FC</xsl:when>
+						<xsl:when test="$class = 'org:Organization'">#FB7E81</xsl:when>
+						<xsl:when test="$class = 'arch:Family'">#FB7E81</xsl:when>
+					</xsl:choose>
+				</color>
 			</structure>
 		</xsl:variable>
 		<xsl:variable name="line">
@@ -76,7 +84,7 @@
 							</xsl:choose>
 						</xsl:when>
 						<xsl:when test="res:binding[@name='class']/res:uri = 'http://www.w3.org/ns/org#Organization'">#FB7E81</xsl:when>
-						<xsl:when test="res:binding[@name='class']/res:uri = 'http://purl.org/archival/vocab/arch#'">#FB7E81</xsl:when>
+						<xsl:when test="res:binding[@name='class']/res:uri = 'http://purl.org/archival/vocab/arch#Family'">#FB7E81</xsl:when>
 					</xsl:choose>
 				</color>
 			</structure>
