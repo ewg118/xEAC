@@ -1,16 +1,18 @@
 
+
 $(document).ready(function () {
+	var url = $('#url').text();
 	var nodes, edges, network;
 	
 	//load nodes and edges asynchronously
 	nodesObj = JSON.parse($.ajax({
 		type: "GET",
-		url: '../api/nodes?id=' + $('#id').text(),
+		url: url + 'api/nodes?id=' + $('#id').text(),
 		async: false
 	}).responseText);
 	edgesObj = JSON.parse($.ajax({
 		type: "GET",
-		url: '../api/edges?id=' + $('#id').text(),
+		url: url + 'api/edges?id=' + $('#id').text(),
 		async: false
 	}).responseText);
 	
@@ -59,7 +61,7 @@ $(document).ready(function () {
 	function expandNodes(data, id) {
 		nodesObj = JSON.parse($.ajax({
 			type: "GET",
-			url: '../api/nodes?id=' + id,
+			url: url + 'api/nodes?id=' + id,
 			async: false
 		}).responseText);
 		
@@ -89,7 +91,7 @@ $(document).ready(function () {
 	function expandEdges(data, id) {
 		edgesObj = JSON.parse($.ajax({
 			type: "GET",
-			url: '../api/edges?id=' + id,
+			url: url + 'api/edges?id=' + id,
 			async: false
 		}).responseText);
 		
