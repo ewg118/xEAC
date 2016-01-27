@@ -11,6 +11,8 @@
 			<xsl:otherwise>public</xsl:otherwise>
 		</xsl:choose>
 	</xsl:param>
+	<xsl:param name="sparql" select="/content/sparql" as="xs:boolean"/>
+
 	<xsl:variable name="display_path">
 		<xsl:choose>
 			<xsl:when test="$mode='private'">
@@ -101,14 +103,14 @@
 					<script type="text/javascript" src="{$url}ui/javascript/param.js"/>
 					<script type="text/javascript" src="{$url}ui/javascript/loaders/kml.js"/>
 				</xsl:if>
-				
+
 				<!-- semantic relations -->
-				<xsl:if test="string(//config/sparql/query) and descendant::eac:cpfRelation[@xlink:arcrole and @xlink:role]">
-					<script type="text/javascript" src="{$url}ui/javascript/vis.min.js"/>
+				<xsl:if test="$sparql = true() and descendant::eac:cpfRelation[@xlink:arcrole and @xlink:role]">
+					<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/vis/4.12.0/vis.min.js"/>
+					<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/vis/4.12.0/vis.min.css"/>
 					<script type="text/javascript" src="{$url}ui/javascript/vis_functions.js"/>
-					<script type="text/javascript" src="{$url}ui/css/vis.min.css"/>
 				</xsl:if>
-				
+
 				<xsl:if test="string(/content/config/google_analytics)">
 					<script type="text/javascript">
 						<xsl:value-of select="/content/config/google_analytics"/>
@@ -161,24 +163,38 @@
 							</xsl:otherwise>
 						</xsl:choose>
 					</h1>
+					<div>
+						<ul class="list-inline">
+							<li>
+								<strong>Jump to section: </strong>
+							</li>
+							<li>
+								<a href="#relations">Relations</a>
+							</li>
+							<li>
+								<a href="#export">Export</a>
+							</li>
+						</ul>
+					</div>
 					<a href="#" id="toggle_names">hide/show names</a>
-					<xsl:if test="eac:cpfDescription/eac:identity/eac:nameEntry[child::node()='WIKIPEDIA']">
-						<div id="wiki-names">
-							<xsl:for-each select="eac:cpfDescription/eac:identity/eac:nameEntry[*[local-name() != 'preferredForm']='WIKIPEDIA']">
-								<xsl:value-of select="eac:part"/>
-								<xsl:if test="not(position()=last())">
-									<xsl:text> / </xsl:text>
-								</xsl:if>
-							</xsl:for-each>
-						</div>
-					</xsl:if>
-
 					<div id="names" style="display:none">
+						<xsl:if test="eac:cpfDescription/eac:identity/eac:nameEntry[child::node()='WIKIPEDIA']">
+							<h4> Wikipedia </h4>
+							<div id="wiki-names">
+								<xsl:for-each select="eac:cpfDescription/eac:identity/eac:nameEntry[*[local-name() != 'preferredForm']='WIKIPEDIA']">
+									<xsl:value-of select="eac:part"/>
+									<xsl:if test="not(position()=last())">
+										<xsl:text> / </xsl:text>
+									</xsl:if>
+								</xsl:for-each>
+							</div>
+						</xsl:if>
+
 						<xsl:for-each select="//eac:conventionDeclaration">
 							<xsl:variable name="abbreviation" select="eac:abbreviation"/>
-							<h2>
+							<h4>
 								<xsl:value-of select="eac:citation"/>
-							</h2>
+							</h4>
 							<dl class="dl-horizontal">
 								<xsl:for-each select="//eac:nameEntry[child::node()=$abbreviation]">
 									<dt>
@@ -235,28 +251,82 @@
 				</div>
 			</div>
 			<div class="row">
-				<div class="col-md-9">
+				<div class="col-md-{if (descendant::eac:placeEntry[string(@vocabularySource)] or (string(//config/sparql/query) and descendant::eac:cpfRelation[@xlink:arcrole and @xlink:role])) then
+					'6' else '12'}">
 					<xsl:call-template name="body"/>
 				</div>
-				<div class="col-md-3">
-					<xsl:call-template name="side-bar"/>
-				</div>
+				<xsl:if test="descendant::eac:placeEntry[string(@vocabularySource)] or ($sparql = true() and descendant::eac:cpfRelation[@xlink:arcrole and @xlink:role])">
+					<div class="col-md-6">
+						<div id="visualizations">
+							<xsl:if test="descendant::eac:placeEntry[string(@vocabularySource)]">
+								<div id="timemap">
+									<div id="mapcontainer">
+										<div id="map"/>
+									</div>
+									<div id="timelinecontainer">
+										<div id="timeline"/>
+									</div>
+								</div>
+							</xsl:if>
+							<xsl:if test="descendant::eac:placeEntry[string(@vocabularySource)] or ($sparql = true() and descendant::eac:cpfRelation[@xlink:arcrole and @xlink:role])">
+								<br/>
+							</xsl:if>
+							<xsl:if test="$sparql = true() and descendant::eac:cpfRelation[@xlink:arcrole and @xlink:role]">
+								<div id="network"/>
+								<br/>
+							</xsl:if>
+						</div>
+					</div>
+				</xsl:if>
 			</div>
 		</div>
 	</xsl:template>
 
 	<xsl:template name="body">
-		<xsl:if test="descendant::eac:placeEntry[string(@vocabularySource)]">
-			<div id="timemap">
-				<div id="mapcontainer">
-					<div id="map"/>
-				</div>
-				<div id="timelinecontainer">
-					<div id="timeline"/>
-				</div>
-			</div>
-		</xsl:if>
 		<xsl:apply-templates select="eac:cpfDescription"/>
+
+		<!-- export -->
+		<div id="export" class="row">
+			<div class="col-md-12">
+				<h3>Export</h3>
+			</div>
+			<div class="col-md-4">
+				<ul class="list-inline">
+					<li>
+						<a href="{$id}.xml">EAC-CPF</a>
+					</li>
+					<li>
+						<a href="{$id}.tei">TEI</a>
+					</li>
+					<li>
+						<a href="{$id}.rdf">RDF/XML</a>
+					</li>
+					<li>
+						<a href="{$id}.ttl">Turtle</a>
+					</li>
+					<li>
+						<a href="{$id}.jsonld">JSON-LD</a>
+					</li>
+					<li>
+						<a href="{$id}.kml">KML</a>
+					</li>
+				</ul>
+				<h4>Alternative RDF</h4>
+				<ul class="list-inline">
+					<li>
+						<a href="{$url}api/get?id={$id}&amp;model=cidoc-crm">CIDOC CRM</a>
+					</li>
+					<li>
+						<a href="{$url}api/get?id={$id}&amp;model=snap">SNAP</a>
+					</li>
+				</ul>
+			</div>
+			<div class="col-md-8">
+				<p>Content negotiation supports the following types: <code>text/html</code>, <code>application/xml</code>, <code>application/tei+xml</code>,
+						<code>application/vnd.google-earth.kml+xml</code>, <code>application/rdf+xml</code>, <code>application/json</code>, <code>text/turtle</code></p>
+			</div>
+		</div>
+
 	</xsl:template>
 
 	<xsl:template name="side-bar">
@@ -296,31 +366,7 @@
 				</ul>
 			</div>
 		</xsl:if>
-		<div>
-			<h3>Export</h3>
-			<ul>
-				<li>
-					<a href="{$id}.xml">EAC-CPF</a>
-				</li>
-				<li>
-					<a href="{$id}.tei">TEI</a>
-				</li>
-				<li>RDF/XML <ul>
-					<li><a href="{$id}.rdf">Default</a></li>
-					<li><a href="{$url}api/get?id={$id}&amp;model=cidoc-crm">CIDOC CRM</a></li>
-					<li><a href="{$url}api/get?id={$id}&amp;model=snap">SNAP</a></li>
-				</ul></li>
-				<li><a href="{$id}.ttl">Turtle</a></li>
-				<li>
-					<a href="{$id}.jsonld">JSON-LD</a>
-				</li>
-				<li>
-					<a href="{$id}.kml">KML</a>
-				</li>
-				<p>Content negotiation supports the following types: <code>text/html</code>, <code>application/xml</code>, <code>application/tei+xml</code>,
-					<code>application/vnd.google-earth.kml+xml</code>, <code>application/rdf+xml</code>, <code>application/json</code>, <code>text/turtle</code></p>
-			</ul>
-		</div>
+
 		<!-- if there is an entityId with a nomisma ID, construction nomisma SPARQL -->
 		<xsl:for-each select="descendant::eac:entityId[contains(., 'nomisma.org')]">
 			<xsl:call-template name="xeac:queryNomisma">
@@ -346,7 +392,8 @@
 			<div id="chron">
 				<h3>Chronology</h3>
 				<ul>
-					<xsl:apply-templates select="descendant::eac:date[@standardDate]|descendant::eac:dateRange[eac:fromDate[@standardDate]]" mode="chronList">
+					<xsl:apply-templates select="descendant::eac:date[@standardDate][not(parent::eac:existDates)]|descendant::eac:dateRange[eac:fromDate[@standardDate]][not(parent::eac:existDates)]"
+						mode="chronList">
 						<xsl:sort select="if(local-name()='date') then if (substring(@standardDate, 1, 1) = '-') then (number(tokenize(@standardDate, '-')[2]) * -1) else tokenize(@standardDate,
 							'-')[1] else  if (substring(eac:fromDate/@standardDate, 1, 1) = '-') then (number(tokenize(eac:fromDate/@standardDate, '-')[2]) * -1) else
 							tokenize(eac:fromDate/@standardDate, '-')[1]"/>
@@ -555,13 +602,10 @@
 						<xsl:sort select="eac:relationEntry"/>
 					</xsl:apply-templates>
 				</dl>
-				<!--<xsl:if test="string(//config/sparql/query) and descendant::eac:cpfRelation[@xlink:arcrole and @xlink:role]">
-					<div id="network"/>
-				</xsl:if>-->
 			</xsl:if>
 			<xsl:choose>
 				<!-- get related resources when there is a SPARQL query endpoint -->
-				<xsl:when test="string(//config/sparql/query)">
+				<xsl:when test="$sparql = true()">
 					<xsl:call-template name="xeac:relatedResources">
 						<xsl:with-param name="uri">
 							<xsl:choose>
@@ -575,7 +619,7 @@
 						</xsl:with-param>
 						<xsl:with-param name="endpoint" select="//config/sparql/query"/>
 					</xsl:call-template>
-					
+
 					<xsl:call-template name="xeac:annotations">
 						<xsl:with-param name="uri">
 							<xsl:choose>
