@@ -6,10 +6,15 @@
 
 	<xsl:template name="resources">
 		<xsl:if test="/content/res:sparql">
-			<div id="resources" class="eac-section">
-				<xsl:apply-templates select="/content/res:sparql[1][descendant::res:result]" mode="relatedResources"/>
-				<xsl:apply-templates select="/content/res:sparql[2][descendant::res:result]" mode="annotations"/>
-			</div>
+			<div class="row">
+				<div class="col-md-12">
+					<div id="associated-content" class="eac-section">
+						<h2>Associated Content</h2>
+						<xsl:apply-templates select="/content/res:sparql[1][descendant::res:result]" mode="relatedResources"/>
+						<xsl:apply-templates select="/content/res:sparql[2][descendant::res:result]" mode="annotations"/>
+					</div>
+				</div>
+			</div>			
 		</xsl:if>
 	</xsl:template>
 
