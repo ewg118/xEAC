@@ -84,7 +84,14 @@
 							<sparql>false</sparql>
 						</p:input>
 						<p:output name="data" id="sparql-enabled"/>
-					</p:processor>			
+					</p:processor>	
+					
+					<p:processor name="oxf:unsafe-xslt">
+						<p:input name="request" href="#request"/>		
+						<p:input name="data" href="aggregate('content', #data, #config, #sparql-enabled)"/>
+						<p:input name="config" href="../../../../ui/xslt/serializations/eac/html.xsl"/>
+						<p:output name="data" id="model"/>
+					</p:processor>
 				</p:when>
 				<p:otherwise>
 					<p:processor name="oxf:identity">
@@ -92,6 +99,24 @@
 							<sparql>true</sparql>
 						</p:input>
 						<p:output name="data" id="sparql-enabled"/>
+					</p:processor>
+					
+					<!-- execute related resources and annotations SPARQL queries -->
+					<p:processor name="oxf:pipeline">
+						<p:input name="config" href="../../../models/sparql/relatedResources.xpl"/>		
+						<p:output name="data" id="relatedResources"/>
+					</p:processor>
+					
+					<p:processor name="oxf:pipeline">
+						<p:input name="config" href="../../../models/sparql/annotations.xpl"/>		
+						<p:output name="data" id="annotations"/>
+					</p:processor>
+					
+					<p:processor name="oxf:unsafe-xslt">
+						<p:input name="request" href="#request"/>		
+						<p:input name="data" href="aggregate('content', #data, #config, #sparql-enabled, #relatedResources, #annotations)"/>
+						<p:input name="config" href="../../../../ui/xslt/serializations/eac/html.xsl"/>
+						<p:output name="data" id="model"/>
 					</p:processor>
 				</p:otherwise>
 			</p:choose>
@@ -103,15 +128,22 @@
 				</p:input>
 				<p:output name="data" id="sparql-enabled"/>
 			</p:processor>
+			
+			<p:processor name="oxf:unsafe-xslt">
+				<p:input name="request" href="#request"/>		
+				<p:input name="data" href="aggregate('content', #data, #config, #sparql-enabled)"/>
+				<p:input name="config" href="../../../../ui/xslt/serializations/eac/html.xsl"/>
+				<p:output name="data" id="model"/>
+			</p:processor>
 		</p:otherwise>
 	</p:choose>
 	
-	<p:processor name="oxf:unsafe-xslt">
+	<!--<p:processor name="oxf:unsafe-xslt">
 		<p:input name="request" href="#request"/>		
 		<p:input name="data" href="aggregate('content', #data, #config, #sparql-enabled)"/>
 		<p:input name="config" href="../../../../ui/xslt/serializations/eac/html.xsl"/>
 		<p:output name="data" id="model"/>
-	</p:processor>
+	</p:processor>-->
 	
 	<p:processor name="oxf:html-serializer">
 		<p:input name="data" href="#model"/>
