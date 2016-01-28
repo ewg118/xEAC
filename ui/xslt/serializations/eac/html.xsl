@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:eac="urn:isbn:1-931666-33-4"
 	xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xeac="https://github.com/ewg118/xEAC"
-	xmlns:xs="http://www.w3.org/2001/XMLSchema" exclude-result-prefixes="#all" version="2.0">
+	xmlns:res="http://www.w3.org/2005/sparql-results#" xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	exclude-result-prefixes="#all" version="2.0">
 	<xsl:include href="../../templates.xsl"/>
 	<xsl:include href="../../functions.xsl"/>
 
@@ -188,9 +189,16 @@
 							<li>
 								<strong>Jump to section: </strong>
 							</li>
-							<li>
-								<a href="#relations">Relations</a>
-							</li>
+							<xsl:if test="descendant::eac:relations">
+								<li>
+									<a href="#relations">Relations</a>
+								</li>
+							</xsl:if>
+							<xsl:if test="/content/res:sparql[descendant::res:result]">
+								<li>
+									<a href="#associated-content">Associated Content</a>
+								</li>
+							</xsl:if>
 							<li>
 								<a href="#export">Export</a>
 							</li>
@@ -315,6 +323,10 @@
 	<xsl:template name="body">
 		<xsl:apply-templates select="eac:cpfDescription"/>
 
+		<xsl:if test="$sparql = true()">
+			<xsl:call-template name="resources"/>
+		</xsl:if>
+
 		<!-- export -->
 		<div id="export" class="row">
 			<div class="col-md-12">
@@ -409,9 +421,6 @@
 		<xsl:apply-templates select="eac:description"/>
 		<xsl:if test="eac:relations">
 			<xsl:call-template name="relations"/>
-		</xsl:if>
-		<xsl:if test="$sparql = true()">
-			<xsl:call-template name="resources"/>
 		</xsl:if>
 	</xsl:template>
 
