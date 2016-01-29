@@ -317,61 +317,60 @@
 					</div>
 				</xsl:if>
 			</div>
+			
+			<xsl:if test="$sparql = true()">
+				<xsl:call-template name="resources"/>
+			</xsl:if>
+			
+			<!-- export -->
+			<div id="export" class="row">
+				<div class="col-md-12">
+					<h3>Export</h3>
+				</div>
+				<div class="col-md-4">
+					<ul class="list-inline">
+						<li>
+							<a href="{$id}.xml">EAC-CPF</a>
+						</li>
+						<li>
+							<a href="{$id}.tei">TEI</a>
+						</li>
+						<li>
+							<a href="{$id}.rdf">RDF/XML</a>
+						</li>
+						<li>
+							<a href="{$id}.ttl">Turtle</a>
+						</li>
+						<li>
+							<a href="{$id}.jsonld">JSON-LD</a>
+						</li>
+						<li>
+							<a href="{$id}.kml">KML</a>
+						</li>
+					</ul>
+					<h4>Alternative RDF</h4>
+					<ul class="list-inline">
+						<li>
+							<a href="{$url}api/get?id={$id}&amp;model=cidoc-crm">CIDOC CRM</a>
+						</li>
+						<li>
+							<a href="{$url}api/get?id={$id}&amp;model=snap">SNAP</a>
+						</li>
+					</ul>
+				</div>
+				<div class="col-md-8">
+					<p>Content negotiation supports the following types: <code>text/html</code>,
+						<code>application/xml</code>, <code>application/tei+xml</code>,
+						<code>application/vnd.google-earth.kml+xml</code>,
+						<code>application/rdf+xml</code>, <code>application/json</code>,
+						<code>text/turtle</code></p>
+				</div>
+			</div>
 		</div>
 	</xsl:template>
 
 	<xsl:template name="body">
 		<xsl:apply-templates select="eac:cpfDescription"/>
-
-		<xsl:if test="$sparql = true()">
-			<xsl:call-template name="resources"/>
-		</xsl:if>
-
-		<!-- export -->
-		<div id="export" class="row">
-			<div class="col-md-12">
-				<h3>Export</h3>
-			</div>
-			<div class="col-md-4">
-				<ul class="list-inline">
-					<li>
-						<a href="{$id}.xml">EAC-CPF</a>
-					</li>
-					<li>
-						<a href="{$id}.tei">TEI</a>
-					</li>
-					<li>
-						<a href="{$id}.rdf">RDF/XML</a>
-					</li>
-					<li>
-						<a href="{$id}.ttl">Turtle</a>
-					</li>
-					<li>
-						<a href="{$id}.jsonld">JSON-LD</a>
-					</li>
-					<li>
-						<a href="{$id}.kml">KML</a>
-					</li>
-				</ul>
-				<h4>Alternative RDF</h4>
-				<ul class="list-inline">
-					<li>
-						<a href="{$url}api/get?id={$id}&amp;model=cidoc-crm">CIDOC CRM</a>
-					</li>
-					<li>
-						<a href="{$url}api/get?id={$id}&amp;model=snap">SNAP</a>
-					</li>
-				</ul>
-			</div>
-			<div class="col-md-8">
-				<p>Content negotiation supports the following types: <code>text/html</code>,
-						<code>application/xml</code>, <code>application/tei+xml</code>,
-						<code>application/vnd.google-earth.kml+xml</code>,
-						<code>application/rdf+xml</code>, <code>application/json</code>,
-						<code>text/turtle</code></p>
-			</div>
-		</div>
-
 	</xsl:template>
 
 	<xsl:template name="side-bar">
