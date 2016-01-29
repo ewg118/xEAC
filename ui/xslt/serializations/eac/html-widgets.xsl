@@ -10,11 +10,13 @@
 				<div class="col-md-12">
 					<div class="eac-section">
 						<h2>Associated Content</h2>
-						<xsl:apply-templates select="/content/res:sparql[1][descendant::res:result]" mode="relatedResources"/>
-						<xsl:apply-templates select="/content/res:sparql[2][descendant::res:result]" mode="annotations"/>
+						<xsl:apply-templates select="/content/res:sparql[1][descendant::res:result]"
+							mode="relatedResources"/>
+						<xsl:apply-templates select="/content/res:sparql[2][descendant::res:result]"
+							mode="annotations"/>
 					</div>
 				</div>
-			</div>			
+			</div>
 		</xsl:if>
 	</xsl:template>
 
@@ -27,7 +29,8 @@
 		</xsl:variable>
 
 		<div>
-			<h3>Related Resources</h3>
+			<h3>Related Resources <small><a href="#top"><span class="glyphicon glyphicon-arrow-up"
+						/></a></small></h3>
 			<xsl:for-each select="$objects">
 				<xsl:variable name="uri" select="."/>
 				<xsl:variable name="roles"
@@ -95,7 +98,8 @@
 		</xsl:variable>
 
 		<div>
-			<h3>Annotations</h3>
+			<h3>Annotations <small><a href="#top" title="Return to top"><span class="glyphicon glyphicon-arrow-up"
+			/></a></small></h3>
 			<xsl:for-each select="$sources">
 				<xsl:variable name="uri" select="."/>
 
