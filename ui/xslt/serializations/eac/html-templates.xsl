@@ -7,14 +7,14 @@
 	xmlns:xeac="https://github.com/ewg118/xEAC" xmlns:xlink="http://www.w3.org/1999/xlink"
 	xmlns:res="http://www.w3.org/2005/sparql-results#" xmlns:xs="http://www.w3.org/2001/XMLSchema"
 	exclude-result-prefixes="#all" version="2.0">
-	
+
 	<xsl:template match="eac:cpfDescription">
 		<xsl:apply-templates select="eac:description"/>
 		<xsl:if test="eac:relations">
 			<xsl:call-template name="relations"/>
 		</xsl:if>
 	</xsl:template>
-	
+
 	<xsl:template
 		match="eac:function|eac:languageUsed|eac:legalStatus|eac:localDescription|eac:mandate|eac:occupation|eac:place">
 		<dt>
@@ -55,10 +55,10 @@
 					</xsl:if>
 				</xsl:when>
 			</xsl:choose>
-			
+
 		</dd>
 	</xsl:template>
-	
+
 	<xsl:template match="eac:existDates">
 		<h3>
 			<xsl:text>Exist Dates</xsl:text>
@@ -73,10 +73,10 @@
 			<xsl:value-of select="string-join(descendant::*[not(child::*)], ' - ')"/>
 		</p>
 	</xsl:template>
-	
+
 	<xsl:template match="eac:biogHist">
 		<h3>Biographical or Historical Note</h3>
-		
+
 		<xsl:if test="eac:abstract">
 			<dl class="dl-horizontal">
 				<xsl:apply-templates select="eac:abstract"/>
@@ -89,7 +89,7 @@
 		</xsl:if>
 		<xsl:apply-templates select="eac:p"/>
 	</xsl:template>
-	
+
 	<xsl:template match="eac:abstract|eac:citation">
 		<dt>
 			<xsl:value-of select="local-name()"/>
@@ -101,29 +101,29 @@
 			<xsl:value-of select="."/>
 		</dd>
 	</xsl:template>
-	
+
 	<xsl:template match="eac:p">
 		<p>
 			<xsl:apply-templates/>
 		</p>
 	</xsl:template>
-	
+
 	<xsl:template match="eac:date|eac:dateRange" mode="chronList">
 		<li>
 			<b><xsl:choose>
-				<xsl:when test="local-name()='date'">
-					<xsl:value-of select="."/>
-				</xsl:when>
-				<xsl:when test="local-name()='dateRange'">
-					<xsl:value-of select="eac:fromDate"/>
-					<xsl:text> - </xsl:text>
-					<xsl:value-of select="eac:toDate"/>
-				</xsl:when>
-			</xsl:choose>: </b>
+					<xsl:when test="local-name()='date'">
+						<xsl:value-of select="."/>
+					</xsl:when>
+					<xsl:when test="local-name()='dateRange'">
+						<xsl:value-of select="eac:fromDate"/>
+						<xsl:text> - </xsl:text>
+						<xsl:value-of select="eac:toDate"/>
+					</xsl:when>
+				</xsl:choose>: </b>
 			<xsl:call-template name="chron-description"/>
 		</li>
 	</xsl:template>
-	
+
 	<xsl:template match="eac:cpfRelation|eac:resourceRelation">
 		<dt>
 			<xsl:value-of select="@xlink:arcrole"/>
@@ -147,7 +147,7 @@
 									</xsl:otherwise>
 								</xsl:choose>
 							</xsl:variable>
-							
+
 							<a href="{$recordURI}">
 								<xsl:if test="@xlink:arcrole">
 									<xsl:attribute name="rel" select="@xlink:arcrole"/>
@@ -185,5 +185,18 @@
 				</xsl:when>
 			</xsl:choose>
 		</dd>
+	</xsl:template>
+
+	<xsl:template match="eac:entityId">
+		<li>
+			<code>
+				<a href="{.}" title="{.}">
+					<xsl:if test="@localType">
+						<xsl:attribute name="rel" select="@localType"/>
+					</xsl:if>
+					<xsl:value-of select="."/>
+				</a>
+			</code>
+		</li>
 	</xsl:template>
 </xsl:stylesheet>
