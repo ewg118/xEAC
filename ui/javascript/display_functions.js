@@ -1,7 +1,15 @@
 $(document).ready(function () {
 	var id = $('#id').text();	
-	$('#toggle_names').click(function () {
-		$('#names').toggle('show');
+	$('.toggle-button').click(function () {
+		var div_id = $(this).attr('id').split('-')[1] + '-div';
+		if ($(this).children('span').hasClass('glyphicon-triangle-bottom')) {
+			$(this).children('span').removeClass('glyphicon-triangle-bottom');
+			$(this).children('span').addClass('glyphicon-triangle-right');
+		} else {
+			$(this).children('span').removeClass('glyphicon-triangle-right');
+			$(this).children('span').addClass('glyphicon-triangle-bottom');
+		}
+		$('#' + div_id).toggle('fast');
 		return false;
 	});
 	

@@ -14,6 +14,7 @@
 							mode="relatedResources"/>
 						<xsl:apply-templates select="/content/res:sparql[2][descendant::res:result]"
 							mode="annotations"/>
+						<hr/>
 					</div>
 				</div>
 			</div>
