@@ -5,10 +5,10 @@
 	exclude-result-prefixes="#all" version="2.0">
 
 	<xsl:template name="resources">
-		<xsl:if test="/content/res:sparql">
-			<div class="row">
+		<xsl:if test="/content/res:sparql[descendant::res:result]">
+			<div class="row" id="associated-content">
 				<div class="col-md-12">
-					<div id="associated-content" class="eac-section">
+					<div class="eac-section">
 						<h2>Associated Content</h2>
 						<xsl:apply-templates select="/content/res:sparql[1][descendant::res:result]" mode="relatedResources"/>
 						<xsl:apply-templates select="/content/res:sparql[2][descendant::res:result]" mode="annotations"/>
