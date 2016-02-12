@@ -87,9 +87,9 @@
 		<xsl:text>":</xsl:text>
 		<xsl:choose>
 			<xsl:when test="child::*">
-				<xsl:text>{</xsl:text>
+				<xsl:text>[{</xsl:text>
 				<xsl:apply-templates select="child::*" mode="json"/>
-				<xsl:text>}</xsl:text>
+				<xsl:text>}]</xsl:text>
 			</xsl:when>
 			<xsl:otherwise>
 				<xsl:text>"</xsl:text>
