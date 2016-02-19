@@ -1,32 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:eac="urn:isbn:1-931666-33-4" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xeac="https://github.com/ewg118/xEAC"
-	xmlns:xs="http://www.w3.org/2001/XMLSchema" exclude-result-prefixes="#all" version="2.0">
+
+<!-- Author: Ethan Gruber
+	Date: January 2016
+	Function: This includes templates for constructing the EAC-CPF to HTML5 document structure. 
+	It includes xsl stylesheets for SPARQL or other linked data lookup widgets (html-widges.xsl) and EAC-CPF element templates (html-templates.xsl)
+-->
+
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:eac="urn:isbn:1-931666-33-4"
+	xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xeac="https://github.com/ewg118/xEAC"
+	xmlns:res="http://www.w3.org/2005/sparql-results#" xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	exclude-result-prefixes="#all" version="2.0">
 	<xsl:include href="../../templates.xsl"/>
-	<xsl:include href="../../widgets.xsl"/>
 	<xsl:include href="../../functions.xsl"/>
 
-	<xsl:param name="mode">
-		<xsl:choose>
-			<xsl:when test="contains(doc('input:request')/request/request-url, 'admin/')">private</xsl:when>
-			<xsl:otherwise>public</xsl:otherwise>
-		</xsl:choose>
-	</xsl:param>
-	<xsl:param name="sparql" select="/content/sparql" as="xs:boolean"/>
+	<!-- include the html-widgets templates for transformation SPARQL results and other linked data lookup mechanisms into HTML. If querying to an internal SPARQL endpoint, then the view XPL should be modified to include the SPARQL response in the model for the XSLT tranformation -->
+	<xsl:include href="html-widgets.xsl"/>
 
-	<xsl:variable name="display_path">
-		<xsl:choose>
-			<xsl:when test="$mode='private'">
-				<xsl:text>../../</xsl:text>
-			</xsl:when>
-			<xsl:otherwise>
-				<xsl:text>../</xsl:text>
-			</xsl:otherwise>
-		</xsl:choose>
-	</xsl:variable>
+	<!-- EAC-CPF templates contained here: -->
+	<xsl:include href="html-templates.xsl"/>
 
+	<!-- parameters and variables -->
+	<xsl:param name="mode"
+		select="if (contains(doc('input:request')/request/request-url, 'admin/')) then 'private' else 'public'"/>
+	<xsl:variable name="display_path" select="if ($mode='private') then '../../' else '../'"/>
+	<xsl:variable name="sparql" select="/content/sparql" as="xs:boolean"/>
 	<xsl:variable name="url" select="/content/config/url"/>
-
-	<xsl:variable name="id" select="//eac:eac-cpf/eac:control/eac:recordId"/>
+	<xsl:variable name="id" select="/content/eac:eac-cpf/eac:control/eac:recordId"/>
 
 	<xsl:variable name="namespaces" as="item()*">
 		<namespaces>
@@ -40,7 +39,7 @@
 			<namespace prefix="skos">http://www.w3.org/2004/02/skos/core#</namespace>
 		</namespaces>
 	</xsl:variable>
-	
+
 	<xsl:variable name="class">
 		<xsl:choose>
 			<xsl:when test="descendant::eac:entityType='person'">foaf:Person</xsl:when>
@@ -63,7 +62,8 @@
 					<xsl:value-of select="."/>
 					<xsl:text> </xsl:text>
 				</xsl:for-each>
-				<xsl:for-each select="descendant::eac:localTypeDeclaration[eac:citation[@xlink:role='semantic']]">
+				<xsl:for-each
+					select="descendant::eac:localTypeDeclaration[eac:citation[@xlink:role='semantic']]">
 					<xsl:value-of select="eac:abbreviation"/>
 					<xsl:text>: </xsl:text>
 					<xsl:value-of select="eac:citation/@xlink:href"/>
@@ -75,11 +75,15 @@
 					<xsl:value-of select="/content/config/title"/>
 					<xsl:text>: </xsl:text>
 					<xsl:choose>
-						<xsl:when test="eac:cpfDescription/eac:identity/eac:nameEntry[eac:preferredForm='WIKIPEDIA']">
-							<xsl:value-of select="eac:cpfDescription/eac:identity/eac:nameEntry[eac:preferredForm='WIKIPEDIA']/eac:part"/>
+						<xsl:when
+							test="eac:cpfDescription/eac:identity/eac:nameEntry[eac:preferredForm='WIKIPEDIA']">
+							<xsl:value-of
+								select="eac:cpfDescription/eac:identity/eac:nameEntry[eac:preferredForm='WIKIPEDIA']/eac:part"
+							/>
 						</xsl:when>
 						<xsl:otherwise>
-							<xsl:value-of select="eac:cpfDescription/eac:identity/eac:nameEntry[1]/eac:part"/>
+							<xsl:value-of
+								select="eac:cpfDescription/eac:identity/eac:nameEntry[1]/eac:part"/>
 						</xsl:otherwise>
 					</xsl:choose>
 					<xsl:text> (</xsl:text>
@@ -89,8 +93,9 @@
 				<meta name="viewport" content="width=device-width, initial-scale=1"/>
 				<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"/>
 				<!-- bootstrap -->
-				<link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css"/>
-				<script src="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"/>
+				<link rel="stylesheet"
+					href="http://netdna.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css"/>
+				<script src="http://netdna.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"/>
 				<link rel="stylesheet" href="{$url}ui/css/style.css"/>
 				<script type="text/javascript" src="{$url}ui/javascript/display_functions.js"/>
 				<!-- other content types -->
@@ -99,7 +104,8 @@
 				<link rel="alternate" type="text/turtle" href="{$url}id/{$id}.ttl"/>
 				<link rel="alternate" type="application/json" href="{$url}id/{$id}.jsonld"/>
 				<link rel="alternate" type="application/tei+xml" href="{$url}id/{$id}.tei"/>
-				<link rel="alternate" type="application/vnd.google-earth.kml+xml" href="{$url}id/{$id}.kml"/>
+				<link rel="alternate" type="application/vnd.google-earth.kml+xml"
+					href="{$url}id/{$id}.kml"/>
 
 				<!-- mapping -->
 				<xsl:if test="descendant::eac:placeEntry[string(@vocabularySource)]">
@@ -113,7 +119,8 @@
 				</xsl:if>
 
 				<!-- semantic relations -->
-				<xsl:if test="$sparql = true() and descendant::eac:cpfRelation[@xlink:arcrole and @xlink:role]">
+				<xsl:if
+					test="$sparql = true() and descendant::eac:cpfRelation[@xlink:arcrole and @xlink:role]">
 					<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/vis/4.12.0/vis.min.js"/>
 					<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/vis/4.12.0/vis.min.css"/>
 					<script type="text/javascript" src="{$url}ui/javascript/vis_functions.js"/>
@@ -129,13 +136,16 @@
 				<xsl:call-template name="header"/>
 				<xsl:call-template name="display"/>
 				<xsl:call-template name="footer"/>
+
+				<!-- hidden variables used within Javascript -->
 				<div style="display:none">
 					<span id="id">
 						<xsl:value-of select="$id"/>
 					</span>
 					<span id="mappable">
 						<xsl:choose>
-							<xsl:when test="descendant::eac:placeEntry[string(@vocabularySource)]">true</xsl:when>
+							<xsl:when test="descendant::eac:placeEntry[string(@vocabularySource)]"
+								>true</xsl:when>
 							<xsl:otherwise>false</xsl:otherwise>
 						</xsl:choose>
 					</span>
@@ -152,38 +162,69 @@
 	</xsl:template>
 
 	<xsl:template name="display">
-		<div class="container-fluid" typeof="{$class}" about="{$id}">
-			<div class="row">
-				<div class="col-md-12">
-					<h1>
-						<xsl:choose>
-							<xsl:when test="eac:cpfDescription/eac:identity/eac:nameEntry[eac:preferredForm='WIKIPEDIA']">
-								<xsl:value-of select="eac:cpfDescription/eac:identity/eac:nameEntry[eac:preferredForm='WIKIPEDIA']/eac:part"/>
-							</xsl:when>
-							<xsl:otherwise>
-								<xsl:value-of select="eac:cpfDescription/eac:identity/eac:nameEntry[1]/eac:part"/>
-							</xsl:otherwise>
-						</xsl:choose>
-					</h1>
-					<div>
-						<ul class="list-inline">
-							<li>
-								<strong>Jump to section: </strong>
-							</li>
-							<li>
-								<a href="#relations">Relations</a>
-							</li>
-							<li>
-								<a href="#export">Export</a>
-							</li>
-						</ul>
-					</div>
-					<a href="#" id="toggle_names">hide/show names</a>
-					<div id="names" style="display:none">
-						<xsl:if test="eac:cpfDescription/eac:identity/eac:nameEntry[child::node()='WIKIPEDIA']">
-							<h4> Wikipedia </h4>
+		<div class="container-fluid" id="top">
+			<xsl:call-template name="doc-header"/>
+			<xsl:call-template name="cpfDescription-vis-structure"/>
+			<xsl:if test="$sparql = true()">
+				<xsl:call-template name="resources"/>
+			</xsl:if>
+			<xsl:if test="eac:cpfDescription/eac:identity/eac:entityId[matches(., 'https?://')]">
+				<xsl:call-template name="matches"/>
+			</xsl:if>
+			<xsl:call-template name="export"/>
+		</div>
+	</xsl:template>
+
+	<xsl:template name="doc-header">
+		<!-- create a boolean variable to determine whether there is a resourceRelation with a foaf:depiction or foaf:thumbnail -->
+		<xsl:variable name="portrait" select="boolean(descendant::eac:resourceRelation[starts-with(@xlink:arcrole, 'foaf:')])"/>
+		
+		<div class="row" typeof="skos:Concept" about="{$id}#concept">
+			<a href="{$id}" rel="foaf:focus" style="display:none"/>
+			
+			<!-- {if ($portrait = true()) then '8' else '12'} col-lg-{if ($portrait = true()) then '10' else '12'} -->
+			<div class="col-md-12">
+				
+				<h1>
+					<xsl:choose>
+						<xsl:when
+							test="eac:cpfDescription/eac:identity/eac:nameEntry[eac:preferredForm='WIKIPEDIA']">
+							<xsl:value-of
+								select="eac:cpfDescription/eac:identity/eac:nameEntry[eac:preferredForm='WIKIPEDIA']/eac:part"
+							/>
+						</xsl:when>
+						<xsl:otherwise>
+							<xsl:value-of
+								select="eac:cpfDescription/eac:identity/eac:nameEntry[1]/eac:part"/>
+						</xsl:otherwise>
+					</xsl:choose>
+				</h1>
+
+				<!-- toggle name entries on and off -->
+				<div>
+					<h4>
+						<a href="#" id="toggle-names" class="toggle-button">Toggle Names <span
+								class="glyphicon glyphicon-triangle-right"/></a>
+					</h4>
+					<div id="names-div" style="display:none">
+						<xsl:if
+							test="eac:cpfDescription/eac:identity/eac:nameEntry[child::node()='WIKIPEDIA']">
+							<h4> Wiki<xsl:if
+									test="eac:cpfDescription/eac:identity/eac:nameEntry[child::node()='WIKIPEDIA']">
+									<h4> Wikipedia </h4>
+									<div id="wiki-names">
+										<xsl:for-each
+											select="eac:cpfDescription/eac:identity/eac:nameEntry[*[local-name() != 'preferredForm']='WIKIPEDIA']">
+											<xsl:value-of select="eac:part"/>
+											<xsl:if test="not(position()=last())">
+												<xsl:text> / </xsl:text>
+											</xsl:if>
+										</xsl:for-each>
+									</div>
+								</xsl:if>pedia </h4>
 							<div id="wiki-names">
-								<xsl:for-each select="eac:cpfDescription/eac:identity/eac:nameEntry[*[local-name() != 'preferredForm']='WIKIPEDIA']">
+								<xsl:for-each
+									select="eac:cpfDescription/eac:identity/eac:nameEntry[*[local-name() != 'preferredForm']='WIKIPEDIA']">
 									<xsl:value-of select="eac:part"/>
 									<xsl:if test="not(position()=last())">
 										<xsl:text> / </xsl:text>
@@ -216,10 +257,12 @@
 										<span>
 											<xsl:choose>
 												<xsl:when test="eac:preferredForm">
-													<xsl:attribute name="property">skos:prefLabel</xsl:attribute>
+												<xsl:attribute name="property"
+												>skos:prefLabel</xsl:attribute>
 												</xsl:when>
 												<xsl:when test="eac:alternativeForm">
-													<xsl:attribute name="property">skos:altLabel</xsl:attribute>
+												<xsl:attribute name="property"
+												>skos:altLabel</xsl:attribute>
 												</xsl:when>
 											</xsl:choose>
 											<xsl:if test="string(@xml:lang)">
@@ -236,12 +279,14 @@
 											<xsl:text>, dates of use: </xsl:text>
 											<xsl:choose>
 												<xsl:when test="eac:useDates/eac:date">
-													<xsl:value-of select="eac:useDates/eac:date"/>
+												<xsl:value-of select="eac:useDates/eac:date"/>
 												</xsl:when>
 												<xsl:when test="eac:useDates/eac:dateRange">
-													<xsl:value-of select="eac:useDates/eac:dateRange/eac:fromDate"/>
-													<xsl:text>-</xsl:text>
-													<xsl:value-of select="eac:useDates/eac:dateRange/eac:toDate"/>
+												<xsl:value-of
+												select="eac:useDates/eac:dateRange/eac:fromDate"/>
+												<xsl:text>-</xsl:text>
+												<xsl:value-of
+												select="eac:useDates/eac:dateRange/eac:toDate"/>
 												</xsl:when>
 											</xsl:choose>
 										</xsl:if>
@@ -250,47 +295,108 @@
 							</dl>
 						</xsl:for-each>
 					</div>
-				</div>
+				</div>				
 			</div>
-			<div class="row">
-				<div class="col-md-{if (descendant::eac:placeEntry[string(@vocabularySource)] or (string(//config/sparql/query) and descendant::eac:cpfRelation[@xlink:arcrole and @xlink:role])) then
-					'6' else '12'}">
-					<xsl:call-template name="body"/>
+			<!--<xsl:if test="$portrait = true()">
+				<xsl:call-template name="portrait"/>
+			</xsl:if>-->
+		</div>
+		<hr/>
+	</xsl:template>
+
+	<xsl:template name="cpfDescription-vis-structure">
+		<div class="row" typeof="{$class}" about="{$id}">
+			<div
+				class="col-md-{if (descendant::eac:placeEntry[string(@vocabularySource)] or (string(//config/sparql/query) and descendant::eac:cpfRelation[@xlink:arcrole and @xlink:role])) then
+				'6' else '12'}">
+
+				<!-- Navigation -->
+				<div>
+					<ul class="list-inline">
+						<li>
+							<strong>Jump to section: </strong>
+						</li>
+						<xsl:if test="descendant::eac:relations">
+							<li>
+								<a href="#relations">Relations</a>
+							</li>
+						</xsl:if>
+						<xsl:if test="/content/res:sparql[1][descendant::res:result]">
+							<li>
+								<a href="#associated-content">Related Resources</a>
+							</li>
+						</xsl:if>
+						<xsl:if test="/content/res:sparql[2][descendant::res:result]">
+							<li>
+								<a href="#associated-content">Annotations</a>
+							</li>
+						</xsl:if>
+						<xsl:if
+							test="eac:cpfDescription/eac:identity/eac:entityId[matches(., 'https?://')]">
+							<li>
+								<a href="#matches">Associated Identifiers</a>
+							</li>
+						</xsl:if>
+
+						<li>
+							<a href="#export">Export</a>
+						</li>
+					</ul>
 				</div>
-				<xsl:if test="descendant::eac:placeEntry[string(@vocabularySource)] or ($sparql = true() and descendant::eac:cpfRelation[@xlink:arcrole and @xlink:role])">
-					<div class="col-md-6">
-						<div id="visualizations">
-							<xsl:if test="descendant::eac:placeEntry[string(@vocabularySource)]">
-								<div id="timemap">
-									<div id="mapcontainer">
-										<div id="map"/>
-									</div>
-									<div id="timelinecontainer">
-										<div id="timeline"/>
-									</div>
+
+				<!-- Description -->
+				<xsl:apply-templates select="eac:cpfDescription"/>
+			</div>
+
+			<!-- optional visualization div -->
+			<xsl:if
+				test="descendant::eac:placeEntry[string(@vocabularySource)] or ($sparql = true() and descendant::eac:cpfRelation[@xlink:arcrole and @xlink:role])">
+				<div class="col-md-6">
+					<div id="visualizations">
+						<xsl:if test="descendant::eac:placeEntry[string(@vocabularySource)]">
+							<div id="timemap">
+								<div id="mapcontainer">
+									<div id="map"/>
 								</div>
-							</xsl:if>
-							<xsl:if test="descendant::eac:placeEntry[string(@vocabularySource)] or ($sparql = true() and descendant::eac:cpfRelation[@xlink:arcrole and @xlink:role])">
-								<br/>
-							</xsl:if>
-							<xsl:if test="$sparql = true() and descendant::eac:cpfRelation[@xlink:arcrole and @xlink:role]">
-								<div id="network"/>
-								<br/>
-							</xsl:if>
-						</div>
+								<div id="timelinecontainer">
+									<div id="timeline"/>
+								</div>
+							</div>
+						</xsl:if>
+						<xsl:if
+							test="descendant::eac:placeEntry[string(@vocabularySource)] or ($sparql = true() and descendant::eac:cpfRelation[@xlink:arcrole and @xlink:role])">
+							<br/>
+						</xsl:if>
+						<xsl:if
+							test="$sparql = true() and descendant::eac:cpfRelation[@xlink:arcrole and @xlink:role]">
+							<div id="network"/>
+							<br/>
+						</xsl:if>
 					</div>
-				</xsl:if>
+				</div>
+			</xsl:if>
+		</div>
+	</xsl:template>
+
+	<xsl:template name="matches">
+		<div id="matches" class="row" typeof="skos:Concept" about="{$id}#concept">
+			<div class="col-md-12">
+				<h2>Associated Identifiers <small><a href="#top" title="Return to top"><span
+					class="glyphicon glyphicon-arrow-up"/></a></small></h2>
+				<ul class="list-unstyled">
+					<xsl:apply-templates
+						select="eac:cpfDescription/eac:identity/eac:entityId[matches(., 'https?://')]"
+					/>
+				</ul>
 			</div>
 		</div>
 	</xsl:template>
 
-	<xsl:template name="body">
-		<xsl:apply-templates select="eac:cpfDescription"/>
-
-		<!-- export -->
+	<xsl:template name="export">
 		<div id="export" class="row">
 			<div class="col-md-12">
-				<h3>Export</h3>
+				<h2>Export <small><a href="#top" title="Return to top"><span
+								class="glyphicon glyphicon-arrow-up"/></a></small></h2>
 			</div>
 			<div class="col-md-4">
 				<ul class="list-inline">
@@ -324,64 +430,35 @@
 				</ul>
 			</div>
 			<div class="col-md-8">
-				<p>Content negotiation supports the following types: <code>text/html</code>, <code>application/xml</code>, <code>application/tei+xml</code>,
-						<code>application/vnd.google-earth.kml+xml</code>, <code>application/rdf+xml</code>, <code>application/json</code>, <code>text/turtle</code></p>
+				<p>Content negotiation supports the following types: <code>text/html</code>,
+						<code>application/xml</code>, <code>application/tei+xml</code>,
+						<code>application/vnd.google-earth.kml+xml</code>,
+						<code>application/rdf+xml</code>, <code>application/json</code>,
+						<code>text/turtle</code></p>
 			</div>
 		</div>
-
 	</xsl:template>
 
-	<xsl:template name="side-bar">
-		<div>
+	<!-- template for displaying portrait image -->
+	<xsl:template name="portrait">
+		<div class="col-md-4 col-lg-2">
 			<xsl:choose>
 				<xsl:when test="descendant::eac:resourceRelation[@xlink:arcrole='foaf:thumbnail']">
-					<p class="text-center">
-						<img src="{descendant::eac:resourceRelation[@xlink:arcrole='foaf:thumbnail']/@xlink:href}" alt="Portrait" style="max-width:100%;"/>
-					</p>
+					<div class="text-center">
+						<img
+							src="{descendant::eac:resourceRelation[@xlink:arcrole='foaf:thumbnail']/@xlink:href}"
+							alt="Portrait" style="max-width:100%;" property="foaf:thumbnail"/>
+					</div>
 				</xsl:when>
 				<xsl:when test="descendant::eac:resourceRelation[@xlink:arcrole='foaf:depiction']">
-					<p class="text-center">
-						<img src="{descendant::eac:resourceRelation[@xlink:arcrole='foaf:depiction']/@xlink:href}" alt="Portrait" style="max-width:100%;"/>
-					</p>
+					<div class="text-center">
+						<img
+							src="{descendant::eac:resourceRelation[@xlink:arcrole='foaf:depiction']/@xlink:href}"
+							alt="Portrait" style="max-width:100%;" property="foaf:depiction"/>
+					</div>
 				</xsl:when>
 			</xsl:choose>
 		</div>
-		<!-- display entityIds, create links when applicable -->
-		<xsl:if test="count(eac:cpfDescription/eac:identity/eac:entityId) &gt; 0">
-			<div>
-				<h3>Associated Identifiers</h3>
-				<ul>
-					<xsl:for-each select="eac:cpfDescription/eac:identity/eac:entityId">
-						<li>
-							<xsl:choose>
-								<xsl:when test="contains(., 'http://')">
-									<a href="{.}" rel="{@localType}">
-										<xsl:value-of select="."/>
-									</a>
-								</xsl:when>
-								<xsl:otherwise>
-									<xsl:value-of select="."/>
-								</xsl:otherwise>
-							</xsl:choose>
-						</li>
-					</xsl:for-each>
-				</ul>
-			</div>
-		</xsl:if>
-
-		<!-- if there is an entityId with a nomisma ID, construction nomisma SPARQL -->
-		<xsl:for-each select="descendant::eac:entityId[contains(., 'nomisma.org')]">
-			<xsl:call-template name="xeac:queryNomisma">
-				<xsl:with-param name="uri" select="."/>
-			</xsl:call-template>
-		</xsl:for-each>
-	</xsl:template>
-
-	<xsl:template match="eac:cpfDescription">
-		<xsl:apply-templates select="eac:description"/>
-		<xsl:if test="eac:relations or string(//config/sparql/query)">
-			<xsl:call-template name="relations"/>
-		</xsl:if>
 	</xsl:template>
 
 	<xsl:template match="eac:description">
@@ -389,145 +466,44 @@
 			<h2>Description</h2>
 			<xsl:apply-templates select="eac:existDates"/>
 			<xsl:apply-templates select="eac:biogHist"/>
+			<xsl:if
+				test="descendant::eac:date[not(parent::eac:existDates)] or descendant::eac:dateRange[not(parent::eac:existDates)]">
+				<div id="chron">
+					<h3>Chronology</h3>
+					<ul>
+						<xsl:apply-templates
+							select="descendant::eac:date[@standardDate][not(parent::eac:existDates)]|descendant::eac:dateRange[eac:fromDate[@standardDate]][not(parent::eac:existDates)]"
+							mode="chronList">
+							<xsl:sort
+								select="if(local-name()='date') then if (substring(@standardDate, 1, 1) = '-') then (number(tokenize(@standardDate, '-')[2]) * -1) else tokenize(@standardDate,
+								'-')[1] else  if (substring(eac:fromDate/@standardDate, 1, 1) = '-') then (number(tokenize(eac:fromDate/@standardDate, '-')[2]) * -1) else
+								tokenize(eac:fromDate/@standardDate, '-')[1]"/>
+							<xsl:sort
+								select="if(local-name()='date') then if (substring(@standardDate, 1, 1) = '-') then number(tokenize(@standardDate, '-')[3]) else tokenize(@standardDate, '-')[2] else
+								if (substring(eac:fromDate/@standardDate, 1, 1) = '-') then number(tokenize(eac:fromDate/@standardDate, '-')[3]) else tokenize(eac:fromDate/@standardDate, '-')[2]"/>
+							<xsl:sort
+								select="if(local-name()='date') then if (substring(@standardDate, 1, 1) = '-') then number(tokenize(@standardDate, '-')[4]) else tokenize(@standardDate, '-')[3] else
+								if (substring(eac:fromDate/@standardDate, 1, 1) = '-') then number(tokenize(eac:fromDate/@standardDate, '-')[4]) else tokenize(eac:fromDate/@standardDate, '-')[3]"
+							/>
+						</xsl:apply-templates>
+					</ul>
+				</div>
+			</xsl:if>
+			<xsl:if
+				test="descendant::eac:function[not(descendant::*/@standardDate)]|descendant::eac:languageUsed[not(descendant::*/@standardDate)]|descendant::eac:legalStatus[not(descendant::*/@standardDate)]|descendant::eac:localDescription[not(descendant::*/@standardDate)]|descendant::eac:mandate[not(descendant::*/@standardDate)]|descendant::eac:occupation[not(descendant::*/@standardDate)]|descendant::eac:place[not(descendant::*/@standardDate)]">
+				<div id="terms">
+					<h3>Terms</h3>
+					<dl class="dl-horizontal">
+						<xsl:apply-templates
+							select="descendant::eac:function[not(descendant::*/@standardDate)]|descendant::eac:languageUsed[not(descendant::*/@standardDate)]|descendant::eac:legalStatus[not(descendant::*/@standardDate)]|descendant::eac:localDescription[not(descendant::*/@standardDate)]|descendant::eac:mandate[not(descendant::*/@standardDate)]|descendant::eac:occupation[not(descendant::*/@standardDate)]|descendant::eac:place[not(descendant::*/@standardDate)]">
+							<xsl:sort select="local-name()"/>
+							<xsl:sort select="eac:term or eac:placeEntry"/>
+						</xsl:apply-templates>
+					</dl>
+				</div>
+			</xsl:if>
+			<hr/>
 		</div>
-		<xsl:if test="descendant::eac:date[not(parent::eac:existDates)] or descendant::eac:dateRange[not(parent::eac:existDates)]">
-			<div id="chron">
-				<h3>Chronology</h3>
-				<ul>
-					<xsl:apply-templates select="descendant::eac:date[@standardDate][not(parent::eac:existDates)]|descendant::eac:dateRange[eac:fromDate[@standardDate]][not(parent::eac:existDates)]"
-						mode="chronList">
-						<xsl:sort select="if(local-name()='date') then if (substring(@standardDate, 1, 1) = '-') then (number(tokenize(@standardDate, '-')[2]) * -1) else tokenize(@standardDate,
-							'-')[1] else  if (substring(eac:fromDate/@standardDate, 1, 1) = '-') then (number(tokenize(eac:fromDate/@standardDate, '-')[2]) * -1) else
-							tokenize(eac:fromDate/@standardDate, '-')[1]"/>
-						<xsl:sort select="if(local-name()='date') then if (substring(@standardDate, 1, 1) = '-') then number(tokenize(@standardDate, '-')[3]) else tokenize(@standardDate, '-')[2] else
-							if (substring(eac:fromDate/@standardDate, 1, 1) = '-') then number(tokenize(eac:fromDate/@standardDate, '-')[3]) else tokenize(eac:fromDate/@standardDate, '-')[2]"/>
-						<xsl:sort select="if(local-name()='date') then if (substring(@standardDate, 1, 1) = '-') then number(tokenize(@standardDate, '-')[4]) else tokenize(@standardDate, '-')[3] else
-							if (substring(eac:fromDate/@standardDate, 1, 1) = '-') then number(tokenize(eac:fromDate/@standardDate, '-')[4]) else tokenize(eac:fromDate/@standardDate, '-')[3]"/>
-					</xsl:apply-templates>
-				</ul>
-			</div>
-		</xsl:if>
-
-		<xsl:if
-			test="descendant::eac:function[not(descendant::*/@standardDate)]|descendant::eac:languageUsed[not(descendant::*/@standardDate)]|descendant::eac:legalStatus[not(descendant::*/@standardDate)]|descendant::eac:localDescription[not(descendant::*/@standardDate)]|descendant::eac:mandate[not(descendant::*/@standardDate)]|descendant::eac:occupation[not(descendant::*/@standardDate)]|descendant::eac:place[not(descendant::*/@standardDate)]">
-			<div id="terms">
-				<h3>Terms</h3>
-				<dl class="dl-horizontal">
-					<xsl:apply-templates
-						select="descendant::eac:function[not(descendant::*/@standardDate)]|descendant::eac:languageUsed[not(descendant::*/@standardDate)]|descendant::eac:legalStatus[not(descendant::*/@standardDate)]|descendant::eac:localDescription[not(descendant::*/@standardDate)]|descendant::eac:mandate[not(descendant::*/@standardDate)]|descendant::eac:occupation[not(descendant::*/@standardDate)]|descendant::eac:place[not(descendant::*/@standardDate)]">
-						<xsl:sort select="local-name()"/>
-						<xsl:sort select="eac:term or eac:placeEntry"/>
-					</xsl:apply-templates>
-				</dl>
-			</div>
-		</xsl:if>
-	</xsl:template>
-
-	<xsl:template match="eac:function|eac:languageUsed|eac:legalStatus|eac:localDescription|eac:mandate|eac:occupation|eac:place">
-		<dt>
-			<xsl:value-of select="local-name()"/>
-		</dt>
-		<dd>
-			<xsl:choose>
-				<xsl:when test="eac:term">
-					<a href="{$url}results/?q={if (string(@localType)) then @localType else local-name()}_facet:&#x022;{eac:term}&#x022;">
-						<xsl:value-of select="eac:term"/>
-					</a>
-					<xsl:if test="string(eac:term/@vocabularySource)">
-						<a href="{eac:term/@vocabularySource}" style="margin-left:5px;">
-							<img src="{$url}ui/images/external.png" alt="External link"/>
-						</a>
-					</xsl:if>
-					<xsl:if test="string(eac:placeEntry)">
-						<xsl:text>, </xsl:text>
-						<a href="{$url}results/?q=placeEntry_facet:&#x022;{eac:placeEntry}&#x022;">
-							<xsl:value-of select="eac:placeEntry"/>
-						</a>
-						<xsl:if test="string(eac:placeEntry/@vocabularySource)">
-							<a href="{eac:placeEntry/@vocabularySource}" style="margin-left:5px;">
-								<img src="{$url}ui/images/external.png" alt="External link"/>
-							</a>
-						</xsl:if>
-					</xsl:if>
-				</xsl:when>
-				<xsl:when test="eac:placeEntry">
-					<a href="{$url}results/?q=placeEntry_facet:&#x022;{eac:placeEntry}&#x022;">
-						<xsl:value-of select="eac:placeEntry"/>
-					</a>
-					<xsl:if test="string(eac:placeEntry/@vocabularySource)">
-						<a href="{eac:placeEntry/@vocabularySource}" style="margin-left:5px;">
-							<img src="{$url}ui/images/external.png" alt="External link"/>
-						</a>
-					</xsl:if>
-				</xsl:when>
-			</xsl:choose>
-
-		</dd>
-	</xsl:template>
-
-	<xsl:template match="eac:existDates">
-		<h3>
-			<xsl:text>Exist Dates</xsl:text>
-			<xsl:if test="contains(@localType, 'xeac:')">
-				<xsl:text> </xsl:text>
-				<small>
-					<xsl:value-of select="@localType"/>
-				</small>
-			</xsl:if>
-		</h3>
-		<p>
-			<xsl:value-of select="string-join(descendant::*[not(child::*)], ' - ')"/>
-		</p>
-	</xsl:template>
-
-	<xsl:template match="eac:biogHist">
-		<h3>Biographical or Historical Note</h3>
-
-		<xsl:if test="eac:abstract">
-			<dl class="dl-horizontal">
-				<xsl:apply-templates select="eac:abstract"/>
-			</dl>
-		</xsl:if>
-		<xsl:if test="eac:citation">
-			<dl class="dl-horizontal">
-				<xsl:apply-templates select="eac:citation"/>
-			</dl>
-		</xsl:if>
-		<xsl:apply-templates select="eac:p"/>
-	</xsl:template>
-
-	<xsl:template match="eac:abstract|eac:citation">
-		<dt>
-			<xsl:value-of select="local-name()"/>
-		</dt>
-		<dd>
-			<xsl:if test="local-name()='abstract'">
-				<xsl:attribute name="property">dcterms:abstract</xsl:attribute>
-			</xsl:if>
-			<xsl:value-of select="."/>
-		</dd>
-	</xsl:template>
-
-	<xsl:template match="eac:p">
-		<p>
-			<xsl:apply-templates/>
-		</p>
-	</xsl:template>
-
-	<xsl:template match="eac:date|eac:dateRange" mode="chronList">
-		<li>
-			<b><xsl:choose>
-					<xsl:when test="local-name()='date'">
-						<xsl:value-of select="."/>
-					</xsl:when>
-					<xsl:when test="local-name()='dateRange'">
-						<xsl:value-of select="eac:fromDate"/>
-						<xsl:text> - </xsl:text>
-						<xsl:value-of select="eac:toDate"/>
-					</xsl:when>
-				</xsl:choose>: </b>
-			<xsl:call-template name="chron-description"/>
-		</li>
 	</xsl:template>
 
 	<xsl:template name="chron-description">
@@ -544,7 +520,8 @@
 				<xsl:value-of select="parent::node()/parent::node()/eac:event"/>
 			</xsl:when>
 			<xsl:when test="parent::node()/eac:term">
-				<a href="{$url}results/?q={if (string(parent::node()/@localType)) then parent::node()/@localType else parent::node()/local-name()}_facet:&#x022;{parent::node()/eac:term}&#x022;">
+				<a
+					href="{$url}results/?q={if (string(parent::node()/@localType)) then parent::node()/@localType else parent::node()/local-name()}_facet:&#x022;{parent::node()/eac:term}&#x022;">
 					<xsl:value-of select="parent::node()/eac:term"/>
 				</a>
 				<xsl:if test="string(parent::node()/eac:term/@vocabularySource)">
@@ -554,12 +531,14 @@
 				</xsl:if>
 			</xsl:when>
 			<xsl:when test="parent::node()/parent::node()/eac:term">
-				<a href="{$url}results/?q={if (string(parent::node()/parent::node()/@localType)) then parent::node()/parent::node()/@localType else
+				<a
+					href="{$url}results/?q={if (string(parent::node()/parent::node()/@localType)) then parent::node()/parent::node()/@localType else
 					parent::node()/parent::node()/local-name()}_facet:&#x022;{parent::node()/parent::node()/eac:term}&#x022;">
 					<xsl:value-of select="parent::node()/parent::node()/eac:term"/>
 				</a>
 				<xsl:if test="string(parent::node()/parent::node()/eac:term/@vocabularySource)">
-					<a href="{parent::node()/parent::node()/eac:term/@vocabularySource}" style="margin-left:5px;">
+					<a href="{parent::node()/parent::node()/eac:term/@vocabularySource}"
+						style="margin-left:5px;">
 						<img src="{$url}ui/images/external.png" alt="External link"/>
 					</a>
 				</xsl:if>
@@ -568,11 +547,13 @@
 				<xsl:value-of select="parent::node()/eac:placeRole"/>
 			</xsl:when>
 			<xsl:when test="parent::node()/eac:placeEntry">
-				<a href="{$url}results/?q={if (string(parent::node()/@localType)) then parent::node()/@localType else 'placeEntry'}_facet:&#x022;{parent::node()/eac:placeEntry}&#x022;">
+				<a
+					href="{$url}results/?q={if (string(parent::node()/@localType)) then parent::node()/@localType else 'placeEntry'}_facet:&#x022;{parent::node()/eac:placeEntry}&#x022;">
 					<xsl:value-of select="parent::node()/eac:placeEntry"/>
 				</a>
 				<xsl:if test="string(parent::node()/eac:placeEntry/@vocabularySource)">
-					<a href="{parent::node()/eac:placeEntry/@vocabularySource}" style="margin-left:5px;">
+					<a href="{parent::node()/eac:placeEntry/@vocabularySource}"
+						style="margin-left:5px;">
 						<img src="{$url}ui/images/external.png" alt="External link"/>
 					</a>
 				</xsl:if>
@@ -580,7 +561,8 @@
 		</xsl:choose>
 		<xsl:if test="string(parent::node()/eac:placeEntry) and not(parent::eac:place)">
 			<xsl:text>, </xsl:text>
-			<a href="{$url}results/?q=placeEntry_facet:&#x022;{parent::node()/eac:placeEntry}&#x022;">
+			<a
+				href="{$url}results/?q=placeEntry_facet:&#x022;{parent::node()/eac:placeEntry}&#x022;">
 				<xsl:value-of select="parent::node()/eac:placeEntry"/>
 			</a>
 			<xsl:if test="string(parent::node()/eac:placeEntry/@vocabularySource)">
@@ -592,10 +574,10 @@
 		</xsl:if>
 	</xsl:template>
 
-
 	<xsl:template name="relations">
 		<div id="relations" class="eac-section">
-			<h2>Relations</h2>
+			<h2>Relations <small><a href="#top" title="Return to top"><span
+							class="glyphicon glyphicon-arrow-up"/></a></small></h2>
 			<xsl:if test="count(eac:relations/eac:cpfRelation) &gt; 0">
 				<h3>Related Corporate, Personal, and Family Names</h3>
 				<dl class="dl-horizontal">
@@ -605,45 +587,14 @@
 					</xsl:apply-templates>
 				</dl>
 			</xsl:if>
-			<xsl:choose>
-				<!-- get related resources when there is a SPARQL query endpoint -->
-				<xsl:when test="$sparql = true()">
-					<xsl:call-template name="xeac:relatedResources">
-						<xsl:with-param name="uri">
-							<xsl:choose>
-								<xsl:when test="string(//config/uri_space)">
-									<xsl:value-of select="concat(//config/uri_space, $id)"/>
-								</xsl:when>
-								<xsl:otherwise>
-									<xsl:value-of select="concat($url, 'id/', $id)"/>
-								</xsl:otherwise>
-							</xsl:choose>
-						</xsl:with-param>
-						<xsl:with-param name="endpoint" select="//config/sparql/query"/>
-					</xsl:call-template>
-
-					<xsl:call-template name="xeac:annotations">
-						<xsl:with-param name="uri">
-							<xsl:choose>
-								<xsl:when test="string(//config/uri_space)">
-									<xsl:value-of select="concat(//config/uri_space, $id)"/>
-								</xsl:when>
-								<xsl:otherwise>
-									<xsl:value-of select="concat($url, 'id/', $id)"/>
-								</xsl:otherwise>
-							</xsl:choose>
-						</xsl:with-param>
-						<xsl:with-param name="endpoint" select="//config/sparql/query"/>
-					</xsl:call-template>
-				</xsl:when>
-				<xsl:when test="count(eac:relations/eac:resourceRelation) &gt; 0">
-					<h3>Related Resources</h3>
-					<dl class="dl-horizontal">
-						<xsl:apply-templates select="eac:relations/eac:resourceRelation[not(@xlink:role='portrait')]"/>
-					</dl>
-				</xsl:when>
-			</xsl:choose>
-
+			<xsl:if test="count(eac:relations/eac:resourceRelation) &gt; 0">
+				<h3>Related Resources</h3>
+				<dl class="dl-horizontal">
+					<xsl:apply-templates
+						select="eac:relations/eac:resourceRelation[not(@xlink:role='portrait')]"/>
+				</dl>
+			</xsl:if>
+			<hr/>
 		</div>
 	</xsl:template>
 
@@ -656,11 +607,14 @@
 				<xsl:when test="local-name()='cpfRelation'">
 					<xsl:choose>
 						<!-- create clickable links to internal documents -->
-						<xsl:when test="string(@xlink:href) and not(contains(@xlink:href, 'http://'))">
+						<xsl:when
+							test="string(@xlink:href) and not(contains(@xlink:href, 'http://'))">
 							<xsl:variable name="recordURI">
 								<xsl:choose>
 									<xsl:when test="string(/content/config/uri_space)">
-										<xsl:value-of select="concat(/content/config/uri_space, @xlink:href)"/>
+										<xsl:value-of
+											select="concat(/content/config/uri_space, @xlink:href)"
+										/>
 									</xsl:when>
 									<xsl:otherwise>
 										<xsl:value-of select="@xlink:href"/>
@@ -706,121 +660,4 @@
 			</xsl:choose>
 		</dd>
 	</xsl:template>
-
-	<!--<xsl:template name="regularize-name">
-		<xsl:param name="name"/>
-		<xsl:choose>
-			<xsl:when test="$name = 'daogrp'">
-				<xsl:text>Image</xsl:text>
-			</xsl:when>
-			<xsl:when test="$name = 'repository'">
-				<xsl:text>Repository</xsl:text>
-			</xsl:when>
-			<xsl:when test="$name = 'origination'">
-				<xsl:text>Creator</xsl:text>
-			</xsl:when>
-			<xsl:when test="$name = 'extent'">
-				<xsl:text>Extent</xsl:text>
-			</xsl:when>
-			<xsl:when test="$name = 'dimensions'">
-				<xsl:text>Dimensions</xsl:text>
-			</xsl:when>
-			<xsl:when test="$name = 'genreform'">
-				<xsl:text>Genre/Format</xsl:text>
-			</xsl:when>
-			<xsl:when test="$name = 'physfacet'">
-				<xsl:text>Physical Facet</xsl:text>
-			</xsl:when>
-			<xsl:when test="$name = 'physloc'">
-				<xsl:text>Location</xsl:text>
-			</xsl:when>
-			<xsl:when test="$name = 'unitid'">
-				<xsl:text>Identification</xsl:text>
-			</xsl:when>
-			<xsl:when test="$name = 'langmaterial'">
-				<xsl:text>Language</xsl:text>
-			</xsl:when>
-			<xsl:when test="$name = 'abstract'">
-				<xsl:text>Abstract</xsl:text>
-			</xsl:when>
-			<xsl:when test="$name = 'materialspec'">
-				<xsl:text>Technical</xsl:text>
-			</xsl:when>
-			<xsl:when test="$name = 'container'">
-				<xsl:text>Container</xsl:text>
-			</xsl:when>
-			<xsl:when test="$name = 'bioghist'">
-				<xsl:text>Biographical/Historical Commentary</xsl:text>
-			</xsl:when>
-			<xsl:when test="$name = 'scopecontent'">
-				<xsl:text>Scope and Content</xsl:text>
-			</xsl:when>
-			<xsl:when test="$name = 'controlaccess'">
-				<xsl:text>Controlled Access Headings</xsl:text>
-			</xsl:when>
-			<xsl:when test="$name = 'arrangement'">
-				<xsl:text>Arrangement</xsl:text>
-			</xsl:when>
-			<xsl:when test="$name = 'accessrestrict'">
-				<xsl:text>Access Restriction</xsl:text>
-			</xsl:when>
-			<xsl:when test="$name = 'userestrict'">
-				<xsl:text>Use Restriction</xsl:text>
-			</xsl:when>
-			<xsl:when test="$name = 'prefercite'">
-				<xsl:text>Preferred Citation</xsl:text>
-			</xsl:when>
-			<xsl:when test="$name = 'acqinfo'">
-				<xsl:text>Acquisition Information</xsl:text>
-			</xsl:when>
-			<xsl:when test="$name = 'altformavail'">
-				<xsl:text>Alternate Form Available</xsl:text>
-			</xsl:when>
-			<xsl:when test="$name = 'accruals'">
-				<xsl:text>Accruals</xsl:text>
-			</xsl:when>
-			<xsl:when test="$name = 'appraisal'">
-				<xsl:text>Appraisal</xsl:text>
-			</xsl:when>
-			<xsl:when test="$name = 'custodhist'">
-				<xsl:text>Custodial History</xsl:text>
-			</xsl:when>
-			<xsl:when test="$name = 'processinfo'">
-				<xsl:text>Processing Information</xsl:text>
-			</xsl:when>
-			<xsl:when test="$name = 'originalsloc'">
-				<xsl:text>Location of Originals</xsl:text>
-			</xsl:when>
-			<xsl:when test="$name = 'phystech'">
-				<xsl:text>Physical Characteristics</xsl:text>
-			</xsl:when>
-			<xsl:when test="$name = 'odd'">
-				<xsl:text>Other Descriptive Data</xsl:text>
-			</xsl:when>
-			<xsl:when test="$name = 'note'">
-				<xsl:text>Note</xsl:text>
-			</xsl:when>
-			<xsl:when test="$name = 'descgrp'">
-				<xsl:text>Descriptive Group</xsl:text>
-			</xsl:when>
-			<xsl:when test="$name = 'bibliography'">
-				<xsl:text>Bibliography</xsl:text>
-			</xsl:when>
-			<xsl:when test="$name = 'relatedmaterial'">
-				<xsl:text>Related Material</xsl:text>
-			</xsl:when>
-			<xsl:when test="$name = 'separatedmaterial'">
-				<xsl:text>Separated Material</xsl:text>
-			</xsl:when>
-			<xsl:when test="$name = 'otherfindaid'">
-				<xsl:text>Other Finding Aid</xsl:text>
-			</xsl:when>
-			<xsl:when test="$name = 'fileplan'">
-				<xsl:text>Fileplan</xsl:text>
-			</xsl:when>
-			<xsl:otherwise>
-				<xsl:text>Other Name</xsl:text>
-			</xsl:otherwise>
-		</xsl:choose>
-	</xsl:template>-->
 </xsl:stylesheet>

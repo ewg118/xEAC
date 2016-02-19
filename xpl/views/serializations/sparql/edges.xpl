@@ -34,6 +34,7 @@
 		<p:input name="config">
 			<config>
 				<encoding>utf-8</encoding>
+				<content-type>application/json</content-type>
 			</config>
 		</p:input>
 		<p:output name="data" ref="data"/>
