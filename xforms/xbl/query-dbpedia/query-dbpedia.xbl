@@ -1,7 +1,7 @@
 <xbl:xbl xmlns="http://www.w3.org/1999/xhtml" xmlns:xforms="http://www.w3.org/2002/xforms" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:xlink="http://www.w3.org/1999/xlink"
 	xmlns:xxforms="http://orbeon.org/oxf/xml/xforms" xmlns:xbl="http://www.w3.org/ns/xbl" xmlns:xxbl="http://orbeon.org/oxf/xml/xbl" xmlns:xeac="https://github.com/ewg118/xEAC"
 	xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dbpedia-owl="http://dbpedia.org/ontology/" xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
-	xmlns:dbpprop="http://dbpedia.org/property/">
+	xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:dbpprop="http://dbpedia.org/property/">
 	<xbl:binding id="xeac-query-dbpedia" element="xeac|query-dbpedia">
 		<xbl:template>
 			<xforms:group xbl:attr="model context ref bind" xxbl:scope="outer">
@@ -222,7 +222,8 @@
 												<xforms:insert context="$binding/eac:cpfDescription/eac:relations/eac:cpfRelation[last()]" origin="xforms:attribute('xlink:arcrole', $arcrole)"/>
 												<xforms:insert context="$binding/eac:cpfDescription/eac:relations/eac:cpfRelation[last()]" origin="xforms:attribute('xlink:role',
 													'foaf:Person')"/>
-												<xforms:insert context="$binding/eac:cpfDescription/eac:relations/eac:cpfRelation[last()]" origin="xforms:attribute('xlink:href', $about)" if="string($about)"/>
+												<xforms:insert context="$binding/eac:cpfDescription/eac:relations/eac:cpfRelation[last()]" origin="xforms:attribute('xlink:href', $about)"
+													if="string($about)"/>
 												<!-- set relationEntry with label delivered from RDF -->
 												<xforms:setvalue ref="instance('temp-dbpedia-id')" value="$about"/>
 												<xforms:send submission="get-temp-dbpedia-rdf"/>
@@ -243,8 +244,7 @@
 												<xforms:var name="href" select="@rdf:resource"/>
 												<xforms:var name="arcrole" select="if (local-name()='parent') then 'childOf' else if (local-name()='successor') then 'predecessorOf' else if
 													(local-name()='predecessor') then 'successorOf' else if (local-name()='spouse') then 'spouseOf' else 'belongsToDynasty'"/>
-												<xforms:var name="role" select="if (local-name() = 'house' or local-name() = 'dynasty') then 'arch:Family'
-													else 'foaf:Person'"/>
+												<xforms:var name="role" select="if (local-name() = 'house' or local-name() = 'dynasty') then 'arch:Family'              else 'foaf:Person'"/>
 												<!-- insert cpfRelation element -->
 												<xforms:insert context="eac:cpfDescription" nodeset="./child::node()[last()]" origin="instance('relations-template')"
 													if="not(eac:cpfDescription/eac:relations)"/>
