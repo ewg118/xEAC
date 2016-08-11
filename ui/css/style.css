@@ -3,20 +3,21 @@
   GLOBAL
   ****************************************
  */
-html {
-	background-color: #F8F8F8;
-	background-attachment: scroll;
-	background-image: url("http://numismatics.org/authorities/ui/images/pattern.gif");
-	background-position: center top;
-	background-repeat: repeat;
+@import url(//fonts.googleapis.com/css?family=Cuprum&#038;subset=latin);
+html{
+	background-color:#F8F8F8;
+	background-attachment:scroll;
+	background-image:url("http://numismatics.org/authorities/ui/images/pattern.gif");
+	background-position:center top;
+	background-repeat:repeat;
 }
-body {
-	color: #535e70;
-	font-family: Georgia,"Times New Roman",Times,serif;
-	font-size: 14px;
-	line-height: 18px;	
+body{
+	color:#535e70;
+	font-family:Arial, Helvetica, sans-serif;
+	font-size:14px;
+	line-height:18px;
 }
-.navbar {
+.navbar{
 	margin-bottom:0;
 	border-bottom:4px solid black;
 }
@@ -33,21 +34,39 @@ a > img{
 .data-options a{
 	margin-right:5px;
 }
+h1,
+h2,
+h3,
+h4,
+h5,
+h6{
+	color:#434343;
+	font-family:Cuprum, sans-serif;
+}
+a{
+	color:#e64100;
+	text-decoration:none;
+}
+a:hover,
+a:focus{
+	color:#535e70;
+	text-decoration:underline
+}
 /*
   ***************************************
   FOOTER
   ***************************************
  */
-#footer {
-	background-color: #535e70;
+#footer{
+	background-color:#535e70;
 	border-top:1px solid #F8F8F8;
 	padding-top:10px;
 	padding-bottom:10px;
 	color:white;
 }
-#footer a {
+#footer a{
 	color:white;
-	text-decoration:underline;	
+	text-decoration:underline;
 }
 /*
   ****************************************
@@ -73,7 +92,7 @@ a > img{
 	border:1px solid lightgray;
 	width:100%;
 }
-.eac-section {
+.eac-section{
 	margin-bottom:20px;
 }
 /*
