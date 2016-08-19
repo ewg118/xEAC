@@ -50,7 +50,7 @@
 		<xsl:param name="roles"/>
 		<xsl:param name="position"/>
 
-		<div class="row">
+		<div class="row" style="padding-top:5px; padding-bottom:5px">
 			<div class="col-md-8">
 				<h4>
 					<xsl:value-of select="$position"/>
@@ -83,7 +83,7 @@
 			<div class="col-md-4 text-right">
 				<xsl:if test="res:binding[@name='thumbnail']/res:uri">
 					<a href="{res:binding[@name='uri']/res:uri}">
-						<img src="{res:binding[@name='thumbnail']/res:uri}" alt="thumbnail"/>
+						<img src="{res:binding[@name='thumbnail']/res:uri}" style="max-height:100px" alt="thumbnail"/>
 					</a>
 				</xsl:if>
 			</div>
