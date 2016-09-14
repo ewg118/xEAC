@@ -10,9 +10,9 @@ $(function () {
 		var query = $('#qs_query').attr('value');
 		if (search_text != null && search_text != '') {
 			if (query == '*:*') {
-				$('#qs_query') .attr('value', 'fulltext:' + search_text);
+				$('#qs_query') .attr('value', 'text:' + search_text);
 			} else {
-				$('#qs_query') .attr('value', query + ' AND fulltext:' + search_text);
+				$('#qs_query') .attr('value', query + ' AND text:' + search_text);
 			}
 		} else {
 			$('#qs_query') .attr('value', '*:*');
