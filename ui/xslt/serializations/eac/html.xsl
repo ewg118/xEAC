@@ -323,12 +323,12 @@
 						</xsl:if>
 						<xsl:if test="/content/res:sparql[1][descendant::res:result]">
 							<li>
-								<a href="#associated-content">Related Resources</a>
+								<a href="#related-resources">Related Resources</a>
 							</li>
 						</xsl:if>
 						<xsl:if test="/content/res:sparql[2][descendant::res:result]">
 							<li>
-								<a href="#associated-content">Annotations</a>
+								<a href="#annotations">Annotations</a>
 							</li>
 						</xsl:if>
 						<xsl:if
