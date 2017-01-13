@@ -38,12 +38,16 @@
 PREFIX dcterms:  <http://purl.org/dc/terms/>
 PREFIX foaf:  <http://xmlns.com/foaf/0.1/>
 PREFIX oa:	<http://www.w3.org/ns/oa#>
-SELECT ?target ?title ?bookTitle ?source WHERE {
+SELECT ?target ?title ?bookTitle ?source ?abstract ?creator ?name ?thumbnail ?abstract WHERE {
 ?s oa:hasBody <URI> ;
    oa:hasTarget ?target . 
   ?target dcterms:source ?source ;
           dcterms:title ?title .
-  ?source dcterms:title ?bookTitle}]]>
+  ?source dcterms:title ?bookTitle ;
+  	dcterms:creator ?creator .
+  OPTIONAL {?source foaf:thumbnail ?thumbnail}
+  OPTIONAL {?source dcterms:abstract ?abstract}
+  OPTIONAL {?creator foaf:name ?name}}]]>
 				</xsl:variable>
 
 				<xsl:variable name="service">
