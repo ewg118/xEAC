@@ -98,34 +98,65 @@
 			<xsl:copy-of select="res:results"/>
 		</xsl:variable>
 
-		<div>
+		<div id="annotations">
 			<h3>Annotations <small><a href="#top" title="Return to top"><span class="glyphicon glyphicon-arrow-up"
 			/></a></small></h3>
 			<xsl:for-each select="$sources">
 				<xsl:variable name="uri" select="."/>
-
-
+				
+				
 				<div class="row">
 					<div class="col-md-12">
 						<h4>
 							<xsl:value-of select="position()"/>
 							<xsl:text>. </xsl:text>
 							<a href="{$uri}">
-								<xsl:value-of
-									select="$results/res:result[res:binding[@name='source']/res:uri = $uri][1]/res:binding[@name='bookTitle']/res:literal"
-								/>
+								<xsl:value-of select="$results/res:result[res:binding[@name='source']/res:uri = $uri][1]/res:binding[@name='bookTitle']/res:literal"/>
 							</a>
 						</h4>
 					</div>
+					<div class="col-md-{if ($results/res:result[res:binding[@name='source']/res:uri = $uri][1]/res:binding[@name='thumbnail']/res:uri) then '8' else '12'}">
+						<dl class="dl-horizontal">
+							<dt>Sections</dt>
+							<dd>
+								<xsl:apply-templates select="$results/res:result[res:binding[@name='source']/res:uri = $uri]" mode="annotations"/>
+							</dd>
+							<dt>Creator</dt>
+							<dd>
+								<xsl:choose>
+									<xsl:when test="$results/res:result[res:binding[@name='source']/res:uri = $uri][1]/res:binding[@name='name']/res:literal">
+										<a href="{$results/res:result[res:binding[@name='source']/res:uri = $uri][1]/res:binding[@name='creator']/res:uri}">
+											<xsl:value-of select="$results/res:result[res:binding[@name='source']/res:uri = $uri][1]/res:binding[@name='name']/res:literal"/>
+										</a>
+									</xsl:when>
+									<xsl:otherwise>
+										<a href="{$results/res:result[res:binding[@name='source']/res:uri = $uri][1]/res:binding[@name='creator']/res:uri}">
+											<xsl:value-of select="$results/res:result[res:binding[@name='source']/res:uri = $uri][1]/res:binding[@name='creator']/res:uri"/>
+										</a>
+									</xsl:otherwise>
+								</xsl:choose>
+							</dd>
+							<xsl:if test="$results/res:result[res:binding[@name='source']/res:uri = $uri][1]/res:binding[@name='abstract']/res:literal">
+								<dt>Abstract</dt>
+								<dd>
+									<xsl:value-of select="$results/res:result[res:binding[@name='source']/res:uri = $uri][1]/res:binding[@name='abstract']/res:literal"/>
+								</dd>
+							</xsl:if>
+						</dl>
+					</div>
+					<xsl:if test="$results/res:result[res:binding[@name='source']/res:uri = $uri][1]/res:binding[@name='thumbnail']/res:uri">
+						<div class="col-md-4 text-right">
+							<a href="{$uri}">
+								<img src="{$results/res:result[res:binding[@name='source']/res:uri = $uri][1]/res:binding[@name='thumbnail']/res:uri}" alt="thumbnail"/>
+							</a>
+						</div>
+					</xsl:if>
 				</div>
-
-				<xsl:apply-templates
-					select="$results/res:result[res:binding[@name='source']/res:uri = $uri]"
-					mode="annotations"/>
 			</xsl:for-each>
+			<hr/>
 		</div>
 	</xsl:template>
-
+	
 	<xsl:template match="res:result" mode="annotations">
 		<a href="{res:binding[@name='target']/res:uri}">
 			<xsl:value-of select="res:binding[@name='title']/res:literal"/>
