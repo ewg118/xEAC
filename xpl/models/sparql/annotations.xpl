@@ -44,7 +44,7 @@ SELECT ?target ?title ?bookTitle ?source ?abstract ?creator ?name ?thumbnail ?ab
   ?target dcterms:source ?source ;
           dcterms:title ?title .
   ?source dcterms:title ?bookTitle ;
-  	dcterms:creator ?creator .
+  	dcterms:creator ?creator . FILTER (?creator != <URI>)
   OPTIONAL {?source foaf:thumbnail ?thumbnail}
   OPTIONAL {?source dcterms:abstract ?abstract}
   OPTIONAL {?creator foaf:name ?name}}]]>
