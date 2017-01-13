@@ -29,13 +29,14 @@
 			<xsl:copy-of select="res:results"/>
 		</xsl:variable>
 
-		<div>
+		<div id="related-resources">
 			<h3>Related Resources <small><a href="#top"><span class="glyphicon glyphicon-arrow-up"
 						/></a></small></h3>
 			<xsl:for-each select="$objects">
 				<xsl:variable name="uri" select="."/>
 				<xsl:variable name="roles"
 					select="$results/res:result[res:binding[@name='uri']/res:uri = $uri]/res:binding[@name='role']/res:uri"/>
+				
 				<xsl:apply-templates
 					select="$results/res:result[res:binding[@name='uri']/res:uri = $uri][1]"
 					mode="relatedResources">
@@ -50,7 +51,7 @@
 		<xsl:param name="roles"/>
 		<xsl:param name="position"/>
 
-		<div class="row" style="padding-top:5px; padding-bottom:5px">
+		<div class="row">
 			<div class="col-md-8">
 				<h4>
 					<xsl:value-of select="$position"/>
