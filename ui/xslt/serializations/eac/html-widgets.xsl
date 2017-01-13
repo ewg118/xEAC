@@ -147,7 +147,7 @@
 					<xsl:if test="$results/res:result[res:binding[@name='source']/res:uri = $uri][1]/res:binding[@name='thumbnail']/res:uri">
 						<div class="col-md-4 text-right">
 							<a href="{$uri}">
-								<img src="{$results/res:result[res:binding[@name='source']/res:uri = $uri][1]/res:binding[@name='thumbnail']/res:uri}" alt="thumbnail"/>
+								<img src="{$results/res:result[res:binding[@name='source']/res:uri = $uri][1]/res:binding[@name='thumbnail']/res:uri}" style="max-height:100px" alt="thumbnail"/>
 							</a>
 						</div>
 					</xsl:if>
