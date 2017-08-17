@@ -21,12 +21,12 @@
 
 		<xforms:model>
 			<!-- exist URL is stored in an XML file -->
-			<xforms:instance id="exist-config">
+			<xforms:instance id="exist-config" xxforms:exclude-result-prefixes="#all">
 				<xi:include href="../exist-config.xml"></xi:include>
 			</xforms:instance>
 
 			<xforms:instance id="control-instance">
-				<controls xmlns="">
+				<controls xmlns="" xxforms:exclude-result-prefixes="#all">
 					<id></id>
 					<identifiers></identifiers>
 					<publicationStatus></publicationStatus>
