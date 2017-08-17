@@ -21,12 +21,12 @@
 
 		<xforms:model>
 			<!-- exist URL is stored in an XML file -->
-			<xforms:instance id="exist-config">
+			<xforms:instance id="exist-config" xxforms:exclude-result-prefixes="#all">
 				<xi:include href="../exist-config.xml"></xi:include>
 			</xforms:instance>
 
 			<xforms:instance id="control-instance">
-				<controls xmlns="">
+				<controls xmlns="" xxforms:exclude-result-prefixes="#all">
 					<id></id>
 					<identifiers></identifiers>
 					<publicationStatus></publicationStatus>
@@ -216,7 +216,7 @@
 						} </report>]]></query>
 					<query id="create-collection">xmldb:create-collection('/db/xeac', 'records')</query>
 					<query id="publish-all"><![CDATA[declare namespace eac="urn:isbn:1-931666-33-4";
-						<report> { for $record in collection()[descendant::eac:publicationStatus='approved'] return 
+						<report> { for $record in collection() return 
 							<id> { data($record//eac:recordId) } </id>
 						} </report>]]></query>
 					<query id="query-objects">
@@ -728,11 +728,10 @@ UNION { ?s rdf:type skos:Concept ; foaf:focus ?entity . ?s ?p ?o }}]]>
 														</td>
 														<td class="text-center">
 															<xforms:group ref=".[maintenanceStatus='new' or maintenanceStatus='revised' or maintenanceStatus='derived']">
-																<xforms:input ref="published">
-																	<xforms:action ev:event="xforms-value-changed">
-																		<xforms:var name="val" select="." as="xs:boolean"></xforms:var>
-																		<!-- publish the record if the box is checked -->
-																		<xforms:action if="$val = true()">
+																<xforms:group ref="published[. = false()]">
+																	<xforms:trigger appearance="minimal">
+																		<xforms:label><span class="glyphicon glyphicon-{if (.=true()) then 'ok' else 'unchecked'}"></span></xforms:label>
+																		<xforms:action ev:event="DOMActivate">
 																			<xforms:setvalue ref="instance('control-instance')/id" value="$id"></xforms:setvalue>
 																			<!-- update publicationStatus -->
 																			<xforms:setvalue ref="instance('control-instance')/publicationStatus">approved</xforms:setvalue>
@@ -755,12 +754,16 @@ UNION { ?s rdf:type skos:Concept ; foaf:focus ?entity . ?s ?p ?o }}]]>
 																				<xforms:send submission="delete-graph"></xforms:send>
 																				<!-- get RDF for entity and re-post it -->
 																				<xforms:send submission="get-rdf" ev:event="xforms-submit-done"></xforms:send>
-																				
-																				<xforms:setvalue ref="instance('control-instance')/status">Record successfully published.</xforms:setvalue>
 																			</xforms:action>
+																			<xforms:setvalue ref="instance('control-instance')/status">Record successfully published.</xforms:setvalue>
+																			<xforms:setvalue ref="." value="true()"></xforms:setvalue>
 																		</xforms:action>
-																		<!-- unpublish the record if the box is unchecked -->
-																		<xforms:action if="$val = false()">
+																	</xforms:trigger>
+																</xforms:group>
+																<xforms:group ref="published[. = true()]">
+																	<xforms:trigger appearance="minimal">
+																		<xforms:label><span class="glyphicon glyphicon-{if (.=true()) then 'ok' else 'unchecked'}"></span></xforms:label>
+																		<xforms:action ev:event="DOMActivate">
 																			<xforms:setvalue ref="instance('control-instance')/id" value="$id"></xforms:setvalue>
 																			<!-- update publicationStatus -->
 																			<xforms:setvalue ref="instance('control-instance')/publicationStatus">inProcess</xforms:setvalue>
@@ -781,9 +784,10 @@ UNION { ?s rdf:type skos:Concept ; foaf:focus ?entity . ?s ?p ?o }}]]>
 																			</xforms:action>
 																			
 																			<xforms:setvalue ref="instance('control-instance')/status">Record successfully unpublished.</xforms:setvalue>
+																			<xforms:setvalue ref="." value="false()"></xforms:setvalue>
 																		</xforms:action>
-																	</xforms:action>
-																</xforms:input>
+																	</xforms:trigger>
+																</xforms:group>
 															</xforms:group>
 														</td>
 														<td class="text-center">
@@ -884,13 +888,17 @@ UNION { ?s rdf:type skos:Concept ; foaf:focus ?entity . ?s ?p ?o }}]]>
 		<fr:alert-dialog id="delete">
 			<fr:label>Delete</fr:label>
 			<fr:message>Are you sure you want to delete this object?</fr:message>
-			<fr:negative-choice></fr:negative-choice>
+			<fr:negative-choice>
+				<fr:label>No</fr:label>
+			</fr:negative-choice>
 			<fr:positive-choice>
+				<fr:label>Yes</fr:label>
 				<xforms:action ev:event="DOMActivate">
 					<xforms:send submission="delete-doc"></xforms:send>
 					<xforms:send submission="delete-kml"></xforms:send>
 					<xforms:setvalue ref="instance('deleteId')/query" value="concat('recordId:&#x022;', instance('control-instance')/id, '&#x022;')"></xforms:setvalue>
-					<xforms:setvalue ref="instance('control-instance')/solr-core" value="instance('config')/solr_published"></xforms:setvalue>
+					<xforms:setvalue ref="i
+						nstance('control-instance')/solr-core" value="instance('config')/solr_published"></xforms:setvalue>
 					<xforms:send submission="delete-solr-doc"></xforms:send>
 
 					<!-- delete from triplestore -->
@@ -919,9 +927,12 @@ UNION { ?s rdf:type skos:Concept ; foaf:focus ?entity . ?s ?p ?o }}]]>
 		<!-- mass publication dialogs -->
 		<fr:alert-dialog id="publish-all">
 			<fr:label>Publish All</fr:label>
-			<fr:message>Do you want to publish all records? This may take several minutes.</fr:message>
-			<fr:negative-choice></fr:negative-choice>
+			<fr:message>This will publish all records, and may take several minutes. Continue?</fr:message>
+			<fr:negative-choice>
+				<fr:label>No</fr:label>
+			</fr:negative-choice>
 			<fr:positive-choice>
+				<fr:label>Yes</fr:label>
 				<xforms:action ev:event="DOMActivate">
 					<xforms:setvalue ref="instance('eXist-xquery')/exist:text" value="instance('xqueries')/query[@id='publish-all']"></xforms:setvalue>
 					<xforms:send submission="xquery-collection"></xforms:send>
@@ -930,12 +941,21 @@ UNION { ?s rdf:type skos:Concept ; foaf:focus ?entity . ?s ?p ?o }}]]>
 						<!-- publish to solr -->
 						<xforms:var name="id" select="context()"></xforms:var>
 						<xforms:setvalue ref="instance('control-instance')/id" value="$id"></xforms:setvalue>
+						<!-- update publicationStatus -->
+						<xforms:setvalue ref="instance('control-instance')/publicationStatus">approved</xforms:setvalue>
+						<xforms:send submission="load-doc"></xforms:send>
+						<!-- create kml -->
+						<xforms:insert nodeset="instance('kml')"
+							origin="xxforms:call-xpl('oxf:/apps/xeac/xpl/views/serializations/eac/kml.xpl', 'data', instance('doc'), 'data')"></xforms:insert>
+						<xforms:send submission="save-kml"></xforms:send>
+						<!-- publish to solr -->
+						<xforms:setvalue ref="instance('control-instance')/solr-core" value="instance('config')/solr_published"></xforms:setvalue>
 						<xforms:send submission="eac-to-solr"></xforms:send>
 					</xforms:action>
 					<!-- commit index -->
 					<xforms:send submission="commit"></xforms:send>
 
-					<!-- post to SPARQL endpoint, if it exists -->
+					<!-- post to dump to SPARQL endpoint, if it exists -->
 					<xforms:action if="string(instance('config')/sparql/update) and string(instance('config')/sparql/store)">
 						<!-- first clear existing triples -->
 						<xforms:setvalue ref="instance('sparqlUpdate')" value="instance('sparqlUpdate-template')/query[@id='delete-all']"></xforms:setvalue>
@@ -947,6 +967,8 @@ UNION { ?s rdf:type skos:Concept ; foaf:focus ?entity . ?s ?p ?o }}]]>
 					<!-- reload table -->
 					<xforms:setvalue ref="instance('eXist-xquery')/exist:text" value="replace(instance('xqueries')/query[@id='get-objects'], 'START', '1')"></xforms:setvalue>
 					<xforms:send submission="xquery-pagination"></xforms:send>
+					
+					<xforms:setvalue ref="instance('control-instance')/status">Batch publication process completed.</xforms:setvalue>
 				</xforms:action>
 			</fr:positive-choice>
 		</fr:alert-dialog>
@@ -980,8 +1002,11 @@ UNION { ?s rdf:type skos:Concept ; foaf:focus ?entity . ?s ?p ?o }}]]>
 		<fr:alert-dialog id="unpublish-all">
 			<fr:label>Unpublish All</fr:label>
 			<fr:message>Do you want to unpublish all records?</fr:message>
-			<fr:negative-choice></fr:negative-choice>
+			<fr:negative-choice>
+				<fr:label>No</fr:label>
+			</fr:negative-choice>
 			<fr:positive-choice>
+				<fr:label>Yes</fr:label>
 				<xforms:action ev:event="DOMActivate">
 					<xforms:setvalue ref="instance('control-instance')/solr-core" value="instance('config')/solr_published"></xforms:setvalue>
 					<xforms:setvalue ref="instance('deleteAll')/query">*:*</xforms:setvalue>
@@ -1006,8 +1031,11 @@ UNION { ?s rdf:type skos:Concept ; foaf:focus ?entity . ?s ?p ?o }}]]>
 		<fr:alert-dialog id="republish-dialog">
 			<fr:label>Republish</fr:label>
 			<fr:message>Do you want to reindex currently published records?</fr:message>
-			<fr:negative-choice></fr:negative-choice>
+			<fr:negative-choice>
+				<fr:label>No</fr:label>
+			</fr:negative-choice>
 			<fr:positive-choice>
+				<fr:label>Yes</fr:label>
 				<xforms:action ev:event="DOMActivate">
 					<xforms:setvalue ref="instance('control-instance')/solr-core" value="instance('config')/solr_published"></xforms:setvalue>
 					<xforms:send submission="republish"></xforms:send>
