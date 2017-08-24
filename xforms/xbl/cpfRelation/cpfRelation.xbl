@@ -1,6 +1,6 @@
 <xbl:xbl xmlns="http://www.w3.org/1999/xhtml" xmlns:xforms="http://www.w3.org/2002/xforms" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:xxforms="http://orbeon.org/oxf/xml/xforms"
 	xmlns:xbl="http://www.w3.org/ns/xbl" xmlns:xxbl="http://orbeon.org/oxf/xml/xbl" xmlns:exist="http://exist.sourceforge.net/NS/exist" xmlns:xeac="https://github.com/ewg118/xEAC"
-	xmlns:eac="urn:isbn:1-931666-33-4">
+	xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:eac="urn:isbn:1-931666-33-4" xmlns:xlink="http://www.w3.org/1999/xlink">
 	<xbl:binding id="xeac-cpfRelation" element="xeac|cpfRelation">
 		<xbl:template>
 			<xforms:group xbl:attr="model context ref bind" xxbl:scope="outer">
@@ -14,20 +14,26 @@
 						<xforms:var name="entityType" select="ancestor::eac:cpfDescription/eac:identity/eac:entityType"/>
 						<xforms:var name="domain" select="if ($entityType='person') then 'foaf:Person' else if ($entityType='family') then 'arch:Family' else 'org:Organization'"/>
 						<xforms:var name="role" select="@xlink:role"/>
-						
+
 						<div class="subsection">
 							<h3>Relation</h3>
 							<xforms:trigger appearance="minimal">
 								<xforms:delete ev:event="DOMActivate" nodeset="."/>
-								<xforms:label><span class="glyphicon glyphicon-remove"/></xforms:label>
+								<xforms:label>
+									<span class="glyphicon glyphicon-remove"/>
+								</xforms:label>
 							</xforms:trigger>
 							<xforms:trigger appearance="minimal">
-								<xforms:label><span class="glyphicon glyphicon-plus"/></xforms:label>
+								<xforms:label>
+									<span class="glyphicon glyphicon-plus"/>
+								</xforms:label>
 								<xxforms:show ev:event="DOMActivate" dialog="cpfRelation-objects"/>
 							</xforms:trigger>
 							<xforms:group ref=".[string(ancestor::eac:cpfDescription/eac:identity/eac:entityType)]">
 								<xforms:trigger appearance="minimal">
-									<xforms:label><span class="glyphicon glyphicon-search"/></xforms:label>
+									<xforms:label>
+										<span class="glyphicon glyphicon-search"/>
+									</xforms:label>
 									<xforms:action ev:event="DOMActivate">
 										<!-- load config on trigger click enabled -->
 										<xforms:send submission="load-config" if="not(string(instance('config')/url))"/>
@@ -38,15 +44,15 @@
 										<xxforms:show dialog="relation-dialog"/>
 									</xforms:action>
 								</xforms:trigger>
-							</xforms:group>							
-							
+							</xforms:group>
+
 							<!-- display triple -->
 							<xforms:group ref=".[string(@xlink:href) and string(@xlink:role) and string(@xlink:arcrole)]">
 								<p class="text-muted">
-									<xforms:output value="concat(@xlink:arcrole, ' ', @xlink:href, '; a ', @xlink:role)"/>								
+									<xforms:output value="concat(@xlink:arcrole, ' ', @xlink:href, '; a ', @xlink:role)"/>
 								</p>
-							</xforms:group>							
-							
+							</xforms:group>
+
 							<!-- relationEntry: only required element -->
 							<xforms:group ref="eac:relationEntry">
 								<xeac:relationEntry/>
@@ -134,8 +140,8 @@
 										<xforms:value ref="@role"/>
 									</xforms:itemset>
 									<xforms:action ev:event="xforms-value-changed">
-										<xforms:insert context="$binding" origin="xxforms:attribute('xlink:role', '')" if="not(@xlink:role)
-											and string-length(instance('attributes')/attribute[@name='xlink:role']) &gt; 0"/>										
+										<xforms:insert context="$binding" origin="xxforms:attribute('xlink:role', '')" if="not(@xlink:role)            and
+											string-length(instance('attributes')/attribute[@name='xlink:role']) &gt; 0"/>
 										<xforms:setvalue ref="$binding/@xlink:role" value="instance('attributes')/attribute[@name='xlink:role']"/>
 									</xforms:action>
 								</xforms:select1>
@@ -154,8 +160,8 @@
 										<xforms:value ref="@from"/>
 									</xforms:itemset>
 									<xforms:action ev:event="xforms-value-changed">
-										<xforms:insert context="$binding" origin="xxforms:attribute('xlink:arcrole', '')" if="not(@xlink:arcrole)
-											and string-length(instance('attributes')/attribute[@name='xlink:arcrole']) &gt; 0"/>
+										<xforms:insert context="$binding" origin="xxforms:attribute('xlink:arcrole', '')" if="not(@xlink:arcrole)            and
+											string-length(instance('attributes')/attribute[@name='xlink:arcrole']) &gt; 0"/>
 										<xforms:setvalue ref="$binding/@xlink:arcrole" value="instance('attributes')/attribute[@name='xlink:arcrole']"/>
 										<xforms:delete if="string-length(instance('attributes')/attribute[@name='xlink:arcrole']) = 0" context="$binding" nodeset="@xlink:arcrole"/>
 									</xforms:action>
@@ -201,7 +207,8 @@
 												<xforms:action ev:event="DOMActivate">
 													<!-- set QUERY and entityType for XQuery -->
 													<xforms:var name="range" select="if ($role = 'foaf:Person') then 'person' else if ($role = 'arch:Family') then 'family' else 'corporateBody'"/>
-													<xforms:setvalue ref="instance('eXist-xquery')/exist:text" value="replace(replace(instance('xquery'), 'ENTITYTYPE', $range), 'QUERY', lower-case(instance('query')))"/>
+													<xforms:setvalue ref="instance('eXist-xquery')/exist:text" value="replace(replace(instance('xquery'), 'ENTITYTYPE', $range), 'QUERY',
+														lower-case(instance('query')))"/>
 													<xforms:send submission="xquery-collection"/>
 												</xforms:action>
 												<xforms:label>Search</xforms:label>
@@ -330,8 +337,9 @@
 						</xforms:instance>
 
 						<xforms:instance id="xquery" xxforms:exclude-result-prefixes="#all">
-							<xquery> &lt;report> { for $record in collection() return if ($record[descendant::*:entityType='ENTITYTYPE']//*:recordId[contains(., 'QUERY')] or $record[descendant::*:entityType='ENTITYTYPE']//*:nameEntry/*:part[matches(., 'QUERY', 'i')]) then
-								&lt;record> &lt;id>{ $record//*:recordId/text() }&lt;/id> &lt;title>{ if (string($record//*:nameEntry[@xml:lang='en'][string(*:preferredForm)][1]/*:part/text())) then
+							<xquery> &lt;report> { for $record in collection() return if ($record[descendant::*:entityType='ENTITYTYPE']//*:recordId[contains(., 'QUERY')] or
+								$record[descendant::*:entityType='ENTITYTYPE']//*:nameEntry/*:part[matches(., 'QUERY', 'i')]) then &lt;record> &lt;id>{ $record//*:recordId/text() }&lt;/id> &lt;title>{
+								if (string($record//*:nameEntry[@xml:lang='en'][string(*:preferredForm)][1]/*:part/text())) then
 								$record//*:nameEntry[@xml:lang='en'][string(*:preferredForm)][1]/*:part/text() else $record//*:nameEntry[1]/*:part[1]/text() }&lt;/title> &lt;/record> else '' }
 								&lt;/report> </xquery>
 						</xforms:instance>
@@ -339,7 +347,7 @@
 						<xforms:instance id="xquery-result" xxforms:exclude-result-prefixes="#all">
 							<exist:result/>
 						</xforms:instance>
-						
+
 						<!-- ***** BINDINGS ***** -->
 						<xforms:bind nodeset="instance('attributes')">
 							<xforms:bind nodeset="attribute" required="true()"/>

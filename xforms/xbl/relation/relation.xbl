@@ -3,7 +3,7 @@
 	Establish connection between an EAC-CPF record in xEAC to another record in xEAC -->
 <xbl:xbl xmlns="http://www.w3.org/1999/xhtml" xmlns:xforms="http://www.w3.org/2002/xforms" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:xxforms="http://orbeon.org/oxf/xml/xforms"
 	xmlns:exist="http://exist.sourceforge.net/NS/exist" xmlns:xbl="http://www.w3.org/ns/xbl" xmlns:xxbl="http://orbeon.org/oxf/xml/xbl" xmlns:xeac="https://github.com/ewg118/xEAC"
-	xmlns:fr="http://orbeon.org/oxf/xml/form-runner" xmlns:eac="urn:isbn:1-931666-33-4">
+	xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:fr="http://orbeon.org/oxf/xml/form-runner" xmlns:eac="urn:isbn:1-931666-33-4">
 	<xbl:binding id="xeac-relation" element="xeac|relation">
 		<xbl:template>
 			<xforms:group xbl:attr="model context ref bind" xxbl:scope="outer">
@@ -103,8 +103,8 @@
 										<xforms:trigger>
 											<xforms:label>Select</xforms:label>
 											<xforms:action ev:event="DOMActivate">
-												<xforms:insert context="$binding" origin="xxforms:attribute('xlink:href', instance('attributes')/attribute[@name='xlink:href'])"
-													if="not(@xlink:href) and string-length(instance('attributes')/attribute[@name='xlink:href']) &gt; 0"/>
+												<xforms:insert context="$binding" origin="xxforms:attribute('xlink:href', instance('attributes')/attribute[@name='xlink:href'])" if="not(@xlink:href)
+													and string-length(instance('attributes')/attribute[@name='xlink:href']) &gt; 0"/>
 											</xforms:action>
 										</xforms:trigger>
 									</div>
@@ -142,8 +142,8 @@
 									<xforms:value ref="@from"/>
 								</xforms:itemset>
 								<xforms:action ev:event="xforms-value-changed">
-									<xforms:insert context="$binding" origin="xxforms:attribute('xlink:arcrole', instance('attributes')/attribute[@name='xlink:arcrole'])"
-										if="not(@xlink:arcrole) and string-length(instance('attributes')/attribute[@name='xlink:arcrole']) &gt; 0"/>
+									<xforms:insert context="$binding" origin="xxforms:attribute('xlink:arcrole', instance('attributes')/attribute[@name='xlink:arcrole'])" if="not(@xlink:arcrole) and
+										string-length(instance('attributes')/attribute[@name='xlink:arcrole']) &gt; 0"/>
 									<xforms:delete if="string-length(instance('attributes')/attribute[@name='xlink:arcrole']) = 0" context="$binding" nodeset="@xlink:arcrole"/>
 								</xforms:action>
 							</xforms:select1>
@@ -160,8 +160,8 @@
 									<xforms:value ref="@role"/>
 								</xforms:itemset>
 								<xforms:action ev:event="xforms-value-changed">
-									<xforms:insert context="$binding" origin="xxforms:attribute('xlink:role', instance('attributes')/attribute[@name='xlink:role'])"
-										if="not(@xlink:role) and string-length(instance('attributes')/attribute[@name='xlink:role']) &gt; 0"/>
+									<xforms:insert context="$binding" origin="xxforms:attribute('xlink:role', instance('attributes')/attribute[@name='xlink:role'])" if="not(@xlink:role) and
+										string-length(instance('attributes')/attribute[@name='xlink:role']) &gt; 0"/>
 									<xforms:delete if="string-length(instance('attributes')/attribute[@name='xlink:role']) = 0" context="$binding" nodeset="@xlink:role"/>
 								</xforms:action>
 							</xforms:select1>
@@ -251,8 +251,8 @@
 							<xforms:message ev:event="xforms-submit-error" level="modal">Unable to load config.</xforms:message>
 						</xforms:submission>
 
-						<xforms:submission id="xquery-collection" ref="instance('eXist-xquery')" action="{instance('exist-config')/url}xeac/records" method="post" replace="instance" instance="xquery-result"
-							xxforms:username="{instance('exist-config')/username}" xxforms:password="{instance('exist-config')/password}">
+						<xforms:submission id="xquery-collection" ref="instance('eXist-xquery')" action="{instance('exist-config')/url}xeac/records" method="post" replace="instance"
+							instance="xquery-result" xxforms:username="{instance('exist-config')/username}" xxforms:password="{instance('exist-config')/password}">
 							<xforms:message ev:event="xforms-submit-error" level="modal">Errory querying eXist database.</xforms:message>
 						</xforms:submission>
 					</xforms:model>

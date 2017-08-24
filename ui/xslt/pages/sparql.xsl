@@ -59,17 +59,23 @@ SELECT * WHERE {
 							<xsl:value-of select="$default-query"/>
 						</textarea>
 						<br/>
-						<div class="form-group">
-							<label for="output">Output</label>
-							<select name="output" class="form-control">
-								<option value="html">HTML</option>
-								<option value="xml">SPARQL/XML</option>
-								<option value="json">SPARQL/JSON</option>
-								<option value="text">Text</option>
-								<option value="csv">CSV</option>
-							</select>
+						<div class="col-md-6">
+							<div class="form-group">
+								<label for="output">Output</label>
+								<select name="output" class="form-control">
+									<option value="html">HTML</option>
+									<option value="xml">XML</option>
+									<option value="json">JSON</option>
+									<option value="text">Text</option>
+									<option value="csv">CSV</option>
+								</select>
+							</div>
+							<button type="submit" class="btn btn-default">Submit</button>
 						</div>
-						<button type="submit" class="btn btn-default">Submit</button>
+						<div class="col-md-6">
+							<p class="text-info">This endpoint (<xsl:value-of select="concat(/config/url, 'query')"/>) supports content negotiation for the following content types with SELECT queries: <code>text/html</code>,
+								<code>text/csv</code>, <code>text/plain</code>, <code>application/sparql-results+json</code>, and <code>application/sparql-results+xml</code></p>
+						</div>
 					</form>
 				</div>
 			</div>

@@ -1,6 +1,6 @@
 <xbl:xbl xmlns="http://www.w3.org/1999/xhtml" xmlns:xforms="http://www.w3.org/2002/xforms" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:xxforms="http://orbeon.org/oxf/xml/xforms"
 	xmlns:fr="http://orbeon.org/oxf/xml/form-runner" xmlns:xbl="http://www.w3.org/ns/xbl" xmlns:xxbl="http://orbeon.org/oxf/xml/xbl" xmlns:xeac="https://github.com/ewg118/xEAC"
-	xmlns:eac="urn:isbn:1-931666-33-4">
+	xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:eac="urn:isbn:1-931666-33-4">
 	<xbl:binding id="xeac-relationEntry" element="xeac|relationEntry">
 		<xbl:template>
 			<xforms:group xbl:attr="model context ref bind" xxbl:scope="outer">
@@ -8,9 +8,9 @@
 				<xforms:group xxbl:scope="inner">
 					<xforms:var name="binding" as="node()?">
 						<xxforms:sequence select="." xxbl:scope="outer"/>
-					</xforms:var>	
+					</xforms:var>
 
-					
+
 					<xforms:group ref="$binding[string-length(parent::node()/@xlink:href) &gt; 0]">
 						<div>
 							<xforms:output ref=".">
@@ -43,7 +43,7 @@
 								<xforms:label>Relation Entry</xforms:label>
 								<xforms:alert>Required</xforms:alert>
 							</xforms:input>
-							
+
 							<xforms:group ref=".[string-length(text()) &gt; 0]">
 								<xforms:trigger appearance="minimal">
 									<xforms:label>Create Record</xforms:label>
@@ -63,7 +63,7 @@
 							<div>
 								<xforms:input ref="attribute[@name='xlink:href']">
 									<xforms:label>Record ID</xforms:label>
-									<xforms:alert>Required; must be xs:ID datatype.</xforms:alert>													
+									<xforms:alert>Required; must be xs:ID datatype.</xforms:alert>
 								</xforms:input>
 								<!-- allow user to generate an 8 alphanumeric character Record ID preceded by 'eac_' -->
 								<xforms:trigger appearance="minimal">
@@ -76,7 +76,7 @@
 											<xforms:setvalue ref="attribute[@name='xlink:href']" value="concat('eac_', substring(string(digest( string( random( true ) ), 'MD5', 'hex' )), 1, 8))"/>
 										</xforms:action>
 									</xforms:action>
-									
+
 								</xforms:trigger>
 							</div>
 							<!--<div>
@@ -102,9 +102,9 @@
 									<xforms:itemset nodeset="instance('config')/relationSemantics/cpfRelations/relation">
 										<xforms:label ref="@from"/>
 										<xforms:value ref="@from"/>
-									</xforms:itemset>									
+									</xforms:itemset>
 								</xforms:select1>
-							</div>								
+							</div>
 							<div>
 								<xforms:select1 ref="attribute[@name='xlink:role']">
 									<xforms:label>Xlink Role</xforms:label>
@@ -115,11 +115,11 @@
 									<xforms:itemset nodeset="instance('role-list')/item">
 										<xforms:label ref="."/>
 										<xforms:value ref="@role"/>
-									</xforms:itemset>													
+									</xforms:itemset>
 								</xforms:select1>
 							</div>
 						</xforms:group>
-						
+
 						<div style="text-align:right">
 							<xforms:trigger>
 								<xforms:action ev:event="DOMActivate">
@@ -139,7 +139,7 @@
 									<xforms:insert context="$binding/parent::node()" origin="xxforms:attribute('xlink:role', instance('attributes')/attribute[@name='xlink:role'])"
 										if="not(parent::node()/@xlink:role) and string-length(instance('attributes')/attribute[@name='xlink:role']) &gt; 0"/>
 									<xforms:delete if="string-length(instance('attributes')/attribute[@name='xlink:role']) = 0" context="parent::node()" nodeset="parent::node()/@xlink:role"/>
-									
+
 									<!-- hide dialog -->
 									<xxforms:hide dialog="generate-dialog"/>
 								</xforms:action>
@@ -152,18 +152,18 @@
 								<xforms:label>Cancel</xforms:label>
 							</xforms:trigger>
 						</div>
-					</xxforms:dialog>					
+					</xxforms:dialog>
 
 					<!-- ********************* MODEL ******************** -->
 					<xforms:model id="relationEntry-model" xmlns:xi="http://www.w3.org/2001/XInclude">
 						<xforms:instance id="config">
 							<config xmlns=""/>
 						</xforms:instance>
-						
+
 						<xforms:instance id="exist-config" xmlns:xi="http://www.w3.org/2001/XInclude">
 							<xi:include href="../../../exist-config.xml"/>
 						</xforms:instance>
-						
+
 						<xforms:instance id="attributes">
 							<attributes xmlns="">
 								<attribute name="cpfRelationType"/>
@@ -172,7 +172,7 @@
 								<attribute name="xlink:role"/>
 							</attributes>
 						</xforms:instance>
-						
+
 						<!-- controlled vocabulary -->
 						<!--<xforms:instance id="cpfRelationType-list">
 							<list xmlns="">
@@ -187,7 +187,7 @@
 								<item>associative</item>
 							</list>
 						</xforms:instance>-->
-						
+
 						<xforms:instance id="role-list">
 							<list xmlns="">
 								<item role="org:Organization">Corporate Body</item>
@@ -195,11 +195,11 @@
 								<item role="arch:Family">Family</item>
 							</list>
 						</xforms:instance>
-						
+
 						<xforms:bind nodeset="instance('attributes')">
 							<xforms:bind nodeset="attribute[@name='xlink:href']" type="xs:anyURI"/>
 						</xforms:bind>
-						
+
 						<!-- ***** SUBMISSIONS ***** -->
 						<xforms:submission id="load-config" serialization="none" method="get" action="{instance('exist-config')/url}xeac/config.xml" replace="instance" instance="config"
 							xxforms:username="{instance('exist-config')/username}" xxforms:password="{instance('exist-config')/password}">
