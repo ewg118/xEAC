@@ -658,7 +658,7 @@
 			<xsl:if test="string($tokenized_q[2])">
 				<div class="stacked_term bg-info row">
 					<div class="col-md-12">
-						<a id="clear_all" href="{$display_path}/results/"><span class="glyphicon glyphicon-remove"/>Clear All Terms</a>
+						<a id="clear_all" href="{$display_path}results/"><span class="glyphicon glyphicon-remove"/>Clear All Terms</a>
 					</div>
 				</div>
 			</xsl:if>
