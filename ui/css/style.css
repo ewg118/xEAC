@@ -95,6 +95,10 @@ a:focus{
 .eac-section{
 	margin-bottom:20px;
 }
+.content-list {
+    padding-top:5px;
+    padding-bottom:5px;
+}
 /*
   ***************************************
   SPARQL
