@@ -51,7 +51,7 @@
 		<xsl:param name="roles"/>
 		<xsl:param name="position"/>
 
-		<div class="row">
+		<div class="row content-list">
 			<div class="col-md-8">
 				<h4>
 					<xsl:value-of select="$position"/>
@@ -106,7 +106,7 @@
 				<xsl:variable name="uri" select="."/>
 				
 				
-				<div class="row">
+				<div class="row content-list">
 					<div class="col-md-12">
 						<h4>
 							<xsl:value-of select="position()"/>
