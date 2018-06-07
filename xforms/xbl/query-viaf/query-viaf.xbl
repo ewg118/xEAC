@@ -1,7 +1,8 @@
-<xbl:xbl xmlns="http://www.w3.org/1999/xhtml" xmlns:xforms="http://www.w3.org/2002/xforms" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:xlink="http://www.w3.org/1999/xlink"
-	xmlns:xxforms="http://orbeon.org/oxf/xml/xforms" xmlns:xbl="http://www.w3.org/ns/xbl" xmlns:xxbl="http://orbeon.org/oxf/xml/xbl" xmlns:xeac="https://github.com/ewg118/xEAC"
-	xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:skos="http://www.w3.org/2004/02/skos/core#" xmlns:dcterms="http://purl.org/dc/terms/"
-	xmlns:schema="http://schema.org/">
+<xbl:xbl xmlns="http://www.w3.org/1999/xhtml" xmlns:xforms="http://www.w3.org/2002/xforms" xmlns:ev="http://www.w3.org/2001/xml-events"
+	xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:eac="urn:isbn:1-931666-33-4" xmlns:xxforms="http://orbeon.org/oxf/xml/xforms"
+	xmlns:xbl="http://www.w3.org/ns/xbl" xmlns:xxbl="http://orbeon.org/oxf/xml/xbl" xmlns:xeac="https://github.com/ewg118/xEAC"
+	xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:skos="http://www.w3.org/2004/02/skos/core#"
+	xmlns:dcterms="http://purl.org/dc/terms/" xmlns:schema="http://schema.org/">
 	<xbl:binding id="xeac-query-viaf" element="xeac|query-viaf">
 		<xbl:template>
 			<xforms:group xbl:attr="model context ref bind" xxbl:scope="outer">
@@ -48,39 +49,56 @@
 										<xforms:action ev:event="xforms-submit-done">
 											<!-- insert entityId if it doesn't already exist -->
 											<xforms:action if="not(instance('viaf-id') = eac:cpfDescription/eac:identity/eac:entityId)">
-												<xforms:insert context="eac:cpfDescription/eac:identity" nodeset="./child::node()[last()]" origin="instance('entityId-template')"/>
+												<xforms:insert context="eac:cpfDescription/eac:identity" nodeset="./child::node()[last()]"
+													origin="instance('entityId-template')"/>
 												<xforms:setvalue ref="eac:cpfDescription/eac:identity/eac:entityId[last()]" value="instance('viaf-id')"/>
 
 												<!-- insert skos localTypeDeclaration for skos if there isn't one already -->
-												<xforms:insert context="eac:control" nodeset="./child::node()[last()]" origin="instance('localTypeDeclaration-template')"
+												<xforms:insert context="eac:control" nodeset="./child::node()[last()]"
+													origin="instance('localTypeDeclaration-template')"
 													if="not(eac:control/eac:localTypeDeclaration[eac:abbreviation='skos'])"/>
 											</xforms:action>
-											<!-- insert source for VIAF URI -->
-											<xforms:action if="not(eac:control/eac:sources/eac:source/@xlink:href = instance('viaf-id'))">
-												<xforms:insert context="eac:control" nodeset="./child::node()[last()]" origin="instance('sources-template')" if="count(eac:control/eac:sources) = 0"/>
-												<xforms:insert context="eac:control/eac:sources" nodeset="./child::node()[last()]" origin="instance('source-template')"/>
-												<xforms:setvalue ref="eac:control/eac:sources/eac:source[last()]/@xlink:href" value="instance('viaf-id')"/>
+											
+											<!-- insert source for VIAF URI, but only if additional data are extracted from VIAF -->
+											<xforms:action if="instance('viaf-import')/* = true()">
+												<xforms:action if="not(eac:control/eac:sources/eac:source/@xlink:href = instance('viaf-id'))">
+													<xforms:insert context="eac:control" nodeset="./child::node()[last()]" origin="instance('sources-template')"
+														if="count(eac:control/eac:sources) = 0"/>
+													<xforms:insert context="eac:control/eac:sources" nodeset="./child::node()[last()]"
+														origin="instance('source-template')"/>
+													<xforms:setvalue ref="eac:control/eac:sources/eac:source[last()]/@xlink:href" value="instance('viaf-id')"/>
+												</xforms:action>
 											</xforms:action>
+											
 
 											<!-- iterate through checked boxes -->
 											<xforms:action if="instance('viaf-import')/existDates = true()">
-												<xforms:action if="string(instance('viaf-rdf')//schema:birthDate) and string(instance('viaf-rdf')//schema:deathDate)">
+												<xforms:action
+													if="string(instance('viaf-rdf')//schema:birthDate) and string(instance('viaf-rdf')//schema:deathDate)">
 													<xforms:var name="fdi" select="instance('viaf-rdf')//schema:birthDate"/>
 													<xforms:var name="tdi" select="instance('viaf-rdf')//schema:deathDate"/>
-													<xforms:var name="fromDate" select="if ($fdi castable as xs:integer) then if ($fdi &lt; 0) then format-number($fdi + 1, '0000') else
+													<xforms:var name="fromDate"
+														select="if ($fdi castable as xs:integer) then if ($fdi &lt; 0) then format-number($fdi + 1, '0000') else
 														format-number($fdi, '0000') else $fdi"/>
-													<xforms:var name="toDate" select="if ($tdi castable as xs:integer) then if ($tdi &lt; 0) then format-number($tdi + 1, '0000') else
+													<xforms:var name="toDate"
+														select="if ($tdi castable as xs:integer) then if ($tdi &lt; 0) then format-number($tdi + 1, '0000') else
 														format-number($tdi, '0000') else $tdi"/>
-													<xforms:insert context="eac:cpfDescription" nodeset="./child::node()[last()]" origin="instance('description-template')"
-														if="not(eac:cpfDescription/eac:description)"/>
+													<xforms:insert context="eac:cpfDescription" nodeset="./child::node()[last()]"
+														origin="instance('description-template')" if="not(eac:cpfDescription/eac:description)"/>
 													<xforms:insert context="eac:cpfDescription/eac:description" origin="instance('existDates-template')"
 														if="not(eac:cpfDescription/eac:description/eac:existDates)"/>
-													<xforms:insert context="eac:cpfDescription/eac:description/eac:existDates" origin="xforms:attribute('localType', 'xeac:life')"/>
-													<xforms:insert context="eac:cpfDescription/eac:description/eac:existDates" origin="instance('dateRange-template')"
+													<xforms:insert context="eac:cpfDescription/eac:description/eac:existDates"
+														origin="xforms:attribute('localType', 'xeac:life')"/>
+													<xforms:insert context="eac:cpfDescription/eac:description/eac:existDates"
+														origin="instance('dateRange-template')"
 														if="not(eac:cpfDescription/eac:description/eac:existDates/eac:dateRange)"/>
 													<!-- set @standardDate -->
-													<xforms:setvalue ref="eac:cpfDescription/eac:description/eac:existDates/eac:dateRange/eac:fromDate/@standardDate" value="$fromDate"/>
-													<xforms:setvalue ref="eac:cpfDescription/eac:description/eac:existDates/eac:dateRange/eac:toDate/@standardDate" value="$toDate"/>
+													<xforms:setvalue
+														ref="eac:cpfDescription/eac:description/eac:existDates/eac:dateRange/eac:fromDate/@standardDate"
+														value="$fromDate"/>
+													<xforms:setvalue
+														ref="eac:cpfDescription/eac:description/eac:existDates/eac:dateRange/eac:toDate/@standardDate"
+														value="$toDate"/>
 													<!-- set text values -->
 													<!-- fromDate -->
 													<!-- BC dates -->
@@ -88,18 +106,22 @@
 														<xforms:var name="from-year" select="abs(number(tokenize($fromDate, '-')[2]))"/>
 														<xforms:var name="from-month" select="tokenize($fromDate, '-')[3]"/>
 														<xforms:var name="from-day" select="tokenize($fromDate, '-')[4]"/>
-														<xforms:setvalue ref="eac:cpfDescription/eac:description/eac:existDates/eac:dateRange/eac:fromDate" value="concat(if (number($from-month)) then
+														<xforms:setvalue ref="eac:cpfDescription/eac:description/eac:existDates/eac:dateRange/eac:fromDate"
+															value="concat(if (number($from-month)) then
 															concat(instance('month-list')/item[@id=$from-month], ' ') else '', if (number($from-day)) then concat($from-day, ', ') else '', $from-year,
-															' B.C.')"/>
+															' B.C.')"
+														/>
 													</xforms:action>
 													<!-- AD dates -->
 													<xforms:action if="substring($fromDate, 1, 1) != '-'">
 														<xforms:var name="from-year" select="abs(number(tokenize($fromDate, '-')[1]))"/>
 														<xforms:var name="from-month" select="tokenize($fromDate, '-')[2]"/>
 														<xforms:var name="from-day" select="tokenize($fromDate, '-')[3]"/>
-														<xforms:setvalue ref="eac:cpfDescription/eac:description/eac:existDates/eac:dateRange/eac:fromDate" value="concat(if ($from-year &lt;= 300) then
+														<xforms:setvalue ref="eac:cpfDescription/eac:description/eac:existDates/eac:dateRange/eac:fromDate"
+															value="concat(if ($from-year &lt;= 300) then
 															'A.D. ' else '', if (number($from-month)) then concat(instance('month-list')/item[@id=$from-month], ' ') else '', if (number($from-day))
-															then concat($from-day, ', ') else '', $from-year)"/>
+															then concat($from-day, ', ') else '', $from-year)"
+														/>
 													</xforms:action>
 													<!--toDate -->
 													<!-- BC dates -->
@@ -107,26 +129,33 @@
 														<xforms:var name="to-year" select="abs(number(tokenize($toDate, '-')[2]))"/>
 														<xforms:var name="to-month" select="tokenize($toDate, '-')[3]"/>
 														<xforms:var name="to-day" select="tokenize($toDate, '-')[4]"/>
-														<xforms:setvalue ref="eac:cpfDescription/eac:description/eac:existDates/eac:dateRange/eac:toDate" value="concat(if (number($to-month)) then
+														<xforms:setvalue ref="eac:cpfDescription/eac:description/eac:existDates/eac:dateRange/eac:toDate"
+															value="concat(if (number($to-month)) then
 															concat(instance('month-list')/item[@id=$to-month], ' ') else '', if (number($to-day)) then concat($to-day, ', ') else '', $to-year, '
-															B.C.')"/>
+															B.C.')"
+														/>
 													</xforms:action>
 													<!-- AD dates -->
 													<xforms:action if="substring($toDate, 1, 1) != '-'">
 														<xforms:var name="to-year" select="abs(number(tokenize($toDate, '-')[1]))"/>
 														<xforms:var name="to-month" select="tokenize($toDate, '-')[2]"/>
 														<xforms:var name="to-day" select="tokenize($toDate, '-')[3]"/>
-														<xforms:setvalue ref="eac:cpfDescription/eac:description/eac:existDates/eac:dateRange/eac:toDate" value="concat(if ($to-year &lt;= 300) then
+														<xforms:setvalue ref="eac:cpfDescription/eac:description/eac:existDates/eac:dateRange/eac:toDate"
+															value="concat(if ($to-year &lt;= 300) then
 															'A.D. ' else '', if (number($to-month)) then concat(instance('month-list')/item[@id=$to-month], ' ') else '', if (number($to-day)) then
-															concat($to-day, ', ') else '', $to-year)"/>
+															concat($to-day, ', ') else '', $to-year)"
+														/>
 													</xforms:action>
 												</xforms:action>
 											</xforms:action>
 											<xforms:action if="instance('viaf-import')/ids = true()">
-												<xforms:action xxforms:iterate="instance('viaf-rdf')/rdf:Description[@rdf:about=instance('viaf-id')]/schema:sameAs">
+												<xforms:action
+													xxforms:iterate="instance('viaf-rdf')/rdf:Description[@rdf:about=instance('viaf-id')]/schema:sameAs">
 													<xforms:action if="not(context()/@rdf:resource = $binding/eac:cfpDescription/eac:identity/eac:entityId)">
-														<xforms:insert context="$binding/eac:cfpDescription/eac:identity" nodeset="./child::node()[last()]" origin="instance('entityId-template')"/>
-														<xforms:setvalue ref="$binding/eac:cfpDescription/eac:identity/eac:entityId[last()]" value="context()/@rdf:resource"/>
+														<xforms:insert context="$binding/eac:cfpDescription/eac:identity" nodeset="./child::node()[last()]"
+															origin="instance('entityId-template')"/>
+														<xforms:setvalue ref="$binding/eac:cfpDescription/eac:identity/eac:entityId[last()]"
+															value="context()/@rdf:resource"/>
 													</xforms:action>
 												</xforms:action>
 											</xforms:action>
@@ -136,24 +165,33 @@
 													<xforms:var name="auth" select="substring-after(context()/skos:inScheme/@rdf:resource, 'authorityScheme/')"/>
 													<xforms:setvalue ref="instance('viaf-id')" value="context()/skos:inScheme/@rdf:resource"/>
 													<!-- insert conventionDeclarations into control -->
-													<xforms:insert context="$binding/eac:control" nodeset="./child::node()[last()]" origin="instance('conventionDeclaration-template')"/>
+													<xforms:insert context="$binding/eac:control" nodeset="./child::node()[last()]"
+														origin="instance('conventionDeclaration-template')"/>
 													<xforms:setvalue ref="$binding/eac:control/eac:conventionDeclaration[last()]/eac:abbreviation" value="$auth"/>
-													<xforms:setvalue ref="$binding/eac:control/eac:conventionDeclaration[last()]/eac:citation" value="instance('viaf-id')"/>
+													<xforms:setvalue ref="$binding/eac:control/eac:conventionDeclaration[last()]/eac:citation"
+														value="instance('viaf-id')"/>
 
 													<!-- insert preferred forms per authority -->
 													<xforms:action xxforms:iterate="context()/skos:prefLabel">
-														<xforms:insert context="$binding/eac:cpfDescription/eac:identity" nodeset="./child::node()[last()]" origin="instance('nameEntry-template')"/>
-														<xforms:setvalue ref="$binding/eac:cpfDescription/eac:identity/eac:nameEntry[last()]/eac:part" value="context()"/>
-														<xforms:insert context="$binding/eac:cpfDescription/eac:identity/eac:nameEntry[last()]" nodeset="./child::node()[last()]"
-															origin="instance('preferredForm-template')"/>
-														<xforms:setvalue ref="$binding/eac:cpfDescription/eac:identity/eac:nameEntry[last()]/eac:preferredForm" value="$auth"/>
+														<xforms:insert context="$binding/eac:cpfDescription/eac:identity" nodeset="./child::node()[last()]"
+															origin="instance('nameEntry-template')"/>
+														<xforms:setvalue ref="$binding/eac:cpfDescription/eac:identity/eac:nameEntry[last()]/eac:part"
+															value="context()"/>
+														<xforms:insert context="$binding/eac:cpfDescription/eac:identity/eac:nameEntry[last()]"
+															nodeset="./child::node()[last()]" origin="instance('preferredForm-template')"/>
+														<xforms:setvalue ref="$binding/eac:cpfDescription/eac:identity/eac:nameEntry[last()]/eac:preferredForm"
+															value="$auth"/>
 													</xforms:action>
 													<xforms:action xxforms:iterate="context()/skos:altLabel">
-														<xforms:insert context="$binding/eac:cpfDescription/eac:identity" nodeset="./child::node()[last()]" origin="instance('nameEntry-template')"/>
-														<xforms:setvalue ref="$binding/eac:cpfDescription/eac:identity/eac:nameEntry[last()]/eac:part" value="context()"/>
-														<xforms:insert context="$binding/eac:cpfDescription/eac:identity/eac:nameEntry[last()]" nodeset="./child::node()[last()]"
-															origin="instance('alternativeForm-template')"/>
-														<xforms:setvalue ref="$binding/eac:cpfDescription/eac:identity/eac:nameEntry[last()]/eac:alternativeForm" value="$auth"/>
+														<xforms:insert context="$binding/eac:cpfDescription/eac:identity" nodeset="./child::node()[last()]"
+															origin="instance('nameEntry-template')"/>
+														<xforms:setvalue ref="$binding/eac:cpfDescription/eac:identity/eac:nameEntry[last()]/eac:part"
+															value="context()"/>
+														<xforms:insert context="$binding/eac:cpfDescription/eac:identity/eac:nameEntry[last()]"
+															nodeset="./child::node()[last()]" origin="instance('alternativeForm-template')"/>
+														<xforms:setvalue
+															ref="$binding/eac:cpfDescription/eac:identity/eac:nameEntry[last()]/eac:alternativeForm"
+															value="$auth"/>
 													</xforms:action>
 												</xforms:action>
 											</xforms:action>
@@ -233,7 +271,8 @@
 						<xforms:instance id="localTypeDeclaration-template" xxforms:exclude-result-prefixes="#all">
 							<localTypeDeclaration>
 								<abbreviation>skos</abbreviation>
-								<citation xlink:type="simple" xlink:role="semantic" xlink:href="http://www.w3.org/2004/02/skos/core#">http://www.w3.org/2004/02/skos/core#</citation>
+								<citation xlink:type="simple" xlink:role="semantic" xlink:href="http://www.w3.org/2004/02/skos/core#"
+									>http://www.w3.org/2004/02/skos/core#</citation>
 							</localTypeDeclaration>
 						</xforms:instance>
 						<xforms:instance id="sources-template" xxforms:exclude-result-prefixes="#all">
@@ -243,7 +282,7 @@
 							<source xlink:type="simple" xlink:href="">
 								<sourceEntry>VIAF</sourceEntry>
 								<descriptiveNote>
-									<p>Programmatically linked this record to VIAF with xEAC.</p>
+									<p>Programmatically linked this record to VIAF with xEAC and extracted additional metadata from VIAF.</p>
 								</descriptiveNote>
 							</source>
 						</xforms:instance>
@@ -291,12 +330,13 @@
 
 						<!-- ***************** QUERY VIAF *****************-->
 						<xforms:submission id="query-viaf" serialization="none" method="get"
-							action="http://viaf.org/viaf/search?query=local.names+all+%22{instance('search-query')}%22&amp;sortKeys=holdingscount&amp;maximumRecords=50&amp;httpAccept=application/rss%2bxml"
+							action="https://viaf.org/viaf/search?query=local.names+all+%22{instance('search-query')}%22&amp;sortKeys=holdingscount&amp;maximumRecords=50&amp;httpAccept=application/rss%2bxml"
 							instance="viaf-response" replace="instance">
 							<xforms:message ev:event="xforms-submit-error" level="modal">Error querying VIAF.</xforms:message>
 						</xforms:submission>
 
-						<xforms:submission id="get-viaf-rdf" serialization="none" method="get" action="{instance('viaf-id')}/rdf.xml" instance="viaf-rdf" replace="instance">
+						<xforms:submission id="get-viaf-rdf" serialization="none" method="get" action="{instance('viaf-id')}/rdf.xml" instance="viaf-rdf"
+							replace="instance">
 							<xforms:message ev:event="xforms-submit-error" level="modal">Unable to get VIAF RDF.</xforms:message>
 						</xforms:submission>
 					</xforms:model>
