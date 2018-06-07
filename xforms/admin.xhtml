@@ -710,12 +710,14 @@ UNION { ?s rdf:type skos:Concept ; foaf:focus ?entity . ?s ?p ?o }}]]>
 												<xforms:repeat nodeset="instance('pagination-result')//record">
 													<xforms:var name="id" select="id"></xforms:var>
 													<tr>
-														<td>
+														<td>															
 															<h4>
-																<a href="edit/?recordId={$id}">
-																	<xforms:output ref="title"></xforms:output>
-																	<xforms:output ref="concat('(', $id, ')')"></xforms:output>
-																</a>
+																<xforms:trigger appearance="minimal">
+																	<xforms:label value="concat(title, ' (', $id, ')')"/>
+																	<xforms:action ev:event="DOMActivate">
+																		<xforms:load show="replace" resource="edit/?recordId={$id}"/>
+																	</xforms:action>
+																</xforms:trigger>
 															</h4>
 															<div>
 																<xforms:output ref="maintenanceStatus">

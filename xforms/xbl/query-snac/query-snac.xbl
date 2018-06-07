@@ -1,5 +1,6 @@
-<xbl:xbl xmlns="http://www.w3.org/1999/xhtml" xmlns:xforms="http://www.w3.org/2002/xforms" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:xlink="http://www.w3.org/1999/xlink"
-	xmlns:xxforms="http://orbeon.org/oxf/xml/xforms" xmlns:xbl="http://www.w3.org/ns/xbl" xmlns:xxbl="http://orbeon.org/oxf/xml/xbl" xmlns:xeac="https://github.com/ewg118/xEAC">
+<xbl:xbl xmlns="http://www.w3.org/1999/xhtml" xmlns:xforms="http://www.w3.org/2002/xforms" xmlns:ev="http://www.w3.org/2001/xml-events"
+	xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:eac="urn:isbn:1-931666-33-4" xmlns:xxforms="http://orbeon.org/oxf/xml/xforms"
+	xmlns:xbl="http://www.w3.org/ns/xbl" xmlns:xxbl="http://orbeon.org/oxf/xml/xbl" xmlns:xeac="https://github.com/ewg118/xEAC">
 	<xbl:binding id="xeac-query-snac" element="xeac|query-snac">
 		<xbl:template>
 			<xforms:group xbl:attr="model context ref bind" xxbl:scope="outer">
@@ -8,19 +9,20 @@
 					<xforms:var name="binding" as="node()?">
 						<xxforms:sequence select="." xxbl:scope="outer"/>
 					</xforms:var>
-					
+
 					<xforms:group ref="$binding">
 						<xforms:trigger appearance="minimal">
 							<xforms:label><span class="glyphicon glyphicon-plus"/>SNAC Lookup</xforms:label>
 							<xforms:action ev:event="DOMActivate">
-								<xforms:setvalue ref="instance('entityType')" value="eac:cpfDescription/eac:identity/eac:entityType"/>
+								<xforms:setvalue ref="instance('query-json')/entity_type" value="$binding/eac:cpfDescription/eac:identity/eac:entityType"/>
 								<xxforms:show dialog="snac-dialog"/>
 							</xforms:action>
 						</xforms:trigger>
+
 						<xxforms:dialog id="snac-dialog" appearance="full" level="modal" close="true" draggable="true" visible="false">
 							<xforms:label>Query SNAC</xforms:label>
 							<div>
-								<xforms:input ref="instance('search-query')">
+								<xforms:input ref="instance('query-json')/term">
 									<xforms:label>Search</xforms:label>
 								</xforms:input>
 								<xforms:trigger>
@@ -31,16 +33,18 @@
 									<xforms:label>Search</xforms:label>
 								</xforms:trigger>
 							</div>
-							<xforms:group ref=".[number(instance('snac-response')/@totalDocs) &gt; 0]">
-								<xforms:output ref="instance('search-results')"/>
+							<xforms:group ref=".[number(instance('snac-response')/total) &gt; 0]">
+								<xforms:group ref=".[string-length(instance('search-results-statment')) &gt; 0]">
+									<p class="text-muted">
+										<xforms:output ref="instance('search-results-statment')"/>
+									</p>
+								</xforms:group>
 								<br/>
 								<xforms:select1 ref="instance('temp')/@href" appearance="compact">
 									<xforms:label>Name</xforms:label>
-									<xforms:itemset nodeset="instance('snac-response')//docHit">
-										<xforms:label ref="meta/identity[1]"/>
-										<xforms:value
-											ref="concat('http://socialarchive.iath.virginia.edu/ark:/', substring-after(tokenize(@path, '-')[1], ':'), '/', substring-before(tokenize(@path, '-')[2], '.xml'))"
-										/>
+									<xforms:itemset nodeset="instance('snac-response')/results/_[@type='object']">
+										<xforms:label ref="nameEntries/_[1]/original"/>
+										<xforms:value ref="ark"/>
 									</xforms:itemset>
 								</xforms:select1>
 								<xforms:trigger>
@@ -51,14 +55,9 @@
 											<xforms:insert context=" eac:cpfDescription/eac:identity" nodeset="./child::node()[last()]" origin="instance('entityId-template')"/>
 											<xforms:setvalue ref=" eac:cpfDescription/eac:identity/eac:entityId[last()]" value="instance('temp')/@href"/>
 										</xforms:action>
-										<!-- insert source for URI -->
-										<xforms:action if="not(instance('temp')/@href = eac:control/eac:source/@xlink:href)">
-											<xforms:insert context="eac:control" nodeset="./child::node()[last()]" origin="instance('sources-template')"
-												if="count(eac:control/eac:sources) = 0"/>
-											<xforms:insert context="eac:control/eac:sources" nodeset="./child::node()[last()]" origin="instance('source-template')"/>
-											<xforms:setvalue ref="eac:control/eac:sources/eac:source[last()]/@xlink:href" value="instance('temp')/@href"/>
-										</xforms:action>
 										
+										<!-- removed insertion of source -->
+
 										<!-- insert skos localTypeDeclaration for skos if there isn't one already -->
 										<xforms:insert context="eac:control" nodeset="./child::node()[last()]" origin="instance('localTypeDeclaration-template')" if="not(eac:control/eac:localTypeDeclaration[eac:abbreviation='skos'])"/>
 										<xxforms:hide dialog="snac-dialog"/>
@@ -69,45 +68,41 @@
 					</xforms:group>
 
 					<!-- ***************** MODEL ***************-->
-					<xforms:model id="query-snac-model" xmlns="urn:isbn:1-931666-33-4">
+					<xforms:model id="query-snac-model">
 						<!-- instances -->
 						<xforms:instance id="temp">
 							<temp href="" xmlns=""/>
 						</xforms:instance>
 
-						<xforms:instance id="search-query">
-							<query/>
-						</xforms:instance>
-
-						<xforms:instance id="search-results">
-							<results/>
+						<xforms:instance id="search-results-statement">
+							<statement/>
 						</xforms:instance>
 
 						<xforms:instance id="snac-response" exclude-result-prefixed="#all">
-							<crossQueryResult/>
+							<json type="object" xmlns=""/>
 						</xforms:instance>
 
-						<xforms:instance id="entityType">
-							<entityType/>
+						<xforms:instance id="query-json" exclude-result-prefixed="#all">
+							<json type="object" xmlns="">
+								<command>search</command>
+								<term/>
+								<entity_type/>
+								<start>0</start>
+								<count>10</count>
+							</json>
 						</xforms:instance>
 
 						<!-- EAC templates -->
 						<xforms:instance id="entityId-template" xxforms:exclude-result-prefixes="#all">
-							<entityId localType="skos:exactMatch"/>
+							<entityId localType="skos:exactMatch" xmlns="urn:isbn:1-931666-33-4"/>
 						</xforms:instance>
+
 						<xforms:instance id="sources-template" xxforms:exclude-result-prefixes="#all">
-							<sources/>
+							<sources xmlns="urn:isbn:1-931666-33-4"/>
 						</xforms:instance>
-						<xforms:instance id="source-template" xxforms:exclude-result-prefixes="#all">
-							<source xlink:type="simple" xlink:href="">
-								<sourceEntry>SNAC</sourceEntry>
-								<descriptiveNote>
-									<p>Programmatically linked this record to SNAC with xEAC.</p>
-								</descriptiveNote>
-							</source>
-						</xforms:instance>
+
 						<xforms:instance id="localTypeDeclaration-template" xxforms:exclude-result-prefixes="#all">
-							<localTypeDeclaration>
+							<localTypeDeclaration xmlns="urn:isbn:1-931666-33-4">
 								<abbreviation>skos</abbreviation>
 								<citation xlink:type="simple" xlink:role="semantic" xlink:href="http://www.w3.org/2004/02/skos/core#"
 									>http://www.w3.org/2004/02/skos/core#</citation>
@@ -115,14 +110,21 @@
 						</xforms:instance>
 
 						<!-- submissions -->
-						<xforms:submission id="query-snac" serialization="none" method="get"
-							action="http://socialarchive.iath.virginia.edu/snac/search?facet-entityType={instance('entityType')}&amp;text={instance('search-query')}&amp;sectionType=identity&amp;rmode=slickgrid&amp;raw=1"
-							instance="snac-response" replace="instance">
-							<xforms:message ev:event="xforms-submit-error" level="modal">Unable to query SNAC.</xforms:message>
+						<xforms:submission id="query-snac" ref="instance('query-json')" action="http://api.snaccooperative.org" method="put" replace="instance"
+							instance="snac-response" serialization="application/json">
+							<xforms:header>
+								<xforms:name>User-Agent</xforms:name>
+								<xforms:value>XForms/xEAC</xforms:value>
+							</xforms:header>
+							<xforms:message ev:event="xforms-submit-error" level="modal">Error transfroming into JSON and/or interacting with the SNAC
+								API.</xforms:message>
 							<xforms:action ev:event="xforms-submit-done">
-								<xforms:message if="number(instance('snac-response')/@totalDocs) = 0" level="modal">No results found for query.</xforms:message>
-								<xforms:setvalue if="number(instance('snac-response')/@totalDocs) != 0" ref="instance('search-results')"
-									value="concat('Displaying first 25 of ', instance('snac-response')/@totalDocs, ' result(s).')"/>
+								<xforms:var name="total" select="number(instance('snac-response')/total)"/>
+								<xforms:setvalue if="$total = 0" ref="instance('search-results-statement')">No results found for query.</xforms:setvalue>
+								<xforms:setvalue if="$total &gt; 0 and $total &lt;= number(instance('query-json')/count)"
+									ref="instance('search-results-statement')" value="concat('Displaying ', $total, ' result(s).')"/>
+								<xforms:setvalue if="$total &gt; number(instance('query-json')/count)" ref="instance('search-results-statement')"
+									value="concat('Displaying first ', instance('query-json')/count, ' of ', $total, ' result(s).')"/>
 							</xforms:action>
 						</xforms:submission>
 					</xforms:model>
