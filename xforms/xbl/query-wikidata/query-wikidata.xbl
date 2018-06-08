@@ -1,0 +1,350 @@
+<xbl:xbl xmlns="http://www.w3.org/1999/xhtml" xmlns:xforms="http://www.w3.org/2002/xforms" xmlns:ev="http://www.w3.org/2001/xml-events"
+	xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:eac="urn:isbn:1-931666-33-4" xmlns:xxforms="http://orbeon.org/oxf/xml/xforms"
+	xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xbl="http://www.w3.org/ns/xbl" xmlns:xxbl="http://orbeon.org/oxf/xml/xbl"
+	xmlns:xeac="https://github.com/ewg118/xEAC">
+	<xbl:binding id="xeac-query-wikidata" element="xeac|query-wikidata">
+		<xbl:template>
+			<xforms:group xbl:attr="model context ref bind" xxbl:scope="outer">
+				<xbl:content includes="xforms|label,xforms|help,xforms|hint,xforms|alert"/>
+				<xforms:group xxbl:scope="inner">
+					<xforms:var name="binding" as="node()?">
+						<xxforms:sequence select="." xxbl:scope="outer"/>
+					</xforms:var>
+
+					<xforms:group ref="$binding">
+						<xforms:trigger appearance="minimal">
+							<xforms:label><span class="glyphicon glyphicon-search"/>Wikidata</xforms:label>
+							<xforms:action ev:event="DOMActivate">
+								<xforms:setvalue ref="instance('control-instance')/entityType" value="$binding/eac:cpfDescription/eac:identity/eac:entityType"/>
+								<xxforms:show dialog="import-wikidata-dialog"/>
+							</xforms:action>
+						</xforms:trigger>
+
+						<xxforms:dialog id="import-wikidata-dialog" appearance="full" level="modal" close="true" draggable="true" visible="false">
+							<xforms:label>Import Data from Wikidata</xforms:label>
+							<div>
+								<p>Copy and paste a Wikipedia URL below to perform a lookup of the Wikidata API.</p>
+							</div>
+							<!--<div>
+								<xforms:input ref="instance('control-instance')/wiki-labels">
+									<xforms:label>Labels</xforms:label>
+								</xforms:input>
+							</div>-->
+							<div>
+								<xforms:input ref="instance('control-instance')/wiki-links">
+									<xforms:label>Matching URIs</xforms:label>
+								</xforms:input>
+							</div>
+							<!--<div>
+								<xforms:input ref="instance('control-instance')/wiki-existDates">
+									<xforms:label>Exist Dates</xforms:label>
+								</xforms:input>
+							</div>-->
+							<div>
+								<xforms:input ref="instance('control-instance')/wiki-url" incremental="true">
+									<xforms:label>URL</xforms:label>
+								</xforms:input>
+
+								<xforms:trigger bind="import-trigger">
+									<xforms:label><span class="glyphicon glyphicon-import"/>Select</xforms:label>
+									<xforms:action ev:event="DOMActivate">
+										<!-- set the wiki title and lang -->
+										<xforms:var name="title" select="tokenize(instance('control-instance')/wiki-url, '/')[last()]"/>
+										<xforms:action if="string($title)">
+											<xforms:setvalue ref="instance('control-instance')/wiki-title" value="$title"/>
+											<xforms:setvalue ref="instance('control-instance')/wiki-lang">en</xforms:setvalue>
+											<xforms:send submission="get-wikidata"/>
+
+											<!-- process wikidata XML model after submission is done -->
+											<xforms:action ev:event="xforms-submit-done">
+												<xforms:action if=".[count(instance('wikidata')//entity) = 0]">
+													<xforms:message level="modal">Wikidata resource does not exist (bad URL?).</xforms:message>
+												</xforms:action>
+												<!-- import labels and associated URIs -->
+												<xforms:action if=".[count(instance('wikidata')//entity) = 1]">
+													<!-- process wikidata XML if the entity has an @id -->
+													<xforms:action if=".[string(instance('wikidata')//entity/@id)]">
+
+														<!-- insert localTypeDescription if it doesn't exist -->
+														<xforms:insert context="$binding/eac:control" nodeset="./child::node()[last()]"
+															origin="instance('localTypeDeclaration-template')"
+															if="not($binding/eac:control/eac:localTypeDeclaration[eac:abbreviation='skos'])"/>
+
+														<!-- insert the wikidata, dpbedia URI -->
+														<xforms:var name="wikidata-uri"
+															select="concat('https://www.wikidata.org/entity/', instance('wikidata')//entity/@id)"/>
+														<!-- insert entityId if it doesn't already exist -->
+														<xforms:action if="not($binding/eac:cpfDescription/eac:identity/eac:entityId = $wikidata-uri)">
+															<xforms:insert context="$binding/eac:cpfDescription/eac:identity" nodeset="./child::node()[last()]"
+																origin="instance('entityId-template')"/>
+															<xforms:setvalue ref="$binding/eac:cpfDescription/eac:identity/eac:entityId[last()]"
+																value="$wikidata-uri"/>
+														</xforms:action>
+
+														<!-- insert dbpedia URI -->
+														<xforms:var name="dbpedia-uri"
+															select="concat('http://dbpedia.org/resource/', instance('control-instance')/wiki-title)"/>
+														<xforms:action
+															if="not($binding/eac:cpfDescription/eac:identity/eac:entityId = $dbpedia-uri) and instance('control-instance')/wiki-lang = 'en'">
+															<xforms:insert context="$binding/eac:cpfDescription/eac:identity" nodeset="./child::node()[last()]"
+																origin="instance('entityId-template')"/>
+															<xforms:setvalue ref="$binding/eac:cpfDescription/eac:identity/eac:entityId[last()]"
+																value="$dbpedia-uri"/>
+														</xforms:action>
+
+
+														<!--<xforms:action if="instance('control-instance')/wiki-labels=true()">
+															<!-\- insert Wikidata convention declaration -\->
+															<!-\- insert conventionDeclaration -\->
+															<xforms:insert context="eac:control" nodeset="./child::node()[last()]"
+																origin="instance('conventionDeclaration-template')"/>
+															<xforms:setvalue ref="eac:control/eac:conventionDeclaration[last()]/eac:abbreviation">WIKIPEDIA</xforms:setvalue>
+															<xforms:setvalue ref="eac:control/eac:conventionDeclaration[last()]/eac:citation"
+																>Wikipedia/Wikidata</xforms:setvalue>
+															
+															
+															<!-\- import new labels, but only ones that follow the two-digit ISO standard -\->
+															<xforms:action xxforms:iterate="instance('wikidata')//entity/labels/label[string-length(@language) = 2]">
+																<xforms:var name="lang" select="data(context()/@language)"/>
+																<xforms:var name="label" select="data(context()/@value)"/>
+																
+																<xforms:insert context="$binding/eac:cpfDescription/eac:identity" nodeset="./child::node()[last()]"
+																	origin="instance('nameEntry-template')"/>
+																<xforms:setvalue ref="$binding/eac:cpfDescription/eac:identity/eac:nameEntry[last()]/eac:part" value="$label"/>
+																<xforms:insert context="$binding/eac:cpfDescription/eac:identity/eac:nameEntry[last()]"
+																	origin="xforms:attribute('xml:lang', $lang)"/>
+																
+																<xforms:action if="$lang = instance('config')/lang">
+																	<xforms:insert context="$binding/eac:cpfDescription/eac:identity/eac:nameEntry[last()]"
+																		nodeset="./child::node()[last()]" origin="instance('preferredForm-template')"/>
+																	<xforms:setvalue ref="$binding/eac:cpfDescription/eac:identity/eac:nameEntry[last()]/eac:preferredForm"
+																		>WIKIPEDIA</xforms:setvalue>
+																</xforms:action>
+																<xforms:action if="$lang != instance('config')/lang">
+																	<xforms:insert context="$binding/eac:cpfDescription/eac:identity/eac:nameEntry[last()]"
+																		nodeset="./child::node()[last()]" origin="instance('alternativeForm-template')"/>
+																	<xforms:setvalue ref="$binding/eac:cpfDescription/eac:identity/eac:nameEntry[last()]/eac:alternativeForm"
+																		>WIKIPEDIA</xforms:setvalue>
+																</xforms:action>
+															</xforms:action>
+														</xforms:action>-->
+
+														<!-- existDates -->
+														<!--<xforms:action if="instance('control-instance')/wiki-existDates=true()">
+															<xforms:action if="instance('control-instance')/entityType = 'person'">
+																<!-\- if the entity is a person, then use the property for birth and death  -\->
+
+																<xforms:var name="P569"
+																	select="instance('wikidata')//entity/claims/property[@id='P569']/claim/mainsnak[1]/datavalue/value/@time"/>
+																<xforms:var name="P570"
+																	select="instance('wikidata')//entity/claims/property[@id='P570']/claim/mainsnak[1]/datavalue/value/@time"/>
+
+
+																<!-\- evaluate the content into proper date(), gYearMonth(), gYear() -\->
+																<xforms:setvalue ref="instance('control-instance')/fromDate" value="if (contains($P569, '-00')) then substring-before($P569, '-00') else substring-before($P569, 'T')"/>																
+																<xforms:setvalue ref="instance('control-instance')/toDate" value="if (contains($P570, '-00')) then substring-before($P570, '-00') else substring-before($P570, 'T')"/>
+
+																<xforms:message level="modal">
+																	<xforms:output value="format-dateTime(xs:dateTime('+1162-00-00T00:00:00Z'), '[M01]/[D01]/[Y0001]')"/>
+																</xforms:message>
+
+																<xforms:action if="string($fromDate) and string($toDate)">
+																	<xforms:insert context="$binding/eac:cpfDescription" nodeset="./child::node()[last()]"
+																		origin="instance('description-template')" if="not($binding/eac:cpfDescription/eac:description)"/>
+																	<xforms:insert context="$binding/eac:cpfDescription/eac:description" origin="instance('existDates-template')"
+																		if="not($binding/eac:cpfDescription/eac:description/eac:existDates)"/>
+																	<xforms:insert context="$binding/eac:cpfDescription/eac:description/eac:existDates"
+																		origin="xforms:attribute('localType', 'xeac:life')"/>
+																	<xforms:insert context="$binding/eac:cpfDescription/eac:description/eac:existDates"
+																		origin="instance('dateRange-template')"
+																		if="not($binding/eac:cpfDescription/eac:description/eac:existDates/eac:dateRange)"/>
+																	
+																	<!-\- set @standardDate -\->
+																	<xforms:setvalue
+																		ref="$binding/eac:cpfDescription/eac:description/eac:existDates/eac:dateRange/eac:fromDate/@standardDate"
+																		value="$fromDate"/>
+																	<xforms:setvalue ref="$binding/eac:cpfDescription/eac:description/eac:existDates/eac:dateRange/eac:toDate/@standardDate"
+																		value="$toDate"/>
+																</xforms:action>
+
+
+															</xforms:action>
+															<xforms:action if="not(instance('control-instance')/entityType = 'person')">
+																<!-\- if the entity is a family or corporateBody, use the inception and dissolution properties -\->
+															</xforms:action>
+														</xforms:action>-->
+
+														<!-- iterate through claims with matching properties to link to external vocabulary systems -->
+														<xforms:action
+															xxforms:iterate="instance('wikidata')//entity/claims/property[@id='P214' or @id='P227' or @id='P213' or
+															@id='P268' or @id='P269' or @id='P245' or @id='P244' or @id='P1225' or @id='P3430']"
+															if="instance('control-instance')/wiki-links=true()">
+
+															<xforms:var name="property" select="data(context()/@id)"/>
+															<xforms:var name="id"
+																select="replace(data(context()/descendant::mainsnak[1]/datavalue/@value), ' ', '')"/>
+															<xforms:var name="uri" select="concat(instance('wikidata-properties')/property[@id=$property], $id)"/>
+
+															<!--<xforms:message level="modal"><xforms:output value="$uri"/></xforms:message>-->
+															<xforms:action if="not($binding/eac:cpfDescription/eac:identity/eac:entityId = $uri)">
+																<xforms:insert context="$binding/eac:cpfDescription/eac:identity"
+																	nodeset="./child::node()[last()]" origin="instance('entityId-template')"/>
+																<xforms:setvalue ref="$binding/eac:cpfDescription/eac:identity/eac:entityId[last()]"
+																	value="$uri"/>
+															</xforms:action>
+														</xforms:action>
+													</xforms:action>
+													<!-- clear wiki stuff from control-instance -->
+													<xforms:setvalue ref="instance('control-instance')/wiki-title"/>
+													<xforms:setvalue ref="instance('control-instance')/wiki-lang"/>
+												</xforms:action>
+
+												<!-- close dialog -->
+												<xxforms:hide dialog="import-wikidata-dialog"/>
+											</xforms:action>
+										</xforms:action>
+									</xforms:action>
+								</xforms:trigger>
+							</div>
+							<xforms:group
+								ref=".[instance('control-instance')/import-trigger = false() and string-length(instance('control-instance')/wiki-url) &gt; 0]">
+								<div class="alert alert-warning" role="alert" style="margin-top:10px"><b><span class="glyphicon glyphicon-exclamation-sign"
+										/>Warning:</b> Wikipedia URL is not valid.</div>
+							</xforms:group>
+						</xxforms:dialog>
+					</xforms:group>
+
+					<!-- ***************** MODEL ***************-->
+					<xforms:model id="wikidata-model">
+						<!-- *** INSTANCES *** -->
+						<xforms:instance id="control-instance">
+							<controls xmlns="">
+								<wiki-url/>
+								<wiki-title/>
+								<wiki-lang/>
+								<wiki-labels>true</wiki-labels>
+								<wiki-existDates>true</wiki-existDates>
+								<wiki-links>true</wiki-links>
+								<wiki-coords>false</wiki-coords>
+								<import-trigger>false</import-trigger>
+								<entityType/>
+								<fromDate/>
+								<toDate/>
+							</controls>
+						</xforms:instance>
+
+						<!-- Wikidata XML -->
+						<xforms:instance id="wikidata">
+							<api xmlns=""/>
+						</xforms:instance>
+
+						<xforms:instance id="wikidata-properties">
+							<properties xmlns="">
+								<property id="P213">http://isni.org/</property>
+								<property id="P214">http://viaf.org/viaf/</property>
+								<property id="P227">http://d-nb.info/gnd/</property>
+								<property id="P245">http://vocab.getty.edu/ulan/</property>
+								<property id="P244">http://id.loc.gov/authorities/names/</property>
+								<property id="P268">http://catalogue.bnf.fr/ark:/12148/cb</property>
+								<property id="P269">http://www.idref.fr/</property>
+								<property id="P1225">https://catalog.archives.gov/id/</property>
+								<property id="P3430">http://n2t.net/ark:/99166/</property>
+							</properties>
+						</xforms:instance>
+
+						<!-- EAC-CPF templates -->
+						<!-- control -->
+
+
+						<xforms:instance id="localTypeDeclaration-template" xxforms:exclude-result-prefixes="#all">
+							<localTypeDeclaration xmlns="urn:isbn:1-931666-33-4">
+								<abbreviation>skos</abbreviation>
+								<citation xlink:type="simple" xlink:role="semantic" xlink:href="http://www.w3.org/2004/02/skos/core#"
+									>http://www.w3.org/2004/02/skos/core#</citation>
+							</localTypeDeclaration>
+						</xforms:instance>
+
+						<xforms:instance id="conventionDeclaration-template" xxforms:exclude-result-prefixes="#all">
+							<conventionDeclaration xmlns="urn:isbn:1-931666-33-4">
+								<abbreviation/>
+								<citation/>
+							</conventionDeclaration>
+						</xforms:instance>
+
+						<xforms:instance id="sources-template" xxforms:exclude-result-prefixes="#all">
+							<sources xmlns="urn:isbn:1-931666-33-4"/>
+						</xforms:instance>
+
+						<xforms:instance id="source-template" xxforms:exclude-result-prefixes="#all">
+							<source xlink:type="simple" xlink:href="" xmlns="urn:isbn:1-931666-33-4">
+								<sourceEntry>Wikidata</sourceEntry>
+								<descriptiveNote>
+									<p>Programmatically linked this record to Wikidata with xEAC and extracted additional metadata.</p>
+								</descriptiveNote>
+							</source>
+						</xforms:instance>
+
+						<!-- identity -->
+						<xforms:instance id="entityId-template" xxforms:exclude-result-prefixes="#all">
+							<entityId localType="skos:exactMatch" xmlns="urn:isbn:1-931666-33-4"/>
+						</xforms:instance>
+
+						<xforms:instance id="nameEntry-template" xxforms:exclude-result-prefixes="#all">
+							<nameEntry xmlns="urn:isbn:1-931666-33-4">
+								<part/>
+							</nameEntry>
+
+						</xforms:instance>
+						<xforms:instance id="authorizedForm-template" xxforms:exclude-result-prefixes="#all">
+							<authorizedForm xmlns="urn:isbn:1-931666-33-4"/>
+						</xforms:instance>
+
+						<xforms:instance id="alternativeForm-template" xxforms:exclude-result-prefixes="#all">
+							<alternativeForm xmlns="urn:isbn:1-931666-33-4"/>
+						</xforms:instance>
+
+						<xforms:instance id="preferredForm-template" xxforms:exclude-result-prefixes="#all">
+							<preferredForm xmlns="urn:isbn:1-931666-33-4"/>
+						</xforms:instance>
+
+						<!-- description -->
+						<xforms:instance id="description-template" xxforms:exclude-result-prefixes="#all">
+							<description xmlns="urn:isbn:1-931666-33-4"/>
+						</xforms:instance>
+
+						<xforms:instance id="existDates-template" xxforms:exclude-result-prefixes="#all">
+							<existDates xmlns="urn:isbn:1-931666-33-4"/>
+						</xforms:instance>
+
+						<xforms:instance id="dateRange-template" xxforms:exclude-result-prefixes="#all">
+							<dateRange xmlns="urn:isbn:1-931666-33-4">
+								<fromDate standardDate=""/>
+								<toDate standardDate=""/>
+							</dateRange>
+						</xforms:instance>
+
+						<!-- *** BINDINGS *** -->
+						<xforms:bind nodeset="instance('control-instance')">
+							<xforms:bind nodeset="import-trigger" id="import-trigger" type="xs:boolean"
+								calculate="matches(../wiki-url, 'https?://[a-z]{2,3}\.wikipedia\.org/wiki/[A-Z].*') and
+								not(contains(../wiki-url, '#'))"
+								readonly=". = false()"/>
+							<xforms:bind nodeset="wiki-labels" type="xs:boolean"/>
+							<xforms:bind nodeset="wiki-links" type="xs:boolean"/>
+							<xforms:bind nodeset="wiki-existDates" type="xs:boolean"/>
+							<xforms:bind nodeset="wiki-coords" type="xs:boolean"/>
+						</xforms:bind>
+
+						<!-- *** SUBMISSIONS *** -->
+						<xforms:submission id="get-wikidata" serialization="none" method="get"
+							action="https://www.wikidata.org/w/api.php?action=wbgetentities&amp;titles={instance('control-instance')/wiki-title}&amp;sites={instance('control-instance')/wiki-lang}wiki&amp;format=xml"
+							instance="wikidata" replace="instance">
+							<xforms:message ev:event="xforms-submit-error" level="modal">Unable to get data from Wikidata.</xforms:message>
+						</xforms:submission>
+					</xforms:model>
+				</xforms:group>
+			</xforms:group>
+		</xbl:template>
+	</xbl:binding>
+
+</xbl:xbl>
