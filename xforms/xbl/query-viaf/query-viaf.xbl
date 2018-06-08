@@ -14,7 +14,7 @@
 
 					<xforms:group ref="$binding">
 						<xforms:trigger appearance="minimal">
-							<xforms:label><span class="glyphicon glyphicon-plus"/>Import VIAF Data</xforms:label>
+							<xforms:label><span class="glyphicon glyphicon-search"/>VIAF</xforms:label>
 							<xforms:action ev:event="DOMActivate">
 								<xforms:setvalue ref="instance('entityType')" value="eac:entityType"/>
 								<xxforms:show dialog="import-viaf-dialog"/>

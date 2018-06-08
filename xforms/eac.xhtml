@@ -1043,9 +1043,9 @@ UNION { <URI> ?p ?o . ?s ?p ?o . FILTER (?s = <URI>) }}]]>
 		<xi:include href="xbl/p/p.xbl" xi:omit-xml-base="true"/>
 		<xi:include href="xbl/place/place.xbl" xi:omit-xml-base="true"/>
 		<xi:include href="xbl/placeEntry/placeEntry.xbl" xi:omit-xml-base="true"/>
-		<xi:include href="xbl/query-dbpedia/query-dbpedia.xbl" xi:omit-xml-base="true"/>
 		<xi:include href="xbl/query-snac/query-snac.xbl" xi:omit-xml-base="true"/>
-		<xi:include href="xbl/query-viaf/query-viaf.xbl" xi:omit-xml-base="true"/>
+		<xi:include href="xbl/query-viaf/query-viaf.xbl" xi:omit-xml-base="true"/>		
+		<xi:include href="xbl/query-wikidata/query-wikidata.xbl" xi:omit-xml-base="true"/>
 		<!--<xi:include href="xbl/relation/relation.xbl" xi:omit-xml-base="true"/>-->
 		<xi:include href="xbl/relationEntry/relationEntry.xbl" xi:omit-xml-base="true"/>
 		<xi:include href="xbl/reorder/reorder.xbl" xi:omit-xml-base="true"/>
@@ -1090,9 +1090,9 @@ UNION { <URI> ?p ?o . ?s ?p ?o . FILTER (?s = <URI>) }}]]>
 										<xeac:query-viaf/>
 									</li>
 								</xforms:group>
-								<xforms:group ref=".[count(eac:cpfDescription/eac:identity/eac:entityId[contains(., 'dbpedia.org')]) = 0]">
+								<xforms:group ref=".[count(eac:cpfDescription/eac:identity/eac:entityId[contains(., 'wikidata.org')]) = 0 and string(eac:cpfDescription/eac:identity/eac:entityType)]">
 									<li>
-										<xeac:query-dbpedia/>
+										<xeac:query-wikidata/>
 									</li>
 								</xforms:group>
 								<xforms:group

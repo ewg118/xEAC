@@ -12,9 +12,14 @@
 
 					<xforms:group ref="$binding">
 						<xforms:trigger appearance="minimal">
-							<xforms:label><span class="glyphicon glyphicon-plus"/>SNAC Lookup</xforms:label>
+							<xforms:label><span class="glyphicon glyphicon-search"/>SNAC</xforms:label>
 							<xforms:action ev:event="DOMActivate">
 								<xforms:setvalue ref="instance('query-json')/entity_type" value="$binding/eac:cpfDescription/eac:identity/eac:entityType"/>
+								<!-- if there's a name, automatically fire the query-->
+								<xforms:action if="string-length($binding/eac:cpfDescription/eac:identity/eac:nameEntry[1]/eac:part[1]) &gt; 0">
+									<xforms:setvalue ref="instance('query-json')/term" value="$binding/eac:cpfDescription/eac:identity/eac:nameEntry[1]/eac:part[1]"/>
+									<xforms:send submission="query-snac"/>
+								</xforms:action>								
 								<xxforms:show dialog="snac-dialog"/>
 							</xforms:action>
 						</xforms:trigger>
@@ -27,7 +32,6 @@
 								</xforms:input>
 								<xforms:trigger>
 									<xforms:action ev:event="DOMActivate">
-										<xforms:delete context="instance('snac-response')/*"/>
 										<xforms:send submission="query-snac"/>
 									</xforms:action>
 									<xforms:label>Search</xforms:label>
@@ -52,8 +56,8 @@
 									<xforms:action ev:event="DOMActivate">
 										<!-- insert entityId if it doesn't already exist -->
 										<xforms:action if="not(instance('temp')/@href = eac:cpfDescription/eac:identity/eac:entityId)">
-											<xforms:insert context=" eac:cpfDescription/eac:identity" nodeset="./child::node()[last()]" origin="instance('entityId-template')"/>
-											<xforms:setvalue ref=" eac:cpfDescription/eac:identity/eac:entityId[last()]" value="instance('temp')/@href"/>
+											<xforms:insert context="eac:cpfDescription/eac:identity" nodeset="./child::node()[last()]" origin="instance('entityId-template')"/>
+											<xforms:setvalue ref="eac:cpfDescription/eac:identity/eac:entityId[last()]" value="instance('temp')/@href"/>
 										</xforms:action>
 										
 										<!-- removed insertion of source -->
@@ -63,6 +67,19 @@
 										<xxforms:hide dialog="snac-dialog"/>
 									</xforms:action>
 								</xforms:trigger>
+								
+								<xforms:group ref=".[string-length(instance('temp')/@href) &gt; 0]">
+									<p>
+										<xforms:output ref="instance('temp')/@abstract"/>
+										<xforms:trigger appearance="minimal">
+											<xforms:label>
+												<span class="glyphicon glyphicon-new-window"/>
+											</xforms:label>
+											<xforms:hint ref="instance('temp')/@href"/>
+											<xforms:load ev:event="DOMActivate" resource="{instance('temp')/@href}" show="new"/>
+										</xforms:trigger>
+									</p>
+								</xforms:group>
 							</xforms:group>
 						</xxforms:dialog>
 					</xforms:group>
@@ -71,7 +88,7 @@
 					<xforms:model id="query-snac-model">
 						<!-- instances -->
 						<xforms:instance id="temp">
-							<temp href="" xmlns=""/>
+							<temp href="" abstract="" xmlns=""/>
 						</xforms:instance>
 
 						<xforms:instance id="search-results-statement">
