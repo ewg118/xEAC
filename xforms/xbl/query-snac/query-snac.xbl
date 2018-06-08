@@ -62,8 +62,10 @@
 										
 										<!-- removed insertion of source -->
 
-										<!-- insert skos localTypeDeclaration for skos if there isn't one already -->
-										<xforms:insert context="eac:control" nodeset="./child::node()[last()]" origin="instance('localTypeDeclaration-template')" if="not(eac:control/eac:localTypeDeclaration[eac:abbreviation='skos'])"/>
+										<!-- insert localTypeDescription if it doesn't exist -->
+										<xforms:insert context="$binding/eac:control" nodeset="./child::node()[last()]"
+											origin="instance('localTypeDeclaration-template')"
+											if="not($binding/eac:control/eac:localTypeDeclaration[eac:abbreviation='skos'])"/>
 										<xxforms:hide dialog="snac-dialog"/>
 									</xforms:action>
 								</xforms:trigger>
