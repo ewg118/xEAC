@@ -170,8 +170,7 @@ a > img{
 button.multiselect{
 	margin:10px 0;
 }
-.thumbImage,
-.flickrthumb{
+.thumbImage{
 	margin:5px;
 }
 .thumbImage > img{

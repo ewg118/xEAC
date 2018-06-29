@@ -19,6 +19,7 @@
 	***************** -->
 	<page path-info="/xeac/admin/edit/" view="xforms/eac.xhtml"/>
 	<page path-info="/xeac/admin/settings/" view="xforms/settings.xhtml"/>
+	<page path-info="/xeac/admin/snac" view="xforms/snac.xhtml"/>
 	<page path-info="/xeac/admin/" view="xforms/admin.xhtml"/>
 
 	<!-- ****************
