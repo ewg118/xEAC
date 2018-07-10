@@ -263,7 +263,7 @@
 PREFIX dcterms:  <http://purl.org/dc/terms/>
 PREFIX foaf:  <http://xmlns.com/foaf/0.1/>
 SELECT ?uri ?role ?title ?type ?genre ?abstract ?extent WHERE {
-?uri ?role <%URI%> ;
+?uri ?role <URI> ;
 	 dcterms:title ?title ;
      rdf:type ?type ;
      dcterms:type ?genre .
@@ -526,18 +526,19 @@ WHERE { ?concept foaf:focus <URI> }]]></query>
 									if="instance('snac-response')/constellation/otherRecordIDs/_/uri = instance('control-instance')/uri"/>
 								<xforms:setvalue ref="instance('control-instance')/constellation/dates_exist" value="true()"
 									if="instance('snac-response')/constellation/dates"/>
+								<!-- set already_has_biogHist if there's a biogHist already in the constellation that is not connected to the current authority URI -->
+								<xforms:setvalue ref="instance('control-instance')/constellation/already_has_biogHist" value="true()"
+									if="instance('snac-response')/constellation/biogHists/_[not(snacControlMetadata/_/citation/uri = instance('control-instance')/uri)]"/>
 								<xforms:setvalue ref="instance('control-instance')/constellation/local_biogHist_exists" value="true()"
 									if="instance('snac-response')/constellation/biogHists/_/snacControlMetadata/_/citation/uri = instance('control-instance')/uri"/>
 
 								<!-- hash encode the local biogHist that is already in the constellation -->
-								<xforms:setvalue ref="instance('control-instance')/constellation/old_biogHist_hash"
-									value="digest(instance('snac-response')/constellation/biogHists/_[snacControlMetadata/_/citation/uri = instance('control-instance')/uri]/text, 'MD5', 'hex')"/>
-								<xforms:setvalue ref="instance('control-instance')/constellation/current_biogHist_hash"
-									value="digest(normalize-space(saxon:serialize(instance('doc')/eac:cpfDescription/eac:description/eac:biogHist[1], 'html')), 'MD5', 'hex')"/>
-
-								<!-- set already_has_biogHist if there's a biogHist already in the constellation that is not connected to the current authority URI -->
-								<xforms:setvalue ref="instance('control-instance')/constellation/already_has_biogHist" value="true()"
-									if="instance('snac-response')/constellation/biogHists/_[not(snacControlMetadata/_/citation/uri = instance('control-instance')/uri)]"/>
+								<xforms:action if="instance('control-instance')/constellation/local_biogHist_exists = true()">									
+									<xforms:setvalue ref="instance('control-instance')/constellation/old_biogHist_hash"
+										value="digest(instance('snac-response')/constellation/biogHists/_[snacControlMetadata/_/citation/uri = instance('control-instance')/uri]/text, 'MD5', 'hex')"/>
+									<xforms:setvalue ref="instance('control-instance')/constellation/current_biogHist_hash"
+										value="digest(normalize-space(saxon:serialize(instance('doc')/eac:cpfDescription/eac:description/eac:biogHist[1], 'html')), 'MD5', 'hex')"/>
+								</xforms:action>								
 
 								<!-- set the id for the source, if it already exists -->
 								<xforms:setvalue ref="instance('control-instance')/constellation/source_id"
@@ -547,8 +548,9 @@ WHERE { ?concept foaf:focus <URI> }]]></query>
 						
 						<!-- get resource relations, if the SPARQL endpoint has been activated -->
 						<xforms:action if="string(instance('config')/sparql/query)">
+							
 							<xforms:setvalue ref="instance('sparqlQuery')"
-								value="replace(instance('sparql-templates')/query[@id='get-resources'], '%URI%', instance('control-instance')/uri)"/>
+								value="replace(instance('sparql-templates')/query[@id='get-resources'], 'URI', instance('control-instance')/uri)"/>
 							<xforms:send submission="submit-sparqlQuery"/>
 							
 							<!-- iterate through all of the results and populate a list of actions to take vs. resource relations already in the constellation -->
@@ -1495,7 +1497,7 @@ WHERE { ?concept foaf:focus <URI> }]]></query>
 						</xforms:case>
 					</xforms:switch>
 
-					<!--<fr:xforms-inspector id="orbeon-xforms-inspector"/>-->
+					<fr:xforms-inspector id="orbeon-xforms-inspector"/>
 
 				</div>
 			</div>
