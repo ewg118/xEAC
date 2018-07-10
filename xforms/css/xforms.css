@@ -11,7 +11,7 @@
 }
 .alert-box {
 	width:50%;
-	margin:auto auto;
+	margin:20px auto;
 }
 .result_metadata {
 	border:0;
@@ -87,7 +87,7 @@
 	line-height:inherit;
 	display:inline;
 	font-size:inherit;
-	color:black
+	color:inherit
 }
 .xforms-trigger {
 	text-decoration:none;
