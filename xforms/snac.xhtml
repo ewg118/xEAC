@@ -1089,6 +1089,9 @@ WHERE { ?concept foaf:focus <URI> }]]></query>
 												<xforms:action xxforms:iterate="instance('relatedResource-actions')/resource">
 													<!-- create new resources -->
 													<xforms:action if="@checked = true() and @exists = false()">
+														<xforms:var name="abstract" select="context()/@abstract"/>
+														<xforms:var name="extent" select="context()/@extent"/>
+														
 														<!-- Clear any existing data from the SNAC API query -->
 														<xforms:delete nodeset="instance('snac-query')/*"/>
 														<xforms:insert context="instance('snac-query')" origin="xforms:element('command', 'insert_resource')"/>
@@ -1104,9 +1107,9 @@ WHERE { ?concept foaf:focus <URI> }]]></query>
 														<xforms:setvalue ref="instance('snac-query')/resource/displayEntry" value="context()/@title"/>
 														<xforms:setvalue ref="instance('snac-query')/resource/link" value="context()/@uri"/>
 														<xforms:insert context="instance('snac-query')/resource" nodeset="./child::node()[last()]"
-															origin="xforms:element('abstract', context/@abstract)" if="context/@abstract"/>
+															origin="xforms:element('abstract', $abstract)" if="string($abstract)"/>
 														<xforms:insert context="instance('snac-query')/resource" nodeset="./child::node()[last()]"
-															origin="xforms:element('extent', context/@extent)" if="context/@extent"/>
+															origin="xforms:element('extent', $extent)" if="string($extent)"/>
 
 														<!-- if there is a repository ARK and constellation ID in the config, then insert repo -->
 														<xforms:action
@@ -1497,7 +1500,7 @@ WHERE { ?concept foaf:focus <URI> }]]></query>
 						</xforms:case>
 					</xforms:switch>
 
-					<!--<fr:xforms-inspector id="orbeon-xforms-inspector"/>-->
+					<fr:xforms-inspector id="orbeon-xforms-inspector"/>
 
 				</div>
 			</div>
