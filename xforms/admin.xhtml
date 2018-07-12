@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-    Copyright (C) 2012 Ethan Gruber
+    Author: Ethan Gruber
     xEAC: https://github.com/ewg118/xEAC
+    Last modified: July 2018
+    Function: Admin panel for xEAC - primarily publication functionality and clicking links to edit EAC-CPF records
     Apache License 2.0
 -->
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:xforms="http://www.w3.org/2002/xforms" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ev="http://www.w3.org/2001/xml-events"
@@ -48,9 +50,9 @@
 			</xforms:instance>
 
 			<xforms:instance id="config-template" xxforms:exclude-result-prefixes="#all">
-				<config version="0.4" xmlns="">
-					<flickr_api_key></flickr_api_key>
+				<config version="18.07" xmlns="">
 					<geonames_api_key></geonames_api_key>
+					<mapboxKey/>
 					<title>xEAC</title>
 					<description>xEAC is an open source XForms framework for creating, managing, and publishing EAC-CPF collections.</description>
 					<solr_published>http://localhost:8080/solr/xeac-published/</solr_published>
@@ -62,6 +64,20 @@
 						<store></store>
 						<query></query>
 					</sparql>
+					<snac>				
+						<api>http://snac-dev.iath.virginia.edu/api/</api>
+						<repository_ark/>
+						<repository_constellation_id/>
+						<user type="object">
+							<userid/>
+							<userName/>
+							<fullName/>
+							<token type="object">
+								<access_token/>
+								<expires/>
+							</token>
+						</user>
+					</snac>
 					<oai-pmh active="false"></oai-pmh>
 					<lang>en</lang>
 					<google_analytics></google_analytics>
@@ -526,10 +542,10 @@ UNION { ?s rdf:type skos:Concept ; foaf:focus ?entity . ?s ?p ?o }}]]>
 						<xforms:case id="xeac-admin">
 							<div id="form">
 								<xforms:group ref=".[string-length(instance('control-instance')/status) &gt; 0]">
-									<div class="bg-info alert-box">
+									<div class="alert alert-box alert-success">
 										<span class="glyphicon glyphicon-info-sign"></span>
 										<strong>Status:</strong>
-										<xforms:output ref="instance('control-instance')/status"></xforms:output>
+										<xforms:output ref="instance('control-instance')/status"/>
 									</div>
 								</xforms:group>
 								<h1>xEAC Administration</h1>
@@ -700,8 +716,9 @@ UNION { ?s rdf:type skos:Concept ; foaf:focus ?entity . ?s ?p ?o }}]]>
 										<table class="table">
 											<thead>
 												<tr>
-													<th>Title</th>
+													<th>Title</th>													
 													<th style="width:10%">View</th>
+													<th style="width:5%">SNAC</th>
 													<th style="width:5%">Publish</th>
 													<th style="width:5%">Delete</th>
 												</tr>
@@ -724,84 +741,101 @@ UNION { ?s rdf:type skos:Concept ; foaf:focus ?entity . ?s ?p ?o }}]]>
 																	<xforms:label>Status</xforms:label>
 																</xforms:output>
 															</div>
+														</td>														
+														<td>
+															<div class="text-center">
+																<a href="{instance('config')/url}id/{$id}.xml" target="_blank">xml</a> | <a href="{instance('config')/url}id/{$id}" target="_blank">html</a>
+															</div>															
 														</td>
-														<td class="text-center">
-															<a href="{instance('config')/url}id/{$id}.xml" target="_blank">xml</a> | <a href="{instance('config')/url}id/{$id}" target="_blank">html</a>
+														<td>
+															<div class="text-center">
+																<xforms:trigger appearance="minimal">
+																	<xforms:label><span class="glyphicon glyphicon-cloud-upload"/></xforms:label>
+																	<xforms:action ev:event="DOMActivate">
+																		<xforms:load show="replace" resource="snac?recordId={$id}"/>
+																	</xforms:action>
+																</xforms:trigger>
+															</div>															
 														</td>
-														<td class="text-center">
-															<xforms:group ref=".[maintenanceStatus='new' or maintenanceStatus='revised' or maintenanceStatus='derived']">
-																<xforms:group ref="published[. = false()]">
-																	<xforms:trigger appearance="minimal">
-																		<xforms:label><span class="glyphicon glyphicon-{if (.=true()) then 'ok' else 'unchecked'}"></span></xforms:label>
-																		<xforms:action ev:event="DOMActivate">
-																			<xforms:setvalue ref="instance('control-instance')/id" value="$id"></xforms:setvalue>
-																			<!-- update publicationStatus -->
-																			<xforms:setvalue ref="instance('control-instance')/publicationStatus">approved</xforms:setvalue>
-																			<xforms:send submission="load-doc"></xforms:send>
-																			<!-- create kml -->
-																			<xforms:insert nodeset="instance('kml')"
-																				origin="xxforms:call-xpl('oxf:/apps/xeac/xpl/views/serializations/eac/kml.xpl', 'data', instance('doc'), 'data')"></xforms:insert>
-																			<xforms:send submission="save-kml"></xforms:send>
-																			<!-- publish to solr -->
-																			<xforms:setvalue ref="instance('control-instance')/solr-core" value="instance('config')/solr_published"></xforms:setvalue>
-																			<xforms:send submission="eac-to-solr"></xforms:send>
-																			<xforms:send submission="commit" ev:event="xforms-submit-done"></xforms:send>
-																			<!-- post to SPARQL endpoint, if it exists -->
-																			<xforms:action if="string(instance('config')/sparql/update) and string(instance('config')/sparql/store)">
-																				<xforms:var name="uri"
-																					select="if (string(instance('config')/uri_space)) then concat(instance('config')/uri_space, instance('control-instance')/id) else concat(instance('config')/url, 'id/', instance('control-instance')/id)"></xforms:var>
-																				<!-- first clear existing triples -->
-																				<xforms:setvalue ref="instance('sparqlUpdate')"
-																					value="replace(instance('sparqlUpdate-template')/query[@id='delete-entity'], 'URI', $uri)"></xforms:setvalue>
-																				<xforms:send submission="delete-graph"></xforms:send>
-																				<!-- get RDF for entity and re-post it -->
-																				<xforms:send submission="get-rdf" ev:event="xforms-submit-done"></xforms:send>
+														<td>
+															<div class="text-center">
+																<xforms:group ref=".[maintenanceStatus='new' or maintenanceStatus='revised' or maintenanceStatus='derived']">
+																	<xforms:group ref="published[. = false()]">
+																		<xforms:trigger appearance="minimal">
+																			<xforms:label><span class="glyphicon glyphicon-{if (.=true()) then 'ok' else 'unchecked'}"></span></xforms:label>
+																			<xforms:action ev:event="DOMActivate">
+																				<xforms:setvalue ref="instance('control-instance')/id" value="$id"></xforms:setvalue>
+																				<!-- update publicationStatus -->
+																				<xforms:setvalue ref="instance('control-instance')/publicationStatus">approved</xforms:setvalue>
+																				<xforms:send submission="load-doc"></xforms:send>
+																				<!-- create kml -->
+																				<xforms:insert nodeset="instance('kml')"
+																					origin="xxforms:call-xpl('oxf:/apps/xeac/xpl/views/serializations/eac/kml.xpl', 'data', instance('doc'), 'data')"></xforms:insert>
+																				<xforms:send submission="save-kml"></xforms:send>
+																				<!-- publish to solr -->
+																				<xforms:setvalue ref="instance('control-instance')/solr-core" value="instance('config')/solr_published"></xforms:setvalue>
+																				<xforms:send submission="eac-to-solr"></xforms:send>
+																				<xforms:send submission="commit" ev:event="xforms-submit-done"></xforms:send>
+																				<!-- post to SPARQL endpoint, if it exists -->
+																				<xforms:action if="string(instance('config')/sparql/update) and string(instance('config')/sparql/store)">
+																					<xforms:var name="uri"
+																						select="if (string(instance('config')/uri_space)) then concat(instance('config')/uri_space, instance('control-instance')/id) else concat(instance('config')/url, 'id/', instance('control-instance')/id)"></xforms:var>
+																					<!-- first clear existing triples -->
+																					<xforms:setvalue ref="instance('sparqlUpdate')"
+																						value="replace(instance('sparqlUpdate-template')/query[@id='delete-entity'], 'URI', $uri)"></xforms:setvalue>
+																					<xforms:send submission="delete-graph"></xforms:send>
+																					<!-- get RDF for entity and re-post it -->
+																					<xforms:send submission="get-rdf" ev:event="xforms-submit-done"></xforms:send>
+																				</xforms:action>
+																				<xforms:setvalue ref="instance('control-instance')/status">Record successfully published.</xforms:setvalue>
+																				<xforms:setvalue ref="." value="true()"></xforms:setvalue>
 																			</xforms:action>
-																			<xforms:setvalue ref="instance('control-instance')/status">Record successfully published.</xforms:setvalue>
-																			<xforms:setvalue ref="." value="true()"></xforms:setvalue>
-																		</xforms:action>
-																	</xforms:trigger>
-																</xforms:group>
-																<xforms:group ref="published[. = true()]">
-																	<xforms:trigger appearance="minimal">
-																		<xforms:label><span class="glyphicon glyphicon-{if (.=true()) then 'ok' else 'unchecked'}"></span></xforms:label>
-																		<xforms:action ev:event="DOMActivate">
-																			<xforms:setvalue ref="instance('control-instance')/id" value="$id"></xforms:setvalue>
-																			<!-- update publicationStatus -->
-																			<xforms:setvalue ref="instance('control-instance')/publicationStatus">inProcess</xforms:setvalue>
-																			<xforms:send submission="load-doc"></xforms:send>
-																			<!-- delete from Solr -->
-																			<xforms:setvalue ref="instance('deleteId')/query"
-																				value="concat('recordId:&#x022;', instance('control-instance')/id, '&#x022;')"></xforms:setvalue>
-																			<xforms:setvalue ref="instance('control-instance')/solr-core" value="instance('config')/solr_published"></xforms:setvalue>
-																			<xforms:send submission="delete-solr-doc"></xforms:send>
-																			<!-- delete from triplestore -->
-																			<xforms:action if="string(instance('config')/sparql/update)">
-																				<xforms:var name="uri"
-																					select="if (string(instance('config')/uri_space)) then concat(instance('config')/uri_space, instance('control-instance')/id) else concat(instance('config')/url, 'id/', instance('control-instance')/id)"></xforms:var>
-																				<!-- first clear existing triples -->
-																				<xforms:setvalue ref="instance('sparqlUpdate')"
-																					value="replace(instance('sparqlUpdate-template')/query[@id='delete-entity'], 'URI', $uri)"></xforms:setvalue>
-																				<xforms:send submission="delete-graph"></xforms:send>
+																		</xforms:trigger>
+																	</xforms:group>
+																	<xforms:group ref="published[. = true()]">
+																		<xforms:trigger appearance="minimal">
+																			<xforms:label><span class="glyphicon glyphicon-{if (.=true()) then 'ok' else 'unchecked'}"></span></xforms:label>
+																			<xforms:action ev:event="DOMActivate">
+																				<xforms:setvalue ref="instance('control-instance')/id" value="$id"></xforms:setvalue>
+																				<!-- update publicationStatus -->
+																				<xforms:setvalue ref="instance('control-instance')/publicationStatus">inProcess</xforms:setvalue>
+																				<xforms:send submission="load-doc"></xforms:send>
+																				<!-- delete from Solr -->
+																				<xforms:setvalue ref="instance('deleteId')/query"
+																					value="concat('recordId:&#x022;', instance('control-instance')/id, '&#x022;')"></xforms:setvalue>
+																				<xforms:setvalue ref="instance('control-instance')/solr-core" value="instance('config')/solr_published"></xforms:setvalue>
+																				<xforms:send submission="delete-solr-doc"></xforms:send>
+																				<!-- delete from triplestore -->
+																				<xforms:action if="string(instance('config')/sparql/update)">
+																					<xforms:var name="uri"
+																						select="if (string(instance('config')/uri_space)) then concat(instance('config')/uri_space, instance('control-instance')/id) else concat(instance('config')/url, 'id/', instance('control-instance')/id)"></xforms:var>
+																					<!-- first clear existing triples -->
+																					<xforms:setvalue ref="instance('sparqlUpdate')"
+																						value="replace(instance('sparqlUpdate-template')/query[@id='delete-entity'], 'URI', $uri)"></xforms:setvalue>
+																					<xforms:send submission="delete-graph"></xforms:send>
+																				</xforms:action>
+																				
+																				<xforms:setvalue ref="instance('control-instance')/status">Record successfully unpublished.</xforms:setvalue>
+																				<xforms:setvalue ref="." value="false()"></xforms:setvalue>
 																			</xforms:action>
-																			
-																			<xforms:setvalue ref="instance('control-instance')/status">Record successfully unpublished.</xforms:setvalue>
-																			<xforms:setvalue ref="." value="false()"></xforms:setvalue>
-																		</xforms:action>
-																	</xforms:trigger>
+																		</xforms:trigger>
+																	</xforms:group>
 																</xforms:group>
-															</xforms:group>
+															</div>
+															
 														</td>
-														<td class="text-center">
-															<xforms:trigger appearance="minimal">
-																<xforms:label>
-																	<span class="glyphicon glyphicon-remove"></span>
-																</xforms:label>
-																<xforms:action ev:event="DOMActivate">
-																	<xforms:setvalue ref="instance('control-instance')/id" value="$id"></xforms:setvalue>
-																	<xforms:dispatch target="delete" name="fr-show"></xforms:dispatch>
-																</xforms:action>
-															</xforms:trigger>
+														<td>
+															<div class="text-center">
+																<xforms:trigger appearance="minimal">
+																	<xforms:label>
+																		<span class="glyphicon glyphicon-remove"></span>
+																	</xforms:label>
+																	<xforms:action ev:event="DOMActivate">
+																		<xforms:setvalue ref="instance('control-instance')/id" value="$id"></xforms:setvalue>
+																		<xforms:dispatch target="delete" name="fr-show"></xforms:dispatch>
+																	</xforms:action>
+																</xforms:trigger>
+															</div>															
 														</td>
 													</tr>
 												</xforms:repeat>

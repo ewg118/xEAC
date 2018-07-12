@@ -1,0 +1,1509 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    xEAC: https://github.com/ewg118/xEAC
+   	Date: Last modified July 2018
+   	Function: Interact with the SNAC JSON API to create and merge constellations
+    License: Apache License 2.0
+-->
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:xforms="http://www.w3.org/2002/xforms" xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:xxforms="http://orbeon.org/oxf/xml/xforms" xmlns:xi="http://www.w3.org/2001/XInclude"
+	xmlns:fr="http://orbeon.org/oxf/xml/form-runner" xmlns:xeac="https://github.com/ewg118/xEAC" xmlns:xlink="http://www.w3.org/1999/xlink"
+	xmlns:xxi="http://orbeon.org/oxf/xml/xinclude" xmlns:eac="urn:isbn:1-931666-33-4" xmlns:xxbl="http://orbeon.org/oxf/xml/xbl"
+	xmlns:exf="http://www.exforms.org/exf/1-0" xmlns:saxon="http://saxon.sf.net/" xmlns:oxf="http://www.orbeon.com/oxf/processors"
+	xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:res="http://www.w3.org/2005/sparql-results#">
+
+	<head>
+		<title>xEAC: SNAC Constellation Integration</title>
+		<link rel="stylesheet" href="/fr/style/bootstrap/css/bootstrap.css" type="text/css" />
+		<link rel="stylesheet" href="/fr/style/form-runner-bootstrap-override.css" type="text/css" />
+		<link rel="shortcut icon" href="/ops/images/orbeon-icon-16.ico" />
+		<link rel="icon" href="/ops/images/orbeon-icon-16.png" type="image/png" />
+		<link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
+		<script type="text/javascript" src="https://netdna.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+		<link rel="stylesheet" type="text/css" href="/apps/xeac/xforms/css/xforms.css" />
+
+		<xforms:model>
+			<!-- ******************* INSTANCES ****************** -->
+			<xforms:instance id="control-instance" xxforms:exclude-result-prefixes="#all">
+				<control xmlns="">
+					<recordId></recordId>
+					<uri></uri>
+					<ark></ark>
+					<primaryName></primaryName>
+					<status></status>
+					<type></type>
+					<select-ark-trigger>false</select-ark-trigger>
+					<authentication-error>false</authentication-error>
+					<authorized>false</authorized>
+					<mode/>
+					<constellation>
+						<id></id>
+						<version></version>
+						<source_id></source_id>
+						<uri_exists>false</uri_exists>
+						<dates_exist>false</dates_exist>
+						<source_exists>false</source_exists>
+						<local_biogHist_exists>false</local_biogHist_exists>
+						<already_has_biogHist>false</already_has_biogHist>
+						<old_biogHist_hash></old_biogHist_hash>
+						<current_biogHist_hash></current_biogHist_hash>
+					</constellation>
+					<updates>
+						<uri>true</uri>
+						<biogHist>true</biogHist>
+						<dates>true</dates>
+						<resources>true</resources>
+					</updates>
+					<summary>
+						<uri>false</uri>
+						<biogHist>no action</biogHist>
+						<dates>false</dates>
+						<resources>
+							<create></create>
+							<delete></delete>
+							<none></none>
+						</resources>
+					</summary>
+				</control>
+			</xforms:instance>
+
+			<xforms:instance id="doc" xxforms:exclude-result-prefixes="#all">
+				<eac-cpf xmlns="urn:isbn:1-931666-33-4" xmlns:xlink="http://www.w3.org/1999/xlink"/>
+			</xforms:instance>
+
+			<!-- exist URL is stored in an XML file -->
+			<xforms:instance id="exist-config">
+				<xi:include href="../exist-config.xml"/>
+			</xforms:instance>
+
+			<xforms:instance id="config" xxforms:exclude-result-prefixes="#all">
+				<config></config>
+			</xforms:instance>
+
+			<!-- EAC templates -->
+			<xforms:instance id="entityId-template" xxforms:exclude-result-prefixes="#all">
+				<entityId localType="skos:exactMatch" xmlns="urn:isbn:1-931666-33-4"/>
+			</xforms:instance>
+
+			<xforms:instance id="localTypeDeclaration-template" xxforms:exclude-result-prefixes="#all">
+				<localTypeDeclaration xmlns="urn:isbn:1-931666-33-4">
+					<abbreviation>skos</abbreviation>
+					<citation xlink:type="simple" xlink:role="semantic" xlink:href="http://www.w3.org/2004/02/skos/core#"
+						>http://www.w3.org/2004/02/skos/core#</citation>
+				</localTypeDeclaration>
+			</xforms:instance>
+
+			<!-- ***** SNAC Instances ***** -->
+			<xforms:instance id="snac-response" xxforms:exclude-result-prefixes="#all">
+				<json type="object" xmlns=""></json>
+			</xforms:instance>
+
+			<!-- the SNAC query is XML that must conform to the XForms 2.0 JSON model for serialization into application/json -->
+			<xforms:instance id="snac-query" xxforms:exclude-result-prefixes="#all">
+				<json type="object" xmlns=""></json>
+			</xforms:instance>
+
+			<!-- JSON templates for SNAC -->
+			<xforms:instance id="constellation-template" xxforms:exclude-result-prefixes="#all">
+				<constellation type="object" xmlns="">
+					<dataType>Constellation</dataType>
+					<id></id>
+					<version></version>
+				</constellation>
+			</xforms:instance>
+
+			<xforms:instance id="entityType-template" xxforms:exclude-result-prefixes="#all">
+				<entityType type="object" xmlns="">
+					<dataType>Term</dataType>
+					<id type="number"></id>
+					<term></term>
+				</entityType>
+			</xforms:instance>
+
+			<xforms:instance id="nameEntry-template" xxforms:exclude-result-prefixes="#all">
+				<_ type="object" xmlns="">
+					<dataType>NameEntry</dataType>
+					<original></original>
+					<preferenceScore type="number">99</preferenceScore>
+					<operation>insert</operation>
+					<components type="array"></components>
+				</_>
+			</xforms:instance>
+
+			<xforms:instance id="nameComponent-template" xxforms:exclude-result-prefixes="#all">
+				<_ type="object" xmlns="">
+					<dataType>NameComponent</dataType>
+					<text></text>
+					<operation>insert</operation>
+					<order type="number"></order>
+					<type type="object">
+						<id type="number"></id>
+					</type>
+				</_>
+			</xforms:instance>
+
+			<xforms:instance id="sources-template" xxforms:exclude-result-prefixes="#all">
+				<sources type="array" xmlns="">
+					<_ type="object">
+						<dataType>Source</dataType>
+						<displayName></displayName>
+						<citation></citation>
+						<uri></uri>
+						<operation>insert</operation>
+					</_>
+				</sources>
+			</xforms:instance>
+
+			<xforms:instance id="otherRecordIDs-template" xxforms:exclude-result-prefixes="#all">
+				<otherRecordIDs type="array" xmlns="">
+					<_ type="object">
+						<dataType>SameAs</dataType>
+						<type type="object">
+							<id>28225</id>
+						</type>
+						<text></text>
+						<uri></uri>
+						<operation>insert</operation>
+					</_>
+				</otherRecordIDs>
+			</xforms:instance>
+
+			<xforms:instance id="dates-template" xxforms:exclude-result-prefixes="#all">
+				<_ type="object" xmlns="">
+					<dataType>SNACDate</dataType>
+					<fromDate></fromDate>
+					<fromDateOriginal></fromDateOriginal>
+					<fromType type="object">
+						<id></id>
+						<term></term>
+					</fromType>
+					<fromBC type="boolean">false</fromBC>
+					<toDate></toDate>
+					<toDateOriginal></toDateOriginal>
+					<toType type="object">
+						<id></id>
+						<term></term>
+					</toType>
+					<toBC type="boolean">false</toBC>
+					<isRange type="boolean">true</isRange>
+					<operation>insert</operation>
+				</_>
+			</xforms:instance>
+
+			<xforms:instance id="biogHists-template" xxforms:exclude-result-prefixes="#all">
+				<biogHists type="array" xmlns="">
+					<_ type="object">
+						<dataType>BiogHist</dataType>
+						<text></text>
+						<operation>insert</operation>
+						<snacControlMetadata type="array">
+							<_ type="object">
+								<dataType>SNACControlMetadata</dataType>
+								<citation type="object">
+									<dataType>Source</dataType>
+									<id></id>
+								</citation>
+								<note>Inserting source: EAC-CPF authority record published by xEAC</note>
+								<operation>insert</operation>
+							</_>
+						</snacControlMetadata>
+					</_>
+				</biogHists>
+			</xforms:instance>
+
+			<!-- template for adding a resource into a constellation -->
+			<xforms:instance id="resource-template" xxforms:exclude-result-prefixes="#all">
+				<_ type="object" xmlns="">
+					<dataType>ResourceRelation</dataType>
+					<resource type="object">
+						<dataType>Resource</dataType>
+						<id></id>
+						<version></version>
+					</resource>
+					<role type="object">
+						<id></id>
+						<term></term>
+					</role>
+					<operation></operation>
+				</_>
+			</xforms:instance>
+
+			<!-- instances for insert_resource -->
+			<xforms:instance id="insert-resource-template" xxforms:exclude-result-prefixes="#all">
+				<resource type="object" xmlns="">
+					<dataType>Resource</dataType>
+					<documentType type="object">
+						<id></id>
+						<term></term>
+					</documentType>
+					<title></title>
+					<displayEntry></displayEntry>
+					<link />
+					<operation>insert</operation>
+				</resource>
+			</xforms:instance>
+
+			<!-- ***** SEARCH constellations ***** -->
+			<xforms:instance id="temp">
+				<temp href="" abstract="" xmlns=""></temp>
+			</xforms:instance>
+
+			<xforms:instance id="search-results-statement" xxforms:exclude-result-prefixes="#all">
+				<statement xmlns=""></statement>
+			</xforms:instance>
+
+			<!-- ***** SPARQL instances ***** -->
+			<xforms:instance id="sparqlQuery">
+				<query></query>
+			</xforms:instance>
+
+			<xforms:instance id="sparql-templates" xxforms:exclude-result-prefixes="#all">
+				<queries xmlns="">
+					<query id="get-resources"><![CDATA[PREFIX rdf:      <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX dcterms:  <http://purl.org/dc/terms/>
+PREFIX foaf:  <http://xmlns.com/foaf/0.1/>
+SELECT ?uri ?role ?title ?type ?genre ?abstract ?extent WHERE {
+?uri ?role <URI> ;
+	 dcterms:title ?title ;
+     rdf:type ?type ;
+     dcterms:type ?genre .
+  OPTIONAL {?uri dcterms:abstract ?abstract}
+  OPTIONAL {?uri dcterms:extent ?extent}
+} ORDER BY ASC(?role)]]></query>
+					<query id="insert-ark"><![CDATA[PREFIX rdf:      <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX skos:  <http://www.w3.org/2004/02/skos/core#>
+PREFIX foaf:  <http://xmlns.com/foaf/0.1/>
+INSERT { ?concept skos:exactMatch <ARK>  }
+WHERE { ?concept foaf:focus <URI> }]]></query>
+				</queries>
+			</xforms:instance>
+
+			<xforms:instance id="sparqlResponse" xxforms:exclude-result-prefixes="#all">
+				<sparql xmlns="http://www.w3.org/2005/sparql-results#"/>
+			</xforms:instance>
+
+			<xforms:instance id="sparqlUpdate">
+				<query></query>
+			</xforms:instance>
+
+			<!-- a list of actions (CRUD) to perform between related resources about an entity extracted from SPARQL vs. resources in the constellation -->
+			<xforms:instance id="relatedResource-actions" xxforms:exclude-result-prefixes="#all">
+				<resources xmlns=""></resources>
+			</xforms:instance>
+
+			<!-- ***** SOLR INSTANCES ***** -->
+			<!-- send to Solr -->
+			<xforms:instance id="addIndex">
+				<add xmlns=""></add>
+			</xforms:instance>
+
+			<!-- Instance for Solr commit-->
+			<xforms:instance id="sendCommit">
+				<commit></commit>
+			</xforms:instance>
+
+
+			<!-- ******************* BINDINGS ****************** -->
+			<xforms:bind nodeset="instance('relatedResource-actions')">
+				<xforms:bind nodeset="resource">
+					<xforms:bind nodeset="@checked" type="xs:boolean"/>
+					<xforms:bind nodeset="@exists" type="xs:boolean"/>
+					<xforms:bind nodeset="@action"
+						calculate="if (../@checked = true() and ../@exists = false()) then 'create' else if (../@checked = false() and ../@exists = true()) then 'delete' else 'none'"
+					/>
+				</xforms:bind>
+			</xforms:bind>
+
+			<xforms:bind nodeset="instance('control-instance')">
+				<xforms:bind nodeset="constellation">
+					<xforms:bind nodeset="uri_exists" type="xs:boolean"/>
+					<xforms:bind nodeset="dates_exist" type="xs:boolean"/>
+					<xforms:bind nodeset="local_biogHist_exists" type="xs:boolean"/>
+					<xforms:bind nodeset="already_has_biogHist" type="xs:boolean"/>
+					<xforms:bind nodeset="source_exists" type="xs:boolean" calculate="string-length(../source_id) &gt; 0"/>
+				</xforms:bind>
+				<xforms:bind nodeset="updates">
+					<xforms:bind nodeset="*" type="xs:boolean"/>
+					<xforms:bind nodeset="biogHist" readonly="../../constellation/already_has_biogHist = true()"/>
+					<xforms:bind nodeset="dates" readonly="../../constellation/dates_exist = true()"/>
+				</xforms:bind>
+				<xforms:bind nodeset="summary">
+					<xforms:bind nodeset="uri" type="xs:boolean"
+						calculate="instance('control-instance')/constellation/uri_exists = false() and instance('control-instance')/updates/uri = true()"/>
+					<xforms:bind nodeset="dates" type="xs:boolean"
+						calculate="instance('doc')/eac:cpfDescription/eac:description/eac:existDates and instance('control-instance')/updates/dates = true() and instance('control-instance')/constellation/dates_exist = false()"/>
+					<xforms:bind nodeset="biogHist"
+						calculate="if (instance('doc')/eac:cpfDescription/eac:description/eac:biogHist and instance('control-instance')/constellation/already_has_biogHist = false()) then 'create' else if (instance('control-instance')/constellation/local_biogHist_exists = true() and not(instance('control-instance')/constellation/old_biogHist_hash = instance('control-instance')/constellation/current_biogHist_hash)) then 'update' else 'no action'"/>
+					<xforms:bind nodeset="resources">
+						<xforms:bind nodeset="create" calculate="count(instance('relatedResource-actions')/resource[@action='create'])"/>
+						<xforms:bind nodeset="delete" calculate="count(instance('relatedResource-actions')/resource[@action='delete'])"/>
+						<xforms:bind nodeset="none" calculate="count(instance('relatedResource-actions')/resource[@action='none'])"/>
+					</xforms:bind>
+				</xforms:bind>
+				<xforms:bind id="select-ark-trigger" nodeset="select-ark-trigger" type="xs:boolean" calculate="matches(instance('temp')/@href, 'https?://')"
+					readonly="not(matches(instance('temp')/@href, 'https?://'))"/>
+				<xforms:bind nodeset="authentication-error" type="xs:boolean"/>
+				<xforms:bind nodeset="authorized" type="xs:boolean"/>
+			</xforms:bind>
+
+			<xforms:bind nodeset="instance('config')">
+				<xforms:bind nodeset="snac">
+					<xforms:bind nodeset="user">
+						<xforms:bind nodeset="*" required="true()"/>
+						<xforms:bind nodeset="userid" type="xs:integer"/>
+						<xforms:bind nodeset="token">
+							<xforms:bind nodeset="access_token" required="true()"/>
+							<xforms:bind nodeset="expires" required="true()" type="xs:integer"/>
+						</xforms:bind>
+					</xforms:bind>
+				</xforms:bind>
+			</xforms:bind>
+
+			<xforms:bind nodeset="instance('snac-query')">
+				<xforms:bind nodeset="constellation">
+					<xforms:bind nodeset="dates">
+						<xforms:bind nodeset="_">
+							<xforms:bind nodeset="fromBC" type="xs:boolean"/>
+							<xforms:bind nodeset="toBC" type="xs:boolean"/>
+							<xforms:bind nodeset="isRange" type="xs:boolean"/>
+						</xforms:bind>
+					</xforms:bind>
+				</xforms:bind>
+			</xforms:bind>
+
+			<!-- ******************* SUBMISSIONS ****************** -->
+			<!-- eXist-db interactivity -->
+			<xforms:submission id="load-config" serialization="none" method="get" action="{instance('exist-config')/url}xeac/config.xml" replace="instance"
+				instance="config" xxforms:username="{instance('exist-config')/username}" xxforms:password="{instance('exist-config')/password}">
+				<xforms:message ev:event="xforms-submit-error" level="modal">Unable to load configuration file</xforms:message>
+			</xforms:submission>
+
+			<xforms:submission id="save-config" ref="instance('config')" xxforms:username="{instance('exist-config')/username}"
+				xxforms:password="{instance('exist-config')/password}" action="{instance('exist-config')/url}xeac/config.xml" method="put" replace="none">
+				<xforms:action ev:event="xforms-submit-done">
+					<xforms:setvalue ref="instance('control-instance')/status">User data updated in config. Note that the
+						'access_token' and 'expires' expire after roughly 24 hours.</xforms:setvalue>
+				</xforms:action>				
+				<xforms:message ev:event="xforms-submit-error" level="modal">Error saving configuration file.</xforms:message>
+			</xforms:submission>
+
+			<!-- Submission to get the document -->
+			<xforms:submission id="load-doc" serialization="none" method="get"
+				action="{instance('exist-config')/url}xeac/records/{instance('control-instance')/recordId}.xml" replace="instance" instance="doc"
+				xxforms:username="{instance('exist-config')/username}" xxforms:password="{instance('exist-config')/password}">
+				<xforms:message ev:event="xforms-submit-error" level="modal">Unable to load EAC record</xforms:message>
+			</xforms:submission>
+
+			<!-- Submission to save the document -->
+			<xforms:submission id="save-doc" ref="instance('doc')"
+				action="{instance('exist-config')/url}xeac/records/{instance('doc')/eac:control/eac:recordId}.xml" method="put" replace="none"
+				xxforms:username="{instance('exist-config')/username}" xxforms:password="{instance('exist-config')/password}">
+				<xforms:message ev:event="xforms-submit-error" level="modal">Error Saving Documents. Be sure all required inputs are filled in.</xforms:message>
+				<xforms:action ev:event="xforms-submit-done">
+					<!-- if there is a SPARQL endpoint, post to endpoint and index into Solr -->
+					<xforms:action if="instance('doc')/eac:control/eac:publicationStatus = 'approved'">
+						<!-- publish record if the publicationStatus is approved -->
+						<xforms:send submission="to-solr"/>
+						<!-- purge existing triples and ingest new RDF into triplestore -->
+						<xforms:action if="string(instance('config')/sparql/update) and string(instance('config')/sparql/store)">
+							<xforms:setvalue ref="instance('sparqlUpdate')"
+								value="replace(replace(instance('sparql-templates')/query[@id='insert-ark'], 'URI', instance('control-instance')/uri), 'ARK', instance('control-instance')/ark)"/>
+							<xforms:send submission="update-graph"/>
+						</xforms:action>
+					</xforms:action>
+				</xforms:action>
+			</xforms:submission>
+
+			<!-- SNAC API -->
+			<xforms:submission id="query-snac" ref="instance('snac-query')" action="{instance('config')/snac/api}" method="put" replace="instance"
+				instance="snac-response" serialization="application/json">
+				<xforms:header>
+					<xforms:name>User-Agent</xforms:name>
+					<xforms:value>XForms/xEAC</xforms:value>
+				</xforms:header>				
+				
+				<!-- perform specific actions when certain queries are issued to SNAC -->
+				<xforms:action ev:event="xforms-submit-done">
+					<!-- testing whether the user data is valid for SNAC authentication -->
+					<xforms:action if="instance('control-instance')/mode='auth'">
+						<!-- if successful, then unlock the constellation and set authorized to true() -->
+						<xforms:setvalue ref="instance('control-instance')/authorized" value="true()"/>
+						<xforms:setvalue ref="instance('control-instance')/mode"/>
+					</xforms:action>
+					<!-- Searching for existing constellations: set the human readable search response if applicable -->
+					<xforms:action if="instance('snac-query')/command = 'search'">
+						<xforms:var name="total" select="number(instance('snac-response')/total)" type="xs:integer"/>
+						<xforms:setvalue if="$total = 0" ref="instance('search-results-statement')">No results found for query.</xforms:setvalue>
+						<xforms:setvalue if="$total &gt; 0 and $total &lt;= number(instance('snac-query')/count)" ref="instance('search-results-statement')"
+							value="concat('Displaying ', string($total), ' result(s).')"/>
+						<xforms:setvalue if="$total &gt; number(instance('snac-query')/count)" ref="instance('search-results-statement')"
+							value="concat('Displaying first ', instance('snac-query')/count, ' of ', string($total), ' results.')"/>
+					</xforms:action>
+				</xforms:action>
+				
+				<!-- if not, then clear the query and display an authentication error. Require resubmission of user data -->
+				<xforms:action ev:event="xforms-submit-error" if="instance('control-instance')/mode='auth'">					
+					<xforms:setvalue ref="instance('control-instance')/authentication-error" value="true()"/>
+				</xforms:action>
+			</xforms:submission>
+
+			<!-- SPARQL query for related resources -->
+			<xforms:submission id="submit-sparqlQuery" action="{instance('config')/sparql/query}?query={encode-for-uri(instance('sparqlQuery'))}&amp;output=xml"
+				ref="instance('sparqlResponse')" replace="instance" method="get">
+				<xforms:message ev:event="xforms-submit-error" level="modal">SPARQL query failed.</xforms:message>
+			</xforms:submission>
+
+			<!-- Update the triplestore after a document is saved, if applicable -->
+			<xforms:submission id="update-graph" action="{instance('config')/sparql/update}" ref="instance('sparqlUpdate')" serialization="text/plain"
+				replace="none" method="post" mediatype="application/sparql-update">
+				<xforms:message ev:event="xforms-submit-error" level="modal">SPARQL update failed.</xforms:message>
+				<xforms:setvalue ev:event="xforms-submit-done" ref="instance('control-instance')/status">Entity updated in SPARQL endpoint.</xforms:setvalue>
+			</xforms:submission>
+
+			<!-- Update Solr after a document is saved -->
+			<xforms:submission id="to-solr" method="get" replace="instance" instance="addIndex" serialization="none"
+				resource="/xeac/id/{instance('control-instance')/recordId}.solr">
+				<xforms:message ev:event="xforms-submit-error" level="modal">Error transforming EAC record to Solr document.</xforms:message>
+				<xforms:send ev:event="xforms-submit-done" submission="publish-submission"/>
+			</xforms:submission>
+
+			<!-- post instance to Solr -->
+			<xforms:submission id="publish-submission" action="{instance('config')/solr_published}update" ref="instance('addIndex')" instance="addIndex"
+				replace="instance" method="post">
+				<xforms:action ev:event="xforms-submit-done">
+					<xforms:send submission="submit-commit"/>
+					<xforms:setvalue ref="instance('control-instance')/status">EAC record saved and updated to search index.</xforms:setvalue>
+				</xforms:action>
+				<xforms:message ev:event="xforms-submit-error" level="modal">Data Failed to POST to Solr. Index may be offline or URL is
+					incorrect.</xforms:message>
+			</xforms:submission>
+
+			<!-- send commit -->
+			<xforms:submission id="submit-commit" action="{instance('config')/solr_published}update" ref="instance('sendCommit')" instance="sendCommit"
+				replace="none" method="post"/>
+
+			<!-- ************************ xforms-model-construct-done ****************************** -->
+			<!-- load recordId -->
+			<xforms:action ev:event="xforms-model-construct-done">
+				<xforms:send submission="load-config"/>
+				<!-- if there is a recordId parameter, load existing EAC record -->
+				<xforms:action if="string(xxforms:get-request-parameter('recordId'))">
+					<xforms:setvalue ref="instance('control-instance')/recordId" value="xxforms:get-request-parameter('recordId')"/>
+
+					<xforms:send submission="load-doc"/>
+
+					<!-- read constellation -->
+					<xforms:action ev:event="xforms-submit-done">
+						<!-- set the URI -->
+						<xforms:setvalue ref="instance('control-instance')/uri"
+							value="if (string(instance('config')/uri_space))
+							then concat(instance('config')/uri_space, instance('control-instance')/recordId) 
+							else concat(instance('config')/url, 'id/', instance('control-instance')/recordId)"/>
+
+						<!-- set the primaryName -->
+						<xforms:setvalue ref="instance('control-instance')/primaryName"
+							value="instance('doc')/eac:cpfDescription/eac:identity/eac:nameEntry[1]/eac:part"/>
+
+						<!-- set type -->
+						<xforms:setvalue ref="instance('control-instance')/type" value="instance('doc')/eac:cpfDescription/eac:identity/eac:entityType"/>
+
+
+						<!-- Use SNAC ARK to read the constellation -->
+						<xforms:action
+							if="instance('doc')/eac:cpfDescription/eac:identity/eac:entityId[matches(., '^http://n2t\.net/ark:/99166/[A-Za-z0-9]+$')]">
+							<xforms:insert context="instance('snac-query')" origin="xforms:element('command', 'read')"/>
+							<xforms:insert context="instance('snac-query')"
+								origin="xforms:element('arkid', data(instance('doc')/eac:cpfDescription/eac:identity/eac:entityId[matches(., '^http://n2t\.net/ark:/99166/[A-Za-z0-9]+$')]))"/>
+							<xforms:send submission="query-snac"/>
+
+							<!-- set constellationid -->
+							<xforms:action ev:event="xforms-submit-done">
+								<xforms:action if="instance('snac-response')/constellation/id">
+									<xforms:setvalue ref="instance('control-instance')/constellation/id" value="instance('snac-response')/constellation/id"/>
+								</xforms:action>
+								<!-- set the constellation variables to true() if the URI, existDates, etc. are present -->
+								<xforms:setvalue ref="instance('control-instance')/constellation/uri_exists" value="true()"
+									if="instance('snac-response')/constellation/otherRecordIDs/_/uri = instance('control-instance')/uri"/>
+								<xforms:setvalue ref="instance('control-instance')/constellation/dates_exist" value="true()"
+									if="instance('snac-response')/constellation/dates"/>
+								<!-- set already_has_biogHist if there's a biogHist already in the constellation that is not connected to the current authority URI -->
+								<xforms:setvalue ref="instance('control-instance')/constellation/already_has_biogHist" value="true()"
+									if="instance('snac-response')/constellation/biogHists/_[not(snacControlMetadata/_/citation/uri = instance('control-instance')/uri)]"/>
+								<xforms:setvalue ref="instance('control-instance')/constellation/local_biogHist_exists" value="true()"
+									if="instance('snac-response')/constellation/biogHists/_/snacControlMetadata/_/citation/uri = instance('control-instance')/uri"/>
+
+								<!-- hash encode the local biogHist that is already in the constellation -->
+								<xforms:action if="instance('control-instance')/constellation/local_biogHist_exists = true()">									
+									<xforms:setvalue ref="instance('control-instance')/constellation/old_biogHist_hash"
+										value="digest(instance('snac-response')/constellation/biogHists/_[snacControlMetadata/_/citation/uri = instance('control-instance')/uri]/text, 'MD5', 'hex')"/>
+									<xforms:setvalue ref="instance('control-instance')/constellation/current_biogHist_hash"
+										value="digest(normalize-space(saxon:serialize(instance('doc')/eac:cpfDescription/eac:description/eac:biogHist[1], 'html')), 'MD5', 'hex')"/>
+								</xforms:action>								
+
+								<!-- set the id for the source, if it already exists -->
+								<xforms:setvalue ref="instance('control-instance')/constellation/source_id"
+									value="instance('snac-response')/constellation/sources/_[uri = instance('control-instance')/uri]/id"/>
+							</xforms:action>
+						</xforms:action>					
+						
+						<!-- get resource relations, if the SPARQL endpoint has been activated -->
+						<xforms:action if="string(instance('config')/sparql/query)">
+							
+							<xforms:setvalue ref="instance('sparqlQuery')"
+								value="replace(instance('sparql-templates')/query[@id='get-resources'], 'URI', instance('control-instance')/uri)"/>
+							<xforms:send submission="submit-sparqlQuery"/>
+							
+							<!-- iterate through all of the results and populate a list of actions to take vs. resource relations already in the constellation -->
+							<xforms:action xxforms:iterate="instance('sparqlResponse')//res:result" ev:event="xforms-submit-done">
+								<xforms:var name="uri" select="context()/res:binding[@name='uri']/res:uri"/>
+								<xforms:var name="title" select="context()/res:binding[@name='title']/res:literal"/>
+								<xforms:var name="extent" select="context()/res:binding[@name='extent']/res:literal"/>
+								<xforms:var name="abstract" select="context()/res:binding[@name='abstract']/res:literal"/>
+								<xforms:var name="genre" select="context()/res:binding[@name='genre']/res:uri"/>
+								<xforms:var name="role"
+									select="if (context()/res:binding[@name='role']/res:uri = 'http://purl.org/dc/terms/creator') then 'creatorOf' else if (context()/res:binding[@name='role']/res:uri = 'http://purl.org/dc/terms/contributor') then 'contributorOf' else 'referencedIn'"/>
+								<xforms:var name="roleId" select="if ($role = 'creatorOf') then '692' else if ($role = 'contributorOf') then '695' else '693'"/>
+								<xforms:var name="type" select="context()/res:binding[@name='type']/res:uri"/>
+								<xforms:var name="exists" select="boolean(instance('snac-response')/constellation/resourceRelations/_/resource[link = $uri])"
+									type="xs:boolean"/>
+								
+								<!-- if the Getty AAT URI is for a monograph, then it's Bibliographic, if it's a URI for finding aid, it's Archival, otherwise Digital Archival (notebooks, photos, etc.) -->
+								<xforms:var name="documentTypeTerm"
+									select="if ($genre = 'http://vocab.getty.edu/aat/300060417') then 'BibliographicResource' else if ($genre = 'http://vocab.getty.edu/aat/300026539') then 'ArchivalResource' else 'DigitalArchivalResource'"/>
+								<xforms:var name="documentTypeId"
+									select="if ($documentTypeTerm = 'BibliographicResource') then '697' else if ($documentTypeTerm = 'ArchivalResource') then '696' else '400478'"/>
+								
+								<xforms:insert context="instance('relatedResource-actions')" nodeset="./child::node()[last()]"
+									origin="xforms:element('resource', (xforms:attribute('uri', $uri), xforms:attribute('title', $title), xforms:attribute('genre', $genre), 
+									xforms:attribute('type', $type), xforms:attribute('documentTypeTerm', $documentTypeTerm), xforms:attribute('documentTypeId', $documentTypeId),
+									xforms:attribute('role', $role), xforms:attribute('roleId', $roleId), xforms:attribute('action', ''), 
+									xforms:attribute('exists', $exists), xforms:attribute('checked', true()), ''))"/>
+								
+								<!-- insert optional values -->
+								<xforms:insert context="instance('relatedResource-actions')/resource[last()]" origin="xforms:attribute('abstract', $abstract)"
+									if="string($abstract)"/>
+								<xforms:insert context="instance('relatedResource-actions')/resource[last()]" origin="xforms:attribute('extent', $extent)"
+									if="string($extent)"/>
+								
+								<!-- if there's already version/id (existing resources) -->
+								<xforms:action if="$exists = true()">
+									<!-- id and version of the resource itself within SNAC -->
+									<xforms:insert context="instance('relatedResource-actions')/resource[last()]"
+										origin="xforms:attribute('id', instance('snac-response')/constellation/resourceRelations/_/resource[link = $uri]/id)"/>
+									<xforms:insert context="instance('relatedResource-actions')/resource[last()]"
+										origin="xforms:attribute('version', instance('snac-response')/constellation/resourceRelations/_/resource[link = $uri]/version)"/>
+									
+									<!-- id and version of the resource as it relates to this particular entity -->
+									<xforms:insert context="instance('relatedResource-actions')/resource[last()]"
+										origin="xforms:attribute('relationId', instance('snac-response')/constellation/resourceRelations/_[resource[link = $uri]]/id)"/>
+									<xforms:insert context="instance('relatedResource-actions')/resource[last()]"
+										origin="xforms:attribute('relationVersion', instance('snac-response')/constellation/resourceRelations/_[resource[link = $uri]]/version)"
+									/>
+								</xforms:action>
+							</xforms:action>
+						</xforms:action>
+					</xforms:action>
+				</xforms:action>
+			</xforms:action>
+
+			<!-- toggle case if no recordId -->
+			<xforms:action ev:event="xforms-ready">
+				<xforms:toggle case="no-recordId" if="not(string(instance('control-instance')/recordId))"/>
+				<!--<xforms:toggle case="create-update-constellation" if="string(instance('control-instance')/constellation/id)"/>-->
+			</xforms:action>
+		</xforms:model>
+
+	</head>
+	<body>
+		<xforms:var name="display_path">../</xforms:var>
+		<div class="container-fluid">
+			<div class="row">
+				<div class="col-md-12">
+					<xforms:group ref=".[string(instance('control-instance')/status)]">
+						<div class="alert alert-box alert-success">
+							<span class="glyphicon glyphicon-info-sign"></span>
+							<strong>Status:</strong>
+							<xforms:output ref="instance('control-instance')/status"/>
+						</div>
+					</xforms:group>
+					<p>
+						<a href="../admin/"><span class="glyphicon glyphicon-arrow-left"></span>Return to Admin</a>
+					</p>
+
+					<h1>SNAC Constellation Integration</h1>
+
+					<div class="alert alert-box alert-info">
+						<span class="glyphicon glyphicon-info-sign"></span>
+						<strong>Note: </strong>
+						<span>This interface is a beta and doesn't support the full range of additions or deletions from a SNAC constellation.</span>
+					</div>
+
+					<xforms:switch>
+						<xforms:case id="user-config">
+							<div class="section">
+								<h3>SNAC API</h3>
+								<xforms:group ref="instance('config')/snac">
+									<div>
+										<xforms:output ref="api">
+											<xforms:label>API</xforms:label>
+										</xforms:output>
+									</div>
+									<xforms:group ref=".[string(repository_ark)]">
+										<div>
+											<xforms:output ref="repository_ark">
+												<xforms:label>Repository ARK</xforms:label>
+											</xforms:output>
+										</div>
+									</xforms:group>
+									<xforms:group ref=".[not(string(repository_ark))]">
+										<p><strong>Note: </strong>Check the <a href="../admin/settings/">xEAC Settings</a> page in order to insert the ARK for
+											the repository, if you intend to publish related resources via the optional SPARQL endpoint.</p>
+									</xforms:group>
+								</xforms:group>
+
+								<h3>SNAC User Data</h3>
+								<p>Copy and paste the following data from your API Key page in SNAC. The manual entering of these data will be replaced
+									eventually by OAuth integration between xEAC and SNAC directly. The SNAC API URL is stored in the xEAC config and can be
+									changed in the <a href="../admin/settings/">Settings</a> page. It is recommended that you verify the functionality of the
+									development endpoint before changing the URL to the production server.</p>
+
+								
+								<xforms:group ref=".[instance('control-instance')/authentication-error = true()]">
+									<div class="alert alert-danger alert-box">
+										<span class="glyphicon glyphicon-warning-sign"></span>
+										<strong>Alert! </strong>
+										<span>The SNAC authentication data are invalid. Please log into the SNAC dashboard and confirm the most recent token credentials.</span>
+									</div>
+								</xforms:group>
+
+								<xforms:group ref="instance('config')/snac/user">
+									<div>
+										<xforms:input ref="userid">
+											<xforms:label>userid</xforms:label>
+											<xforms:alert>Required. Integer</xforms:alert>
+										</xforms:input>
+									</div>
+									<div>
+										<xforms:input ref="userName">
+											<xforms:label>userName</xforms:label>
+											<xforms:alert>Required. Email address</xforms:alert>
+										</xforms:input>
+									</div>
+									<div>
+										<xforms:input ref="fullName">
+											<xforms:label>fullName</xforms:label>
+											<xforms:alert>Required.</xforms:alert>
+										</xforms:input>
+									</div>
+									<div>
+										<xforms:textarea ref="token/access_token">
+											<xforms:label>access_token</xforms:label>
+											<xforms:alert>Required.</xforms:alert>
+										</xforms:textarea>
+									</div>
+									<div>
+										<xforms:input ref="token/expires">
+											<xforms:label>expires</xforms:label>
+											<xforms:alert>Required. Integer</xforms:alert>
+										</xforms:input>
+									</div>
+								</xforms:group>
+
+								<xforms:trigger>
+									<xforms:label>Confirm User Data</xforms:label>
+									<xforms:action ev:event="DOMActivate">
+										<!-- submit an edit to a constellation to verify user authentication -->
+										<xforms:setvalue ref="instance('control-instance')/mode">auth</xforms:setvalue>
+										<xforms:delete nodeset="instance('snac-query')/*"/>
+										<xforms:insert context="instance('snac-query')" origin="xforms:element('command', 'edit')"/>
+										<xforms:insert context="instance('snac-query')" origin="xforms:element('constellationid', '67889762')"/>
+										<xforms:insert context="instance('snac-query')" origin="instance('config')/snac/user"/>
+										<xforms:send submission="query-snac"/>		
+										
+										<xforms:action ev:event="xforms-submit-done" if="instance('control-instance')/authorized = true()">
+											<xforms:delete nodeset="instance('snac-query')/*"/>
+											<xforms:insert context="instance('snac-query')" origin="xforms:element('command', 'unlock_constellation')"/>
+											<xforms:insert context="instance('snac-query')" origin="instance('config')/snac/user"/>
+											<xforms:insert context="instance('snac-query')" origin="instance('constellation-template')"/>
+											<xforms:setvalue ref="instance('snac-query')/constellation/id" value="instance('snac-response')/constellation/id"/>
+											<xforms:setvalue ref="instance('snac-query')/constellation/version"
+												value="instance('snac-response')/constellation/version"/>
+											<xforms:send submission="query-snac"/>
+											
+											<xforms:action ev:event="xforms-submit-done">												
+												<xforms:send submission="save-config"/>
+												<xforms:toggle case="form"/>
+												
+												<!-- if a constellation id was already extracted via automated lookup on a SNAC ARK on EAC-CPF load, then toggle directly to upload interface -->
+												<xforms:action if="string(instance('control-instance')/constellation/id)">
+													<xforms:toggle case="create-update-constellation"/>
+												</xforms:action>
+												<!-- if there's no SNAC ARK, then set up a constellation query -->
+												<xforms:action if="not(string(instance('control-instance')/constellation/id))">		
+													<xforms:delete nodeset="instance('snac-query')/*"/>
+													<xforms:insert context="instance('snac-query')" origin="xforms:element('command', 'search')"/>
+													<xforms:insert context="instance('snac-query')"
+														origin="xforms:element('term', data(instance('doc')/eac:cpfDescription/eac:identity/eac:nameEntry[1]/eac:part))"/>
+													<xforms:insert context="instance('snac-query')"
+														origin="xforms:element('entity_type', data(instance('doc')/eac:cpfDescription/eac:identity/eac:entityType))"/>
+													<xforms:insert context="instance('snac-query')" origin="xforms:element('start', '0')"/>
+													<xforms:insert context="instance('snac-query')" origin="xforms:element('count', '25')"/>
+													<xforms:send submission="query-snac"/>
+												</xforms:action>
+											</xforms:action>
+										</xforms:action>
+									</xforms:action>
+								</xforms:trigger>
+							</div>
+						</xforms:case>
+						<xforms:case id="form">
+							<xforms:group ref="instance('doc')/eac:cpfDescription/eac:identity">
+								<h2>
+									<xforms:output ref="eac:nameEntry[1]/eac:part"/>
+									<small>
+										<xforms:trigger appearance="minimal">
+											<xforms:label><span class="glyphicon glyphicon-new-window"></span></xforms:label>
+											<xforms:action ev:event="DOMActivate">
+												<xforms:load show="new" resource="{instance('control-instance')/uri}"/>
+											</xforms:action>
+										</xforms:trigger>
+									</small>
+								</h2>
+							</xforms:group>
+
+							<!-- display different interfaces for Updates for Creations -->
+							<xforms:group ref=".[string(instance('control-instance')/constellation/id)]">
+								<dl class="dl-horizontal">
+									<dt>SNAC URI</dt>
+									<dd>
+										<xforms:trigger appearance="minimal">
+											<xforms:label><xforms:output
+													ref="instance('doc')/eac:cpfDescription/eac:identity/eac:entityId[matches(., '^http://n2t\.net/ark:/99166/[A-Za-z0-9]+$')]"/>
+												<span class="glyphicon glyphicon-new-window"></span></xforms:label>
+											<xforms:action ev:event="DOMActivate">
+												<xforms:load show="new"
+													resource="{instance('doc')/eac:cpfDescription/eac:identity/eac:entityId[matches(., '^http://n2t\.net/ark:/99166/[A-Za-z0-9]+$')]}"
+												/>
+											</xforms:action>
+										</xforms:trigger>
+									</dd>
+									<dt>Constellation ID</dt>
+									<dd>
+										<xforms:output ref="instance('control-instance')/constellation/id"/>
+									</dd>
+								</dl>
+
+								<h3>Update Constellation</h3>
+								<p>Update the SNAC constellation with the following data:</p>
+							</xforms:group>
+							<xforms:group ref=".[not(string(instance('control-instance')/constellation/id))]">
+								<h3>Create New Constellation</h3>
+								<p>This interface will create a new constellation for this entity. Before created a new one, you should verify that this entity
+									does not already exist in SNAC with the interface below:</p>
+							</xforms:group>
+
+							<xforms:switch>
+								<xforms:case id="search-constellation">
+									<h4>Search for Existing Constellations</h4>
+
+									<div>
+										<xforms:input ref="instance('snac-query')/term">
+											<xforms:label>Name</xforms:label>
+										</xforms:input>
+										<xforms:trigger>
+											<xforms:action ev:event="DOMActivate">
+												<xforms:send submission="query-snac"/>
+											</xforms:action>
+											<xforms:label>Search</xforms:label>
+										</xforms:trigger>
+									</div>
+									<xforms:group ref=".[string-length(instance('search-results-statement')) &gt; 0]">
+										<p class="text-muted">
+											<xforms:output ref="instance('search-results-statement')"/>
+										</p>
+									</xforms:group>
+									<xforms:select1 ref="instance('temp')/@href" appearance="compact">
+										<xforms:label>Results</xforms:label>
+										<xforms:itemset nodeset="instance('snac-response')/results/_[@type='object']">
+											<xforms:label ref="nameEntries/_[1]/original"/>
+											<xforms:value ref="ark"/>
+										</xforms:itemset>
+									</xforms:select1>
+
+									<xforms:group ref=".[string-length(instance('temp')/@href) &gt; 0]">
+										<p>
+											<xforms:trigger appearance="minimal">
+												<xforms:label>
+													<xforms:output ref="instance('temp')/@href"/>
+													<span class="glyphicon glyphicon-new-window"></span>
+												</xforms:label>
+												<xforms:hint ref="instance('temp')/@href"/>
+												<xforms:load ev:event="DOMActivate" resource="{instance('temp')/@href}" show="new"/>
+											</xforms:trigger>
+										</p>
+									</xforms:group>
+
+									<div>
+										<!-- selecting an entity will embed the entityId and trigger a constellation update -->
+										<xforms:trigger bind="select-ark-trigger">
+											<xforms:label>Select and Update</xforms:label>
+											<xforms:action ev:event="DOMActivate" if="string(instance('temp')/@href)">
+												<!-- insert entityId if it doesn't already exist -->
+												<xforms:action if="not(instance('temp')/@href = instance('doc')/eac:cpfDescription/eac:identity/eac:entityId)">
+													<xforms:insert context="instance('doc')/eac:cpfDescription/eac:identity" nodeset="./child::node()[last()]"
+														origin="instance('entityId-template')"/>
+													<xforms:setvalue ref="instance('doc')/eac:cpfDescription/eac:identity/eac:entityId[last()]"
+														value="instance('temp')/@href"/>
+												</xforms:action>
+
+												<!-- insert localTypeDescription if it doesn't exist -->
+												<xforms:insert context="instance('doc')/eac:control" nodeset="./child::node()[last()]"
+													origin="instance('localTypeDeclaration-template')"
+													if="not(instance('doc')/eac:control/eac:localTypeDeclaration[eac:abbreviation='skos'])"/>
+
+												<!-- save the EAC-CPF document -->
+												<xforms:send submission="save-doc"/>
+
+												<!-- initiate a read query for the constellation -->
+												<xforms:action ev:event="xforms-submit-done">
+													<xforms:delete nodeset="instance('snac-query')/*"/>
+													<xforms:insert context="instance('snac-query')" origin="xforms:element('command', 'read')"/>
+													<xforms:insert context="instance('snac-query')"
+														origin="xforms:element('arkid', data(instance('doc')/eac:cpfDescription/eac:identity/eac:entityId[matches(., '^http://n2t\.net/ark:/99166/[A-Za-z0-9]+$')]))"/>
+													<xforms:send submission="query-snac"/>
+
+													<!-- set constellationid -->
+													<xforms:action ev:event="xforms-submit-done" if="instance('snac-response')/constellation/id">
+														<xforms:setvalue ref="instance('control-instance')/constellation/id"
+															value="instance('snac-response')/constellation/id"/>
+														<xforms:toggle case="create-update-constellation"/>
+													</xforms:action>
+												</xforms:action>
+											</xforms:action>
+										</xforms:trigger>
+
+										<!-- otherwise proceed with the generation of a new constellation -->
+										<xforms:trigger>
+											<xforms:label>Proceed with new constellation</xforms:label>
+											<xforms:action ev:event="DOMActivate">
+												<xforms:toggle case="create-update-constellation"/>
+											</xforms:action>
+										</xforms:trigger>
+									</div>
+								</xforms:case>
+								<xforms:case id="create-update-constellation">
+									<!--<xforms:group ref=".[string(instance('control-instance')/constellation/id]">
+										<div class="subsection">
+											<h4>Name Entries</h4>
+										</div>
+									</xforms:group>-->
+
+									<!-- if the URI doesn't already exist within the constellation -->
+									<div class="subsection">
+										<h4>Same As URI</h4>
+										<xforms:group ref=".[instance('control-instance')/constellation/uri_exists = false()]">
+											<div>
+												<xforms:input ref="instance('control-instance')/updates/uri" appearance="minimal">
+													<xforms:label>URI</xforms:label>
+												</xforms:input>
+												<p>The URI does not already exist in this constellation. Check the box above to insert it.</p>
+											</div>
+										</xforms:group>
+										<xforms:group ref=".[instance('control-instance')/constellation/uri_exists = true()]">
+											<div>
+												<xforms:input ref="instance('control-instance')/updates/uri" appearance="minimal">
+													<xforms:label>URI</xforms:label>
+												</xforms:input>
+												<p>The URI already exists in the constellation. <strike>Uncheck the box above to remove it.</strike>
+													<span class="text-info">URI deletion operations have not yet been implemented.</span></p>
+											</div>
+										</xforms:group>
+										<hr />
+									</div>
+
+									<div class="subsection">
+										<h4>Descriptive Context</h4>
+										<!-- only display dates control if existDates are present in EAC-CPF -->
+										<xforms:group ref=".[instance('doc')/eac:cpfDescription/eac:description/eac:existDates]">
+											<div>
+												<xforms:input ref="instance('control-instance')/updates/dates" appearance="minimal">
+													<xforms:label>Exist Dates</xforms:label>
+												</xforms:input>
+												<xforms:group ref=".[instance('control-instance')/constellation/dates_exist = true()]">
+													<p>There are already Exist Dates in the constellation. New ones cannot be added or updated.</p>
+												</xforms:group>
+												<xforms:group ref=".[instance('control-instance')/constellation/dates_exist = false()]">
+													<p>Exist Dates are not present in this constellation. Check the box above to insert them.</p>
+												</xforms:group>
+											</div>
+										</xforms:group>
+
+
+										<!-- display control for adding/updating/deleting bioghist -->
+										<xforms:group ref=".[instance('doc')/eac:cpfDescription/eac:description/eac:biogHist]">
+											<div>
+												<xforms:input ref="instance('control-instance')/updates/biogHist" appearance="minimal">
+													<xforms:label>Biography/History</xforms:label>
+												</xforms:input>
+												<xforms:group ref=".[instance('control-instance')/constellation/already_has_biogHist = true()]">
+													<p>There is already a biogHist present in the constellation, published from another data provider. This
+														process will currently not overwrite the currently visible biogHist.</p>
+												</xforms:group>
+												<xforms:group ref=".[instance('control-instance')/constellation/already_has_biogHist = false()]">
+													<xforms:group ref=".[instance('control-instance')/constellation/local_biogHist_exists = false()]">
+														<p>Checking the box above will import the biogHist into the constellation.</p>
+													</xforms:group>
+													<xforms:group ref=".[instance('control-instance')/constellation/local_biogHist_exists = true()]">
+														<xforms:group
+															ref=".[instance('control-instance')/constellation/old_biogHist_hash = instance('control-instance')/constellation/current_biogHist_hash]">
+															<p>The biogHist in the EAC-CPF record is identical to the one in SNAC. <strike>Unchecking the box
+																	will remove the biogHist from the constellation.</strike>
+																<span class="text-info">BiogHist deletion has not yet been implemented.</span></p>
+														</xforms:group>
+														<xforms:group
+															ref=".[not(instance('control-instance')/constellation/old_biogHist_hash = instance('control-instance')/constellation/current_biogHist_hash)]">
+															<p>The biogHist in the EAC-CPF record has changed from the version in SNAC. Checking the box will
+																submit an update to SNAC. <strike>Unchecking the box will remove the biogHist from the
+																	constellation.</strike>
+																<span class="text-info">BiogHist deletion has not yet been implemented.</span></p>
+														</xforms:group>
+													</xforms:group>
+												</xforms:group>
+											</div>
+										</xforms:group>
+										<hr />
+									</div>
+
+									<xforms:group ref="instance('relatedResource-actions')[count(resource) &gt; 0]">
+										<div class="subsection">
+											<h4>Resource Relations</h4>
+
+											<table class="table">
+												<thead>
+													<th style="width:20%">
+														<div class="text-center">Add/Update</div>
+													</th>
+													<th>Description</th>
+												</thead>
+												<tbody>
+													<xforms:repeat nodeset="resource">
+														<tr>
+															<td>
+																<div class="text-center">
+																	<xforms:input ref="@checked" appearance="minimal"/>
+																</div>
+															</td>
+															<td>
+																<h5>
+																	<xforms:output ref="@title"/>
+																	<small>
+																		<xforms:trigger appearance="minimal">
+																			<xforms:label><span class="glyphicon glyphicon-new-window"></span></xforms:label>
+																			<xforms:action ev:event="DOMActivate">
+																				<xforms:load show="new" resource="{@uri}"/>
+																			</xforms:action>
+																		</xforms:trigger>
+																	</small>
+																</h5>
+																<div>
+																	<xforms:output ref="@documentTypeTerm">
+																		<xforms:label>Resource Type</xforms:label>
+																	</xforms:output>
+																</div>
+																<div>
+																	<xforms:output ref="@role">
+																		<xforms:label>Role</xforms:label>
+																	</xforms:output>
+																</div>
+																<div>
+																	<xforms:output ref="@genre">
+																		<xforms:label>Genre</xforms:label>
+																	</xforms:output>
+																	<xforms:trigger appearance="minimal">
+																		<xforms:label>
+																			<span class="glyphicon glyphicon-new-window"></span>
+																		</xforms:label>
+																		<xforms:action ev:event="DOMActivate">
+																			<xforms:load show="new" resource="{@genre}"/>
+																		</xforms:action>
+																	</xforms:trigger>
+																</div>
+																<xforms:group ref="@abstract">
+																	<div>
+																		<xforms:output ref=".">
+																			<xforms:label>Abstract</xforms:label>
+																		</xforms:output>
+																	</div>
+																</xforms:group>
+																<xforms:group ref="@extent">
+																	<div>
+																		<xforms:output ref=".">
+																			<xforms:label>Extent</xforms:label>
+																		</xforms:output>
+																	</div>
+																</xforms:group>
+																<div>
+																	<xforms:output ref="@exists">
+																		<xforms:label>In Constellation</xforms:label>
+																	</xforms:output>
+																</div>
+																<div>
+																	<xforms:output ref="@action">
+																		<xforms:label>Action</xforms:label>
+																	</xforms:output>
+																</div>
+															</td>
+														</tr>
+													</xforms:repeat>
+												</tbody>
+											</table>
+											<hr />
+										</div>
+									</xforms:group>
+
+
+
+									<div>
+										<h3>Summary of Modifications</h3>
+
+										<xforms:group ref="instance('control-instance')/summary">
+											<dl class="dl-horizontal">
+												<dt>Insert URI</dt>
+												<dd><xforms:output value="if (uri = true()) then 'yes' else 'no'"/></dd>
+												<dt>Insert Dates</dt>
+												<dd><xforms:output ref="if (dates = true()) then 'yes' else 'no'"/></dd>
+												<dt>Biography/History</dt>
+												<dd><xforms:output ref="biogHist"/></dd>
+												<dt>Resource Relations</dt>
+												<dd><span class="text-success"><strong><xforms:output ref="resources/create"/></strong></span> to be created.
+														<span class="text-danger"><strong><xforms:output ref="resources/delete"/></strong></span> to be deleted.
+														<span class="text-muted"><strong><xforms:output ref="resources/none"/></strong></span> with no change in
+													publication status.</dd>
+											</dl>
+										</xforms:group>
+
+										<xforms:trigger>
+											<xforms:label value="if (string(instance('control-instance')/constellation/id)) then 'Update' else 'Create'"/>
+											<xforms:action ev:event="DOMActivate">
+												<!-- ***** 1. INSERT_RESOURCE WORKFLOW: Iterate through new resources ***** -->
+												<xforms:action xxforms:iterate="instance('relatedResource-actions')/resource">
+													<!-- create new resources -->
+													<xforms:action if="@checked = true() and @exists = false()">
+														<xforms:var name="abstract" select="context()/@abstract"/>
+														<xforms:var name="extent" select="context()/@extent"/>
+														
+														<!-- Clear any existing data from the SNAC API query -->
+														<xforms:delete nodeset="instance('snac-query')/*"/>
+														<xforms:insert context="instance('snac-query')" origin="xforms:element('command', 'insert_resource')"/>
+														<xforms:insert context="instance('snac-query')" origin="instance('config')/snac/user"/>
+														<xforms:insert context="instance('snac-query')" nodeset="./child::node()[last()]"
+															origin="instance('insert-resource-template')"/>
+
+														<!-- set values -->
+														<xforms:setvalue ref="instance('snac-query')/resource/documentType/id" value="context()/@documentTypeId"/>
+														<xforms:setvalue ref="instance('snac-query')/resource/documentType/term"
+															value="context()/@documentTypeTerm"/>
+														<xforms:setvalue ref="instance('snac-query')/resource/title" value="context()/@title"/>
+														<xforms:setvalue ref="instance('snac-query')/resource/displayEntry" value="context()/@title"/>
+														<xforms:setvalue ref="instance('snac-query')/resource/link" value="context()/@uri"/>
+														<xforms:insert context="instance('snac-query')/resource" nodeset="./child::node()[last()]"
+															origin="xforms:element('abstract', $abstract)" if="string($abstract)"/>
+														<xforms:insert context="instance('snac-query')/resource" nodeset="./child::node()[last()]"
+															origin="xforms:element('extent', $extent)" if="string($extent)"/>
+
+														<!-- if there is a repository ARK and constellation ID in the config, then insert repo -->
+														<xforms:action
+															if="string(instance('config')/snac/repository_ark) and string(instance('config')/snac/repository_constellation_id)">
+															<xforms:insert context="instance('snac-query')/resource" nodeset="./child::node()[last()]"
+																origin="xforms:element('repository', (xforms:attribute('type', 'object'), ''))"/>
+															<xforms:insert context="instance('snac-query')/resource/repository"
+																nodeset="./child::node()[last()]"
+																origin="xforms:element('ark', instance('config')/snac/repository_ark)"/>
+															<xforms:insert context="instance('snac-query')/resource/repository"
+																nodeset="./child::node()[last()]"
+																origin="xforms:element('id', instance('config')/snac/repository_constellation_id)"/>
+															<xforms:insert context="instance('snac-query')/resource/repository"
+																nodeset="./child::node()[last()]" origin="xforms:element('dataType', 'Constellation')"/>
+														</xforms:action>
+
+														<!-- submit the resource to SNAC -->
+														<xforms:send submission="query-snac"/>
+
+														<!-- after the submission is complete, get the version and id from the SNAC response and insert into the actions -->
+														<xforms:action ev:event="xforms-submit-done">
+															<xforms:insert context="context()"
+																origin="xforms:attribute('id', instance('snac-response')/resource/id)"/>
+															<xforms:insert context="context()"
+																origin="xforms:attribute('version', instance('snac-response')/resource/version)"/>
+														</xforms:action>
+													</xforms:action>
+												</xforms:action>
+
+												<!-- 2. CONSTELLATION WORKFLOW -->
+												<!-- Submit an Edit request to the API if we are editing an existing constellation. Clear and reset JSON properties -->
+												<xforms:action if="string(instance('control-instance')/constellation/id)">
+													<xforms:delete nodeset="instance('snac-query')/*"/>
+													<xforms:insert context="instance('snac-query')" origin="xforms:element('command', 'edit')"/>
+													<xforms:insert context="instance('snac-query')"
+														origin="xforms:element('constellationid', data(instance('control-instance')/constellation/id))"/>
+													<xforms:insert context="instance('snac-query')" origin="instance('config')/snac/user"/>
+													<xforms:send submission="query-snac"/>
+												</xforms:action>
+
+												<!-- Otherwise, create the constellation with a nameEntry. The other steps remain the same -->
+												<xforms:action if="not(string(instance('control-instance')/constellation/id))">
+													<xforms:delete nodeset="instance('snac-query')/*"/>
+													<xforms:insert context="instance('snac-query')" origin="xforms:element('command', 'insert_constellation')"/>
+													<xforms:insert context="instance('snac-query')" origin="instance('config')/snac/user"/>
+													<xforms:insert context="instance('snac-query')" origin="instance('constellation-template')"/>
+
+													<!-- delete version and id -->
+													<xforms:delete nodeset="instance('snac-query')/constellation/version"/>
+													<xforms:delete nodeset="instance('snac-query')/constellation/id"/>
+
+													<!-- insert operation -->
+													<xforms:insert context="instance('snac-query')/constellation" origin="xforms:element('operation', 'insert')"/>
+
+													<!--entityType -->
+													<xforms:insert context="instance('snac-query')/constellation" nodeset="./child::node()[last()]"
+														origin="instance('entityType-template')"/>
+													<xforms:setvalue ref="instance('snac-query')/constellation/entityType/term"
+														value="instance('control-instance')/type"/>
+													<xforms:setvalue ref="instance('snac-query')/constellation/entityType/id"
+														value="if (instance('control-instance')/type = 'person') then '700' else if (instance('control-instance')/type = 'family') then '699' else '698'"/>
+
+													<!-- iterate through nameEntries -->
+													<xforms:insert context="instance('snac-query')/constellation" nodeset="./child::node()[last()]"
+														origin="xforms:element('nameEntries', (xforms:attribute('type', 'array'), ''))"/>
+
+													<!-- note: nameEntries only functional with one part so far! -->
+													<xforms:action xxforms:iterate="instance('doc')/eac:cpfDescription/eac:identity/eac:nameEntry">
+														<xforms:insert context="instance('snac-query')/constellation/nameEntries"
+															nodeset="./child::node()[last()]" origin="instance('nameEntry-template')"/>
+														<xforms:setvalue ref="instance('snac-query')/constellation/nameEntries/_[last()]/original"
+															value="data(context()/eac:part[1])"/>
+														<xforms:action xxforms:iterate="context()/eac:part">
+															<xforms:var name="position" select="position()"/>
+
+															<xforms:insert context="instance('snac-query')/constellation/nameEntries/_[last()]/components"
+																nodeset="./child::node()[last()]" origin="instance('nameComponent-template')"/>
+															<xforms:setvalue
+																ref="instance('snac-query')/constellation/nameEntries/_[last()]/components/_[last()]/text"
+																value="context()/text()"/>
+															<xforms:setvalue
+																ref="instance('snac-query')/constellation/nameEntries/_[last()]/components/_[last()]/order"
+																value="$position - 1"/>
+															<xforms:setvalue
+																ref="instance('snac-query')/constellation/nameEntries/_[last()]/components/_[last()]/type/id"
+																>400228</xforms:setvalue>
+														</xforms:action>
+													</xforms:action>
+
+													<!-- submit the new constellation to SNAC and then populate the control instance with the new id and version -->
+													<xforms:send submission="query-snac"/>
+													<xforms:action ev:event="xforms-submit-done">
+														<xforms:setvalue ref="instance('control-instance')/constellation/version"
+															value="instance('snac-response')/constellation/version"/>
+														<xforms:setvalue ref="instance('control-instance')/constellation/id"
+															value="instance('snac-response')/constellation/id"/>
+													</xforms:action>
+												</xforms:action>
+
+												<!-- ***** 2A. Source URI: Update the constellation separately with the source, if it doesn't already exist *****-->
+												<xforms:action if="instance('control-instance')/constellation/source_exists = false()">
+													<!-- get the version from the Edit API and store it -->
+													<xforms:setvalue ref="instance('control-instance')/constellation/version"
+														value="instance('snac-response')/constellation/version"/>
+
+													<!-- reset snac query -->
+													<xforms:delete nodeset="instance('snac-query')/*"/>
+													<xforms:insert context="instance('snac-query')" origin="xforms:element('command', 'update_constellation')"/>
+													<xforms:insert context="instance('snac-query')" origin="instance('config')/snac/user"/>
+													<xforms:insert context="instance('snac-query')" origin="instance('constellation-template')"/>
+
+													<!-- set constellation variables -->
+													<xforms:setvalue ref="instance('snac-query')/constellation/id"
+														value="instance('control-instance')/constellation/id"/>
+													<xforms:setvalue ref="instance('snac-query')/constellation/version"
+														value="instance('control-instance')/constellation/version"/>
+
+
+													<!-- insert source and set values -->
+													<xforms:insert context="instance('snac-query')/constellation" nodeset="./child::node()[last()]"
+														origin="instance('sources-template')"/>
+													<xforms:setvalue ref="instance('snac-query')/constellation/sources/_/uri"
+														value="instance('control-instance')/uri"/>
+													<xforms:setvalue ref="instance('snac-query')/constellation/sources/_/displayName"
+														value="instance('control-instance')/primaryName"/>
+													<xforms:setvalue ref="instance('snac-query')/constellation/sources/_/citation"
+														value="concat('From the authority record of ', instance('control-instance')/primaryName, ' (', instance('doc')/eac:control/eac:maintenanceAgency/eac:agencyName, '). ', instance('control-instance')/uri)"/>
+
+													<!-- submit the constellation with the new source to SNAC -->
+													<xforms:send submission="query-snac"/>
+
+													<!-- set the source_id after updating the constellation with the source -->
+													<xforms:setvalue ref="instance('control-instance')/constellation/source_id"
+														value="instance('snac-response')/constellation/sources/_[uri = instance('control-instance')/uri]/id"
+														ev:event="xforms-submit-done"/>
+												</xforms:action>
+
+												<!-- ***** 2B. initiate the new action if there's a source_id (functions whether or not the source has previously been set) ***** -->
+												<xforms:action if="string(instance('control-instance')/constellation/source_id)">
+
+													<!-- get the new version, either from the Edit request or the previous update_constellation from the newly created source -->
+													<xforms:setvalue ref="instance('control-instance')/constellation/version"
+														value="instance('snac-response')/constellation/version"/>
+
+													<!-- begin the formation of the update_constellation JSON -->
+													<xforms:delete nodeset="instance('snac-query')/*"/>
+													<xforms:insert context="instance('snac-query')" origin="xforms:element('command', 'update_constellation')"/>
+													<xforms:insert context="instance('snac-query')" origin="instance('config')/snac/user"/>
+													<xforms:insert context="instance('snac-query')" origin="instance('constellation-template')"/>
+
+													<!-- set constellation variables -->
+													<xforms:setvalue ref="instance('snac-query')/constellation/id"
+														value="instance('control-instance')/constellation/id"/>
+													<xforms:setvalue ref="instance('snac-query')/constellation/version"
+														value="instance('control-instance')/constellation/version"/>
+
+													<!-- ***** 3A. SameAs URI workflow ***** -->
+													<!-- if the URI doesn't already exist and the URI is set to update, then insert the otherRecordIDs into the constellation -->
+													<xforms:action
+														if="instance('control-instance')/constellation/uri_exists = false() and instance('control-instance')/updates/uri = true()">
+														<xforms:insert context="instance('snac-query')/constellation" nodeset="./child::node()[last()]"
+															origin="instance('otherRecordIDs-template')"/>
+														<xforms:setvalue ref="instance('snac-query')/constellation/otherRecordIDs/_/uri"
+															value="instance('control-instance')/uri"/>
+														<xforms:setvalue ref="instance('snac-query')/constellation/otherRecordIDs/_/text"
+															value="instance('control-instance')/primaryName"/>
+													</xforms:action>
+
+													<!-- ***** 3B. DESCRIPTION ***** -->
+													<!-- 3B.1. Exist Dates: only process if there are existDates -->
+													<xforms:action if="instance('doc')/eac:cpfDescription/eac:description/eac:existDates">
+														<!-- insert a date if there isn't one already -->
+														<xforms:action
+															if="instance('control-instance')/updates/dates = true() and instance('control-instance')/constellation/dates_exist = false()">
+															<xforms:insert context="instance('snac-query')/constellation" nodeset="./child::node()[last()]"
+																origin="xforms:element('dates', (xforms:attribute('type', 'array'), ''))"/>
+
+															<!-- iterate through existDates in the EAC-CPF record -->
+															<xforms:action xxforms:iterate="instance('doc')/eac:cpfDescription/eac:description/eac:existDates">
+																<xforms:var name="fromDate"
+																	select="if (context()/eac:date) then context()/eac:date/@standardDate else context()/eac:dateRange/eac:fromDate/@standardDate"/>
+																<xforms:var name="toDate"
+																	select="if (context()/eac:date) then context()/eac:date/@standardDate else context()/eac:dateRange/eac:toDate/@standardDate"/>
+																<!--fromDate-->
+																<xforms:insert context="instance('snac-query')/constellation/dates"
+																	nodeset="./child::node()[last()]" origin="instance('dates-template')"/>
+																<xforms:setvalue ref="instance('snac-query')/constellation/dates/_[last()]/fromDate"
+																	value="$fromDate"/>
+																<xforms:setvalue ref="instance('snac-query')/constellation/dates/_[last()]/fromDateOriginal"
+																	value="if (context()/eac:date) then context()/eac:date else context()/eac:dateRange/eac:fromDate"/>
+																<xforms:setvalue ref="instance('snac-query')/constellation/dates/_[last()]/fromBC"
+																	value="if (number($fromDate) &lt; 0) then true() else false()"/>
+																<xforms:setvalue ref="instance('snac-query')/constellation/dates/_[last()]/fromType/id"
+																	value="if (instance('control-instance')/type = 'person') then '689' else '688'"/>
+																<xforms:setvalue ref="instance('snac-query')/constellation/dates/_[last()]/fromType/term"
+																	value="if (instance('control-instance')/type = 'person') then 'Birth' else 'Active'"/>
+																<!-- toDate-->
+																<xforms:setvalue ref="instance('snac-query')/constellation/dates/_[last()]/toDate"
+																	value="$toDate"/>
+																<xforms:setvalue ref="instance('snac-query')/constellation/dates/_[last()]/toDateOriginal"
+																	value="if (context()/eac:date) then context()/eac:date else context()/eac:dateRange/eac:toDate"/>
+																<xforms:setvalue ref="instance('snac-query')/constellation/dates/_[last()]/toBC"
+																	value="if (number($toDate) &lt; 0) then true() else false()"/>
+																<xforms:setvalue ref="instance('snac-query')/constellation/dates/_[last()]/toType/id"
+																	value="if (instance('control-instance')/type = 'person') then '690' else '688'"/>
+																<xforms:setvalue ref="instance('snac-query')/constellation/dates/_[last()]/toType/term"
+																	value="if (instance('control-instance')/type = 'person') then 'Death' else 'Active'"/>
+
+																<xforms:setvalue ref="instance('snac-query')/constellation/dates/_[last()]/isRange"
+																	value="if ($fromDate = $toDate) then false() else true()"/>
+															</xforms:action>
+														</xforms:action>
+													</xforms:action>
+
+													<!-- 3B.2. BiogHist -->
+													<!-- only process biogHist if there is one in the document and there isn't a previously existing one in the constellation -->
+													<xforms:action
+														if="instance('doc')/eac:cpfDescription/eac:description/eac:biogHist and instance('control-instance')/constellation/already_has_biogHist = false()">
+
+														<!-- if there isn't already a biogHist, then prepare to insert one -->
+														<xforms:action if="instance('control-instance')/constellation/local_biogHist_exists = false()">
+															<xforms:action if="instance('control-instance')/updates/biogHist = true()">
+																<xforms:insert context="instance('snac-query')/constellation" nodeset="./child::node()[last()]"
+																	origin="instance('biogHists-template')"/>
+																<xforms:setvalue ref="instance('snac-query')/constellation/biogHists/_/text"
+																	value="normalize-space(saxon:serialize(instance('doc')/eac:cpfDescription/eac:description/eac:biogHist[1], 'html'))"/>
+																<xforms:setvalue
+																	ref="instance('snac-query')/constellation/biogHists/_/snacControlMetadata/_/citation/id"
+																	value="instance('control-instance')/constellation/source_id"/>
+															</xforms:action>
+														</xforms:action>
+
+														<!-- if the biogHist from this entity already exists and the content of the constellation's biogHist is different than the one in the EAC-CPF, then update it-->
+														<xforms:action
+															if="instance('control-instance')/constellation/local_biogHist_exists = true() and not(instance('control-instance')/constellation/old_biogHist_hash = instance('control-instance')/constellation/current_biogHist_hash)">
+
+															<!-- get the biogHist from the edit request and insert into constellation, replacing the text and adding "operation":"update" -->
+															<xforms:action if="instance('control-instance')/updates/biogHist = true()">
+																<xforms:insert context="instance('snac-query')/constellation" nodeset="./child::node()[last()]"
+																	origin="instance('snac-response')/constellation/biogHists"/>
+																<xforms:insert
+																	context="instance('snac-query')/constellation/biogHists/_[snacControlMetadata/_/citation/uri = instance('control-instance')/uri]"
+																	origin="xforms:element('operation', 'update')"/>
+																<xforms:setvalue
+																	ref="instance('snac-query')/constellation/biogHists/_[snacControlMetadata/_/citation/uri = instance('control-instance')/uri]/text"
+																	value="normalize-space(saxon:serialize(instance('doc')/eac:cpfDescription/eac:description/eac:biogHist[1], 'html'))"
+																/>
+															</xforms:action>
+														</xforms:action>
+													</xforms:action>
+
+													<!-- ***** 3C. Related Resources ***** -->
+													<xforms:action if="count(instance('relatedResource-actions')/resource) &gt; 0">
+														<!-- insert an empty resourceRelations object into the constellation -->
+														<xforms:insert context="instance('snac-query')/constellation" nodeset="./child::node()[last()]"
+															origin="xforms:element('resourceRelations', (xforms:attribute('type', 'array'), ''))"/>
+
+														<!-- iterate through resources and evaluate CRUD operations -->
+														<xforms:action xxforms:iterate="instance('relatedResource-actions')/resource">
+															<!-- insert new resources -->
+															<xforms:action if="@checked = true() and @exists = false()">
+																<xforms:var name="title" select="data(context()/@title)"/>
+																<xforms:insert context="instance('snac-query')/constellation/resourceRelations"
+																	nodeset="./child::node()[last()]" origin="instance('resource-template')"/>
+
+																<!-- set values -->
+																<xforms:setvalue
+																	ref="instance('snac-query')/constellation/resourceRelations/_[last()]/resource/id"
+																	value="context()/@id"/>
+																<xforms:setvalue
+																	ref="instance('snac-query')/constellation/resourceRelations/_[last()]/resource/version"
+																	value="context()/@version"/>
+																<xforms:setvalue
+																	ref="instance('snac-query')/constellation/resourceRelations/_[last()]/role/term"
+																	value="context()/@role"/>
+																<xforms:setvalue ref="instance('snac-query')/constellation/resourceRelations/_[last()]/role/id"
+																	value="context()/@roleId"/>
+																<xforms:setvalue
+																	ref="instance('snac-query')/constellation/resourceRelations/_[last()]/operation"
+																	value="context()/@action"/>
+																<xforms:insert context="instance('snac-query')/constellation/resourceRelations/_[last()]"
+																	origin="xforms:element('content', $title)"/>
+															</xforms:action>
+
+															<!-- if the resource exists in the constellation but has been unchecked, then delete it from the constellation -->
+															<xforms:action if="@checked = false() and @exists = true()">
+																<xforms:var name="relationId" select="data(context()/@relationId)"/>
+																<xforms:var name="relationVerson" select="data(context()/@relationVersion)"/>
+
+																<xforms:insert context="instance('snac-query')/constellation/resourceRelations"
+																	nodeset="./child::node()[last()]" origin="instance('resource-template')"/>
+
+																<!-- set values -->
+																<xforms:setvalue
+																	ref="instance('snac-query')/constellation/resourceRelations/_[last()]/resource/id"
+																	value="context()/@id"/>
+																<xforms:setvalue
+																	ref="instance('snac-query')/constellation/resourceRelations/_[last()]/resource/version"
+																	value="context()/@version"/>
+																<xforms:setvalue
+																	ref="instance('snac-query')/constellation/resourceRelations/_[last()]/role/term"
+																	value="context()/@role"/>
+																<xforms:setvalue ref="instance('snac-query')/constellation/resourceRelations/_[last()]/role/id"
+																	value="context()/@roleId"/>
+																<xforms:setvalue
+																	ref="instance('snac-query')/constellation/resourceRelations/_[last()]/operation"
+																	value="context()/@action"/>
+																<!-- insert relation id and version -->
+																<xforms:insert context="instance('snac-query')/constellation/resourceRelations/_[last()]"
+																	nodeset="./child::node()[last()]" origin="xforms:element('id', $relationId)"/>
+																<xforms:insert context="instance('snac-query')/constellation/resourceRelations/_[last()]"
+																	nodeset="./child::node()[last()]" origin="xforms:element('version', $relationVerson)"/>
+															</xforms:action>
+														</xforms:action>
+													</xforms:action>
+
+
+													<!-- 3Z. Set publication message -->
+													<!--change-->
+													<xforms:insert context="instance('snac-query')" origin="xforms:element('message', 'Updated from xEAC')"/>
+
+													<!-- ***** 4. SUBMIT CONSTELLATION UPDATE ***** -->
+													<xforms:send submission="query-snac"/>
+
+													<!-- ***** 5. PUBLISH_CONSTELLATION ***** -->
+													<xforms:action ev:event="xforms-submit-done">
+														<xforms:delete nodeset="instance('snac-query')/*"/>
+														<xforms:insert context="instance('snac-query')"
+															origin="xforms:element('command', 'publish_constellation')"/>
+														<xforms:insert context="instance('snac-query')"
+															origin="xforms:element('message', 'Publishing update via xEAC')"/>
+														<xforms:insert context="instance('snac-query')" origin="instance('config')/snac/user"/>
+														<xforms:insert context="instance('snac-query')" origin="instance('snac-response')/constellation"/>
+
+														<xforms:send submission="query-snac"/>
+
+														<!-- after successful publication, switch the UI -->
+														<xforms:action ev:event="xforms-submit-done">
+															<xforms:toggle case="update-success"/>
+
+															<!-- get the ARK from the response and add it into the EAC-CPF record, if it doesn't exist already, save and re-publish -->
+															<xforms:action if="not(instance('doc')/eac:cpfDescription/eac:identity/eac:entityId[matches(., '^http://n2t\.net/ark:/99166/[A-Za-z0-9]+$')])">
+																<xforms:insert context="instance('doc')/eac:cpfDescription/eac:identity"
+																	nodeset="./child::node()[last()]" origin="instance('entityId-template')"/>
+																<xforms:setvalue ref="instance('doc')/eac:cpfDescription/eac:identity/eac:entityId[last()]"
+																	value="instance('snac-response')/constellation/ark"/>
+																
+																<!-- insert localTypeDescription if it doesn't exist -->
+																<xforms:insert context="instance('doc')/eac:control" nodeset="./child::node()[last()]"
+																	origin="instance('localTypeDeclaration-template')"
+																	if="not(instance('doc')/eac:control/eac:localTypeDeclaration[eac:abbreviation='skos'])"/>
+																<xforms:setvalue ref="instance('control-instance')/ark"
+																	value="instance('snac-response')/constellation/ark"/>
+																<xforms:send submission="save-doc"/>
+															</xforms:action>		
+
+															<xforms:setvalue ref="instance('control-instance')/status">Constellation successfully
+																updated.</xforms:setvalue>
+														</xforms:action>
+													</xforms:action>
+												</xforms:action>
+											</xforms:action>
+										</xforms:trigger>
+									</div>
+								</xforms:case>
+							</xforms:switch>
+						</xforms:case>
+						<xforms:case id="update-success">
+							<div>
+								<p><xforms:output ref="eac:nameEntry[1]/eac:part"/><xforms:trigger appearance="minimal">
+										<xforms:label><span class="glyphicon glyphicon-new-window"></span></xforms:label>
+										<xforms:action ev:event="DOMActivate">
+											<xforms:load show="new" resource="{instance('control-instance')/uri}"/>
+										</xforms:action>
+									</xforms:trigger> successfully updated to SNAC constellation <xforms:output
+										ref="instance('control-instance')/constellation/id"/>.</p>
+								<p>
+									<a href="../admin/"><span class="glyphicon glyphicon-arrow-left"></span>Return to Admin</a>
+								</p>
+							</div>
+						</xforms:case>
+						<xforms:case id="no-recordId">
+							<div class="alert alert-danger alert-box">
+								<span class="glyphicon glyphicon-warning-sign"></span>
+								<strong>Alert! </strong>
+								<span>No recordId has been set, and so no action can be taken on an EAC-CPF record.</span>
+							</div>
+						</xforms:case>
+					</xforms:switch>
+
+					<fr:xforms-inspector id="orbeon-xforms-inspector"/>
+
+				</div>
+			</div>
+		</div>
+	</body>
+</html>

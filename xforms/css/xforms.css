@@ -12,10 +12,6 @@
 .alert-box {
 	width:50%;
 	margin:20px auto;
-	padding:5px;
-	border-radius:5px;
-	border:1px solid gray;
-	color:gray;
 }
 .result_metadata {
 	border:0;
@@ -91,7 +87,7 @@
 	line-height:inherit;
 	display:inline;
 	font-size:inherit;
-	color:black
+	color:inherit
 }
 .xforms-trigger {
 	text-decoration:none;

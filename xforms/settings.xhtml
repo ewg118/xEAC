@@ -1,77 +1,72 @@
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:xforms="http://www.w3.org/2002/xforms" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ev="http://www.w3.org/2001/xml-events"
-	xmlns:xxforms="http://orbeon.org/oxf/xml/xforms" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:fr="http://orbeon.org/oxf/xml/form-runner" xmlns:xlink="http://www.w3.org/1999/xlink"
-	xmlns:xxi="http://orbeon.org/oxf/xml/xinclude" xmlns:eac="urn:isbn:1-931666-33-4" xmlns:oxf="http://www.orbeon.com/oxf/processors" xmlns:exist="http://exist.sourceforge.net/NS/exist"
-	xmlns:xeac="https://github.com/ewg118/xEAC" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:owl="http://www.w3.org/2002/07/owl#">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:xforms="http://www.w3.org/2002/xforms" xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:xxforms="http://orbeon.org/oxf/xml/xforms" xmlns:xi="http://www.w3.org/2001/XInclude"
+	xmlns:fr="http://orbeon.org/oxf/xml/form-runner" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xxi="http://orbeon.org/oxf/xml/xinclude"
+	xmlns:eac="urn:isbn:1-931666-33-4" xmlns:oxf="http://www.orbeon.com/oxf/processors" xmlns:exist="http://exist.sourceforge.net/NS/exist"
+	xmlns:xeac="https://github.com/ewg118/xEAC" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+	xmlns:owl="http://www.w3.org/2002/07/owl#">
 	<head>
 		<title>xEAC Application Settings</title>
-		<link rel="stylesheet" href="/fr/style/bootstrap/css/bootstrap.css" type="text/css"/>
-		<link rel="stylesheet" href="/fr/style/form-runner-bootstrap-override.css" type="text/css"/>
-		
-		<link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css"/>
-		<script type="text/javascript" src="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"/>
-		<link rel="shortcut icon" href="/ops/images/orbeon-icon-16.ico"/>
-		<link rel="icon" href="/ops/images/orbeon-icon-16.png" type="image/png"/>
-		<link rel="stylesheet" type="text/css" href="/apps/xeac/xforms/css/xforms.css"/>
+		<link rel="stylesheet" href="/fr/style/bootstrap/css/bootstrap.css" type="text/css" />
+		<link rel="stylesheet" href="/fr/style/form-runner-bootstrap-override.css" type="text/css" />
+
+		<link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" />
+		<script type="text/javascript" src="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+		<link rel="shortcut icon" href="/ops/images/orbeon-icon-16.ico" />
+		<link rel="icon" href="/ops/images/orbeon-icon-16.png" type="image/png" />
+		<link rel="stylesheet" type="text/css" href="/apps/xeac/xforms/css/xforms.css" />
 
 		<xforms:model>
 			<xforms:instance id="config" xxforms:exclude-result-prefixes="#all">
-				<config/>
+				<config></config>
 			</xforms:instance>
 
 			<xforms:instance id="exist-config" xxforms:exclude-result-prefixes="#all">
 				<xi:include href="../exist-config.xml"/>
 			</xforms:instance>
 
-			<xforms:instance id="status">
-				<status/>
-			</xforms:instance>
-
-			<xforms:instance id="flickr-response">
-				<rsp xmlns=""/>
-			</xforms:instance>
-
 			<xforms:instance id="control-instance">
 				<control xmlns="">
-					<id/>
-					<api-key-accepted/>
-					<save-trigger/>
-					<collection-name/>
-					<error/>
-					<simple-upload-trigger/>
-					<connect-trigger/>
+					<id></id>
+					<api-key-accepted></api-key-accepted>
+					<save-trigger></save-trigger>
+					<collection-name></collection-name>
+					<error></error>
+					<simple-upload-trigger></simple-upload-trigger>
+					<connect-trigger></connect-trigger>
 					<sparql>
-						<update/>
-						<query/>
-						<store/>
+						<update></update>
+						<query></query>
+						<store></store>
 					</sparql>
 					<sparql-success>false</sparql-success>
 					<sparql-connect>false</sparql-connect>
 					<sparql-query-test>ASK WHERE {?s ?p ?o}</sparql-query-test>
+					<status/>
 				</control>
 			</xforms:instance>
 
 			<xforms:instance id="agencyName-template">
-				<item xmlns=""/>
+				<item xmlns=""></item>
 			</xforms:instance>
 
 			<xforms:instance id="cpfRelation-template" xxforms:exclude-result-prefixes="#all">
-				<relation from="" to="" domain="" range="" xmlns=""/>
+				<relation from="" to="" domain="" range="" xmlns=""></relation>
 			</xforms:instance>
 
 			<xforms:instance id="resourceRelation-template" xxforms:exclude-result-prefixes="#all">
-				<relation from="" to="" xmlns=""/>
+				<relation from="" to="" xmlns=""></relation>
 			</xforms:instance>
 
 			<xforms:instance id="localTypeDeclaration-template" xxforms:exclude-result-prefixes="#all">
 				<localTypeDeclaration xmlns="">
-					<abbreviation/>
-					<citation role="semantic" type="simple" href=""/>
+					<abbreviation></abbreviation>
+					<citation role="semantic" type="simple" href=""></citation>
 				</localTypeDeclaration>
 			</xforms:instance>
 
 			<xforms:instance id="descriptiveNote-template" xxforms:exclude-result-prefixes="#all">
 				<descriptiveNote>
-					<p/>
+					<p></p>
 				</descriptiveNote>
 			</xforms:instance>
 
@@ -84,12 +79,14 @@
 
 			<xforms:instance id="xqueries">
 				<queries xmlns="">
-					<query id="gather-cpfRelations">declare namespace eac="urn:isbn:1-931666-33-4"; &lt;report> { for $arcrole in distinct-values(collection()//eac:cpfRelation/@xlink:arcrole) order by
-						$arcrole return &lt;relation> { $arcrole } &lt;/relation> } &lt;/report> </query>
+					<query id="gather-cpfRelations">declare namespace eac="urn:isbn:1-931666-33-4"; &lt;report> { for $arcrole in
+						distinct-values(collection()//eac:cpfRelation/@xlink:arcrole) order by $arcrole return &lt;relation> { $arcrole } &lt;/relation> }
+						&lt;/report> </query>
 					<query id="gather-resourceRelations">declare namespace eac="urn:isbn:1-931666-33-4"; &lt;report> { for $arcrole in
-						distinct-values(collection()//eac:resourceRelation/@xlink:arcrole) order by $arcrole return &lt;relation> { $arcrole } &lt;/relation> } &lt;/report> </query>
-					<query id="publish-all">&lt;report> { for $foo in collection()[descendant::*:publicationStatus='approved'] return &lt;id> { $foo//*:recordId/text() } &lt;/id> }
-						&lt;/report></query>
+						distinct-values(collection()//eac:resourceRelation/@xlink:arcrole) order by $arcrole return &lt;relation> { $arcrole } &lt;/relation> }
+						&lt;/report> </query>
+					<query id="publish-all">&lt;report> { for $foo in collection()[descendant::*:publicationStatus='approved'] return &lt;id> {
+						$foo//*:recordId/text() } &lt;/id> } &lt;/report></query>
 				</queries>
 			</xforms:instance>
 
@@ -99,44 +96,54 @@
 
 			<!-- lists -->
 			<xforms:instance id="cpfRelations-list" xxforms:exclude-result-prefixes="#all">
-				<relations xmlns=""/>
+				<relations xmlns=""></relations>
 			</xforms:instance>
 			<xforms:instance id="resourceRelations-list" xxforms:exclude-result-prefixes="#all">
-				<relations xmlns=""/>
+				<relations xmlns=""></relations>
 			</xforms:instance>
 
 			<!-- upload relationship ontology -->
 			<xforms:instance id="file">
 				<!-- Start with placeholders for three files -->
-				<file xmlns="" xsi:type="xs:anyURI" filename="" mediatype="" size=""/>
+				<file xmlns="" xsi:type="xs:anyURI" filename="" mediatype="" size=""></file>
 			</xforms:instance>
 
 			<xforms:instance id="ontology">
 				<rdf:RDF xmlns=""/>
 			</xforms:instance>
-			
+
 			<xforms:instance id="load-rdf-config">
 				<config xmlns="">
-					<url/>
+					<url></url>
 					<content-type>application/xml</content-type>
 					<mode>xml</mode>
 				</config>
 			</xforms:instance>
 			
+			<!-- ***** SNAC Instances ***** -->
+			<xforms:instance id="snac-response" xxforms:exclude-result-prefixes="#all">
+				<json type="object" xmlns=""></json>
+			</xforms:instance>
+			
+			<!-- the SNAC query is XML that must conform to the XForms 2.0 JSON model for serialization into application/json -->
+			<xforms:instance id="snac-query" xxforms:exclude-result-prefixes="#all">
+				<json type="object" xmlns=""></json>
+			</xforms:instance>
+
 			<!-- connecting to a SPARQL endpoint -->
 			<xforms:instance id="sparql-response">
 				<sparql xmlns="http://www.w3.org/2005/sparql-results#"/>
 			</xforms:instance>
-			
+
 			<!-- publish records to SPARQL endpoint -->
 			<xforms:instance id="solr-response" xxforms:exclude-result-prefixes="#all">
-				<response/>
+				<response></response>
 			</xforms:instance>
-			
+
 			<xforms:instance id="rdf" xxforms:exclude-result-prefixes="#all">
 				<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"/>
 			</xforms:instance>
-			
+
 			<xforms:instance id="rdf-test" xxforms:exclude-result-prefixes="#all">
 				<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
 					<rdf:Description rdf:about="http://example.org/">
@@ -144,15 +151,15 @@
 					</rdf:Description>
 				</rdf:RDF>
 			</xforms:instance>
-			
+
 			<xforms:instance id="sparqlUpdate-template">
 				<query>
 					<![CDATA[DELETE {?s ?p ?o} WHERE { <URI> ?p ?o . ?s ?p ?o . FILTER (?s = <URI>) }]]>
 				</query>
 			</xforms:instance>
-			
+
 			<xforms:instance id="sparqlUpdate">
-				<query/>
+				<query></query>
 			</xforms:instance>
 
 			<!-- ************ BINDINGS *************** -->
@@ -168,6 +175,9 @@
 					<xforms:bind nodeset="update" type="xs:anyURI"/>
 					<xforms:bind nodeset="endpoint" type="xs:boolean"/>
 				</xforms:bind>
+				<xforms:bind nodeset="snac">
+					<xforms:bind nodeset="repository_ark" id="ark" constraint="if (string-length(.) &gt; 0) then matches(., '^http://n2t\.net/ark:/99166/[a-z0-9]+$') else true()"/>
+				</xforms:bind>				
 				<xforms:bind nodeset="instances/agencyName-list">
 					<xforms:bind nodeset="item" required="true()"/>
 				</xforms:bind>
@@ -177,7 +187,8 @@
 				</xforms:bind>
 				<xforms:bind nodeset="relationSemantics">
 					<xforms:bind nodeset="descendant::relation">
-						<xforms:bind nodeset="@from" required="true()" constraint="if (contains(., ':')) then substring-before(., ':') = instance('config')//abbreviation else string-length(.) &gt; 0"/>
+						<xforms:bind nodeset="@from" required="true()"
+							constraint="if (contains(., ':')) then substring-before(., ':') = instance('config')//abbreviation else string-length(.) &gt; 0"/>
 						<xforms:bind nodeset="@to" required="true()"/>
 						<xforms:bind nodeset="@domain" required="true()"/>
 						<xforms:bind nodeset="@range" required="true()"/>
@@ -206,7 +217,7 @@
 					<xforms:bind nodeset="update" as="xs:anyURI"/>
 				</xforms:bind>
 			</xforms:bind>
-			
+
 			<xforms:bind id="sparql-connect" nodeset="instance('control-instance')/connect-trigger"
 				readonly="string-length(../sparql/query) = 0 or string-length(../sparql/update) = 0 or string-length(../sparql/store) = 0"/>
 
@@ -217,20 +228,22 @@
 
 			<!-- ****************** SUBMISSIONS ***************** -->
 			<!-- Load File -->
-			<xforms:submission id="load-config" serialization="none" method="get" action="{instance('exist-config')/url}xeac/config.xml" xxforms:username="{instance('exist-config')/username}"
-				xxforms:password="{instance('exist-config')/password}" replace="instance" instance="config">
+			<xforms:submission id="load-config" serialization="none" method="get" action="{instance('exist-config')/url}xeac/config.xml"
+				xxforms:username="{instance('exist-config')/username}" xxforms:password="{instance('exist-config')/password}" replace="instance"
+				instance="config">
 				<xforms:message ev:event="xforms-submit-error" level="modal">Unable to load configuration file</xforms:message>
 			</xforms:submission>
 
 			<!-- Save File -->
-			<xforms:submission id="save-config" ref="instance('config')" xxforms:username="{instance('exist-config')/username}" xxforms:password="{instance('exist-config')/password}"
-				action="{instance('exist-config')/url}xeac/config.xml" method="put" replace="none">
-				<xforms:setvalue ev:event="xforms-submit-done" ref="instance('status')">Configuration saved.</xforms:setvalue>
+			<xforms:submission id="save-config" ref="instance('config')" xxforms:username="{instance('exist-config')/username}"
+				xxforms:password="{instance('exist-config')/password}" action="{instance('exist-config')/url}xeac/config.xml" method="put" replace="none">
+				<xforms:setvalue ev:event="xforms-submit-done" ref="instance('control-instance')/status">Configuration saved.</xforms:setvalue>
 				<xforms:message ev:event="xforms-submit-error" level="modal">Error saving configuration file.</xforms:message>
 			</xforms:submission>
 
-			<xforms:submission id="xquery-collection" ref="instance('eXist-xquery')" action="{instance('exist-config')/url}xeac/records" method="post" replace="instance" instance="xquery-result"
-				xxforms:username="{instance('exist-config')/username}" xxforms:password="{instance('exist-config')/password}">
+			<xforms:submission id="xquery-collection" ref="instance('eXist-xquery')" action="{instance('exist-config')/url}xeac/records" method="post"
+				replace="instance" instance="xquery-result" xxforms:username="{instance('exist-config')/username}"
+				xxforms:password="{instance('exist-config')/password}">
 				<xforms:setvalue ref="instance('control-instance')/error" ev:event="xforms-submit-error">Error querying eXist database.</xforms:setvalue>
 			</xforms:submission>
 
@@ -253,7 +266,7 @@
 				</xforms:header>
 				<xforms:setvalue ev:event="xforms-submit-done" ref="instance('control-instance')/sparql-success">false</xforms:setvalue>
 			</xforms:submission>
-			
+
 			<xforms:submission id="get-rdf" method="get" replace="instance" instance="rdf" serialization="none"
 				resource="/xeac/id/{instance('control-instance')/id}.rdf">
 				<xforms:message ev:event="xforms-submit-error" level="modal">Unable to get RDF/XML serialization.</xforms:message>
@@ -268,7 +281,7 @@
 					<xforms:send submission="post-rdf"/>
 				</xforms:action>
 			</xforms:submission>
-			
+
 			<xforms:submission id="post-rdf" action="{instance('control-instance')/sparql/store}?default" ref="instance('rdf')" replace="none" method="post"
 				mediatype="application/rdf+xml">
 				<xforms:action ev:event="xforms-submit-error">
@@ -276,13 +289,26 @@
 					<xforms:message level="modal">Post to endpoint failed.</xforms:message>
 				</xforms:action>
 			</xforms:submission>
-			
-			<xforms:submission id="delete-graph" action="{instance('control-instance')/sparql/update}" ref="instance('sparqlUpdate')" serialization="text/plain" replace="none"
-				method="post" mediatype="application/sparql-update">
+
+			<xforms:submission id="delete-graph" action="{instance('control-instance')/sparql/update}" ref="instance('sparqlUpdate')" serialization="text/plain"
+				replace="none" method="post" mediatype="application/sparql-update">
 				<xforms:action ev:event="xforms-submit-error">
 					<xforms:setvalue ref="instance('control-instance')/sparql-success">false</xforms:setvalue>
 					<xforms:message level="modal">SPARQL update failed.</xforms:message>
 				</xforms:action>
+			</xforms:submission>
+			
+			<!-- Read the SNAC ARK and get the constellation ID -->
+			<!-- SNAC API -->
+			<xforms:submission id="query-snac" ref="instance('snac-query')" action="{instance('config')/snac/api}" method="put" replace="instance"
+				instance="snac-response" serialization="application/json">
+				<xforms:header>
+					<xforms:name>User-Agent</xforms:name>
+					<xforms:value>XForms/xEAC</xforms:value>
+				</xforms:header>
+				<xforms:message ev:event="xforms-submit-error" level="modal">
+					<xforms:output ref="event('response-body')"/>
+				</xforms:message>
 			</xforms:submission>
 
 			<!-- ********* XFORMS-MODEL-CONSTRUCT-DONE *********** -->
@@ -299,21 +325,23 @@
 				<div class="col-md-12">
 					<div id="form">
 						<h1>Edit Settings</h1>
-						<p><a href="../"><span class="glyphicon glyphicon-arrow-left"/>Return to Admin</a></p>
-						<xforms:group ref=".[string-length(instance('status')) &gt; 0]">
-							<div class="bg-info alert-box">
-								<span class="glyphicon glyphicon-info-sign"/>
+						<p><a href="../"><span class="glyphicon glyphicon-arrow-left"></span>Return to Admin</a></p>
+						
+						<xforms:group ref=".[string(instance('control-instance')/status)]">
+							<div class="alert alert-box alert-success">
+								<span class="glyphicon glyphicon-info-sign"></span>
 								<strong>Status:</strong>
-								<xforms:output ref="instance('status')"/>
+								<xforms:output ref="instance('control-instance')/status"/>
 							</div>
 						</xforms:group>
+						
 						<div class="submission">
 							<xforms:trigger appareance="minimal">
-								<xforms:label><span class="glyphicon glyphicon-floppy-disk"/>Save</xforms:label>
+								<xforms:label><span class="glyphicon glyphicon-floppy-disk"></span>Save</xforms:label>
 								<xforms:send ev:event="DOMActivate" submission="save-config"/>
 							</xforms:trigger>
 						</div>
-						<fr:tabview>
+						<fr:tabbable>
 							<fr:tab bind="settings-tab">
 								<fr:label>Settings</fr:label>
 								<h2>Primary Settings</h2>
@@ -338,20 +366,23 @@
 											<xforms:label>URL</xforms:label>
 											<xforms:alert>Required</xforms:alert>
 										</xforms:input>
-										<p>Public URL of the site. Used in citations of and image references in PDF printouts. Changing this to an inactive URL will <b>not</b> break 's core
-											functionality, but web forms may be style-less since the Orbeon applications point to this URL for embedding css files.</p>
+										<p>Public URL of the site. Used in citations of and image references in PDF printouts. Changing this to an inactive URL
+											will <b>not</b> break 's core functionality, but web forms may be style-less since the Orbeon applications point to
+											this URL for embedding css files.</p>
 									</div>
 									<div>
 										<xforms:input ref="uri_space">
-											<xforms:label>URI Space</xforms:label>											
+											<xforms:label>URI Space</xforms:label>
 										</xforms:input>
-										<p>URI prefix for all EAC-CPF records in the collection, e.g., ARK URIs at a particular domain name. Note: this should be used in conjunction with Apache ProxyPass.</p>
+										<p>URI prefix for all EAC-CPF records in the collection, e.g., ARK URIs at a particular domain name. Note: this should
+											be used in conjunction with Apache ProxyPass.</p>
 									</div>
 									<div>
 										<xforms:textarea ref="google_analytics">
 											<xforms:label>Google Analytics</xforms:label>
 										</xforms:textarea>
-										<p>Copy and paste the javascript code between <b>&lt;script type="text/javascript"&gt;&lt;/script&gt;</b> provided by Google.</p>
+										<p>Copy and paste the javascript code between <b>&lt;script type="text/javascript"&gt;&lt;/script&gt;</b> provided by
+											Google.</p>
 									</div>
 								</div>
 								<xforms:group ref="sparql">
@@ -408,25 +439,76 @@
 										</xforms:group>
 									</div>
 								</xforms:group>
+								
+								<!-- SNAC configuration -->								
+								<!-- if the SPARQL endpoint is enabled, then allow the user to enter an ARK URI for the repository -->
+								<div class="section">
+									<h2>SNAC Configuration</h2>
+									<xforms:group ref="snac">
+										<xforms:group ref=".[../sparql[string(query) and string(update) and string(store)]]">
+											<div>
+												<xforms:input ref="repository_ark">
+													<xforms:label>Repository ARK</xforms:label>
+													<xforms:alert>Must be a SNAC ARK, if entered</xforms:alert>		
+													
+													<!-- submit an API request to SNAC to get the constellation ID if a valid ARK URI has been entered -->
+													<xforms:action ev:event="xforms-value-changed">														
+														<xforms:var name="ark" select="data(.)"/>
+														
+														<!-- evaluate validity of ARK -->
+														<xforms:action if="matches(., '^http://n2t\.net/ark:/99166/[a-z0-9]+$')">
+															<xforms:insert context="instance('snac-query')" origin="xforms:element('command', 'read')"/>
+															<xforms:insert context="instance('snac-query')" origin="xforms:element('arkid', $ark)"/>
+															<xforms:send submission="query-snac"/>
+															
+															<!-- set constellationid -->
+															<xforms:action ev:event="xforms-submit-done">
+																<xforms:action if="instance('snac-response')/constellation/id">
+																	<xforms:setvalue ref="instance('config')/snac/repository_constellation_id" value="instance('snac-response')/constellation/id"/>
+																</xforms:action>
+															</xforms:action>
+														</xforms:action>
+														
+													</xforms:action>
+												</xforms:input>
+												<p>Insert a SNAC ARK, conforming to <code>http://n2t.net/ark:/99166/[a-z0-9]+</code>, for the repository responsible for
+													publishing archival and bibliographic materials relating to the entity.</p>
+											</div>		
+											<xforms:group ref=".[string(repository_constellation_id)]">
+												<div>
+													<xforms:output ref="repository_constellation_id">
+														<xforms:label>Constellation ID</xforms:label>
+													</xforms:output>
+													<p>The SNAC constellation ID for the repository, extracted from the API.</p>
+												</div>
+											</xforms:group>
+										</xforms:group>
+									</xforms:group>
+								</div>
+																
+								
+
 								<div class="section">
 									<h2>API Keys</h2>
-									<div class="subsection">
-										<h3>geonames</h3>
+									<div>
+										<h3>Geonames</h3>
 										<div>
 											<xforms:input ref="geonames_api_key" incremental="true">
 												<xforms:label>Key</xforms:label>
 											</xforms:input>
-											<p>A <a href="http://www.geonames.org/export/web-services.html">geonames API key</a> is required in order to link geographical places to geonames ids.</p>
+											<p>A <a href="http://www.geonames.org/export/web-services.html">geonames API key</a> is required in order to link
+												geographical places to geonames ids.</p>
 										</div>
-									</div>
+									</div>									
 								</div>
 								<div class="section">
 									<xforms:group ref="instances/agencyName-list">
 										<h2>Agency Names</h2>
 										<xforms:trigger appearance="minimal">
 											<xforms:label>
-												<span class="glyphicon glyphicon-plus"/>Agency</xforms:label>
-											<xforms:insert ev:event="DOMActivate" context="." nodeset="./child::node()[last()]" origin="instance('agencyName-template')"/>
+												<span class="glyphicon glyphicon-plus"></span>Agency</xforms:label>
+											<xforms:insert ev:event="DOMActivate" context="." nodeset="./child::node()[last()]"
+												origin="instance('agencyName-template')"/>
 										</xforms:trigger>
 										<xforms:repeat nodeset="item">
 											<div>
@@ -439,7 +521,7 @@
 													<xforms:trigger appearance="minimal">
 														<xforms:delete ev:event="DOMActivate" nodeset="."/>
 														<xforms:label>
-															<span class="glyphicon glyphicon-remove"/>
+															<span class="glyphicon glyphicon-remove"></span>
 														</xforms:label>
 													</xforms:trigger>
 												</xforms:group>
@@ -457,15 +539,16 @@
 											<h3>CPF Relations</h3>
 											<span class="add">
 												<xforms:trigger appearance="minimal">
-													<xforms:label><span class="glyphicon glyphicon-plus"/>Import</xforms:label>
+													<xforms:label><span class="glyphicon glyphicon-plus"></span>Import</xforms:label>
 													<xforms:action ev:event="DOMActivate">
-														<xforms:setvalue ref="instance('eXist-xquery')/exist:text" value="instance('xqueries')/query[@id='gather-cpfRelations']"/>
+														<xforms:setvalue ref="instance('eXist-xquery')/exist:text"
+															value="instance('xqueries')/query[@id='gather-cpfRelations']"/>
 														<xforms:send submission="xquery-collection"/>
 														<xforms:insert context="instance('cpfRelations-list')" origin="instance('xquery-result')//relation"/>
 													</xforms:action>
 												</xforms:trigger>
 												<xforms:trigger appearance="minimal">
-													<xforms:label><span class="glyphicon glyphicon-plus"/>Upload RDF/XML Ontology</xforms:label>
+													<xforms:label><span class="glyphicon glyphicon-plus"></span>Upload RDF/XML Ontology</xforms:label>
 													<xxforms:show ev:event="DOMActivate" dialog="upload-ontology-dialog"/>
 												</xforms:trigger>
 											</span>
@@ -481,11 +564,13 @@
 															</xforms:output>
 															<xforms:group ref=".[not(instance('config')/relationSemantics/cpfRelations/relation/@from = $val)]">
 																<xforms:trigger appearance="minimal">
-																	<xforms:label><span class="glyphicon glyphicon-plus"/>Add</xforms:label>
+																	<xforms:label><span class="glyphicon glyphicon-plus"></span>Add</xforms:label>
 																	<xforms:action ev:event="DOMActivate">
-																		<xforms:insert context="instance('config')/relationSemantics/cpfRelations" nodeset="./child::node()[last()]"
-																			origin="instance('cpfRelation-template')"/>
-																		<xforms:setvalue ref="instance('config')/relationSemantics/cpfRelations/relation[last()]/@from" value="$val"/>
+																		<xforms:insert context="instance('config')/relationSemantics/cpfRelations"
+																			nodeset="./child::node()[last()]" origin="instance('cpfRelation-template')"/>
+																		<xforms:setvalue
+																			ref="instance('config')/relationSemantics/cpfRelations/relation[last()]/@from"
+																			value="$val"/>
 																	</xforms:action>
 																</xforms:trigger>
 															</xforms:group>
@@ -497,7 +582,7 @@
 												<h4>Controlled Template</h4>
 												<span class="add">
 													<xforms:trigger appearance="minimal">
-														<xforms:label><span class="glyphicon glyphicon-plus"/>Add New</xforms:label>
+														<xforms:label><span class="glyphicon glyphicon-plus"></span>Add New</xforms:label>
 														<xforms:action ev:event="DOMActivate">
 															<xforms:insert nodeset="./child::node()[last()]" origin="instance('cpfRelation-template')"/>
 														</xforms:action>
@@ -520,14 +605,17 @@
 																	<td>
 																		<xforms:input ref="@from">
 																			<xforms:alert>Required</xforms:alert>
-																			<xforms:action ev:event="xforms-value-changed">																				
+																			<xforms:action ev:event="xforms-value-changed">
 																				<!-- insert localTypeDeclaration -->
-																				<xforms:action if="contains(., ':') and not(instance('config')//abbreviation = substring-before(., ':'))">
-																					<xforms:var name="prefix" select="substring-before(., ':')"/>
-																					<xforms:insert context="instance('config')/localTypeDeclarations" nodeset="./child::node()[last()]"
-																						origin="instance('localTypeDeclaration-template')"/>
-																					<xforms:setvalue ref="instance('config')/localTypeDeclarations/localTypeDeclaration[last()]/abbreviation"
-																						value="$prefix"/>
+																				<xforms:action
+																				if="contains(., ':') and not(instance('config')//abbreviation = substring-before(., ':'))">
+																				<xforms:var name="prefix" select="substring-before(., ':')"/>
+																				<xforms:insert context="instance('config')/localTypeDeclarations"
+																				nodeset="./child::node()[last()]"
+																				origin="instance('localTypeDeclaration-template')"/>
+																				<xforms:setvalue
+																				ref="instance('config')/localTypeDeclarations/localTypeDeclaration[last()]/abbreviation"
+																				value="$prefix"/>
 																				</xforms:action>
 																			</xforms:action>
 																		</xforms:input>
@@ -587,7 +675,7 @@
 																		<xforms:trigger appearance="minimal">
 																			<xforms:delete ev:event="DOMActivate" nodeset="."/>
 																			<xforms:label>
-																				<span class="glyphicon glyphicon-remove"/>
+																				<span class="glyphicon glyphicon-remove"></span>
 																			</xforms:label>
 																		</xforms:trigger>
 																	</td>
@@ -604,11 +692,13 @@
 											<h3>Resource Relations</h3>
 											<span class="add">
 												<xforms:trigger appearance="minimal">
-													<xforms:label><span class="glyphicon glyphicon-plus"/>Import</xforms:label>
+													<xforms:label><span class="glyphicon glyphicon-plus"></span>Import</xforms:label>
 													<xforms:action ev:event="DOMActivate">
-														<xforms:setvalue ref="instance('eXist-xquery')/exist:text" value="instance('xqueries')/query[@id='gather-resourceRelations']"/>
+														<xforms:setvalue ref="instance('eXist-xquery')/exist:text"
+															value="instance('xqueries')/query[@id='gather-resourceRelations']"/>
 														<xforms:send submission="xquery-collection"/>
-														<xforms:insert context="instance('resourceRelations-list')" origin="instance('xquery-result')//relation"/>
+														<xforms:insert context="instance('resourceRelations-list')" origin="instance('xquery-result')//relation"
+														/>
 													</xforms:action>
 												</xforms:trigger>
 											</span>
@@ -622,13 +712,16 @@
 															<xforms:output ref=".">
 																<xforms:label>Relation</xforms:label>
 															</xforms:output>
-															<xforms:group ref=".[not(instance('config')/relationSemantics/resourceRelations/relation/@from = $val)]">
+															<xforms:group
+																ref=".[not(instance('config')/relationSemantics/resourceRelations/relation/@from = $val)]">
 																<xforms:trigger appearance="minimal">
-																	<xforms:label><span class="glyphicon glyphicon-plus"/>Add</xforms:label>
+																	<xforms:label><span class="glyphicon glyphicon-plus"></span>Add</xforms:label>
 																	<xforms:action ev:event="DOMActivate">
-																		<xforms:insert context="instance('config')/relationSemantics/resourceRelations" nodeset="./child::node()[last()]"
-																			origin="instance('cpfRelation-template')"/>
-																		<xforms:setvalue ref="instance('config')/relationSemantics/resourceRelations/relation[last()]/@from" value="$val"/>
+																		<xforms:insert context="instance('config')/relationSemantics/resourceRelations"
+																			nodeset="./child::node()[last()]" origin="instance('cpfRelation-template')"/>
+																		<xforms:setvalue
+																			ref="instance('config')/relationSemantics/resourceRelations/relation[last()]/@from"
+																			value="$val"/>
 																	</xforms:action>
 																</xforms:trigger>
 															</xforms:group>
@@ -640,7 +733,7 @@
 												<h4>Controlled Template</h4>
 												<span class="add">
 													<xforms:trigger appearance="minimal">
-														<xforms:label><span class="glyphicon glyphicon-plus"/>Add New</xforms:label>
+														<xforms:label><span class="glyphicon glyphicon-plus"></span>Add New</xforms:label>
 														<xforms:action ev:event="DOMActivate">
 															<xforms:insert nodeset="./child::node()[last()]" origin="instance('cpfRelation-template')"/>
 														</xforms:action>
@@ -662,12 +755,15 @@
 																			<xforms:alert>Required</xforms:alert>
 																			<xforms:action ev:event="xforms-value-changed">
 																				<!-- insert localTypeDeclaration -->
-																				<xforms:action if="contains(., ':') and not(instance('config')//abbreviation = substring-before(., ':'))">
-																					<xforms:var name="prefix" select="substring-before(., ':')"/>
-																					<xforms:insert context="instance('config')/localTypeDeclarations" nodeset="./child::node()[last()]"
-																						origin="instance('localTypeDeclaration-template')"/>
-																					<xforms:setvalue ref="instance('config')/localTypeDeclarations/localTypeDeclaration[last()]/abbreviation"
-																						value="$prefix"/>
+																				<xforms:action
+																				if="contains(., ':') and not(instance('config')//abbreviation = substring-before(., ':'))">
+																				<xforms:var name="prefix" select="substring-before(., ':')"/>
+																				<xforms:insert context="instance('config')/localTypeDeclarations"
+																				nodeset="./child::node()[last()]"
+																				origin="instance('localTypeDeclaration-template')"/>
+																				<xforms:setvalue
+																				ref="instance('config')/localTypeDeclarations/localTypeDeclaration[last()]/abbreviation"
+																				value="$prefix"/>
 																				</xforms:action>
 																			</xforms:action>
 																		</xforms:input>
@@ -676,7 +772,7 @@
 																		<xforms:trigger appearance="minimal">
 																			<xforms:delete ev:event="DOMActivate" nodeset="."/>
 																			<xforms:label>
-																				<span class="glyphicon glyphicon-remove"/>
+																				<span class="glyphicon glyphicon-remove"></span>
 																			</xforms:label>
 																		</xforms:trigger>
 																	</td>
@@ -693,9 +789,9 @@
 										<span class="add">
 											<xforms:trigger appearance="minimal">
 												<xforms:label>
-													<span class="glyphicon glyphicon-plus"/>Local Type Declaration</xforms:label>
-												<xforms:insert context="instance('config')/localTypeDeclarations" nodeset="./child::node()[last()]" origin="instance('localTypeDeclaration-template')"
-													ev:event="DOMActivate"/>
+													<span class="glyphicon glyphicon-plus"></span>Local Type Declaration</xforms:label>
+												<xforms:insert context="instance('config')/localTypeDeclarations" nodeset="./child::node()[last()]"
+													origin="instance('localTypeDeclaration-template')" ev:event="DOMActivate"/>
 											</xforms:trigger>
 										</span>
 										<xforms:repeat nodeset="instance('config')/localTypeDeclarations/localTypeDeclaration">
@@ -704,7 +800,7 @@
 												<xforms:trigger appearance="minimal">
 													<xforms:delete ev:event="DOMActivate" nodeset="."/>
 													<xforms:label>
-														<span class="glyphicon glyphicon-remove"/>
+														<span class="glyphicon glyphicon-remove"></span>
 													</xforms:label>
 												</xforms:trigger>
 												<!--<div class="trigger_container">
@@ -762,15 +858,15 @@
 									</div>
 								</div>
 							</fr:tab>
-						</fr:tabview>
+						</fr:tabbable>
 						<xxforms:dialog id="upload-ontology-dialog" appearance="full" level="modal" close="true" draggable="true" visible="false">
 							<xforms:label>Upload Ontology</xforms:label>
 							<div style="width:400px;">
-								<fr:upload ref="instance('file')">
+								<xforms:upload ref="instance('file')">
 									<xforms:filename ref="@filename"/>
 									<xforms:mediatype ref="@mediatype"/>
 									<xxforms:size ref="@size"/>
-								</fr:upload>
+								</xforms:upload>
 								<div style="margin:20px 0;">
 									<fr:button>
 										<xforms:label>Upload</xforms:label>
@@ -785,10 +881,12 @@
 												<!--<xforms:send submission="get-ontology"/>-->
 												<!-- process ontology to extract namespaces -->
 												<xforms:action ev:event="xforms-submit-done">
-													<xforms:action xxforms:iterate="instance('ontology')/*[@rdf:about][rdf:type[@rdf:resource='http://www.w3.org/2002/07/owl#Ontology'] or name()='owl:Ontology']">
+													<xforms:action
+														xxforms:iterate="instance('ontology')/*[@rdf:about][rdf:type[@rdf:resource='http://www.w3.org/2002/07/owl#Ontology'] or name()='owl:Ontology']">
 														<xforms:var name="about" select="data(context()/@rdf:about)"/>
 														<xforms:insert context="instance('control-instance')" nodeset="./child::node()[last()]"
-															origin="xforms:element('namespace', (xforms:attribute('prefix', ''), xforms:attribute('import', true()), $about))"/>
+															origin="xforms:element('namespace', (xforms:attribute('prefix', ''), xforms:attribute('import', true()), $about))"
+														/>
 													</xforms:action>
 													<xxforms:show dialog="prefixes-dialog"/>
 												</xforms:action>
@@ -834,35 +932,49 @@
 											<xforms:var name="uri" select="data(context()/text())"/>
 											<xforms:var name="prefix" select="data(context()/@prefix)"/>
 											<!-- insert relations extracted from RDF -->
-											<xforms:action xxforms:iterate="instance('ontology')/*[contains(@rdf:about, $uri)][rdf:type/@rdf:resource='http://www.w3.org/1999/02/22-rdf-syntax-ns#Property' or rdf:type/@rdf:resource='http://www.w3.org/2002/07/owl#SymmetricProperty' or name()='rdf:Property' or name()='owl:SymmetricProperty' or name()='owl:ObjectProperty']">
+											<xforms:action
+												xxforms:iterate="instance('ontology')/*[contains(@rdf:about, $uri)][rdf:type/@rdf:resource='http://www.w3.org/1999/02/22-rdf-syntax-ns#Property' or rdf:type/@rdf:resource='http://www.w3.org/2002/07/owl#SymmetricProperty' or name()='rdf:Property' or name()='owl:SymmetricProperty' or name()='owl:ObjectProperty']">
 												<xforms:var name="source" select="replace(@rdf:about, $uri, concat($prefix, ':'))"/>
 												<!-- ignore properties which have already been imported -->
 												<xforms:action if="not(instance('config')/relationSemantics/cpfRelations/relation/@from = $source)">
-													<xforms:insert context="instance('config')/relationSemantics/cpfRelations" nodeset="child::node()[last()]" origin="instance('cpfRelation-template')"/>
+													<xforms:insert context="instance('config')/relationSemantics/cpfRelations" nodeset="child::node()[last()]"
+														origin="instance('cpfRelation-template')"/>
 													<!-- handle equivalent relationships -->
-													<xforms:action if="rdf:type/@rdf:resource='http://www.w3.org/2002/07/owl#SymmetricProperty' or name()='owl:SymmetricProperty'">
-														<xforms:setvalue ref="instance('config')/relationSemantics/cpfRelations/relation[last()]/@from" value="$source"/>
-														<xforms:setvalue ref="instance('config')/relationSemantics/cpfRelations/relation[last()]/@to" value="$source"/>
+													<xforms:action
+														if="rdf:type/@rdf:resource='http://www.w3.org/2002/07/owl#SymmetricProperty' or name()='owl:SymmetricProperty'">
+														<xforms:setvalue ref="instance('config')/relationSemantics/cpfRelations/relation[last()]/@from"
+															value="$source"/>
+														<xforms:setvalue ref="instance('config')/relationSemantics/cpfRelations/relation[last()]/@to"
+															value="$source"/>
 													</xforms:action>
 													<!-- handle inverse relationships -->
-													<xforms:action if="rdf:type/@rdf:resource='http://www.w3.org/1999/02/22-rdf-syntax-ns#Property' or name()='rdf:Property' or name()='owl:ObjectProperty'">
+													<xforms:action
+														if="rdf:type/@rdf:resource='http://www.w3.org/1999/02/22-rdf-syntax-ns#Property' or name()='rdf:Property' or name()='owl:ObjectProperty'">
 														<!-- if owl:inverseOf exists -->
-														<xforms:action if="string(context()/owl:inverseOf/@rdf:resource) or string(context()/owl:inverseOf/*/@rdf:about)">															
-															<xforms:var name="to" select="if (string(context()/owl:inverseOf/@rdf:resource)) then replace(context()/owl:inverseOf/@rdf:resource, $uri, concat($prefix, ':')) else replace(context()/owl:inverseOf/*/@rdf:about, $uri, concat($prefix, ':'))"/>
-															<xforms:setvalue ref="instance('config')/relationSemantics/cpfRelations/relation[last()]/@from" value="$source"/>
-															<xforms:setvalue ref="instance('config')/relationSemantics/cpfRelations/relation[last()]/@to" value="$to"/>
+														<xforms:action
+															if="string(context()/owl:inverseOf/@rdf:resource) or string(context()/owl:inverseOf/*/@rdf:about)">
+															<xforms:var name="to"
+																select="if (string(context()/owl:inverseOf/@rdf:resource)) then replace(context()/owl:inverseOf/@rdf:resource, $uri, concat($prefix, ':')) else replace(context()/owl:inverseOf/*/@rdf:about, $uri, concat($prefix, ':'))"/>
+															<xforms:setvalue ref="instance('config')/relationSemantics/cpfRelations/relation[last()]/@from"
+																value="$source"/>
+															<xforms:setvalue ref="instance('config')/relationSemantics/cpfRelations/relation[last()]/@to"
+																value="$to"/>
 														</xforms:action>
 														<!-- otherwise, insert the same relationship -->
-														<xforms:action if="not(string(context()/owl:inverseOf/@rdf:resource) or string(context()/owl:inverseOf/*/@rdf:about))">															
-															<xforms:setvalue ref="instance('config')/relationSemantics/cpfRelations/relation[last()]/@from" value="$source"/>
-															<xforms:setvalue ref="instance('config')/relationSemantics/cpfRelations/relation[last()]/@to" value="$source"/>
+														<xforms:action
+															if="not(string(context()/owl:inverseOf/@rdf:resource) or string(context()/owl:inverseOf/*/@rdf:about))">
+															<xforms:setvalue ref="instance('config')/relationSemantics/cpfRelations/relation[last()]/@from"
+																value="$source"/>
+															<xforms:setvalue ref="instance('config')/relationSemantics/cpfRelations/relation[last()]/@to"
+																value="$source"/>
 														</xforms:action>
 													</xforms:action>
 												</xforms:action>
 											</xforms:action>
-											
+
 											<!-- insert localTypeDeclaration for the prefix and URI if it does not already exist -->
-											<xforms:action if="not(instance('config')/localTypeDeclarations/localTypeDeclaration[abbreviation=$prefix and citation/@href=$uri])">
+											<xforms:action
+												if="not(instance('config')/localTypeDeclarations/localTypeDeclaration[abbreviation=$prefix and citation/@href=$uri])">
 												<xforms:insert context="instance('config')/localTypeDeclarations" nodeset="./child::node()[last()]"
 													origin="instance('localTypeDeclaration-template')"/>
 												<xforms:setvalue ref="instance('config')/localTypeDeclarations/localTypeDeclaration[last()]/abbreviation"
@@ -881,12 +993,13 @@
 								</xforms:trigger>
 							</div>
 						</xxforms:dialog>
-						
+
 						<!-- connect to SPARQL -->
 						<xxforms:dialog id="sparql-dialog" appearance="full" level="modal" close="true" draggable="true" visible="false">
 							<xforms:label>Connect to SPARQL Endpoint</xforms:label>
-							<p style="width:600px;">Insert the URLs for SPARQL endpoint query and update services below. In the Apache Fuseki endpoint, for example, the Query web service is
-								http://localhost:3030/ds/query, Graph Store is http://localhost:3030/ds/data and SPARQL/Update service is located at http://localhost:3030/ds/update</p>
+							<p style="width:600px;">Insert the URLs for SPARQL endpoint query and update services below. In the Apache Fuseki endpoint, for
+								example, the Query web service is http://localhost:3030/ds/query, Graph Store is http://localhost:3030/ds/data and SPARQL/Update
+								service is located at http://localhost:3030/ds/update</p>
 							<xforms:group ref="instance('control-instance')">
 								<xforms:group ref=".[sparql-connect=false() or sparql-success=false()]">
 									<div>
@@ -920,7 +1033,8 @@
 												<xforms:send submission="post-rdf"/>
 												<xforms:action ev:event="xforms-submit-done">
 													<!-- if the RDF test successfully posts, then delete the graph through SPARQL/Update -->
-													<xforms:setvalue ref="instance('sparqlUpdate')" value="replace(instance('sparqlUpdate-template'), 'URI', 'http://example.org/')"/>
+													<xforms:setvalue ref="instance('sparqlUpdate')"
+														value="replace(instance('sparqlUpdate-template'), 'URI', 'http://example.org/')"/>
 													<xforms:send submission="delete-graph"/>
 												</xforms:action>
 											</xforms:action>
@@ -950,7 +1064,7 @@
 											<xforms:action ev:event="DOMActivate">
 												<xforms:setvalue ref="instance('config')/sparql/query" value="instance('control-instance')/sparql/query"/>
 												<xforms:setvalue ref="instance('config')/sparql/update" value="instance('control-instance')/sparql/update"/>
-												<xforms:setvalue ref="instance('config')/sparql/store" value="instance('control-instance')/sparql/store"/>								
+												<xforms:setvalue ref="instance('config')/sparql/store" value="instance('control-instance')/sparql/store"/>
 												<xxforms:hide dialog="sparql-dialog"/>
 												<xforms:dispatch target="publish-all" name="fr-show"/>
 											</xforms:action>
@@ -964,7 +1078,7 @@
 								</xforms:group>
 							</xforms:group>
 						</xxforms:dialog>
-						
+
 						<!-- publish RDF -->
 						<fr:alert-dialog id="publish-all">
 							<fr:label>Publish RDF</fr:label>
@@ -982,6 +1096,7 @@
 								</xforms:action>
 							</fr:positive-choice>
 						</fr:alert-dialog>
+						
 						<!--<fr:xforms-inspector id="orbeon-xforms-inspector"/>-->
 					</div>
 				</div>

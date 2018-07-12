@@ -155,11 +155,10 @@
 					<id/>
 					<publicationStatus/>
 					<maintenanceEvent-position/>
+					<status/>
 				</control>
 			</xforms:instance>
-			<xforms:instance id="status">
-				<status xmlns=""/>
-			</xforms:instance>
+			
 			<xforms:instance id="temp-id">
 				<id xmlns="">
 					<identifier/>
@@ -770,7 +769,7 @@ UNION { <URI> ?p ?o . ?s ?p ?o . FILTER (?s = <URI>) }}]]>
 				xxforms:username="{instance('exist-config')/username}" xxforms:password="{instance('exist-config')/password}">
 				<xforms:message ev:event="xforms-submit-error" level="modal">Error Saving Documents. Be sure all required inputs are filled in.</xforms:message>
 				<xforms:action ev:event="xforms-submit-done">
-					<xforms:setvalue ref="instance('status')">EAC record saved.</xforms:setvalue>
+					<xforms:setvalue ref="instance('control-instance')/status">EAC record saved.</xforms:setvalue>
 
 					<!-- generate KML -->
 					<xforms:insert nodeset="instance('kml')"
@@ -853,7 +852,7 @@ UNION { <URI> ?p ?o . ?s ?p ?o . FILTER (?s = <URI>) }}]]>
 					<xforms:delete nodeset="instance('relations-post')/*"/>
 					<xforms:delete nodeset="instance('action-list')/*"/>
 
-					<!-- if there is a SPARQL endpoint, post to endpoint -->
+					<!-- if there is a SPARQL endpoint, post to endpoint and index into Solr -->
 					<xforms:action if="instance('doc')/eac:control/eac:publicationStatus = 'approved'">
 						<xforms:setvalue ref="instance('control-instance')/id" value="instance('doc')/eac:control/eac:recordId"/>
 						<!-- publish record if the publicationStatus is approved -->
@@ -904,7 +903,7 @@ UNION { <URI> ?p ?o . ?s ?p ?o . FILTER (?s = <URI>) }}]]>
 					<xforms:output value="concat('Unable to update relational document: ', instance('temp-doc')/eac:control/eac:recordId)"/>
 				</xforms:message>
 				<xforms:action ev:event="xforms-submit-done">
-					<xforms:setvalue ref="instance('status')">EAC record saved.</xforms:setvalue>
+					<xforms:setvalue ref="instance('control-instance')/status">EAC record saved.</xforms:setvalue>
 					<!-- if the temp EAC-CPF doc is approved for publication, update it in Solr and the triplestore -->
 					<xforms:action if="instance('temp-doc')/eac:control/eac:publicationStatus='approved'">
 						<xforms:setvalue ref="instance('control-instance')/id" value="instance('temp-doc')/eac:control/eac:recordId"/>
@@ -929,7 +928,7 @@ UNION { <URI> ?p ?o . ?s ?p ?o . FILTER (?s = <URI>) }}]]>
 					<xforms:output value="concat('Unable generate new document: ', instance('eac-template')/eac:control/eac:recordId)"/>
 				</xforms:message>
 				<xforms:action ev:event="xforms-submit-done">
-					<xforms:setvalue ref="instance('status')">EAC record saved.</xforms:setvalue>
+					<xforms:setvalue ref="instance('control-instance')/status">EAC record saved.</xforms:setvalue>
 				</xforms:action>
 			</xforms:submission>
 			<!-- ********************* SOLR SUBMISSIONS ********************** -->
@@ -944,7 +943,7 @@ UNION { <URI> ?p ?o . ?s ?p ?o . FILTER (?s = <URI>) }}]]>
 				replace="none" method="post">
 				<xforms:action ev:event="xforms-submit-done">
 					<xforms:send submission="submit-commit"/>
-					<xforms:setvalue ref="instance('status')">Object saved, but removed from Solr index (publicationStatus set to
+					<xforms:setvalue ref="instance('control-instance')/status">Object saved, but removed from Solr index (publicationStatus set to
 						'inProcess').</xforms:setvalue>
 				</xforms:action>
 				<xforms:message ev:event="xforms-submit-error" level="modal">Data Failed to POST to Solr.</xforms:message>
@@ -954,7 +953,7 @@ UNION { <URI> ?p ?o . ?s ?p ?o . FILTER (?s = <URI>) }}]]>
 			<xforms:submission id="publish-submission" action="{instance('config')/solr_published}update" ref="instance('addIndex')" instance="addIndex"
 				replace="instance" method="post">
 				<xforms:send ev:event="xforms-submit-done" submission="submit-commit"/>
-				<xforms:setvalue ev:event="xforms-submit-done" ref="instance('status')">EAC record saved and updated to search index.</xforms:setvalue>
+				<xforms:setvalue ev:event="xforms-submit-done" ref="instance('control-instance')/status">EAC record saved and updated to search index.</xforms:setvalue>
 				<xforms:message ev:event="xforms-submit-error" level="modal">Data Failed to POST to Solr. Index may be offline or URL is
 					incorrect.</xforms:message>
 			</xforms:submission>
@@ -1057,11 +1056,11 @@ UNION { <URI> ?p ?o . ?s ?p ?o . FILTER (?s = <URI>) }}]]>
 		<div class="container-fluid">
 			<div class="row">
 				<div class="col-md-12">
-					<xforms:group ref="instance('status')/text()">
-						<div class="bg-info alert-box">
+					<xforms:group ref=".[string(instance('control-instance')/status)]">
+						<div class="alert alert-box alert-success">
 							<span class="glyphicon glyphicon-info-sign"></span>
 							<strong>Status:</strong>
-							<xforms:output ref="instance('status')"/>
+							<xforms:output ref="instance('control-instance')/status"/>
 						</div>
 					</xforms:group>
 					<p>
