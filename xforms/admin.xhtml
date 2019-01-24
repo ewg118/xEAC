@@ -222,7 +222,14 @@
 					<query id="collection-count">&lt;report&gt;{count(collection())}&lt;/report&gt;</query>
 					<query id="get-objects">
 						<![CDATA[declare namespace eac="urn:isbn:1-931666-33-4";
-						<report> { for $record in subsequence(collection(), START, 20) return
+						<report> {
+							let $records :=
+							   for $record in collection()
+							   order by $record//eac:recordId/text()
+							   return $record
+						
+						for $record in subsequence($records, START, 20) 
+							return
 							<record>
 								<maintenanceStatus>{ data($record/eac:eac-cpf/eac:control/eac:maintenanceStatus) }</maintenanceStatus>
 								<publicationStatus>{ data($record/eac:eac-cpf/eac:control/eac:publicationStatus) }</publicationStatus>
