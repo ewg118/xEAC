@@ -17,9 +17,7 @@
 								<xforms:label>Relation Entry</xforms:label>
 							</xforms:output>
 							<xforms:trigger appearance="minimal">
-								<xforms:label>
-									<img src="/xeac/xforms/images/external.png"/>
-								</xforms:label>
+								<xforms:label><span class="glyphicon glyphicon-new-window"></span></xforms:label>
 								<xforms:load ev:event="DOMActivate" show="new" ref="@xlink:href"/>
 							</xforms:trigger>
 							<xforms:group ref=".[contains(parent::node()/@xlink:href, 'http://')]">

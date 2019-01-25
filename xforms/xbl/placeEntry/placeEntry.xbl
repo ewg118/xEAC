@@ -18,7 +18,7 @@
 								<xforms:group ref=".[string(@vocabularySource)]">
 									<xforms:trigger appearance="minimal">
 										<xforms:label>
-											<img src="/xeac/xforms/images/external.png"/>
+											<span class="glyphicon glyphicon-new-window"></span>
 										</xforms:label>
 										<xforms:load ev:event="DOMActivate" show="new" ref="@vocabularySource"/>
 									</xforms:trigger>
@@ -208,7 +208,7 @@
 											</xforms:output>
 											<xforms:trigger appearance="xxforms:link">
 												<xforms:label>
-													<img src="/xeac/xforms/images/external.png"/>
+													<span class="glyphicon glyphicon-new-window"></span>
 												</xforms:label>
 												<xforms:load ev:event="DOMActivate" show="new" ref="instance('temp')/@vocabularySource"/>
 											</xforms:trigger>
@@ -254,7 +254,7 @@
 											</xforms:output>
 											<xforms:trigger appearance="xxforms:link">
 												<xforms:label>
-													<img src="/xeac/xforms/images/external.png"/>
+													<span class="glyphicon glyphicon-new-window"></span>
 												</xforms:label>
 												<xforms:load ev:event="DOMActivate" show="new" ref="instance('temp')/@vocabularySource"/>
 											</xforms:trigger>
