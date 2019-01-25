@@ -29,7 +29,7 @@
 					</a>
 					<xsl:if test="string(eac:term/@vocabularySource)">
 						<a href="{eac:term/@vocabularySource}" style="margin-left:5px;">
-							<img src="{$url}ui/images/external.png" alt="External link"/>
+							<span class="glyphicon glyphicon-new-window"></span>
 						</a>
 					</xsl:if>
 					<xsl:if test="string(eac:placeEntry)">
@@ -39,7 +39,7 @@
 						</a>
 						<xsl:if test="string(eac:placeEntry/@vocabularySource)">
 							<a href="{eac:placeEntry/@vocabularySource}" style="margin-left:5px;">
-								<img src="{$url}ui/images/external.png" alt="External link"/>
+								<span class="glyphicon glyphicon-new-window"></span>
 							</a>
 						</xsl:if>
 					</xsl:if>
@@ -50,7 +50,7 @@
 					</a>
 					<xsl:if test="string(eac:placeEntry/@vocabularySource)">
 						<a href="{eac:placeEntry/@vocabularySource}" style="margin-left:5px;">
-							<img src="{$url}ui/images/external.png" alt="External link"/>
+							<span class="glyphicon glyphicon-new-window"></span>
 						</a>
 					</xsl:if>
 				</xsl:when>
@@ -162,7 +162,7 @@
 								<xsl:if test="@xlink:arcrole">
 									<xsl:attribute name="rel" select="@xlink:arcrole"/>
 								</xsl:if>
-								<img src="{$url}ui/images/external.png" alt="External link"/>
+								<span class="glyphicon glyphicon-new-window"></span>
 							</a>
 						</xsl:when>
 						<xsl:otherwise>

@@ -22,14 +22,10 @@
 									<xforms:output value="concat(upper-case(substring(local-name(), 1, 1)), substring(local-name(), 2))"/>
 								</h4>
 							</xforms:group>
-							<span class="add">
-								<xforms:trigger appearance="minimal">
-									<xforms:label>
-										<span class="glyphicon glyphicon-plus"/>
-									</xforms:label>
-									<xxforms:show ev:event="DOMActivate" dialog="place-objects"/>
-								</xforms:trigger>
-							</span>
+							<xforms:trigger appearance="minimal">
+								<xforms:label><span class="glyphicon glyphicon-plus"/></xforms:label>
+								<xxforms:show ev:event="DOMActivate" dialog="place-objects"/>
+							</xforms:trigger>
 							<xforms:trigger appearance="minimal">
 								<xforms:delete ev:event="DOMActivate" nodeset="."/>
 								<xforms:label>

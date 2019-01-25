@@ -28,19 +28,13 @@
 									<xforms:output value="concat(upper-case(substring(local-name(), 1, 1)), substring(local-name(), 2))"/>
 								</h4>
 							</xforms:group>
-							<span class="add">
-								<xforms:trigger appearance="minimal">
-									<xforms:label>
-										<span class="glyphicon glyphicon-plus"/>
-									</xforms:label>
-									<xxforms:show ev:event="DOMActivate" dialog="function-objects"/>
-								</xforms:trigger>
-							</span>
+							<xforms:trigger appearance="minimal">
+								<xforms:label><span class="glyphicon glyphicon-plus"/></xforms:label>
+								<xxforms:show ev:event="DOMActivate" dialog="function-objects"/>
+							</xforms:trigger>
 							<xforms:trigger appearance="minimal">
 								<xforms:delete ev:event="DOMActivate" nodeset="."/>
-								<xforms:label>
-									<span class="glyphicon glyphicon-remove"/>
-								</xforms:label>
+								<xforms:label><span class="glyphicon glyphicon-remove"/></xforms:label>
 							</xforms:trigger>
 							<xxforms:dialog id="function-objects" appearance="full" level="modal" close="true" draggable="true" visible="false">
 								<xforms:label>Insert Element</xforms:label>
@@ -111,7 +105,7 @@
 									</xforms:output>
 									<xforms:group ref=".[string(eac:term/@vocabularySource)]">
 										<xforms:trigger appearance="minimal">
-											<xforms:label><img src="/xeac/xforms/images/external.png"/></xforms:label>
+											<xforms:label><span class="glyphicon glyphicon-new-window"></span></xforms:label>
 											<xforms:load ev:event="DOMActivate" show="new" ref="eac:term/@vocabularySource"/>
 										</xforms:trigger>										
 									</xforms:group>
