@@ -104,10 +104,10 @@
 
 		<xsl:variable name="otherURI">
 			<xsl:choose>
-				<xsl:when test=". castable as xs:anyURI and contains(., 'http://')">
+				<xsl:when test=". castable as xs:anyURI and matches(., '^https?://')">
 					<xsl:value-of select="."/>
 				</xsl:when>
-				<xsl:when test=". castable as xs:anyURI and not(contains(., 'http://'))">
+				<xsl:when test=". castable as xs:anyURI and not(matches(., '^https?://'))">
 					<xsl:choose>
 						<xsl:when test="string(/content/config/uri_space)">
 							<xsl:value-of select="concat(/content/config/uri_space, .)"/>

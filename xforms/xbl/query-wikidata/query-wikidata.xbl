@@ -72,7 +72,7 @@
 
 														<!-- insert the wikidata, dpbedia URI -->
 														<xforms:var name="wikidata-uri"
-															select="concat('https://www.wikidata.org/entity/', instance('wikidata')//entity/@id)"/>
+															select="concat('http://www.wikidata.org/entity/', instance('wikidata')//entity/@id)"/>
 														<!-- insert entityId if it doesn't already exist -->
 														<xforms:action if="not($binding/eac:cpfDescription/eac:identity/eac:entityId = $wikidata-uri)">
 															<xforms:insert context="$binding/eac:cpfDescription/eac:identity" nodeset="./child::node()[last()]"
