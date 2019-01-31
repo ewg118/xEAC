@@ -1316,6 +1316,8 @@ UNION { <URI> ?p ?o . ?s ?p ?o . FILTER (?s = <URI>) }}]]>
 													</xforms:group>
 												</div>
 											</xforms:repeat>
+											
+											<!-- other entity IDs (primarily matching URIs in other schemes) -->
 											<xforms:repeat ref="eac:entityId">
 												<div>
 													<xforms:input ref=".">
@@ -1324,12 +1326,50 @@ UNION { <URI> ?p ?o . ?s ?p ?o . FILTER (?s = <URI>) }}]]>
 													</xforms:input>
 													<xforms:trigger appearance="minimal">
 														<xforms:delete ev:event="DOMActivate" nodeset="."/>
-														<xforms:label>
-															<span class="glyphicon glyphicon-remove"></span>
-														</xforms:label>
+														<xforms:label><span class="glyphicon glyphicon-remove"></span></xforms:label>
 													</xforms:trigger>
+													
+													<xforms:group ref=".[not(@localType)]">
+														<xforms:trigger appearance="minimal">
+															<xforms:label>
+																<span class="glyphicon glyphicon-plus"></span> @Semantic Property</xforms:label>
+															<xforms:insert ev:event="DOMActivate" context="." origin="xforms:attribute('localType', 'skos:exactMatch')"/>
+														</xforms:trigger>
+														<xforms:trigger appearance="minimal">
+															<xforms:label>
+																<span class="glyphicon glyphicon-plus"></span> @Local Type</xforms:label>
+															<xforms:insert ev:event="DOMActivate" context="." origin="xforms:attribute('localType', '')"/>
+														</xforms:trigger>
+													</xforms:group>
+													
+													<xforms:group ref="@localType">
+														<xforms:group ref=".[contains(., ':')]">
+															<xforms:select1 ref=".">
+																<xforms:label>Semantic Property</xforms:label>
+																<xforms:item>
+																	<xforms:label>Exact Match</xforms:label>
+																	<xforms:value>skos:exactMatch</xforms:value>
+																</xforms:item>
+																<xforms:item>
+																	<xforms:label>Close Match</xforms:label>
+																	<xforms:value>skos:closeMatch</xforms:value>
+																</xforms:item>																
+															</xforms:select1>
+														</xforms:group>
+														<xforms:group ref=".[not(contains(., ':'))]">
+															<xforms:input ref=".">
+																<xforms:label>Local Type</xforms:label>
+															</xforms:input>
+														</xforms:group>	
+														<xforms:trigger appearance="minimal">
+															<xforms:delete ev:event="DOMActivate" nodeset="."/>
+															<xforms:label><span class="glyphicon glyphicon-remove"></span></xforms:label>
+															<xforms:hint>Delete @localType attribute</xforms:hint>
+														</xforms:trigger>
+													</xforms:group>
 												</div>
 											</xforms:repeat>
+											
 											<xforms:group ref="eac:descriptiveNote">
 												<xeac:descriptiveNote/>
 											</xforms:group>
