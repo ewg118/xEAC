@@ -1320,7 +1320,7 @@ WHERE { ?concept foaf:focus <URI> }]]></query>
 														<xforms:insert context="instance('snac-query')/constellation" nodeset="./child::node()[last()]"
 															origin="xforms:element('otherRecordIDs', (xforms:attribute('type', 'array'), ''))"/>
 
-														<!-- evaluate whether or not there is a source in the config. if there is construct the otherRecordId different -->
+														<!-- Use the config from the source, which would have been populated by the ARK specified as the contribution institution -->
 														<xforms:action if="string(instance('config')/snac/source)">
 															<xforms:action if="instance('control-instance')/constellation/uri_exists = false()">
 																<xforms:insert context="instance('snac-query')/constellation/otherRecordIDs"
@@ -1332,23 +1332,7 @@ WHERE { ?concept foaf:focus <URI> }]]></query>
 																	nodeset="./child::node()[last()]"
 																	origin="xforms:element('text', data(instance('config')/snac/source))"/>
 															</xforms:action>
-														</xforms:action>
-														<xforms:action if="not(string(instance('config')/snac/source))">
-															<!-- if the URI doesn't already exist and the URI is set to update, then insert the otherRecordIDs into the constellation -->
-															<xforms:action if="instance('control-instance')/constellation/uri_exists = false()">
-																<!-- insert URI for the current entity -->
-																<xforms:insert context="instance('snac-query')/constellation/otherRecordIDs"
-																	nodeset="./child::node()[last()]" origin="instance('otherRecordID-template')"/>
-
-																<!-- insert URI -->
-																<xforms:setvalue ref="instance('snac-query')/constellation/otherRecordIDs/_[last()]/uri"
-																	value="instance('control-instance')/uri"/>
-																<!-- insert textual label for canonical URI -->
-																<xforms:insert context="instance('snac-query')/constellation/otherRecordIDs/_[last()]"
-																	nodeset="./child::node()[last()]"
-																	origin="xforms:element('text', data(instance('control-instance')/primaryName))"/>
-															</xforms:action>
-														</xforms:action>
+														</xforms:action>														
 
 														<!-- insert new sameAs URIs from other entityIDs -->
 														<xforms:action
