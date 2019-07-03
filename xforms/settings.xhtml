@@ -175,7 +175,7 @@
 					<xforms:bind nodeset="update" type="xs:anyURI"/>
 					<xforms:bind nodeset="endpoint" type="xs:boolean"/>
 				</xforms:bind>
-				<xforms:bind nodeset="snac">
+				<xforms:bind nodeset="snac">					
 					<xforms:bind nodeset="repository_ark" id="ark" constraint="if (string-length(.) &gt; 0) then matches(., '^http://n2t\.net/ark:/99166/[a-z0-9]+$') else true()"/>
 				</xforms:bind>				
 				<xforms:bind nodeset="instances/agencyName-list">
@@ -341,7 +341,7 @@
 								<xforms:send ev:event="DOMActivate" submission="save-config"/>
 							</xforms:trigger>
 						</div>
-						<fr:tabbable>
+						<fr:tabview>
 							<fr:tab bind="settings-tab">
 								<fr:label>Settings</fr:label>
 								<h2>Primary Settings</h2>
@@ -445,6 +445,20 @@
 								<div class="section">
 									<h2>SNAC Configuration</h2>
 									<xforms:group ref="snac">
+										<div>
+											<xforms:select1 ref="api">
+												<xforms:label>API</xforms:label>
+												<xforms:item>
+													<xforms:label>Development</xforms:label>
+													<xforms:value>http://snac-dev.iath.virginia.edu/api/</xforms:value>
+												</xforms:item>
+												<xforms:item>
+													<xforms:label>Production</xforms:label>
+													<xforms:value>http://api.snaccooperative.org/</xforms:value>
+												</xforms:item>
+											</xforms:select1>
+										</div>
+										
 										<xforms:group ref=".[../sparql[string(query) and string(update) and string(store)]]">
 											<div>
 												<xforms:input ref="repository_ark">
@@ -858,7 +872,7 @@
 									</div>
 								</div>
 							</fr:tab>
-						</fr:tabbable>
+						</fr:tabview>
 						<xxforms:dialog id="upload-ontology-dialog" appearance="full" level="modal" close="true" draggable="true" visible="false">
 							<xforms:label>Upload Ontology</xforms:label>
 							<div style="width:400px;">
