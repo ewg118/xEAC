@@ -41,7 +41,7 @@
 					<sparql-success>false</sparql-success>
 					<sparql-connect>false</sparql-connect>
 					<sparql-query-test>ASK WHERE {?s ?p ?o}</sparql-query-test>
-					<status/>
+					<status></status>
 				</control>
 			</xforms:instance>
 
@@ -119,12 +119,12 @@
 					<mode>xml</mode>
 				</config>
 			</xforms:instance>
-			
+
 			<!-- ***** SNAC Instances ***** -->
 			<xforms:instance id="snac-response" xxforms:exclude-result-prefixes="#all">
 				<json type="object" xmlns=""></json>
 			</xforms:instance>
-			
+
 			<!-- the SNAC query is XML that must conform to the XForms 2.0 JSON model for serialization into application/json -->
 			<xforms:instance id="snac-query" xxforms:exclude-result-prefixes="#all">
 				<json type="object" xmlns=""></json>
@@ -176,8 +176,9 @@
 					<xforms:bind nodeset="endpoint" type="xs:boolean"/>
 				</xforms:bind>
 				<xforms:bind nodeset="snac">
-					<xforms:bind nodeset="repository_ark" id="ark" constraint="if (string-length(.) &gt; 0) then matches(., '^http://n2t\.net/ark:/99166/[a-z0-9]+$') else true()"/>
-				</xforms:bind>				
+					<xforms:bind nodeset="repository_ark" id="ark"
+						constraint="if (string-length(.) &gt; 0) then matches(., '^http://n2t\.net/ark:/99166/[a-z0-9]+$') else true()"/>
+				</xforms:bind>
 				<xforms:bind nodeset="instances/agencyName-list">
 					<xforms:bind nodeset="item" required="true()"/>
 				</xforms:bind>
@@ -297,7 +298,7 @@
 					<xforms:message level="modal">SPARQL update failed.</xforms:message>
 				</xforms:action>
 			</xforms:submission>
-			
+
 			<!-- Read the SNAC ARK and get the constellation ID -->
 			<!-- SNAC API -->
 			<xforms:submission id="query-snac" ref="instance('snac-query')" action="{instance('config')/snac/api}" method="put" replace="instance"
@@ -326,7 +327,7 @@
 					<div id="form">
 						<h1>Edit Settings</h1>
 						<p><a href="../"><span class="glyphicon glyphicon-arrow-left"></span>Return to Admin</a></p>
-						
+
 						<xforms:group ref=".[string(instance('control-instance')/status)]">
 							<div class="alert alert-box alert-success">
 								<span class="glyphicon glyphicon-info-sign"></span>
@@ -334,14 +335,14 @@
 								<xforms:output ref="instance('control-instance')/status"/>
 							</div>
 						</xforms:group>
-						
+
 						<div class="submission">
 							<xforms:trigger appareance="minimal">
 								<xforms:label><span class="glyphicon glyphicon-floppy-disk"></span>Save</xforms:label>
 								<xforms:send ev:event="DOMActivate" submission="save-config"/>
 							</xforms:trigger>
 						</div>
-						<fr:tabbable>
+						<fr:tabview>
 							<fr:tab bind="settings-tab">
 								<fr:label>Settings</fr:label>
 								<h2>Primary Settings</h2>
@@ -439,42 +440,66 @@
 										</xforms:group>
 									</div>
 								</xforms:group>
-								
-								<!-- SNAC configuration -->								
+
+								<!-- SNAC configuration -->
 								<!-- if the SPARQL endpoint is enabled, then allow the user to enter an ARK URI for the repository -->
 								<div class="section">
 									<h2>SNAC Configuration</h2>
 									<xforms:group ref="snac">
+										<div>
+											<xforms:select1 ref="api">
+												<xforms:label>API</xforms:label>
+												<xforms:item>
+													<xforms:label>Development</xforms:label>
+													<xforms:value>http://snac-dev.iath.virginia.edu/api/</xforms:value>
+												</xforms:item>
+												<xforms:item>
+													<xforms:label>Production</xforms:label>
+													<xforms:value>http://api.snaccooperative.org/</xforms:value>
+												</xforms:item>
+											</xforms:select1>
+										</div>
+
 										<xforms:group ref=".[../sparql[string(query) and string(update) and string(store)]]">
 											<div>
 												<xforms:input ref="repository_ark">
 													<xforms:label>Repository ARK</xforms:label>
-													<xforms:alert>Must be a SNAC ARK, if entered</xforms:alert>		
-													
+													<xforms:alert>Must be a SNAC ARK, if entered</xforms:alert>
+
 													<!-- submit an API request to SNAC to get the constellation ID if a valid ARK URI has been entered -->
-													<xforms:action ev:event="xforms-value-changed">														
+													<xforms:action ev:event="xforms-value-changed">
 														<xforms:var name="ark" select="data(.)"/>
-														
+
 														<!-- evaluate validity of ARK -->
 														<xforms:action if="matches(., '^http://n2t\.net/ark:/99166/[a-z0-9]+$')">
 															<xforms:insert context="instance('snac-query')" origin="xforms:element('command', 'read')"/>
 															<xforms:insert context="instance('snac-query')" origin="xforms:element('arkid', $ark)"/>
 															<xforms:send submission="query-snac"/>
-															
-															<!-- set constellationid -->
+
+															<!-- set constellationid and set source (constellation preferred label) -->
 															<xforms:action ev:event="xforms-submit-done">
 																<xforms:action if="instance('snac-response')/constellation/id">
-																	<xforms:setvalue ref="instance('config')/snac/repository_constellation_id" value="instance('snac-response')/constellation/id"/>
+																	<xforms:setvalue ref="instance('config')/snac/repository_constellation_id"
+																		value="instance('snac-response')/constellation/id"/>
+																	<xforms:setvalue ref="instance('config')/snac/source"
+																		value="instance('snac-response')/constellation/nameEntries/_[preferenceScore = '99']/original"
+																	/>
 																</xforms:action>
 															</xforms:action>
 														</xforms:action>
-														
+
 													</xforms:action>
 												</xforms:input>
-												<p>Insert a SNAC ARK, conforming to <code>http://n2t.net/ark:/99166/[a-z0-9]+</code>, for the repository responsible for
-													publishing archival and bibliographic materials relating to the entity.</p>
-											</div>		
+												<p>Insert a SNAC ARK, conforming to <code>http://n2t.net/ark:/99166/[a-z0-9]+</code>, for the repository
+													responsible for publishing archival and bibliographic materials relating to the entity.</p>
+											</div>
 											<xforms:group ref=".[string(repository_constellation_id)]">
+												<div>
+													<xforms:output ref="source">
+														<xforms:label>Preferred Label</xforms:label>
+													</xforms:output>
+													<p>The preferred label for the repository is used when inserting the local authority URI into a SNAC constellation.</p>
+												</div>
 												<div>
 													<xforms:output ref="repository_constellation_id">
 														<xforms:label>Constellation ID</xforms:label>
@@ -485,8 +510,8 @@
 										</xforms:group>
 									</xforms:group>
 								</div>
-																
-								
+
+
 
 								<div class="section">
 									<h2>API Keys</h2>
@@ -499,7 +524,7 @@
 											<p>A <a href="http://www.geonames.org/export/web-services.html">geonames API key</a> is required in order to link
 												geographical places to geonames ids.</p>
 										</div>
-									</div>									
+									</div>
 								</div>
 								<div class="section">
 									<xforms:group ref="instances/agencyName-list">
@@ -858,7 +883,7 @@
 									</div>
 								</div>
 							</fr:tab>
-						</fr:tabbable>
+						</fr:tabview>
 						<xxforms:dialog id="upload-ontology-dialog" appearance="full" level="modal" close="true" draggable="true" visible="false">
 							<xforms:label>Upload Ontology</xforms:label>
 							<div style="width:400px;">
@@ -1096,7 +1121,7 @@
 								</xforms:action>
 							</fr:positive-choice>
 						</fr:alert-dialog>
-						
+
 						<!--<fr:xforms-inspector id="orbeon-xforms-inspector"/>-->
 					</div>
 				</div>
