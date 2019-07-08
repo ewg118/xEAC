@@ -97,6 +97,16 @@
 						>http://www.w3.org/2004/02/skos/core#</citation>
 				</localTypeDeclaration>
 			</xforms:instance>
+			
+			<xforms:instance id="maintenanceEvent-template" xxforms:exclude-result-prefixes="#all">
+				<maintenanceEvent>
+					<eventType>revised</eventType>
+					<eventDateTime standardDateTime=""/>
+					<agentType>machine</agentType>
+					<agent>xEAC</agent>
+					<eventDescription>Metadata created or updated in SNAC. Constellation ID added to EAC-CPF Record.</eventDescription>
+				</maintenanceEvent>
+			</xforms:instance>
 
 			<!-- ***** SNAC Instances ***** -->
 			<xforms:instance id="snac-response" xxforms:exclude-result-prefixes="#all">
@@ -447,7 +457,7 @@ WHERE { ?concept foaf:focus <URI> }]]></query>
 						<xforms:setvalue ref="instance('control-instance')/authorized" value="true()"/>
 						<xforms:setvalue ref="instance('control-instance')/mode"/>
 					</xforms:action>
-					
+
 					<!-- Searching for existing constellations: set the human readable search response if applicable -->
 					<xforms:action if="instance('snac-query')/command = 'search'">
 						<xforms:var name="total" select="number(instance('snac-response')/total)" type="xs:integer"/>
@@ -457,7 +467,7 @@ WHERE { ?concept foaf:focus <URI> }]]></query>
 						<xforms:setvalue if="$total &gt; number(instance('snac-query')/count)" ref="instance('search-results-statement')"
 							value="concat('Displaying first ', instance('snac-query')/count, ' of ', string($total), ' results.')"/>
 					</xforms:action>
-					
+
 					<!-- initiate metadata check after a read -->
 					<xforms:action if="instance('snac-query')/command = 'read'">
 						<xforms:setvalue ref="instance('control-instance')/constellation/id" value="instance('snac-response')/constellation/id"/>
@@ -471,7 +481,7 @@ WHERE { ?concept foaf:focus <URI> }]]></query>
 							if="instance('snac-response')/constellation/biogHists/_[not(snacControlMetadata/_/citation/uri = instance('control-instance')/uri)]"/>
 						<xforms:setvalue ref="instance('control-instance')/constellation/local_biogHist_exists" value="true()"
 							if="instance('snac-response')/constellation/biogHists/_/snacControlMetadata/_/citation/uri = instance('control-instance')/uri"/>
-						
+
 						<!-- hash encode the local biogHist that is already in the constellation -->
 						<xforms:action if="instance('control-instance')/constellation/local_biogHist_exists = true()">
 							<xforms:setvalue ref="instance('control-instance')/constellation/old_biogHist_hash"
@@ -480,13 +490,13 @@ WHERE { ?concept foaf:focus <URI> }]]></query>
 								value="digest(normalize-space(saxon:serialize(instance('doc')/eac:cpfDescription/eac:description/eac:biogHist[1], 'html')), 'MD5', 'hex')"
 							/>
 						</xforms:action>
-						
+
 						<!-- iterate through each otherRecordID to add URIs to the list -->
 						<xforms:action xxforms:iterate="instance('snac-response')/constellation/otherRecordIDs/_[matches(uri, '^https?://')]">
 							<xforms:var name="uri" select="data(context()/uri)"/>
 							<xforms:insert context="instance('control-instance')/constellation/otherRecordIDs" origin="xforms:element('uri', $uri)"/>
 						</xforms:action>
-						
+
 						<!-- set the id for the source, if it already exists -->
 						<xforms:setvalue ref="instance('control-instance')/constellation/source_id"
 							value="instance('snac-response')/constellation/sources/_[uri = instance('control-instance')/uri]/id"/>
@@ -891,7 +901,7 @@ WHERE { ?concept foaf:focus <URI> }]]></query>
 													<xforms:insert context="instance('snac-query')" origin="xforms:element('command', 'read')"/>
 													<xforms:insert context="instance('snac-query')"
 														origin="xforms:element('arkid', data(instance('doc')/eac:cpfDescription/eac:identity/eac:entityId[matches(., '^http://n2t\.net/ark:/99166/[A-Za-z0-9]+$')]))"/>
-													<xforms:send submission="query-snac"/>													
+													<xforms:send submission="query-snac"/>
 													<xforms:toggle case="create-update-constellation"/>
 												</xforms:action>
 											</xforms:action>
@@ -1332,7 +1342,7 @@ WHERE { ?concept foaf:focus <URI> }]]></query>
 																	nodeset="./child::node()[last()]"
 																	origin="xforms:element('text', data(instance('config')/snac/source))"/>
 															</xforms:action>
-														</xforms:action>														
+														</xforms:action>
 
 														<!-- insert new sameAs URIs from other entityIDs -->
 														<xforms:action
@@ -1553,6 +1563,13 @@ WHERE { ?concept foaf:focus <URI> }]]></query>
 																	nodeset="./child::node()[last()]" origin="instance('snacID-template')"/>
 																<xforms:setvalue ref="instance('doc')/eac:cpfDescription/eac:identity/eac:entityId[last()]"
 																	value="instance('snac-response')/constellation/id"/>
+
+																<!-- insert a provenance event -->
+																<xforms:insert context="instance('doc')/eac:control/eac:maintenanceHistory"
+																	nodeset="./child::node()[last()]" origin="instance('maintenanceEvent-template')"/>
+																<xforms:setvalue
+																	ref="instance('temp-doc')/eac:control/eac:maintenanceHistory/eac:maintenanceEvent[last()]/eac:eventDateTime/@standardDateTime"
+																	value="current-dateTime()"/>																
 															</xforms:action>
 
 															<!-- save the document -->
