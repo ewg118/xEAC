@@ -99,11 +99,11 @@
 			</xforms:instance>
 			
 			<xforms:instance id="maintenanceEvent-template" xxforms:exclude-result-prefixes="#all">
-				<maintenanceEvent>
+				<maintenanceEvent xmlns="urn:isbn:1-931666-33-4">
 					<eventType>revised</eventType>
 					<eventDateTime standardDateTime=""/>
-					<agentType>machine</agentType>
-					<agent>xEAC</agent>
+					<agentType>human</agentType>
+					<agent/>
 					<eventDescription>Metadata created or updated in SNAC. Constellation ID added to EAC-CPF Record.</eventDescription>
 				</maintenanceEvent>
 			</xforms:instance>
@@ -1568,8 +1568,11 @@ WHERE { ?concept foaf:focus <URI> }]]></query>
 																<xforms:insert context="instance('doc')/eac:control/eac:maintenanceHistory"
 																	nodeset="./child::node()[last()]" origin="instance('maintenanceEvent-template')"/>
 																<xforms:setvalue
-																	ref="instance('temp-doc')/eac:control/eac:maintenanceHistory/eac:maintenanceEvent[last()]/eac:eventDateTime/@standardDateTime"
-																	value="current-dateTime()"/>																
+																	ref="instance('doc')/eac:control/eac:maintenanceHistory/eac:maintenanceEvent[last()]/eac:eventDateTime/@standardDateTime"
+																	value="current-dateTime()"/>		
+																<xforms:setvalue
+																	ref="instance('doc')/eac:control/eac:maintenanceHistory/eac:maintenanceEvent[last()]/eac:agent"
+																	value="xxforms:get-remote-user()"/>
 															</xforms:action>
 
 															<!-- save the document -->
