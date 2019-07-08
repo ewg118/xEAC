@@ -12,6 +12,7 @@
 .alert-box {
 	width:50%;
 	margin:20px auto;
+	border-radius:10px
 }
 .result_metadata {
 	border:0;
@@ -82,12 +83,13 @@
 .xforms-output {
 	margin:0;
 }
-.xforms-output-output {
-	padding:0;
-	line-height:inherit;
+.orbeon .xforms-output output[role=textbox] {
 	display:inline;
 	font-size:inherit;
-	color:inherit
+	border:none;
+	background-color:white;
+	cursor:default;
+	white-space:normal;
 }
 .xforms-trigger {
 	text-decoration:none;
