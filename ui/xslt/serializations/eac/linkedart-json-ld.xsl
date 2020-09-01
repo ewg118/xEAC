@@ -24,28 +24,6 @@
 
 	<xsl:variable name="type" select="/content/eac:eac-cpf/eac:cpfDescription/eac:identity/eac:entityType"/>
 
-	<!-- get dynasty/organization and skos:broader RDF -->
-	<!--<xsl:variable name="rdf" as="element()*">
-		<rdf:RDF xmlns:dcterms="http://purl.org/dc/terms/" xmlns:nm="http://nomisma.org/id/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-			xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#" xmlns:skos="http://www.w3.org/2004/02/skos/core#"
-			xmlns:geo="http://www.w3.org/2003/01/geo/wgs84_pos#" xmlns:foaf="http://xmlns.com/foaf/0.1/" xmlns:org="http://www.w3.org/ns/org#"
-			xmlns:nomisma="http://nomisma.org/" xmlns:nmo="http://nomisma.org/ontology#">
-			<xsl:variable name="id-param">
-				<xsl:for-each
-					select="
-						distinct-values(descendant::org:memberOf/@rdf:resource | descendant::org:organization/@rdf:resource | descendant::skos:broader/@rdf:resource)">
-					<xsl:value-of select="substring-after(., 'id/')"/>
-					<xsl:if test="not(position() = last())">
-						<xsl:text>|</xsl:text>
-					</xsl:if>
-				</xsl:for-each>
-			</xsl:variable>
-
-			<xsl:variable name="rdf_url" select="concat('http://nomisma.org/apis/getRdf?identifiers=', encode-for-uri($id-param))"/>
-			<xsl:copy-of select="document($rdf_url)/rdf:RDF/*"/>
-		</rdf:RDF>
-	</xsl:variable>-->
-
 	<xsl:template match="/">
 		<xsl:variable name="model" as="element()*">
 			<_object>
