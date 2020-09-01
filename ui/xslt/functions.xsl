@@ -108,47 +108,29 @@
 	</xsl:function>
 	
 	<!-- ***** Functions for linked.art JSON-LD serialization ***** -->
-	<!-- expand the @standardDate into a fully compliant xs:dateTime -->
-	<xsl:function name="xeac:expandDatetoDateTime">
+	<!-- parse @standardDate or @standardDateTime -->
+	<xsl:function name="xeac:expandDate">
 		<xsl:param name="date"/>
-		<xsl:param name="range"/>
-		
-		<xsl:variable name="time" select="if ($range = 'begin') then 'T00:00:00Z' else 'T23:59:59Z'"/>
 		
 		<!-- the data should be assumed to be XSD 1.0 compliant, which means that in order to make BC dates compliant to ISO 8601/XSD 1.1, 
 			a year should be added mathematically so that 1 BC is "0000" in the JSON output -->
+		
 		<xsl:choose>
 			<xsl:when test="substring($date, 1, 1) = '-'">
-				<xsl:choose>
-					<xsl:when test="$date castable as xs:gYear">
-						<xsl:value-of select="concat(xs:date(concat($date, if ($range = 'begin') then '-01-01' else '-12-31')) + xs:dayTimeDuration('P365DT0M'), $time)"/>
-					</xsl:when>
-					<xsl:when test="$date castable as xs:gYearMonth">
-						<xsl:value-of select="concat(xs:date(concat($date, if ($range = 'begin') then '-01' else '-31')) + xs:dayTimeDuration('P365DT0M'), $time)"/>
-					</xsl:when>
-					<xsl:when test="$date castable as xs:date">
-						<xsl:value-of select="concat(xs:date($date) + xs:dayTimeDuration('P365DT0M'), $time)"/>
-					</xsl:when>
-					<xsl:when test="$date castable as xs:dateTime">
-						<xsl:value-of select="$date"/>
-					</xsl:when>
-				</xsl:choose>
+				
+				<xsl:variable name="pieces" select="tokenize(substring($date, 2), '-')"/>				
+				<xsl:variable name="new-year" select="format-number((number($pieces[1]) * -1) + 1, '0000')"/>
+				
+				<xsl:value-of select="concat('-', $new-year)"/>
+				<xsl:if test="string($pieces[2])">
+					<xsl:value-of select="concat('-', $pieces[2])"/>
+				</xsl:if>
+				<xsl:if test="string($pieces[3])">
+					<xsl:value-of select="concat('-', $pieces[3])"/>
+				</xsl:if>
 			</xsl:when>
 			<xsl:otherwise>
-				<xsl:choose>
-					<xsl:when test="$date castable as xs:gYear">
-						<xsl:value-of select="concat($date, if ($range = 'begin') then '-01-01' else '-12-31', $time)"/>
-					</xsl:when>
-					<xsl:when test="$date castable as xs:gYearMonth">
-						<xsl:value-of select="concat($date, if ($range = 'begin') then '-01' else '-31', $time)"/>
-					</xsl:when>
-					<xsl:when test="$date castable as xs:date">
-						<xsl:value-of select="concat($date, $time)"/>
-					</xsl:when>
-					<xsl:when test="$date castable as xs:dateTime">
-						<xsl:value-of select="$date"/>
-					</xsl:when>
-				</xsl:choose>
+				<xsl:value-of select="$date"/>
 			</xsl:otherwise>
 		</xsl:choose>		
 	</xsl:function>

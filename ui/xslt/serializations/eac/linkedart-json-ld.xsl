@@ -2,9 +2,8 @@
 <!-- Author: Ethan Gruber
 	Date: August 2020
 	Function: Transform Nomisma RDF into Linked Art JSON-LD. Query broader concepts -->
-<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:eac="urn:isbn:1-931666-33-4"
-	xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xeac="https://github.com/ewg118/xEAC"
-	xmlns:res="http://www.w3.org/2005/sparql-results#" xmlns:xs="http://www.w3.org/2001/XMLSchema"
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:eac="urn:isbn:1-931666-33-4" xmlns:xlink="http://www.w3.org/1999/xlink"
+	xmlns:xeac="https://github.com/ewg118/xEAC" xmlns:res="http://www.w3.org/2005/sparql-results#" xmlns:xs="http://www.w3.org/2001/XMLSchema"
 	exclude-result-prefixes="#all" version="2.0">
 	<xsl:include href="../json/json-metamodel.xsl"/>
 	<xsl:include href="../../functions.xsl"/>
@@ -22,7 +21,7 @@
 			</xsl:otherwise>
 		</xsl:choose>
 	</xsl:variable>
-	
+
 	<xsl:variable name="type" select="/content/eac:eac-cpf/eac:cpfDescription/eac:identity/eac:entityType"/>
 
 	<!-- get dynasty/organization and skos:broader RDF -->
@@ -63,7 +62,11 @@
 			<xsl:value-of select="$recordURI"/>
 		</id>
 		<type>
-			<xsl:value-of select="if ($type = 'person') then 'Person' else 'Group'"/>
+			<xsl:value-of select="
+					if ($type = 'person') then
+						'Person'
+					else
+						'Group'"/>
 		</type>
 		<_label>
 			<xsl:value-of select="descendant::eac:nameEntry[1]/eac:part"/>
@@ -88,94 +91,14 @@
 				</_object>
 			</_array>
 		</identified_by>
-		
+
 		<xsl:apply-templates select="eac:cpfDescription"/>
-
-		<!-- birth and death events for a Person -->
-		<!--<xsl:if test="$type = 'person'">
-			
-			<xsl:if test="bio:birth">
-				<xsl:variable name="uri" select="bio:birth/@rdf:resource"/>
-				<xsl:apply-templates select="/content/rdf:RDF/*[@rdf:about = $uri]"/>
-			</xsl:if>
-			<xsl:if test="bio:death">
-				<xsl:variable name="uri" select="bio:death/@rdf:resource"/>
-				<xsl:apply-templates select="/content/rdf:RDF/*[@rdf:about = $uri]"/>
-			</xsl:if>
-		</xsl:if>-->
-
-		<!-- creation and dissolution for Groups -->
-		<!--<xsl:if test="$type = 'foaf:Organization' or $type = 'foaf:Group' or $type = 'rdac:Family'">
-			<xsl:if test="/content/rdf:RDF/org:Membership[nmo:hasStartDate]">
-				<xsl:variable name="dates">
-					<xsl:for-each select="//nmo:hasStartDate">
-						<xsl:sort data-type="number" order="ascending"/>
-
-						<xsl:value-of select="."/>
-					</xsl:for-each>
-				</xsl:variable>
-
-				<formed_by>
-					<_object>
-						<type>Formation</type>
-						<_label>Start Date</_label>
-						<timespan>
-							<_object>
-								<type>TimeSpan</type>
-								<begin_of_the_begin>
-									<xsl:value-of select="xeac:expandDatetoDateTime($dates[1], 'begin')"/>
-								</begin_of_the_begin>
-								<end_of_the_end>
-									<xsl:value-of select="xeac:expandDatetoDateTime($dates[1], 'end')"/>
-								</end_of_the_end>
-							</_object>
-						</timespan>
-					</_object>
-				</formed_by>
-			</xsl:if>
-
-			<xsl:if test="/content/rdf:RDF/org:Membership[nmo:hasEndDate]">
-				<xsl:variable name="dates">
-					<xsl:for-each select="//nmo:hasEndDate">
-						<xsl:sort data-type="number" order="ascending"/>
-
-						<xsl:value-of select="."/>
-					</xsl:for-each>
-				</xsl:variable>
-
-				<dissolved_by>
-					<_object>
-						<type>Dissolution</type>
-						<_label>End Date</_label>
-						<timespan>
-							<_object>
-								<type>TimeSpan</type>
-								<begin_of_the_begin>
-									<xsl:value-of select="xeac:expandDatetoDateTime($dates[last()], 'begin')"/>
-								</begin_of_the_begin>
-								<end_of_the_end>
-									<xsl:value-of select="xeac:expandDatetoDateTime($dates[last()], 'end')"/>
-								</end_of_the_end>
-							</_object>
-						</timespan>
-					</_object>
-				</dissolved_by>
-			</xsl:if>
-		</xsl:if>-->
-
-		<!--<xsl:if test="/content/rdf:RDF/org:Membership[org:organization] or org:memberOf">
-			<member_of>
-				<_array>
-					<xsl:apply-templates select="//org:Membership[org:organization] | org:memberOf"/>
-				</_array>
-			</member_of>
-		</xsl:if>-->
 	</xsl:template>
-	
+
 	<xsl:template match="eac:cpfDescription">
-		<xsl:apply-templates select="eac:identity | eac:description"/>
+		<xsl:apply-templates select="eac:identity | eac:description | eac:relations"/>
 	</xsl:template>
-	
+
 	<xsl:template match="eac:identity">
 		<xsl:if test="eac:entityId[@localType = 'skos:exactMatch']">
 			<exact_match>
@@ -185,8 +108,10 @@
 			</exact_match>
 		</xsl:if>
 	</xsl:template>
-	
+
 	<xsl:template match="eac:description">
+		<xsl:apply-templates select="eac:existDates[@localType = 'xeac:life']"/>
+
 		<xsl:if test="eac:biogHist/eac:abstract">
 			<referred_to_by>
 				<_array>
@@ -194,9 +119,8 @@
 				</_array>
 			</referred_to_by>
 		</xsl:if>
-		
 	</xsl:template>
-	
+
 	<!-- definitions as brief text statements -->
 	<xsl:template match="eac:abstract">
 		<_object>
@@ -218,7 +142,7 @@
 								<_label>Description</_label>
 							</xsl:otherwise>
 						</xsl:choose>
-						
+
 						<classified_as>
 							<_array>
 								<_object>
@@ -233,58 +157,75 @@
 			</classified_as>
 		</_object>
 	</xsl:template>
-		
-	
 
-	<!-- groups and dynasties -->
-	<!--<xsl:template match="org:Membership">
-		<xsl:if test="not(org:organization/@rdf:resource = preceding::org:Membership/org:organization/@rdf:resource)">
-			<xsl:variable name="uri" select="org:organization/@rdf:resource"/>
-
-			<xsl:apply-templates select="$rdf//*[@rdf:about = $uri]" mode="membership"/>
+	<xsl:template match="eac:relations">		
+		<xsl:if test="eac:cpfRelation[string(@xlink:href) and @xlink:arcrole = 'org:memberOf']">
+			<member_of>
+				<_array>
+					<xsl:apply-templates select="eac:cpfRelation[@xlink:href and @xlink:arcrole = 'org:memberOf']"/>
+				</_array>
+			</member_of>
 		</xsl:if>
+		<xsl:if test="eac:cpfRelation[string(@xlink:href) and @xlink:arcrole = 'org:hasMember']">
+			<member>
+				<_array>
+					<xsl:apply-templates select="eac:cpfRelation[@xlink:href and @xlink:arcrole = 'org:hasMember']"/>
+				</_array>
+			</member>
+		</xsl:if>		
 	</xsl:template>
 
-	<xsl:template match="org:memberOf">
-		<xsl:variable name="uri" select="@rdf:resource"/>
-
-		<xsl:apply-templates select="$rdf//*[@rdf:about = $uri]" mode="membership"/>
-	</xsl:template>-->
-
-	<!--<xsl:template match="*" mode="membership">
+	<xsl:template match="eac:cpfRelation">
 		<_object>
-			<type>Group</type>
+			<type>
+				<xsl:choose>
+					<xsl:when test="@xlink:arcrole = 'org:memberOf'">Group</xsl:when>
+					<xsl:when test="@xlink:arcrole = 'org:hasMember'">Person</xsl:when>
+				</xsl:choose>
+			</type>
 			<id>
-				<xsl:value-of select="@rdf:about"/>
+				<xsl:choose>
+					<xsl:when test="matches(@xlink:href, '^https?://')">
+						<xsl:value-of select="@xlink:href"/>
+					</xsl:when>
+					<xsl:otherwise>
+						<xsl:choose>
+							<xsl:when test="string(/content/config/uri_space)">
+								<xsl:value-of select="concat(/content/config/uri_space, @xlink:href)"/>
+							</xsl:when>
+							<xsl:otherwise>
+								<xsl:value-of select="concat($url, 'id/', @xlink:href)"/>
+							</xsl:otherwise>
+						</xsl:choose>
+					</xsl:otherwise>
+				</xsl:choose>
 			</id>
 			<_label>
-				<xsl:value-of select="skos:prefLabel[@xml:lang = 'en']"/>
+				<xsl:value-of select="normalize-space(.)"/>
 			</_label>
-			<classified_as>
-				<_array>
-					<_object>
-						<type>Type</type>
-						<xsl:choose>
-							<xsl:when test="self::foaf:Organization">
-								<id>http://vocab.getty.edu/aat/300387047</id>
-								<_label>political entities</_label>
-							</xsl:when>
-							<xsl:when test="self::foaf:Group">
-								<id>http://vocab.getty.edu/aat/300387353</id>
-								<_label>groups of political entities</_label>
-							</xsl:when>
-							<xsl:when test="self::rdac:Family">
-								<id>http://vocab.getty.edu/aat/300386176</id>
-								<_label>dynasties</_label>
-							</xsl:when>
-						</xsl:choose>
-					</_object>
-				</_array>
-			</classified_as>
+			
+			<!-- commenting out classification for now since the organizations don't have types in EAC-CPF -->
+			<!--<xsl:if test="not(@xlink:role = 'foaf:Person')">
+				<classified_as>
+					<_array>
+						<_object>
+							<type>Type</type>
+							<xsl:choose>
+								<xsl:when test="@xlink:role = 'org:Organization' or @xlink:role = 'foaf:Organization'">
+									<id>http://vocab.getty.edu/aat/300387047</id>
+									<_label>political entities</_label>
+								</xsl:when>
+								<xsl:otherwise>
+									<id>http://vocab.getty.edu/aat/300055474</id>
+									<_label>families (kinship groups)</_label>
+								</xsl:otherwise>
+							</xsl:choose>
+						</_object>
+					</_array>
+				</classified_as>
+			</xsl:if>-->			
 		</_object>
-	</xsl:template>-->
-
-	
+	</xsl:template>
 
 	<!-- matching terms as an array of URIs -->
 	<xsl:template match="eac:entityId[@localType = 'skos:exactMatch']">
@@ -293,30 +234,120 @@
 		</_>
 	</xsl:template>
 
-	<!-- geographic coordinates -->
-	
+	<!-- create associated born/died formed_by/dissolved_by properties -->
+	<xsl:template match="eac:existDates[@localType = 'xeac:life']">
+		<xsl:choose>
+			<xsl:when test="eac:date[@standardDate or @standardDateTime]">
+				<xsl:apply-templates select="eac:date"/>
+			</xsl:when>
+			<xsl:when test="eac:dateRange/eac:fromDate[@standardDate or @standardDateTime] and eac:dateRange/eac:toDate[@standardDate or @standardDateTime]">
+				<xsl:apply-templates select="eac:dateRange/eac:fromDate | eac:dateRange/eac:toDate"/>
+			</xsl:when>
+		</xsl:choose>
+	</xsl:template>
 
-	<!-- birth and death for people -->
-	<!--<xsl:template match="bio:Birth | bio:Death">
-		<xsl:element name="{if (self::bio:Birth) then 'born' else 'died'}">
+	<xsl:template match="eac:date">
+		<!-- unlikely to see, but a person or organization with a single date of existence -->
+
+		<xsl:call-template name="render_date">
+			<xsl:with-param name="date" select="
+					if (@standardDate) then
+						@standardDate
+					else
+						@standardDateTime"/>
+			<xsl:with-param name="range">begin</xsl:with-param>
+			<xsl:with-param name="element">
+				<xsl:choose>
+					<xsl:when test="$type = 'person'">born</xsl:when>
+					<xsl:otherwise>formed_by</xsl:otherwise>
+				</xsl:choose>
+			</xsl:with-param>
+		</xsl:call-template>
+
+		<xsl:call-template name="render_date">
+			<xsl:with-param name="date" select="
+					if (@standardDate) then
+						@standardDate
+					else
+						@standardDateTime"/>
+			<xsl:with-param name="range">end</xsl:with-param>
+			<xsl:with-param name="element">
+				<xsl:choose>
+					<xsl:when test="$type = 'person'">died</xsl:when>
+					<xsl:otherwise>dissolved_by</xsl:otherwise>
+				</xsl:choose>
+			</xsl:with-param>
+		</xsl:call-template>
+	</xsl:template>
+
+	<xsl:template match="eac:fromDate">
+		<xsl:call-template name="render_date">
+			<xsl:with-param name="date" select="
+					if (@standardDate) then
+						@standardDate
+					else
+						@standardDateTime"/>
+			<xsl:with-param name="range">begin</xsl:with-param>
+			<xsl:with-param name="element">
+				<xsl:choose>
+					<xsl:when test="$type = 'person'">born</xsl:when>
+					<xsl:otherwise>formed_by</xsl:otherwise>
+				</xsl:choose>
+			</xsl:with-param>
+		</xsl:call-template>
+	</xsl:template>
+
+	<xsl:template match="eac:toDate">
+		<xsl:call-template name="render_date">
+			<xsl:with-param name="date" select="
+					if (@standardDate) then
+						@standardDate
+					else
+						@standardDateTime"/>
+			<xsl:with-param name="range">end</xsl:with-param>
+			<xsl:with-param name="element">
+				<xsl:choose>
+					<xsl:when test="$type = 'person'">died</xsl:when>
+					<xsl:otherwise>dissolved_by</xsl:otherwise>
+				</xsl:choose>
+			</xsl:with-param>
+		</xsl:call-template>
+	</xsl:template>
+
+	<xsl:template name="render_date">
+		<xsl:param name="element"/>
+		<xsl:param name="date"/>
+		<xsl:param name="range"/>
+
+		<xsl:element name="{$element}">
 			<_object>
-				<id>
-					<xsl:value-of select="@rdf:about"/>
-				</id>
-				<type>Death</type>
+				<type>
+					<xsl:choose>
+						<xsl:when test="$element = 'born'">Birth</xsl:when>
+						<xsl:when test="$element = 'died'">Death</xsl:when>
+						<xsl:when test="$element = 'formed_by'">Formed By</xsl:when>
+						<xsl:when test="$element = 'dissolved_by'">Dissolution</xsl:when>
+					</xsl:choose>
+				</type>
+				<_label>
+					<xsl:choose>
+						<xsl:when test="$range = 'begin'">Start Date</xsl:when>
+						<xsl:when test="$range = 'end'">End Date</xsl:when>
+					</xsl:choose>
+				</_label>
 				<timespan>
 					<_object>
 						<type>TimeSpan</type>
 						<begin_of_the_begin>
-							<xsl:value-of select="nomisma:expandDatetoDateTime(dcterms:date, 'begin')"/>
+							<xsl:value-of select="xeac:expandDate($date)"/>
 						</begin_of_the_begin>
 						<end_of_the_end>
-							<xsl:value-of select="nomisma:expandDatetoDateTime(dcterms:date, 'end')"/>
+							<xsl:value-of select="xeac:expandDate($date)"/>
 						</end_of_the_end>
 					</_object>
 				</timespan>
 			</_object>
 		</xsl:element>
-	</xsl:template>-->
+	</xsl:template>
 
 </xsl:stylesheet>
