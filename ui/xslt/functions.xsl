@@ -106,8 +106,52 @@
 		<xsl:value-of select="replace($uri, $namespaces//namespace[contains($uri, @uri)]/@uri, concat($namespaces//namespace[contains($uri, @uri)]/@prefix, ':'))"/>
 
 	</xsl:function>
+	
+	<!-- ***** Functions for linked.art JSON-LD serialization ***** -->
+	<!-- parse @standardDate or @standardDateTime -->
+	<xsl:function name="xeac:expandDate">
+		<xsl:param name="date"/>
+		
+		<!-- the data should be assumed to be XSD 1.0 compliant, which means that in order to make BC dates compliant to ISO 8601/XSD 1.1, 
+			a year should be added mathematically so that 1 BC is "0000" in the JSON output -->
+		
+		<xsl:choose>
+			<xsl:when test="substring($date, 1, 1) = '-'">
+				
+				<xsl:variable name="pieces" select="tokenize(substring($date, 2), '-')"/>				
+				<xsl:variable name="new-year" select="format-number((number($pieces[1]) * -1) + 1, '0000')"/>
+				
+				<xsl:value-of select="concat('-', $new-year)"/>
+				<xsl:if test="string($pieces[2])">
+					<xsl:value-of select="concat('-', $pieces[2])"/>
+				</xsl:if>
+				<xsl:if test="string($pieces[3])">
+					<xsl:value-of select="concat('-', $pieces[3])"/>
+				</xsl:if>
+			</xsl:when>
+			<xsl:otherwise>
+				<xsl:value-of select="$date"/>
+			</xsl:otherwise>
+		</xsl:choose>		
+	</xsl:function>
 
 	<!-- ********************************** TEMPLATES ************************************ -->
+	<xsl:template name="xeac:evaluateDatatype">
+		<xsl:param name="val"/>
+		
+		<xsl:choose>
+			<!-- metadata fields must be a string -->
+			<xsl:when test="ancestor::metadata or self::label">
+				<xsl:value-of select="concat('&#x022;', replace($val, '&#x022;', '\\&#x022;'), '&#x022;')"/>
+			</xsl:when>
+			<xsl:when test="number($val)">
+				<xsl:value-of select="$val"/>
+			</xsl:when>
+			<xsl:otherwise>
+				<xsl:value-of select="concat('&#x022;', replace($val, '&#x022;', '\\&#x022;'), '&#x022;')"/>
+			</xsl:otherwise>
+		</xsl:choose>
+	</xsl:template>
 
 	<xsl:template name="multifields">
 		<xsl:param name="field"/>

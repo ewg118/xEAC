@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-	Copyright (C) 2010 Ethan Gruber
-	EADitor: http://code.google.com/p/eaditor/
-	Apache License 2.0: http://code.google.com/p/eaditor/
-	
+	Author: Ethan Gruber
+	Date Last Modified: August 2020
+	Function: Serialize EAC-CPF into HTML, including conditionals to execute other SPARQL queries to enhance page context. Use HTTP serializer to add Link headers
 -->
 <p:config xmlns:p="http://www.orbeon.com/oxf/pipeline"
 	xmlns:oxf="http://www.orbeon.com/oxf/processors">
@@ -138,14 +137,13 @@
 		</p:otherwise>
 	</p:choose>
 	
-	<!--<p:processor name="oxf:unsafe-xslt">
-		<p:input name="request" href="#request"/>		
-		<p:input name="data" href="aggregate('content', #data, #config, #sparql-enabled)"/>
-		<p:input name="config" href="../../../../ui/xslt/serializations/eac/html.xsl"/>
-		<p:output name="data" id="model"/>
-	</p:processor>-->
+	<p:processor name="oxf:pipeline">
+		<p:input name="data" href="#model"/>
+		<p:input name="config" href="../../../controllers/http-headers.xpl"/>
+		<p:output name="data" ref="data"/>
+	</p:processor>
 	
-	<p:processor name="oxf:html-serializer">
+	<!--<p:processor name="oxf:html-serializer">
 		<p:input name="data" href="#model"/>
 		<p:input name="config">
 			<config>
@@ -157,5 +155,5 @@
 			</config>
 		</p:input>
 		<p:output name="data" ref="data"/>
-	</p:processor>
+	</p:processor>-->
 </p:config>
