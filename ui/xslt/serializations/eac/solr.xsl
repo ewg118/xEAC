@@ -23,17 +23,10 @@
 				<xsl:choose>
 					<xsl:when test="string($modified)">
 						<!-- if the timezone modifier is already the last character of the @standardDateTime-->
-						<xsl:choose>
-							<xsl:when test="substring($modified, string-length($modified), 1) = 'Z'">
-								<xsl:value-of select="$modified"/>
-							</xsl:when>
-							<xsl:otherwise>
-								<xsl:value-of select="concat($modified, 'Z')"/>
-							</xsl:otherwise>
-						</xsl:choose>
+						<xsl:value-of select="format-dateTime(xs:dateTime($modified), '[Y0001]-[M01]-[D01]T[h01]:[m01]:[s01]Z')"/>
 					</xsl:when>
 					<xsl:otherwise>
-						<xsl:value-of select="if(contains(string(current-dateTime()), 'Z')) then current-dateTime() else concat(string(current-dateTime()), 'Z')"/>
+						<xsl:value-of select="format-dateTime(current-dateTime(), '[Y0001]-[M01]-[D01]T[h01]:[m01]:[s01]Z')"/>
 					</xsl:otherwise>
 				</xsl:choose>
 			</field>
