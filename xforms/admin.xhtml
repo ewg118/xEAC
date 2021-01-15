@@ -52,13 +52,13 @@
 
 			<xforms:instance id="config-template" xxforms:exclude-result-prefixes="#all">
 				<config version="18.07" xmlns="">
-					<geonames_api_key></geonames_api_key>
-					<mapboxKey></mapboxKey>
 					<title>xEAC</title>
 					<description>xEAC is an open source XForms framework for creating, managing, and publishing EAC-CPF collections.</description>
-					<solr_published>http://localhost:8080/solr/xeac-published/</solr_published>
+					<solr_published>http://localhost:8983/solr/xeac/</solr_published>
 					<url>http://localhost:8080/orbeon/xeac/</url>
 					<uri_space></uri_space>
+					<geonames_api_key></geonames_api_key>
+					<mapboxKey></mapboxKey>
 					<sparql>
 						<endpoint>false</endpoint>
 						<update></update>
@@ -68,8 +68,8 @@
 					<snac>
 						<api>http://snac-dev.iath.virginia.edu/api/</api>
 						<repository_ark></repository_ark>
-						<repository_constellation_id></repository_constellation_id>						
-						<source/>
+						<repository_constellation_id></repository_constellation_id>
+						<source></source>
 						<user type="object">
 							<userid></userid>
 							<userName></userName>
@@ -204,10 +204,6 @@
 
 			<xforms:instance id="doc" xxforms:exclude-result-prefixes="#all">
 				<eac-cpf xmlns=""></eac-cpf>
-			</xforms:instance>
-
-			<xforms:instance id="kml" xxforms:exclude-result-prefixes="#all">
-				<kml></kml>
 			</xforms:instance>
 
 			<!-- xquery -->
@@ -476,16 +472,6 @@ UNION { ?s rdf:type skos:Concept ; foaf:focus ?entity . ?s ?p ?o }}]]>
 				<xforms:setvalue ev:event="xforms-submit-done" ref="instance('control-instance')/status">EAC-CPF record successfully deleted.</xforms:setvalue>
 			</xforms:submission>
 
-			<!-- save KML -->
-			<xforms:submission id="save-kml" ref="instance('kml')"
-				action="{instance('exist-config')/url}xeac/kml/{instance('doc')/eac:control/eac:recordId}.kml" method="put" replace="none"
-				xxforms:username="{instance('exist-config')/username}" xxforms:password="{instance('exist-config')/password}">
-				<xforms:message ev:event="xforms-submit-error" level="modal">Error Saving KML.</xforms:message>
-			</xforms:submission>
-
-			<xforms:submission id="delete-kml" action="{instance('exist-config')/url}xeac/kml/{instance('control-instance')/id}.kml" method="delete"
-				replace="none" xxforms:username="{instance('exist-config')/username}" xxforms:password="{instance('exist-config')/password}"/>
-
 			<!-- ************************* SOLR SUBMISSIONS ************************** -->
 			<!-- access service to read in pre-transformed solr doc -->
 			<xforms:submission id="eac-to-solr" method="get" replace="instance" instance="addIndex" serialization="none"
@@ -501,12 +487,14 @@ UNION { ?s rdf:type skos:Concept ; foaf:focus ?entity . ?s ?p ?o }}]]>
 				<xforms:message ev:event="xforms-submit-error" level="modal">Data Failed to POST to Solr. Index may be offline or URL is
 					incorrect.</xforms:message>
 			</xforms:submission>
+
 			<!-- delete from Solr -->
 			<xforms:submission id="delete-solr-doc" action="{instance('control-instance')/solr-core}update" ref="instance('deleteId')" instance="deleteId"
 				replace="none" method="post">
 				<xforms:send ev:event="xforms-submit-done" submission="commit"/>
 				<xforms:message ev:event="xforms-submit-error" level="modal">Data Failed to POST to Solr.</xforms:message>
 			</xforms:submission>
+
 			<xforms:submission id="delete-all" action="{instance('control-instance')/solr-core}update" ref="instance('deleteAll')" instance="deleteAll"
 				replace="none" method="post">
 				<xforms:send ev:event="xforms-submit-done" submission="commit"/>
@@ -612,13 +600,7 @@ UNION { ?s rdf:type skos:Concept ; foaf:focus ?entity . ?s ?p ?o }}]]>
 												<xforms:label>Unpublish All Records</xforms:label>
 												<xforms:dispatch target="unpublish-all" name="fr-show" ev:event="DOMActivate"/>
 											</xforms:trigger>
-										</li>
-										<li>
-											<xforms:trigger appearance="minimal">
-												<xforms:label>Generate KML for All Records</xforms:label>
-												<xforms:dispatch target="generate-kml" name="fr-show" ev:event="DOMActivate"/>
-											</xforms:trigger>
-										</li>
+										</li>										
 									</ul>
 								</div>
 								<xforms:group ref="instance('control-instance')[number(numFound) &gt; 0]">
@@ -832,7 +814,7 @@ UNION { ?s rdf:type skos:Concept ; foaf:focus ?entity . ?s ?p ?o }}]]>
 															<div class="text-center">
 																<xforms:var name="action"
 																	select="if (string(snacID)) then 'refresh' else if (string(ark)) then 'merge' else 'new'"/>
-																	<xforms:trigger appearance="minimal">
+																<xforms:trigger appearance="minimal">
 																	<xforms:label><span
 																			class="glyphicon glyphicon-{if ($action = 'refresh') then 'refresh' else if ($action = 'merge') then 'link' else 'file'}"
 																		></span></xforms:label>
@@ -860,10 +842,6 @@ UNION { ?s rdf:type skos:Concept ; foaf:focus ?entity . ?s ?p ?o }}]]>
 																				<xforms:setvalue ref="instance('control-instance')/publicationStatus"
 																				>approved</xforms:setvalue>
 																				<xforms:send submission="load-doc"/>
-																				<!-- create kml -->
-																				<xforms:insert nodeset="instance('kml')"
-																				origin="xxforms:call-xpl('oxf:/apps/xeac/xpl/views/serializations/eac/kml.xpl', 'data', instance('doc'), 'data')"/>
-																				<xforms:send submission="save-kml"/>
 																				<!-- publish to solr -->
 																				<xforms:setvalue ref="instance('control-instance')/solr-core"
 																				value="instance('config')/solr_published"/>
@@ -1013,7 +991,7 @@ UNION { ?s rdf:type skos:Concept ; foaf:focus ?entity . ?s ?p ?o }}]]>
 							</div>
 						</xforms:case>
 					</xforms:switch>
-					<!--<fr:xforms-inspector id="orbeon-xforms-inspector"></fr:xforms-inspector>-->
+					<!--<fr:xforms-inspector id="orbeon-xforms-inspector"/>-->
 				</div>
 			</div>
 		</div>
@@ -1028,7 +1006,6 @@ UNION { ?s rdf:type skos:Concept ; foaf:focus ?entity . ?s ?p ?o }}]]>
 				<fr:label>Yes</fr:label>
 				<xforms:action ev:event="DOMActivate">
 					<xforms:send submission="delete-doc"/>
-					<xforms:send submission="delete-kml"/>
 					<xforms:setvalue ref="instance('deleteId')/query" value="concat('recordId:&#x022;', instance('control-instance')/id, '&#x022;')"/>
 					<xforms:setvalue ref="i
 						nstance('control-instance')/solr-core" value="instance('config')/solr_published"/>
@@ -1068,24 +1045,16 @@ UNION { ?s rdf:type skos:Concept ; foaf:focus ?entity . ?s ?p ?o }}]]>
 				<xforms:action ev:event="DOMActivate">
 					<xforms:setvalue ref="instance('eXist-xquery')/exist:text" value="instance('xqueries')/query[@id='publish-all']"/>
 					<xforms:send submission="xquery-collection"/>
-					<xforms:setvalue ref="instance('control-instance')/solr-core" value="instance('config')/solr_published"/>
-					<xforms:action xxforms:iterate="instance('xquery-result')/report/id">
+					<xforms:setvalue ref="instance('control-instance')/solr-core" value="instance('config')/solr_published"/> <xforms:action
+						xxforms:iterate="instance('xquery-result')/report/id">
 						<!-- publish to solr -->
 						<xforms:var name="id" select="context()"/>
 						<xforms:setvalue ref="instance('control-instance')/id" value="$id"/>
 						<!-- update publicationStatus -->
-						<xforms:setvalue ref="instance('control-instance')/publicationStatus">approved</xforms:setvalue>
-						<xforms:send submission="load-doc"/>
-						<!-- create kml -->
-						<xforms:insert nodeset="instance('kml')"
-							origin="xxforms:call-xpl('oxf:/apps/xeac/xpl/views/serializations/eac/kml.xpl', 'data', instance('doc'), 'data')"/>
-						<xforms:send submission="save-kml"/>
-						<!-- publish to solr -->
-						<xforms:setvalue ref="instance('control-instance')/solr-core" value="instance('config')/solr_published"/>
-						<xforms:send submission="eac-to-solr"/>
-					</xforms:action>
-					<!-- commit index -->
-					<xforms:send submission="commit"/>
+						<!--<xforms:setvalue ref="instance('control-instance')/publicationStatus">approved</xforms:setvalue>
+						<xforms:send submission="load-doc"/>-->
+							<xforms:send submission="eac-to-solr"/>
+					</xforms:action> <xforms:send submission="commit"/>
 					<!-- post to dump to SPARQL endpoint, if it exists -->
 					<xforms:action if="string(instance('config')/sparql/update) and string(instance('config')/sparql/store)">
 						<!-- first clear existing triples -->
@@ -1098,32 +1067,6 @@ UNION { ?s rdf:type skos:Concept ; foaf:focus ?entity . ?s ?p ?o }}]]>
 					<xforms:setvalue ref="instance('eXist-xquery')/exist:text" value="replace(instance('xqueries')/query[@id='get-objects'], 'START', '1')"/>
 					<xforms:send submission="xquery-pagination"/>
 					<xforms:setvalue ref="instance('control-instance')/status">Batch publication process completed.</xforms:setvalue>
-				</xforms:action>
-			</fr:positive-choice>
-		</fr:alert-dialog>
-		<fr:alert-dialog id="generate-kml">
-			<fr:label>Generate KML</fr:label>
-			<fr:message>This will generate KML documents for all records. It may take several minutes. Proceed?</fr:message>
-			<fr:negative-choice>
-				<fr:label>No</fr:label>
-			</fr:negative-choice>
-			<fr:positive-choice>
-				<fr:label>Yes</fr:label>
-				<xforms:action ev:event="DOMActivate">
-					<xforms:setvalue ref="instance('eXist-xquery')/exist:text" value="instance('xqueries')/query[@id='publish-all']"/>
-					<xforms:send submission="xquery-collection"/>
-					<xforms:action xxforms:iterate="instance('xquery-result')/report/id">
-						<xforms:var name="id" select="context()"/>
-						<xforms:setvalue ref="instance('control-instance')/id" value="$id"/>
-						<xforms:send submission="load-doc"/>
-						<!-- create kml -->
-						<xforms:action ev:event="xforms-submit-done">
-							<xforms:insert nodeset="instance('kml')"
-								origin="xxforms:call-xpl('oxf:/apps/xeac/xpl/views/serializations/eac/kml.xpl', 'data', instance('doc'), 'data')"/>
-							<xforms:send submission="save-kml"/>
-						</xforms:action>
-					</xforms:action>
-					<xforms:setvalue ref="instance('control-instance')/status">Process complete: KML files generated.</xforms:setvalue>
 				</xforms:action>
 			</fr:positive-choice>
 		</fr:alert-dialog>

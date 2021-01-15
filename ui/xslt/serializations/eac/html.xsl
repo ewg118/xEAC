@@ -103,9 +103,7 @@
 				<link rel="alternate" type="application/rdf+xml" href="{$url}id/{$id}.rdf"/>
 				<link rel="alternate" type="text/turtle" href="{$url}id/{$id}.ttl"/>
 				<link rel="alternate" type="application/json" href="{$url}id/{$id}.jsonld"/>
-				<link rel="alternate" type="application/tei+xml" href="{$url}id/{$id}.tei"/>
-				<link rel="alternate" type="application/vnd.google-earth.kml+xml"
-					href="{$url}id/{$id}.kml"/>
+				<link rel="alternate" type="application/tei+xml" href="{$url}id/{$id}.tei"/>				
 
 				<!-- mapping -->
 				<xsl:if test="descendant::eac:placeEntry[string(@vocabularySource)]">
@@ -414,9 +412,6 @@
 					</li>
 					<li>
 						<a href="{$id}.jsonld">JSON-LD</a>
-					</li>
-					<li>
-						<a href="{$id}.kml">KML</a>
 					</li>
 				</ul>
 				<h4>Alternative RDF</h4>
