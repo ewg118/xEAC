@@ -1,4 +1,4 @@
-<xbl:xbl xmlns="http://www.w3.org/1999/xhtml" xmlns:xforms="http://www.w3.org/2002/xforms" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:xxforms="http://orbeon.org/oxf/xml/xforms"
+<xbl:xbl xmlns="http://www.w3.org/1999/xhtml" xmlns:xforms="http://www.w3.org/2002/xforms" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:xxf="http://orbeon.org/oxf/xml/xforms"
 	xmlns:xbl="http://www.w3.org/ns/xbl" xmlns:xxbl="http://orbeon.org/oxf/xml/xbl" xmlns:exist="http://exist.sourceforge.net/NS/exist" xmlns:xeac="https://github.com/ewg118/xEAC"
 	xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:eac="urn:isbn:1-931666-33-4" xmlns:xlink="http://www.w3.org/1999/xlink">
 	<xbl:binding id="xeac-cpfRelation" element="xeac|cpfRelation">
@@ -7,7 +7,7 @@
 				<xbl:content includes="xforms|label,xforms|help,xforms|hint,xforms|alert"/>
 				<xforms:group xxbl:scope="inner">
 					<xforms:var name="binding" as="node()?">
-						<xxforms:sequence select="." xxbl:scope="outer"/>
+						<xxf:sequence select="." xxbl:scope="outer"/>
 					</xforms:var>
 
 					<xforms:group ref="$binding">
@@ -27,7 +27,7 @@
 								<xforms:label>
 									<span class="glyphicon glyphicon-plus"/>
 								</xforms:label>
-								<xxforms:show ev:event="DOMActivate" dialog="cpfRelation-objects"/>
+								<xxf:show ev:event="DOMActivate" dialog="cpfRelation-objects"/>
 							</xforms:trigger>
 							<xforms:group ref=".[string(ancestor::eac:cpfDescription/eac:identity/eac:entityType)]">
 								<xforms:trigger appearance="minimal">
@@ -41,7 +41,7 @@
 										<xforms:setvalue ref="instance('attributes')/attribute[@name='xlink:role']" value="$binding/@xlink:role"/>
 										<xforms:setvalue ref="instance('attributes')/attribute[@name='xlink:arcrole']" value="$binding/@xlink:arcrole"/>
 										<xforms:setvalue ref="instance('attributes')/attribute[@name='xlink:href']" value="$binding/@xlink:href"/>
-										<xxforms:show dialog="relation-dialog"/>
+										<xxf:show dialog="relation-dialog"/>
 									</xforms:action>
 								</xforms:trigger>
 							</xforms:group>
@@ -78,7 +78,7 @@
 								<xeac:placeEntry/>
 							</xforms:group>
 						</div>
-						<xxforms:dialog id="cpfRelation-objects" appearance="full" level="modal" close="true" draggable="true" visible="false">
+						<xxf:dialog id="cpfRelation-objects" appearance="full" level="modal" close="true" draggable="true" visible="false">
 							<xforms:label>CPF Relation Objects</xforms:label>
 							<xforms:group ref=".[count(eac:date) = 0 and count(eac:dateRange) = 0 and count(eac:dateSet) = 0]">
 								<xforms:trigger appearance="minimal">
@@ -109,7 +109,7 @@
 										<span class="glyphicon glyphicon-plus"/>Descriptive Note</xforms:label>
 									<xforms:action ev:event="DOMActivate">
 										<xforms:insert context="." origin="instance('descriptiveNote-template')" nodeset="./child::node()[last()]"/>
-										<xxforms:hide dialog="cpfRelation-objects"/>
+										<xxf:hide dialog="cpfRelation-objects"/>
 									</xforms:action>
 								</xforms:trigger>
 							</xforms:group>
@@ -119,12 +119,12 @@
 										<span class="glyphicon glyphicon-plus"/>Place Entry</xforms:label>
 									<xforms:action ev:event="DOMActivate">
 										<xforms:insert context="." origin="instance('placeEntry-template')" nodeset="./child::node()[last()]"/>
-										<xxforms:hide dialog="cpfRelation-objects"/>
+										<xxf:hide dialog="cpfRelation-objects"/>
 									</xforms:action>
 								</xforms:trigger>
 							</xforms:group>
-						</xxforms:dialog>
-						<xxforms:dialog id="relation-dialog" appearance="full" level="modal" close="false" draggable="true" visible="false">
+						</xxf:dialog>
+						<xxf:dialog id="relation-dialog" appearance="full" level="modal" close="false" draggable="true" visible="false">
 							<xforms:label>Establish Relationship</xforms:label>
 							<!-- target entity type -->
 							<div>
@@ -140,7 +140,7 @@
 										<xforms:value ref="@role"/>
 									</xforms:itemset>
 									<xforms:action ev:event="xforms-value-changed">
-										<xforms:insert context="$binding" origin="xxforms:attribute('xlink:role', '')" if="not(@xlink:role)            and
+										<xforms:insert context="$binding" origin="xxf:attribute('xlink:role', '')" if="not(@xlink:role)            and
 											string-length(instance('attributes')/attribute[@name='xlink:role']) &gt; 0"/>
 										<xforms:setvalue ref="$binding/@xlink:role" value="instance('attributes')/attribute[@name='xlink:role']"/>
 									</xforms:action>
@@ -160,7 +160,7 @@
 										<xforms:value ref="@from"/>
 									</xforms:itemset>
 									<xforms:action ev:event="xforms-value-changed">
-										<xforms:insert context="$binding" origin="xxforms:attribute('xlink:arcrole', '')" if="not(@xlink:arcrole)            and
+										<xforms:insert context="$binding" origin="xxf:attribute('xlink:arcrole', '')" if="not(@xlink:arcrole)            and
 											string-length(instance('attributes')/attribute[@name='xlink:arcrole']) &gt; 0"/>
 										<xforms:setvalue ref="$binding/@xlink:arcrole" value="instance('attributes')/attribute[@name='xlink:arcrole']"/>
 										<xforms:delete if="string-length(instance('attributes')/attribute[@name='xlink:arcrole']) = 0" context="$binding" nodeset="@xlink:arcrole"/>
@@ -226,7 +226,7 @@
 												<xforms:trigger>
 													<xforms:label>Select</xforms:label>
 													<xforms:action ev:event="DOMActivate">
-														<xforms:insert context="$binding" origin="xxforms:attribute('xlink:href', instance('attributes')/attribute[@name='xlink:href'])"
+														<xforms:insert context="$binding" origin="xxf:attribute('xlink:href', instance('attributes')/attribute[@name='xlink:href'])"
 															if="not(@xlink:href) and string-length(instance('attributes')/attribute[@name='xlink:href']) &gt; 0"/>
 														<xforms:setvalue ref="$binding/eac:relationEntry" value="instance('xquery-result')//*:record[*:id =
 															instance('attributes')/attribute[@name='xlink:href']]/*:title"/>
@@ -248,7 +248,7 @@
 											<xforms:trigger>
 												<xforms:label>Select</xforms:label>
 												<xforms:action ev:event="DOMActivate">
-													<xforms:insert context="$binding" origin="xxforms:attribute('xlink:href', instance('attributes')/attribute[@name='xlink:href'])"
+													<xforms:insert context="$binding" origin="xxf:attribute('xlink:href', instance('attributes')/attribute[@name='xlink:href'])"
 														if="not(@xlink:href) and string-length(instance('attributes')/attribute[@name='xlink:href']) &gt; 0"/>
 												</xforms:action>
 											</xforms:trigger>
@@ -259,40 +259,40 @@
 							<div style="text-align:right">
 								<xforms:trigger>
 									<xforms:action ev:event="DOMActivate">
-										<xxforms:hide dialog="relation-dialog"/>
+										<xxf:hide dialog="relation-dialog"/>
 									</xforms:action>
 									<xforms:label>Close</xforms:label>
 								</xforms:trigger>
 							</div>
-						</xxforms:dialog>
+						</xxf:dialog>
 					</xforms:group>
 
 					<!-- ********************************************************************** -->
 					<xforms:model id="cpfRelation-model" xmlns="urn:isbn:1-931666-33-4">
 
 						<!-- eac instances -->
-						<xforms:instance id="date-template" xxforms:exclude-result-prefixes="#all">
+						<xforms:instance id="date-template" xxf:exclude-result-prefixes="#all">
 							<date standardDate=""/>
 						</xforms:instance>
 
-						<xforms:instance id="dateRange-template" xxforms:exclude-result-prefixes="#all">
+						<xforms:instance id="dateRange-template" xxf:exclude-result-prefixes="#all">
 							<dateRange>
 								<fromDate standardDate=""/>
 								<toDate standardDate=""/>
 							</dateRange>
 						</xforms:instance>
 
-						<xforms:instance id="dateSet-template" xxforms:exclude-result-prefixes="#all">
+						<xforms:instance id="dateSet-template" xxf:exclude-result-prefixes="#all">
 							<dateSet/>
 						</xforms:instance>
 
-						<xforms:instance id="descriptiveNote-template" xxforms:exclude-result-prefixes="#all">
+						<xforms:instance id="descriptiveNote-template" xxf:exclude-result-prefixes="#all">
 							<descriptiveNote>
 								<p/>
 							</descriptiveNote>
 						</xforms:instance>
 
-						<xforms:instance id="placeEntry-template" xxforms:exclude-result-prefixes="#all">
+						<xforms:instance id="placeEntry-template" xxf:exclude-result-prefixes="#all">
 							<placeEntry vocabularySource=""/>
 						</xforms:instance>
 
@@ -326,17 +326,17 @@
 						</xforms:instance>
 
 						<!-- xquery -->
-						<xforms:instance id="query" xxforms:exclude-result-prefixes="#all">
+						<xforms:instance id="query" xxf:exclude-result-prefixes="#all">
 							<query/>
 						</xforms:instance>
 
-						<xforms:instance id="eXist-xquery" xxforms:exclude-result-prefixes="#all">
+						<xforms:instance id="eXist-xquery" xxf:exclude-result-prefixes="#all">
 							<exist:query>
 								<exist:text/>
 							</exist:query>
 						</xforms:instance>
 
-						<xforms:instance id="xquery" xxforms:exclude-result-prefixes="#all">
+						<xforms:instance id="xquery" xxf:exclude-result-prefixes="#all">
 							<xquery> &lt;report> { for $record in collection() return if ($record[descendant::*:entityType='ENTITYTYPE']//*:recordId[contains(., 'QUERY')] or
 								$record[descendant::*:entityType='ENTITYTYPE']//*:nameEntry/*:part[matches(., 'QUERY', 'i')]) then &lt;record> &lt;id>{ $record//*:recordId/text() }&lt;/id> &lt;title>{
 								if (string($record//*:nameEntry[@xml:lang='en'][string(*:preferredForm)][1]/*:part/text())) then
@@ -344,7 +344,7 @@
 								&lt;/report> </xquery>
 						</xforms:instance>
 
-						<xforms:instance id="xquery-result" xxforms:exclude-result-prefixes="#all">
+						<xforms:instance id="xquery-result" xxf:exclude-result-prefixes="#all">
 							<exist:result/>
 						</xforms:instance>
 
@@ -355,12 +355,12 @@
 
 						<!-- ***** SUBMISSIONS ***** -->
 						<xforms:submission id="load-config" serialization="none" method="get" action="{instance('exist-config')/url}xeac/config.xml" replace="instance" instance="config"
-							xxforms:username="{instance('exist-config')/username}" xxforms:password="{instance('exist-config')/password}">
+							xxf:username="{instance('exist-config')/username}" xxf:password="{instance('exist-config')/password}">
 							<xforms:message ev:event="xforms-submit-error" level="modal">Unable to load config.</xforms:message>
 						</xforms:submission>
 
 						<xforms:submission id="xquery-collection" ref="instance('eXist-xquery')" action="{instance('exist-config')/url}xeac/records" method="post" replace="instance"
-							instance="xquery-result" xxforms:username="{instance('exist-config')/username}" xxforms:password="{instance('exist-config')/password}">
+							instance="xquery-result" xxf:username="{instance('exist-config')/username}" xxf:password="{instance('exist-config')/password}">
 							<xforms:message ev:event="xforms-submit-error" level="modal">Errory querying eXist database.</xforms:message>
 						</xforms:submission>
 					</xforms:model>

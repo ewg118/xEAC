@@ -1,5 +1,5 @@
 <xbl:xbl xmlns="http://www.w3.org/1999/xhtml" xmlns:xforms="http://www.w3.org/2002/xforms" xmlns:ev="http://www.w3.org/2001/xml-events"
-	xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:eac="urn:isbn:1-931666-33-4" xmlns:xxforms="http://orbeon.org/oxf/xml/xforms"
+	xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:eac="urn:isbn:1-931666-33-4" xmlns:xxf="http://orbeon.org/oxf/xml/xforms"
 	xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xbl="http://www.w3.org/ns/xbl" xmlns:xxbl="http://orbeon.org/oxf/xml/xbl"
 	xmlns:xeac="https://github.com/ewg118/xEAC">
 	<xbl:binding id="xeac-query-wikidata" element="xeac|query-wikidata">
@@ -8,7 +8,7 @@
 				<xbl:content includes="xforms|label,xforms|help,xforms|hint,xforms|alert"/>
 				<xforms:group xxbl:scope="inner">
 					<xforms:var name="binding" as="node()?">
-						<xxforms:sequence select="." xxbl:scope="outer"/>
+						<xxf:sequence select="." xxbl:scope="outer"/>
 					</xforms:var>
 
 					<xforms:group ref="$binding">
@@ -16,11 +16,11 @@
 							<xforms:label><span class="glyphicon glyphicon-search"/>Wikidata</xforms:label>
 							<xforms:action ev:event="DOMActivate">
 								<xforms:setvalue ref="instance('control-instance')/entityType" value="$binding/eac:cpfDescription/eac:identity/eac:entityType"/>
-								<xxforms:show dialog="import-wikidata-dialog"/>
+								<xxf:show dialog="import-wikidata-dialog"/>
 							</xforms:action>
 						</xforms:trigger>
 
-						<xxforms:dialog id="import-wikidata-dialog" appearance="full" level="modal" close="true" draggable="true" visible="false">
+						<xxf:dialog id="import-wikidata-dialog" appearance="full" level="modal" close="true" draggable="true" visible="false">
 							<xforms:label>Import Data from Wikidata</xforms:label>
 							<div>
 								<p>Copy and paste a Wikipedia URL below to perform a lookup of the Wikidata API.</p>
@@ -104,7 +104,7 @@
 															
 															
 															<!-\- import new labels, but only ones that follow the two-digit ISO standard -\->
-															<xforms:action xxforms:iterate="instance('wikidata')//entity/labels/label[string-length(@language) = 2]">
+															<xforms:action xxf:iterate="instance('wikidata')//entity/labels/label[string-length(@language) = 2]">
 																<xforms:var name="lang" select="data(context()/@language)"/>
 																<xforms:var name="label" select="data(context()/@value)"/>
 																
@@ -176,7 +176,7 @@
 
 														<!-- iterate through claims with matching properties to link to external vocabulary systems -->
 														<xforms:action
-															xxforms:iterate="instance('wikidata')//entity/claims/property[@id='P214' or @id='P227' or @id='P213' or
+															xxf:iterate="instance('wikidata')//entity/claims/property[@id='P214' or @id='P227' or @id='P213' or
 															@id='P268' or @id='P269' or @id='P245' or @id='P244' or @id='P1225' or @id='P3430']"
 															if="instance('control-instance')/wiki-links=true()">
 
@@ -200,7 +200,7 @@
 												</xforms:action>
 
 												<!-- close dialog -->
-												<xxforms:hide dialog="import-wikidata-dialog"/>
+												<xxf:hide dialog="import-wikidata-dialog"/>
 											</xforms:action>
 										</xforms:action>
 									</xforms:action>
@@ -211,7 +211,7 @@
 								<div class="alert alert-warning" role="alert" style="margin-top:10px"><b><span class="glyphicon glyphicon-exclamation-sign"
 										/>Warning:</b> Wikipedia URL is not valid.</div>
 							</xforms:group>
-						</xxforms:dialog>
+						</xxf:dialog>
 					</xforms:group>
 
 					<!-- ***************** MODEL ***************-->
@@ -256,7 +256,7 @@
 						<!-- control -->
 
 
-						<xforms:instance id="localTypeDeclaration-template" xxforms:exclude-result-prefixes="#all">
+						<xforms:instance id="localTypeDeclaration-template" xxf:exclude-result-prefixes="#all">
 							<localTypeDeclaration xmlns="urn:isbn:1-931666-33-4">
 								<abbreviation>skos</abbreviation>
 								<citation xlink:type="simple" xlink:role="semantic" xlink:href="http://www.w3.org/2004/02/skos/core#"
@@ -264,18 +264,18 @@
 							</localTypeDeclaration>
 						</xforms:instance>
 
-						<xforms:instance id="conventionDeclaration-template" xxforms:exclude-result-prefixes="#all">
+						<xforms:instance id="conventionDeclaration-template" xxf:exclude-result-prefixes="#all">
 							<conventionDeclaration xmlns="urn:isbn:1-931666-33-4">
 								<abbreviation/>
 								<citation/>
 							</conventionDeclaration>
 						</xforms:instance>
 
-						<xforms:instance id="sources-template" xxforms:exclude-result-prefixes="#all">
+						<xforms:instance id="sources-template" xxf:exclude-result-prefixes="#all">
 							<sources xmlns="urn:isbn:1-931666-33-4"/>
 						</xforms:instance>
 
-						<xforms:instance id="source-template" xxforms:exclude-result-prefixes="#all">
+						<xforms:instance id="source-template" xxf:exclude-result-prefixes="#all">
 							<source xlink:type="simple" xlink:href="" xmlns="urn:isbn:1-931666-33-4">
 								<sourceEntry>Wikidata</sourceEntry>
 								<descriptiveNote>
@@ -285,38 +285,38 @@
 						</xforms:instance>
 
 						<!-- identity -->
-						<xforms:instance id="entityId-template" xxforms:exclude-result-prefixes="#all">
+						<xforms:instance id="entityId-template" xxf:exclude-result-prefixes="#all">
 							<entityId localType="skos:exactMatch" xmlns="urn:isbn:1-931666-33-4"/>
 						</xforms:instance>
 
-						<xforms:instance id="nameEntry-template" xxforms:exclude-result-prefixes="#all">
+						<xforms:instance id="nameEntry-template" xxf:exclude-result-prefixes="#all">
 							<nameEntry xmlns="urn:isbn:1-931666-33-4">
 								<part/>
 							</nameEntry>
 
 						</xforms:instance>
-						<xforms:instance id="authorizedForm-template" xxforms:exclude-result-prefixes="#all">
+						<xforms:instance id="authorizedForm-template" xxf:exclude-result-prefixes="#all">
 							<authorizedForm xmlns="urn:isbn:1-931666-33-4"/>
 						</xforms:instance>
 
-						<xforms:instance id="alternativeForm-template" xxforms:exclude-result-prefixes="#all">
+						<xforms:instance id="alternativeForm-template" xxf:exclude-result-prefixes="#all">
 							<alternativeForm xmlns="urn:isbn:1-931666-33-4"/>
 						</xforms:instance>
 
-						<xforms:instance id="preferredForm-template" xxforms:exclude-result-prefixes="#all">
+						<xforms:instance id="preferredForm-template" xxf:exclude-result-prefixes="#all">
 							<preferredForm xmlns="urn:isbn:1-931666-33-4"/>
 						</xforms:instance>
 
 						<!-- description -->
-						<xforms:instance id="description-template" xxforms:exclude-result-prefixes="#all">
+						<xforms:instance id="description-template" xxf:exclude-result-prefixes="#all">
 							<description xmlns="urn:isbn:1-931666-33-4"/>
 						</xforms:instance>
 
-						<xforms:instance id="existDates-template" xxforms:exclude-result-prefixes="#all">
+						<xforms:instance id="existDates-template" xxf:exclude-result-prefixes="#all">
 							<existDates xmlns="urn:isbn:1-931666-33-4"/>
 						</xforms:instance>
 
-						<xforms:instance id="dateRange-template" xxforms:exclude-result-prefixes="#all">
+						<xforms:instance id="dateRange-template" xxf:exclude-result-prefixes="#all">
 							<dateRange xmlns="urn:isbn:1-931666-33-4">
 								<fromDate standardDate=""/>
 								<toDate standardDate=""/>

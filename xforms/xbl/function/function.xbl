@@ -1,4 +1,4 @@
-<xbl:xbl xmlns="http://www.w3.org/1999/xhtml" xmlns:xforms="http://www.w3.org/2002/xforms" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:xxforms="http://orbeon.org/oxf/xml/xforms"
+<xbl:xbl xmlns="http://www.w3.org/1999/xhtml" xmlns:xforms="http://www.w3.org/2002/xforms" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:xxf="http://orbeon.org/oxf/xml/xforms"
 	xmlns:xbl="http://www.w3.org/ns/xbl" xmlns:fr="http://orbeon.org/oxf/xml/form-runner" xmlns:xxbl="http://orbeon.org/oxf/xml/xbl" xmlns:res="http://www.w3.org/2005/sparql-results#"
 	xmlns:xeac="https://github.com/ewg118/xEAC" xmlns:eac="urn:isbn:1-931666-33-4">
 	<xbl:binding id="xeac-function" element="xeac|function">
@@ -7,7 +7,7 @@
 				<xbl:content includes="xforms|label,xforms|help,xforms|hint,xforms|alert"/>
 				<xforms:group xxbl:scope="inner">
 					<xforms:var name="binding" as="node()?">
-						<xxforms:sequence select="." xxbl:scope="outer"/>
+						<xxf:sequence select="." xxbl:scope="outer"/>
 					</xforms:var>
 					<xforms:action ev:event="xforms-enabled" ev:target="#observer">
 						<xforms:action if="not(string($binding/eac:term))">
@@ -30,13 +30,13 @@
 							</xforms:group>
 							<xforms:trigger appearance="minimal">
 								<xforms:label><span class="glyphicon glyphicon-plus"/></xforms:label>
-								<xxforms:show ev:event="DOMActivate" dialog="function-objects"/>
+								<xxf:show ev:event="DOMActivate" dialog="function-objects"/>
 							</xforms:trigger>
 							<xforms:trigger appearance="minimal">
 								<xforms:delete ev:event="DOMActivate" nodeset="."/>
 								<xforms:label><span class="glyphicon glyphicon-remove"/></xforms:label>
 							</xforms:trigger>
-							<xxforms:dialog id="function-objects" appearance="full" level="modal" close="true" draggable="true" visible="false">
+							<xxf:dialog id="function-objects" appearance="full" level="modal" close="true" draggable="true" visible="false">
 								<xforms:label>Insert Element</xforms:label>
 								<xforms:group ref=".[count(eac:citation) = 0]">
 									<xforms:trigger appearance="minimal">
@@ -44,7 +44,7 @@
 											<span class="glyphicon glyphicon-plus"/>Citation</xforms:label>
 										<xforms:action ev:event="DOMActivate">
 											<xforms:insert context="." origin="instance('citation-template')"/>
-											<xxforms:hide dialog="function-objects"/>
+											<xxf:hide dialog="function-objects"/>
 										</xforms:action>
 									</xforms:trigger>
 								</xforms:group>
@@ -54,7 +54,7 @@
 											<span class="glyphicon glyphicon-plus"/>Date</xforms:label>
 										<xforms:action ev:event="DOMActivate">
 											<xforms:insert context="." origin="instance('date-template')"/>
-											<xxforms:hide dialog="function-objects"/>
+											<xxf:hide dialog="function-objects"/>
 										</xforms:action>
 									</xforms:trigger>
 									<xforms:trigger appearance="minimal">
@@ -62,7 +62,7 @@
 											<span class="glyphicon glyphicon-plus"/>Date Range</xforms:label>
 										<xforms:action ev:event="DOMActivate">
 											<xforms:insert context="." origin="instance('dateRange-template')"/>
-											<xxforms:hide dialog="function-objects"/>
+											<xxf:hide dialog="function-objects"/>
 										</xforms:action>
 									</xforms:trigger>
 									<xforms:trigger appearance="minimal">
@@ -70,7 +70,7 @@
 											<span class="glyphicon glyphicon-plus"/>Date Set</xforms:label>
 										<xforms:action ev:event="DOMActivate">
 											<xforms:insert context="." origin="instance('dateSet-template')"/>
-											<xxforms:hide dialog="function-objects"/>
+											<xxf:hide dialog="function-objects"/>
 										</xforms:action>
 									</xforms:trigger>
 								</xforms:group>
@@ -80,7 +80,7 @@
 											<span class="glyphicon glyphicon-plus"/>Descriptive Note</xforms:label>
 										<xforms:action ev:event="DOMActivate">
 											<xforms:insert context="." origin="instance('descriptiveNote-template')"/>
-											<xxforms:hide dialog="function-objects"/>
+											<xxf:hide dialog="function-objects"/>
 										</xforms:action>
 									</xforms:trigger>
 								</xforms:group>
@@ -90,11 +90,11 @@
 											<span class="glyphicon glyphicon-plus"/>Place Entry</xforms:label>
 										<xforms:action ev:event="DOMActivate">
 											<xforms:insert context="." origin="instance('placeEntry-template')"/>
-											<xxforms:hide dialog="function-objects"/>
+											<xxf:hide dialog="function-objects"/>
 										</xforms:action>
 									</xforms:trigger>
 								</xforms:group>
-							</xxforms:dialog>
+							</xxf:dialog>
 
 
 
@@ -143,7 +143,7 @@
 													<xforms:setvalue ref="instance('search-query')"/>
 													<!-- add attributes -->
 													<xforms:setvalue ref="$binding/eac:term"/>
-													<xforms:insert context="$binding/eac:term" origin="xxforms:attribute('vocabularySource', '')" if="not($binding/eac:term/@vocabularySource)"/>
+													<xforms:insert context="$binding/eac:term" origin="xxf:attribute('vocabularySource', '')" if="not($binding/eac:term/@vocabularySource)"/>
 													<xforms:toggle case="aat-search"/>
 												</xforms:action>
 												<xforms:action if=". = 'free-text'">
@@ -237,32 +237,32 @@
 					<!-- ********************************************************************** -->
 					<xforms:model id="function-model" xmlns="urn:isbn:1-931666-33-4">
 						<!-- EAC-CPF instances -->
-						<xforms:instance id="citation-template" xxforms:exclude-result-prefixes="#all">
+						<xforms:instance id="citation-template" xxf:exclude-result-prefixes="#all">
 							<citation/>
 						</xforms:instance>
 
-						<xforms:instance id="date-template" xxforms:exclude-result-prefixes="#all">
+						<xforms:instance id="date-template" xxf:exclude-result-prefixes="#all">
 							<date standardDate=""/>
 						</xforms:instance>
 
-						<xforms:instance id="dateRange-template" xxforms:exclude-result-prefixes="#all">
+						<xforms:instance id="dateRange-template" xxf:exclude-result-prefixes="#all">
 							<dateRange>
 								<fromDate standardDate=""/>
 								<toDate standardDate=""/>
 							</dateRange>
 						</xforms:instance>
 
-						<xforms:instance id="dateSet-template" xxforms:exclude-result-prefixes="#all">
+						<xforms:instance id="dateSet-template" xxf:exclude-result-prefixes="#all">
 							<dateSet/>
 						</xforms:instance>
 
-						<xforms:instance id="descriptiveNote-template" xxforms:exclude-result-prefixes="#all">
+						<xforms:instance id="descriptiveNote-template" xxf:exclude-result-prefixes="#all">
 							<descriptiveNote>
 								<p/>
 							</descriptiveNote>
 						</xforms:instance>
 
-						<xforms:instance id="placeEntry-template" xxforms:exclude-result-prefixes="#all">
+						<xforms:instance id="placeEntry-template" xxf:exclude-result-prefixes="#all">
 							<placeEntry vocabularySource=""/>
 						</xforms:instance>
 

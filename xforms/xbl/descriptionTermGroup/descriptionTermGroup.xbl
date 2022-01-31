@@ -1,4 +1,4 @@
-<xbl:xbl xmlns="http://www.w3.org/1999/xhtml" xmlns:xforms="http://www.w3.org/2002/xforms" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:xxforms="http://orbeon.org/oxf/xml/xforms"
+<xbl:xbl xmlns="http://www.w3.org/1999/xhtml" xmlns:xforms="http://www.w3.org/2002/xforms" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:xxf="http://orbeon.org/oxf/xml/xforms"
 	xmlns:xbl="http://www.w3.org/ns/xbl" xmlns:xxbl="http://orbeon.org/oxf/xml/xbl" xmlns:xeac="https://github.com/ewg118/xEAC" xmlns:eac="urn:isbn:1-931666-33-4">
 	<xbl:binding id="xeac-descriptionTermGroup" element="xeac|descriptionTermGroup">
 		<xbl:template>
@@ -6,7 +6,7 @@
 				<xbl:content includes="xforms|label,xforms|help,xforms|hint,xforms|alert"/>
 				<xforms:group xxbl:scope="inner">
 					<xforms:var name="binding" as="node()?">
-						<xxforms:sequence select="." xxbl:scope="outer"/>
+						<xxf:sequence select="." xxbl:scope="outer"/>
 					</xforms:var>
 
 					<xforms:group ref="$binding">
@@ -171,67 +171,67 @@
 
 					<!-- ********************************************************************** -->
 					<xforms:model id="descriptionTermGroup-model" xmlns="urn:isbn:1-931666-33-4">
-						<xforms:instance id="function-template" xxforms:exclude-result-prefixes="#all">
+						<xforms:instance id="function-template" xxf:exclude-result-prefixes="#all">
 							<function>
 								<term/>
 							</function>
 						</xforms:instance>
 
-						<xforms:instance id="languageUsed-template" xxforms:exclude-result-prefixes="#all">
+						<xforms:instance id="languageUsed-template" xxf:exclude-result-prefixes="#all">
 							<languageUsed>
 								<language languageCode=""/>
 								<script scriptCode=""/>
 							</languageUsed>
 						</xforms:instance>
 
-						<xforms:instance id="legalStatus-template" xxforms:exclude-result-prefixes="#all">
+						<xforms:instance id="legalStatus-template" xxf:exclude-result-prefixes="#all">
 							<legalStatus>
 								<term/>
 							</legalStatus>
 						</xforms:instance>
 
-						<xforms:instance id="localDescription-template" xxforms:exclude-result-prefixes="#all">
+						<xforms:instance id="localDescription-template" xxf:exclude-result-prefixes="#all">
 							<localDescription>
 								<term/>
 							</localDescription>
 						</xforms:instance>
 
-						<xforms:instance id="mandate-template" xxforms:exclude-result-prefixes="#all">
+						<xforms:instance id="mandate-template" xxf:exclude-result-prefixes="#all">
 							<mandate>
 								<term/>
 							</mandate>
 						</xforms:instance>
 
-						<xforms:instance id="occupation-template" xxforms:exclude-result-prefixes="#all">
+						<xforms:instance id="occupation-template" xxf:exclude-result-prefixes="#all">
 							<occupation>
 								<term/>
 							</occupation>
 						</xforms:instance>
 
-						<xforms:instance id="place-template" xxforms:exclude-result-prefixes="#all">
+						<xforms:instance id="place-template" xxf:exclude-result-prefixes="#all">
 							<place>
 								<placeEntry vocabularySource=""/>
 							</place>
 						</xforms:instance>
 
 						<!-- generic instances -->
-						<xforms:instance id="citation-template" xxforms:exclude-result-prefixes="#all">
+						<xforms:instance id="citation-template" xxf:exclude-result-prefixes="#all">
 							<citation/>
 						</xforms:instance>
 
-						<xforms:instance id="descriptiveNote-template" xxforms:exclude-result-prefixes="#all">
+						<xforms:instance id="descriptiveNote-template" xxf:exclude-result-prefixes="#all">
 							<descriptiveNote>
 								<p/>
 							</descriptiveNote>
 						</xforms:instance>
 						
-						<xforms:instance id="list-template" xxforms:exclude-result-prefixes="#all">
+						<xforms:instance id="list-template" xxf:exclude-result-prefixes="#all">
 							<list>
 								<item/>
 							</list>
 						</xforms:instance>
 
-						<xforms:instance id="outline-template" xxforms:exclude-result-prefixes="#all">
+						<xforms:instance id="outline-template" xxf:exclude-result-prefixes="#all">
 							<outline>
 								<level>
 									<item/>
@@ -239,7 +239,7 @@
 							</outline>
 						</xforms:instance>
 
-						<xforms:instance id="p-template" xxforms:exclude-result-prefixes="#all">
+						<xforms:instance id="p-template" xxf:exclude-result-prefixes="#all">
 							<p/>
 						</xforms:instance>
 					</xforms:model>

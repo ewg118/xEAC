@@ -7,7 +7,7 @@
     Apache License 2.0
 -->
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:xforms="http://www.w3.org/2002/xforms" xmlns:xs="http://www.w3.org/2001/XMLSchema"
-	xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:xxforms="http://orbeon.org/oxf/xml/xforms" xmlns:xi="http://www.w3.org/2001/XInclude"
+	xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:xxf="http://orbeon.org/oxf/xml/xforms" xmlns:xi="http://www.w3.org/2001/XInclude"
 	xmlns:fr="http://orbeon.org/oxf/xml/form-runner" xmlns:xeac="https://github.com/ewg118/xEAC" xmlns:xlink="http://www.w3.org/1999/xlink"
 	xmlns:eac="urn:isbn:1-931666-33-4" xmlns:oxf="http://www.orbeon.com/oxf/processors" xmlns:exist="http://exist.sourceforge.net/NS/exist"
 	xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
@@ -24,12 +24,12 @@
 
 		<xforms:model>
 			<!-- exist URL is stored in an XML file -->
-			<xforms:instance id="exist-config" xxforms:exclude-result-prefixes="#all">
+			<xforms:instance id="exist-config" xxf:exclude-result-prefixes="#all">
 				<xi:include href="../exist-config.xml"/>
 			</xforms:instance>
 
 			<xforms:instance id="control-instance">
-				<controls xmlns="" xxforms:exclude-result-prefixes="#all">
+				<controls xmlns="" xxf:exclude-result-prefixes="#all">
 					<id></id>
 					<identifiers></identifiers>
 					<publicationStatus></publicationStatus>
@@ -46,11 +46,11 @@
 				</controls>
 			</xforms:instance>
 
-			<xforms:instance id="config" xxforms:exclude-result-prefixes="#all">
+			<xforms:instance id="config" xxf:exclude-result-prefixes="#all">
 				<config></config>
 			</xforms:instance>
 
-			<xforms:instance id="config-template" xxforms:exclude-result-prefixes="#all">
+			<xforms:instance id="config-template" xxf:exclude-result-prefixes="#all">
 				<config version="18.07" xmlns="">
 					<title>xEAC</title>
 					<description>xEAC is an open source XForms framework for creating, managing, and publishing EAC-CPF collections.</description>
@@ -202,7 +202,7 @@
 				</item>
 			</xforms:instance>
 
-			<xforms:instance id="doc" xxforms:exclude-result-prefixes="#all">
+			<xforms:instance id="doc" xxf:exclude-result-prefixes="#all">
 				<eac-cpf xmlns=""></eac-cpf>
 			</xforms:instance>
 
@@ -281,34 +281,34 @@
 			</xforms:instance>
 
 			<!-- send to Solr -->
-			<xforms:instance id="addIndex" xxforms:exclude-result-prefixes="#all">
+			<xforms:instance id="addIndex" xxf:exclude-result-prefixes="#all">
 				<add xmlns=""></add>
 			</xforms:instance>
-			<xforms:instance id="addDoc" xxforms:exclude-result-prefixes="#all">
+			<xforms:instance id="addDoc" xxf:exclude-result-prefixes="#all">
 				<add xmlns=""></add>
 			</xforms:instance>
 			<!-- Instance for Solr commit-->
-			<xforms:instance id="sendCommit" xxforms:exclude-result-prefixes="#all">
+			<xforms:instance id="sendCommit" xxf:exclude-result-prefixes="#all">
 				<commit></commit>
 			</xforms:instance>
 			<!-- delete from Solr -->
-			<xforms:instance id="deleteId" xxforms:exclude-result-prefixes="#all">
+			<xforms:instance id="deleteId" xxf:exclude-result-prefixes="#all">
 				<delete xmlns="">
 					<query></query>
 				</delete>
 			</xforms:instance>
-			<xforms:instance id="deleteAll" xxforms:exclude-result-prefixes="#all">
+			<xforms:instance id="deleteAll" xxf:exclude-result-prefixes="#all">
 				<delete xmlns="">
 					<query>id:*</query>
 				</delete>
 			</xforms:instance>
 
-			<xforms:instance id="optimizeIndex" xxforms:exclude-result-prefixes="#all">
+			<xforms:instance id="optimizeIndex" xxf:exclude-result-prefixes="#all">
 				<optimize></optimize>
 			</xforms:instance>
 
 			<!-- SPARQL CRUD -->
-			<xforms:instance id="rdf" xxforms:exclude-result-prefixes="#all">
+			<xforms:instance id="rdf" xxf:exclude-result-prefixes="#all">
 				<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"/>
 			</xforms:instance>
 
@@ -389,7 +389,7 @@ UNION { ?s rdf:type skos:Concept ; foaf:focus ?entity . ?s ?p ?o }}]]>
 
 			<!-- ************* SUBMISSIONS ************* -->
 			<xforms:submission id="load-config" serialization="none" method="get" action="{instance('exist-config')/url}xeac/config.xml" replace="instance"
-				instance="config" xxforms:username="{instance('exist-config')/username}" xxforms:password="{instance('exist-config')/password}">
+				instance="config" xxf:username="{instance('exist-config')/username}" xxf:password="{instance('exist-config')/password}">
 				<xforms:action ev:event="xforms-submit-done">
 					<!-- get the number of docs in the eXist collection() -->
 					<xforms:setvalue ref="instance('eXist-xquery')/exist:text" value="instance('xqueries')/query[@id='collection-count']"/>
@@ -409,12 +409,12 @@ UNION { ?s rdf:type skos:Concept ; foaf:focus ?entity . ?s ?p ?o }}]]>
 			</xforms:submission>
 
 			<xforms:submission id="save-config" ref="instance('config-template')" action="{instance('exist-config')/url}xeac/config.xml" method="put"
-				replace="none" xxforms:username="{instance('exist-config')/username}" xxforms:password="{instance('exist-config')/password}">
+				replace="none" xxf:username="{instance('exist-config')/username}" xxf:password="{instance('exist-config')/password}">
 				<xforms:message ev:event="xforms-submit-error" level="modal">Error Saving Config. Ensure the eXist is configured correctly.</xforms:message>
 			</xforms:submission>
 
 			<xforms:submission id="create-records-collection" ref="instance('eXist-xquery')" method="post" action="{instance('exist-config')/url}"
-				replace="none" xxforms:username="{instance('exist-config')/username}" xxforms:password="{instance('exist-config')/password}">
+				replace="none" xxf:username="{instance('exist-config')/username}" xxf:password="{instance('exist-config')/password}">
 				<xforms:action ev:event="xforms-submit-done">
 					<xforms:send submission="load-config"/>
 				</xforms:action>
@@ -423,12 +423,12 @@ UNION { ?s rdf:type skos:Concept ; foaf:focus ?entity . ?s ?p ?o }}]]>
 			<!--***************** XQUERY ******************-->
 			<!-- xquery for getting and processing query results into pages of items -->
 			<xforms:submission id="xquery-pagination" ref="instance('eXist-xquery')" action="{instance('exist-config')/url}xeac/records" method="post"
-				replace="instance" instance="pagination-result" xxforms:username="{instance('exist-config')/username}"
-				xxforms:password="{instance('exist-config')/password}">
+				replace="instance" instance="pagination-result" xxf:username="{instance('exist-config')/username}"
+				xxf:password="{instance('exist-config')/password}">
 				<xforms:setvalue ref="instance('control-instance')/error" ev:event="xforms-submit-error">Error querying eXist database.</xforms:setvalue>
 				<xforms:action ev:event="xforms-submit-done">
 					<!--iterate through docs, check for publication -->
-					<xforms:action xxforms:iterate="instance('pagination-result')//record">
+					<xforms:action xxf:iterate="instance('pagination-result')//record">
 						<xforms:setvalue ref="instance('control-instance')/solr-core" value="instance('config')/solr_published"/>
 						<xforms:setvalue ref="instance('control-instance')/id" value="context()/id"/>
 						<xforms:send submission="query-solr-for-publication"/>
@@ -437,8 +437,8 @@ UNION { ?s rdf:type skos:Concept ; foaf:focus ?entity . ?s ?p ?o }}]]>
 			</xforms:submission>
 
 			<xforms:submission id="xquery-collection" ref="instance('eXist-xquery')" action="{instance('exist-config')/url}xeac/records" method="post"
-				replace="instance" instance="xquery-result" xxforms:username="{instance('exist-config')/username}"
-				xxforms:password="{instance('exist-config')/password}">
+				replace="instance" instance="xquery-result" xxf:username="{instance('exist-config')/username}"
+				xxf:password="{instance('exist-config')/password}">
 				<xforms:setvalue ref="instance('control-instance')/error" ev:event="xforms-submit-error">Error querying eXist database.</xforms:setvalue>
 			</xforms:submission>
 
@@ -454,7 +454,7 @@ UNION { ?s rdf:type skos:Concept ; foaf:focus ?entity . ?s ?p ?o }}]]>
 			<!-- ************** Temporary Document Submissions ************** -->
 			<xforms:submission id="load-doc" serialization="none" method="get"
 				action="{instance('exist-config')/url}xeac/records/{instance('control-instance')/id}.xml" replace="instance" instance="doc"
-				xxforms:username="{instance('exist-config')/username}" xxforms:password="{instance('exist-config')/password}">
+				xxf:username="{instance('exist-config')/username}" xxf:password="{instance('exist-config')/password}">
 				<xforms:message ev:event="xforms-submit-error" level="modal">Error loading file.</xforms:message>
 				<xforms:action ev:event="xforms-submit-done">
 					<xforms:setvalue ref="instance('doc')/eac:control/eac:publicationStatus" value="instance('control-instance')/publicationStatus"/>
@@ -462,13 +462,13 @@ UNION { ?s rdf:type skos:Concept ; foaf:focus ?entity . ?s ?p ?o }}]]>
 				</xforms:action>
 			</xforms:submission>
 
-			<xforms:submission id="save-doc" ref="instance('doc')" xxforms:username="{instance('exist-config')/username}"
-				xxforms:password="{instance('exist-config')/password}" action="{instance('exist-config')/url}xeac/records/{instance('control-instance')/id}.xml"
+			<xforms:submission id="save-doc" ref="instance('doc')" xxf:username="{instance('exist-config')/username}"
+				xxf:password="{instance('exist-config')/password}" action="{instance('exist-config')/url}xeac/records/{instance('control-instance')/id}.xml"
 				method="put" replace="none"/>
 
 			<!-- delete finding aid -->
 			<xforms:submission id="delete-doc" action="{instance('exist-config')/url}xeac/records/{instance('control-instance')/id}.xml" method="delete"
-				replace="none" xxforms:username="{instance('exist-config')/username}" xxforms:password="{instance('exist-config')/password}">
+				replace="none" xxf:username="{instance('exist-config')/username}" xxf:password="{instance('exist-config')/password}">
 				<xforms:setvalue ev:event="xforms-submit-done" ref="instance('control-instance')/status">EAC-CPF record successfully deleted.</xforms:setvalue>
 			</xforms:submission>
 
@@ -1046,7 +1046,7 @@ UNION { ?s rdf:type skos:Concept ; foaf:focus ?entity . ?s ?p ?o }}]]>
 					<xforms:setvalue ref="instance('eXist-xquery')/exist:text" value="instance('xqueries')/query[@id='publish-all']"/>
 					<xforms:send submission="xquery-collection"/>
 					<xforms:setvalue ref="instance('control-instance')/solr-core" value="instance('config')/solr_published"/> <xforms:action
-						xxforms:iterate="instance('xquery-result')/report/id">
+						xxf:iterate="instance('xquery-result')/report/id">
 						<!-- publish to solr -->
 						<xforms:var name="id" select="context()"/>
 						<xforms:setvalue ref="instance('control-instance')/id" value="$id"/>

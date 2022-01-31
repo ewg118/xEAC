@@ -1,4 +1,4 @@
-<xbl:xbl xmlns="http://www.w3.org/1999/xhtml" xmlns:xforms="http://www.w3.org/2002/xforms" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:xxforms="http://orbeon.org/oxf/xml/xforms"
+<xbl:xbl xmlns="http://www.w3.org/1999/xhtml" xmlns:xforms="http://www.w3.org/2002/xforms" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:xxf="http://orbeon.org/oxf/xml/xforms"
 	xmlns:xbl="http://www.w3.org/ns/xbl" xmlns:xxbl="http://orbeon.org/oxf/xml/xbl" xmlns:xeac="https://github.com/ewg118/xEAC" xmlns:eac="urn:isbn:1-931666-33-4">
 	<xbl:binding id="xeac-language" element="xeac|language">
 		<xbl:template>
@@ -6,7 +6,7 @@
 				<xbl:content includes="xforms|label,xforms|help,xforms|hint,xforms|alert"/>
 				<xforms:group xxbl:scope="inner">
 					<xforms:var name="binding" as="node()?">
-						<xxforms:sequence select="." xxbl:scope="outer"/>
+						<xxf:sequence select="." xxbl:scope="outer"/>
 					</xforms:var>
 
 					<xforms:group ref="$binding">
@@ -33,7 +33,7 @@
 											<span class="glyphicon glyphicon-plus"/>Descriptive Note</xforms:label>
 										<xforms:action ev:event="DOMActivate">
 											<xforms:insert context="." origin="instance('descriptiveNote-template')"/>
-											<xxforms:hide dialog="languageUsed-objects"/>
+											<xxf:hide dialog="languageUsed-objects"/>
 										</xforms:action>
 									</xforms:trigger>
 								</xforms:group>
@@ -87,7 +87,7 @@
 
 					<!-- ********************************************************************** -->
 					<xforms:model id="languageUsed-model" xmlns="urn:isbn:1-931666-33-4" xmlns:xi="http://www.w3.org/2001/XInclude">
-						<xforms:instance id="descriptiveNote-template" xxforms:exclude-result-prefixes="#all">
+						<xforms:instance id="descriptiveNote-template" xxf:exclude-result-prefixes="#all">
 							<descriptiveNote>
 								<p/>
 							</descriptiveNote>

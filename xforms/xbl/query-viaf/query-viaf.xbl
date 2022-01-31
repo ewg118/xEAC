@@ -1,5 +1,5 @@
 <xbl:xbl xmlns="http://www.w3.org/1999/xhtml" xmlns:xforms="http://www.w3.org/2002/xforms" xmlns:ev="http://www.w3.org/2001/xml-events"
-	xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:eac="urn:isbn:1-931666-33-4" xmlns:xxforms="http://orbeon.org/oxf/xml/xforms"
+	xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:eac="urn:isbn:1-931666-33-4" xmlns:xxf="http://orbeon.org/oxf/xml/xforms"
 	xmlns:xbl="http://www.w3.org/ns/xbl" xmlns:xxbl="http://orbeon.org/oxf/xml/xbl" xmlns:xeac="https://github.com/ewg118/xEAC"
 	xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:skos="http://www.w3.org/2004/02/skos/core#"
 	xmlns:dcterms="http://purl.org/dc/terms/" xmlns:schema="http://schema.org/">
@@ -9,7 +9,7 @@
 				<xbl:content includes="xforms|label,xforms|help,xforms|hint,xforms|alert"/>
 				<xforms:group xxbl:scope="inner">
 					<xforms:var name="binding" as="node()?">
-						<xxforms:sequence select="." xxbl:scope="outer"/>
+						<xxf:sequence select="." xxbl:scope="outer"/>
 					</xforms:var>
 
 					<xforms:group ref="$binding">
@@ -17,10 +17,10 @@
 							<xforms:label><span class="glyphicon glyphicon-search"/>VIAF</xforms:label>
 							<xforms:action ev:event="DOMActivate">
 								<xforms:setvalue ref="instance('entityType')" value="eac:entityType"/>
-								<xxforms:show dialog="import-viaf-dialog"/>
+								<xxf:show dialog="import-viaf-dialog"/>
 							</xforms:action>
 						</xforms:trigger>
-						<xxforms:dialog id="import-viaf-dialog" appearance="full" level="modal" close="true" draggable="true" visible="false">
+						<xxf:dialog id="import-viaf-dialog" appearance="full" level="modal" close="true" draggable="true" visible="false">
 							<xforms:label>Import Data from VIAF</xforms:label>
 							<div>
 								<xforms:input ref="instance('search-query')">
@@ -150,7 +150,7 @@
 											</xforms:action>
 											<xforms:action if="instance('viaf-import')/ids = true()">
 												<xforms:action
-													xxforms:iterate="instance('viaf-rdf')/rdf:Description[@rdf:about=instance('viaf-id')]/schema:sameAs">
+													xxf:iterate="instance('viaf-rdf')/rdf:Description[@rdf:about=instance('viaf-id')]/schema:sameAs">
 													<xforms:action if="not(context()/@rdf:resource = $binding/eac:cfpDescription/eac:identity/eac:entityId)">
 														<xforms:insert context="$binding/eac:cfpDescription/eac:identity" nodeset="./child::node()[last()]"
 															origin="instance('entityId-template')"/>
@@ -161,7 +161,7 @@
 											</xforms:action>
 											<xforms:action if="instance('viaf-import')/names = true()">
 												<!-- create nameEntries -->
-												<xforms:action xxforms:iterate="instance('viaf-rdf')//skos:Concept">
+												<xforms:action xxf:iterate="instance('viaf-rdf')//skos:Concept">
 													<xforms:var name="auth" select="substring-after(context()/skos:inScheme/@rdf:resource, 'authorityScheme/')"/>
 													<xforms:setvalue ref="instance('viaf-id')" value="context()/skos:inScheme/@rdf:resource"/>
 													<!-- insert conventionDeclarations into control -->
@@ -172,7 +172,7 @@
 														value="instance('viaf-id')"/>
 
 													<!-- insert preferred forms per authority -->
-													<xforms:action xxforms:iterate="context()/skos:prefLabel">
+													<xforms:action xxf:iterate="context()/skos:prefLabel">
 														<xforms:insert context="$binding/eac:cpfDescription/eac:identity" nodeset="./child::node()[last()]"
 															origin="instance('nameEntry-template')"/>
 														<xforms:setvalue ref="$binding/eac:cpfDescription/eac:identity/eac:nameEntry[last()]/eac:part"
@@ -182,7 +182,7 @@
 														<xforms:setvalue ref="$binding/eac:cpfDescription/eac:identity/eac:nameEntry[last()]/eac:preferredForm"
 															value="$auth"/>
 													</xforms:action>
-													<xforms:action xxforms:iterate="context()/skos:altLabel">
+													<xforms:action xxf:iterate="context()/skos:altLabel">
 														<xforms:insert context="$binding/eac:cpfDescription/eac:identity" nodeset="./child::node()[last()]"
 															origin="instance('nameEntry-template')"/>
 														<xforms:setvalue ref="$binding/eac:cpfDescription/eac:identity/eac:nameEntry[last()]/eac:part"
@@ -196,7 +196,7 @@
 												</xforms:action>
 											</xforms:action>
 										</xforms:action>
-										<xxforms:hide dialog="import-viaf-dialog"/>
+										<xxf:hide dialog="import-viaf-dialog"/>
 									</xforms:action>
 								</xforms:trigger>
 								<xforms:group ref="instance('viaf-import')">
@@ -218,7 +218,7 @@
 									</div>
 								</xforms:group>
 							</xforms:group>
-						</xxforms:dialog>
+						</xxf:dialog>
 					</xforms:group>
 
 					<!-- ***************** MODEL ***************-->
@@ -265,20 +265,20 @@
 						</xforms:instance>
 
 						<!-- EAC templates -->
-						<xforms:instance id="entityId-template" xxforms:exclude-result-prefixes="#all">
+						<xforms:instance id="entityId-template" xxf:exclude-result-prefixes="#all">
 							<entityId localType="skos:exactMatch"/>
 						</xforms:instance>
-						<xforms:instance id="localTypeDeclaration-template" xxforms:exclude-result-prefixes="#all">
+						<xforms:instance id="localTypeDeclaration-template" xxf:exclude-result-prefixes="#all">
 							<localTypeDeclaration>
 								<abbreviation>skos</abbreviation>
 								<citation xlink:type="simple" xlink:role="semantic" xlink:href="http://www.w3.org/2004/02/skos/core#"
 									>http://www.w3.org/2004/02/skos/core#</citation>
 							</localTypeDeclaration>
 						</xforms:instance>
-						<xforms:instance id="sources-template" xxforms:exclude-result-prefixes="#all">
+						<xforms:instance id="sources-template" xxf:exclude-result-prefixes="#all">
 							<sources/>
 						</xforms:instance>
-						<xforms:instance id="source-template" xxforms:exclude-result-prefixes="#all">
+						<xforms:instance id="source-template" xxf:exclude-result-prefixes="#all">
 							<source xlink:type="simple" xlink:href="">
 								<sourceEntry>VIAF</sourceEntry>
 								<descriptiveNote>
@@ -287,37 +287,37 @@
 							</source>
 						</xforms:instance>
 
-						<xforms:instance id="description-template" xxforms:exclude-result-prefixes="#all">
+						<xforms:instance id="description-template" xxf:exclude-result-prefixes="#all">
 							<description/>
 						</xforms:instance>
-						<xforms:instance id="existDates-template" xxforms:exclude-result-prefixes="#all">
+						<xforms:instance id="existDates-template" xxf:exclude-result-prefixes="#all">
 							<existDates/>
 						</xforms:instance>
-						<xforms:instance id="dateRange-template" xxforms:exclude-result-prefixes="#all">
+						<xforms:instance id="dateRange-template" xxf:exclude-result-prefixes="#all">
 							<dateRange>
 								<fromDate standardDate=""/>
 								<toDate standardDate=""/>
 							</dateRange>
 						</xforms:instance>
-						<xforms:instance id="conventionDeclaration-template" xxforms:exclude-result-prefixes="#all">
+						<xforms:instance id="conventionDeclaration-template" xxf:exclude-result-prefixes="#all">
 							<conventionDeclaration>
 								<abbreviation/>
 								<citation/>
 							</conventionDeclaration>
 						</xforms:instance>
 						<!-- identity -->
-						<xforms:instance id="nameEntry-template" xxforms:exclude-result-prefixes="#all">
+						<xforms:instance id="nameEntry-template" xxf:exclude-result-prefixes="#all">
 							<nameEntry>
 								<part/>
 							</nameEntry>
 						</xforms:instance>
-						<xforms:instance id="authorizedForm-template" xxforms:exclude-result-prefixes="#all">
+						<xforms:instance id="authorizedForm-template" xxf:exclude-result-prefixes="#all">
 							<authorizedForm/>
 						</xforms:instance>
-						<xforms:instance id="alternativeForm-template" xxforms:exclude-result-prefixes="#all">
+						<xforms:instance id="alternativeForm-template" xxf:exclude-result-prefixes="#all">
 							<alternativeForm/>
 						</xforms:instance>
-						<xforms:instance id="preferredForm-template" xxforms:exclude-result-prefixes="#all">
+						<xforms:instance id="preferredForm-template" xxf:exclude-result-prefixes="#all">
 							<preferredForm/>
 						</xforms:instance>
 

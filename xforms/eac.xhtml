@@ -5,7 +5,7 @@
     Apache License 2.0
 -->
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:xforms="http://www.w3.org/2002/xforms" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ev="http://www.w3.org/2001/xml-events"
-	xmlns:xxforms="http://orbeon.org/oxf/xml/xforms" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:fr="http://orbeon.org/oxf/xml/form-runner"
+	xmlns:xxf="http://orbeon.org/oxf/xml/xforms" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:fr="http://orbeon.org/oxf/xml/form-runner"
 	xmlns:xeac="https://github.com/ewg118/xEAC" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xxi="http://orbeon.org/oxf/xml/xinclude" xmlns:eac="urn:isbn:1-931666-33-4"
 	xmlns:xxbl="http://orbeon.org/oxf/xml/xbl" xmlns:exf="http://www.exforms.org/exf/1-0" xmlns:saxon="http://saxon.sf.net/" xmlns:oxf="http://www.orbeon.com/oxf/processors"
 	xmlns:xbl="http://www.w3.org/ns/xbl" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
@@ -68,7 +68,7 @@
 				</xs:simpleType>
 			</xs:schema>
 			<!-- ******************* INSTANCES ****************** -->
-			<xforms:instance id="doc" xxforms:exclude-result-prefixes="#all">
+			<xforms:instance id="doc" xxf:exclude-result-prefixes="#all">
 				<eac-cpf xmlns="urn:isbn:1-931666-33-4" xmlns:xlink="http://www.w3.org/1999/xlink">
 					<control>
 						<recordId/>
@@ -98,7 +98,7 @@
 					</cpfDescription>
 				</eac-cpf>
 			</xforms:instance>
-			<xforms:instance id="eac-template" xxforms:exclude-result-prefixes="#all">
+			<xforms:instance id="eac-template" xxf:exclude-result-prefixes="#all">
 				<eac-cpf xmlns="urn:isbn:1-931666-33-4" xmlns:xlink="http://www.w3.org/1999/xlink">
 					<control>
 						<recordId/>
@@ -137,7 +137,7 @@
 			<xforms:instance id="exist-config">
 				<xi:include href="../exist-config.xml"/>
 			</xforms:instance>
-			<xforms:instance id="config" xxforms:exclude-result-prefixes="#all">
+			<xforms:instance id="config" xxf:exclude-result-prefixes="#all">
 				<config/>
 			</xforms:instance>
 			<xforms:instance id="kml">
@@ -203,43 +203,43 @@
 				</list>
 			</xforms:instance>
 			<!-- relations diff -->
-			<xforms:instance id="relations-pre" xxforms:exclude-result-prefixes="#all">
+			<xforms:instance id="relations-pre" xxf:exclude-result-prefixes="#all">
 				<relations xmlns=""/>
 			</xforms:instance>
-			<xforms:instance id="relations-post" xxforms:exclude-result-prefixes="#all">
+			<xforms:instance id="relations-post" xxf:exclude-result-prefixes="#all">
 				<relations xmlns=""/>
 			</xforms:instance>
-			<xforms:instance id="rel-template" xxforms:exclude-result-prefixes="#all">
+			<xforms:instance id="rel-template" xxf:exclude-result-prefixes="#all">
 				<relation xlink:href="" xlink:arcrole="" xlink:role="" xmlns=""/>
 			</xforms:instance>
 			<xforms:instance id="identifier">
 				<identifer/>
 			</xforms:instance>
-			<xforms:instance id="action-list" xxforms:exclude-result-prefixes="#all">
+			<xforms:instance id="action-list" xxf:exclude-result-prefixes="#all">
 				<actions xmlns=""/>
 			</xforms:instance>
-			<xforms:instance id="action-template" xxforms:exclude-result-prefixes="#all">
+			<xforms:instance id="action-template" xxf:exclude-result-prefixes="#all">
 				<action source="" dest="" xmlns=""/>
 			</xforms:instance>
-			<xforms:instance id="action-add" xxforms:exclude-result-prefixes="#all">
+			<xforms:instance id="action-add" xxf:exclude-result-prefixes="#all">
 				<add xlink:arcrole="" xlink:role="" relationEntry="" xmlns=""/>
 			</xforms:instance>
-			<xforms:instance id="action-remove" xxforms:exclude-result-prefixes="#all">
+			<xforms:instance id="action-remove" xxf:exclude-result-prefixes="#all">
 				<remove xmlns=""/>
 			</xforms:instance>
-			<xforms:instance id="action-change" xxforms:exclude-result-prefixes="#all">
+			<xforms:instance id="action-change" xxf:exclude-result-prefixes="#all">
 				<change xlink:arcrole="" xmlns=""/>
 			</xforms:instance>
 			<!-- temp instances -->
-			<xforms:instance id="temp-doc" xxforms:exclude-result-prefixes="#all">
+			<xforms:instance id="temp-doc" xxf:exclude-result-prefixes="#all">
 				<eac-cpf xmlns="urn:isbn:1-931666-33-4"/>
 			</xforms:instance>
-			<xforms:instance id="temp-nameEntry" xxforms:exclude-result-prefixes="#all">
+			<xforms:instance id="temp-nameEntry" xxf:exclude-result-prefixes="#all">
 				<temp xmlns=""/>
 			</xforms:instance>
 			<!-- ******************* EAC ELEMENTS ****************** -->
 			<!-- control -->
-			<xforms:instance id="maintenanceEvent-template" xxforms:exclude-result-prefixes="#all">
+			<xforms:instance id="maintenanceEvent-template" xxf:exclude-result-prefixes="#all">
 				<maintenanceEvent>
 					<eventType/>
 					<eventDateTime standardDateTime=""/>
@@ -247,125 +247,125 @@
 					<agent/>
 				</maintenanceEvent>
 			</xforms:instance>
-			<xforms:instance id="conventionDeclaration-template" xxforms:exclude-result-prefixes="#all">
+			<xforms:instance id="conventionDeclaration-template" xxf:exclude-result-prefixes="#all">
 				<conventionDeclaration>
 					<abbreviation/>
 					<citation/>
 				</conventionDeclaration>
 			</xforms:instance>
-			<xforms:instance id="languageDeclaration-template" xxforms:exclude-result-prefixes="#all">
+			<xforms:instance id="languageDeclaration-template" xxf:exclude-result-prefixes="#all">
 				<languageDeclaration>
 					<language languageCode=""/>
 					<script scriptCode=""/>
 				</languageDeclaration>
 			</xforms:instance>
-			<xforms:instance id="localTypeDeclaration-template" xxforms:exclude-result-prefixes="#all">
+			<xforms:instance id="localTypeDeclaration-template" xxf:exclude-result-prefixes="#all">
 				<localTypeDeclaration>
 					<abbreviation/>
 					<citation/>
 				</localTypeDeclaration>
 			</xforms:instance>
-			<xforms:instance id="eventDescription-template" xxforms:exclude-result-prefixes="#all">
+			<xforms:instance id="eventDescription-template" xxf:exclude-result-prefixes="#all">
 				<eventDescription/>
 			</xforms:instance>
-			<xforms:instance id="otherRecordId-template" xxforms:exclude-result-prefixes="#all">
+			<xforms:instance id="otherRecordId-template" xxf:exclude-result-prefixes="#all">
 				<otherRecordId/>
 			</xforms:instance>
-			<xforms:instance id="sources-template" xxforms:exclude-result-prefixes="#all">
+			<xforms:instance id="sources-template" xxf:exclude-result-prefixes="#all">
 				<sources/>
 			</xforms:instance>
-			<xforms:instance id="source-template" xxforms:exclude-result-prefixes="#all">
+			<xforms:instance id="source-template" xxf:exclude-result-prefixes="#all">
 				<source xlink:type="simple" xlink:href="">
 					<sourceEntry/>
 				</source>
 			</xforms:instance>
 			<!-- cpfDescription -->
-			<xforms:instance id="description-template" xxforms:exclude-result-prefixes="#all">
+			<xforms:instance id="description-template" xxf:exclude-result-prefixes="#all">
 				<description/>
 			</xforms:instance>
-			<xforms:instance id="relations-template" xxforms:exclude-result-prefixes="#all">
+			<xforms:instance id="relations-template" xxf:exclude-result-prefixes="#all">
 				<relations/>
 			</xforms:instance>
 			<!-- identity -->
-			<xforms:instance id="nameEntry-template" xxforms:exclude-result-prefixes="#all">
+			<xforms:instance id="nameEntry-template" xxf:exclude-result-prefixes="#all">
 				<nameEntry>
 					<part/>
 				</nameEntry>
 			</xforms:instance>
-			<xforms:instance id="part-template" xxforms:exclude-result-prefixes="#all">
+			<xforms:instance id="part-template" xxf:exclude-result-prefixes="#all">
 				<part/>
 			</xforms:instance>
-			<xforms:instance id="authorizedForm-template" xxforms:exclude-result-prefixes="#all">
+			<xforms:instance id="authorizedForm-template" xxf:exclude-result-prefixes="#all">
 				<authorizedForm/>
 			</xforms:instance>
-			<xforms:instance id="alternativeForm-template" xxforms:exclude-result-prefixes="#all">
+			<xforms:instance id="alternativeForm-template" xxf:exclude-result-prefixes="#all">
 				<alternativeForm/>
 			</xforms:instance>
-			<xforms:instance id="preferredForm-template" xxforms:exclude-result-prefixes="#all">
+			<xforms:instance id="preferredForm-template" xxf:exclude-result-prefixes="#all">
 				<preferredForm/>
 			</xforms:instance>
-			<xforms:instance id="nameEntryParallel-template" xxforms:exclude-result-prefixes="#all">
+			<xforms:instance id="nameEntryParallel-template" xxf:exclude-result-prefixes="#all">
 				<nameEntryParallel/>
 			</xforms:instance>
-			<xforms:instance id="entityId-template" xxforms:exclude-result-prefixes="#all">
+			<xforms:instance id="entityId-template" xxf:exclude-result-prefixes="#all">
 				<entityId/>
 			</xforms:instance>
-			<xforms:instance id="descriptiveNote-template" xxforms:exclude-result-prefixes="#all">
+			<xforms:instance id="descriptiveNote-template" xxf:exclude-result-prefixes="#all">
 				<descriptiveNote>
 					<p/>
 				</descriptiveNote>
 			</xforms:instance>
-			<xforms:instance id="useDates-template" xxforms:exclude-result-prefixes="#all">
+			<xforms:instance id="useDates-template" xxf:exclude-result-prefixes="#all">
 				<useDates/>
 			</xforms:instance>
 			<!-- description -->
-			<xforms:instance id="abstract-template" xxforms:exclude-result-prefixes="#all">
+			<xforms:instance id="abstract-template" xxf:exclude-result-prefixes="#all">
 				<abstract/>
 			</xforms:instance>
-			<xforms:instance id="biogHist-template" xxforms:exclude-result-prefixes="#all">
+			<xforms:instance id="biogHist-template" xxf:exclude-result-prefixes="#all">
 				<biogHist/>
 			</xforms:instance>
-			<xforms:instance id="chronList-template" xxforms:exclude-result-prefixes="#all">
+			<xforms:instance id="chronList-template" xxf:exclude-result-prefixes="#all">
 				<chronList>
 					<chronItem>
 						<event/>
 					</chronItem>
 				</chronList>
 			</xforms:instance>
-			<xforms:instance id="citation-template" xxforms:exclude-result-prefixes="#all">
+			<xforms:instance id="citation-template" xxf:exclude-result-prefixes="#all">
 				<citation/>
 			</xforms:instance>
-			<xforms:instance id="existDates-template" xxforms:exclude-result-prefixes="#all">
+			<xforms:instance id="existDates-template" xxf:exclude-result-prefixes="#all">
 				<existDates/>
 			</xforms:instance>
-			<xforms:instance id="dateRange-template" xxforms:exclude-result-prefixes="#all">
+			<xforms:instance id="dateRange-template" xxf:exclude-result-prefixes="#all">
 				<dateRange>
 					<fromDate standardDate=""/>
 					<toDate standardDate=""/>
 				</dateRange>
 			</xforms:instance>
-			<xforms:instance id="function-template" xxforms:exclude-result-prefixes="#all">
+			<xforms:instance id="function-template" xxf:exclude-result-prefixes="#all">
 				<function>
 					<term/>
 				</function>
 			</xforms:instance>
-			<xforms:instance id="functions-template" xxforms:exclude-result-prefixes="#all">
+			<xforms:instance id="functions-template" xxf:exclude-result-prefixes="#all">
 				<functions>
 					<function>
 						<term/>
 					</function>
 				</functions>
 			</xforms:instance>
-			<xforms:instance id="generalContext-template" xxforms:exclude-result-prefixes="#all">
+			<xforms:instance id="generalContext-template" xxf:exclude-result-prefixes="#all">
 				<generalContext/>
 			</xforms:instance>
-			<xforms:instance id="languageUsed-template" xxforms:exclude-result-prefixes="#all">
+			<xforms:instance id="languageUsed-template" xxf:exclude-result-prefixes="#all">
 				<languageUsed>
 					<language languageCode=""/>
 					<script scriptCode=""/>
 				</languageUsed>
 			</xforms:instance>
-			<xforms:instance id="languagesUsed-template" xxforms:exclude-result-prefixes="#all">
+			<xforms:instance id="languagesUsed-template" xxf:exclude-result-prefixes="#all">
 				<languagesUsed>
 					<languageUsed>
 						<language languageCode=""/>
@@ -373,91 +373,91 @@
 					</languageUsed>
 				</languagesUsed>
 			</xforms:instance>
-			<xforms:instance id="legalStatus-template" xxforms:exclude-result-prefixes="#all">
+			<xforms:instance id="legalStatus-template" xxf:exclude-result-prefixes="#all">
 				<legalStatus>
 					<term/>
 				</legalStatus>
 			</xforms:instance>
-			<xforms:instance id="legalStatuses-template" xxforms:exclude-result-prefixes="#all">
+			<xforms:instance id="legalStatuses-template" xxf:exclude-result-prefixes="#all">
 				<legalStatuses>
 					<legalStatus>
 						<term/>
 					</legalStatus>
 				</legalStatuses>
 			</xforms:instance>
-			<xforms:instance id="list-template" xxforms:exclude-result-prefixes="#all">
+			<xforms:instance id="list-template" xxf:exclude-result-prefixes="#all">
 				<list>
 					<item/>
 				</list>
 			</xforms:instance>
-			<xforms:instance id="localDescription-template" xxforms:exclude-result-prefixes="#all">
+			<xforms:instance id="localDescription-template" xxf:exclude-result-prefixes="#all">
 				<localDescription>
 					<term/>
 				</localDescription>
 			</xforms:instance>
-			<xforms:instance id="localDescriptions-template" xxforms:exclude-result-prefixes="#all">
+			<xforms:instance id="localDescriptions-template" xxf:exclude-result-prefixes="#all">
 				<localDescriptions>
 					<localDescription>
 						<term/>
 					</localDescription>
 				</localDescriptions>
 			</xforms:instance>
-			<xforms:instance id="mandate-template" xxforms:exclude-result-prefixes="#all">
+			<xforms:instance id="mandate-template" xxf:exclude-result-prefixes="#all">
 				<mandate>
 					<term/>
 				</mandate>
 			</xforms:instance>
-			<xforms:instance id="mandates-template" xxforms:exclude-result-prefixes="#all">
+			<xforms:instance id="mandates-template" xxf:exclude-result-prefixes="#all">
 				<mandates>
 					<mandate>
 						<term/>
 					</mandate>
 				</mandates>
 			</xforms:instance>
-			<xforms:instance id="occupation-template" xxforms:exclude-result-prefixes="#all">
+			<xforms:instance id="occupation-template" xxf:exclude-result-prefixes="#all">
 				<occupation>
 					<term/>
 				</occupation>
 			</xforms:instance>
-			<xforms:instance id="occupations-template" xxforms:exclude-result-prefixes="#all">
+			<xforms:instance id="occupations-template" xxf:exclude-result-prefixes="#all">
 				<occupations>
 					<occupation>
 						<term/>
 					</occupation>
 				</occupations>
 			</xforms:instance>
-			<xforms:instance id="outline-template" xxforms:exclude-result-prefixes="#all">
+			<xforms:instance id="outline-template" xxf:exclude-result-prefixes="#all">
 				<outline>
 					<level>
 						<item/>
 					</level>
 				</outline>
 			</xforms:instance>
-			<xforms:instance id="p-template" xxforms:exclude-result-prefixes="#all">
+			<xforms:instance id="p-template" xxf:exclude-result-prefixes="#all">
 				<p/>
 			</xforms:instance>
-			<xforms:instance id="place-template" xxforms:exclude-result-prefixes="#all">
+			<xforms:instance id="place-template" xxf:exclude-result-prefixes="#all">
 				<place>
 					<placeEntry vocabularySource=""/>
 				</place>
 			</xforms:instance>
-			<xforms:instance id="places-template" xxforms:exclude-result-prefixes="#all">
+			<xforms:instance id="places-template" xxf:exclude-result-prefixes="#all">
 				<places>
 					<place>
 						<placeEntry vocabularySource=""/>
 					</place>
 				</places>
 			</xforms:instance>
-			<xforms:instance id="structureOrGenealogy-template" xxforms:exclude-result-prefixes="#all">
+			<xforms:instance id="structureOrGenealogy-template" xxf:exclude-result-prefixes="#all">
 				<structureOrGenealogy/>
 			</xforms:instance>
 			<!-- relations -->
-			<xforms:instance id="cpfRelation-template" xxforms:exclude-result-prefixes="#all">
+			<xforms:instance id="cpfRelation-template" xxf:exclude-result-prefixes="#all">
 				<cpfRelation xlink:type="simple">
 					<relationEntry/>
 				</cpfRelation>
 			</xforms:instance>
-			<xforms:instance id="resourceRelation-template" xxforms:exclude-result-prefixes="#all">
+			<xforms:instance id="resourceRelation-template" xxf:exclude-result-prefixes="#all">
 				<resourceRelation xlink:type="simple">
 					<relationEntry/>
 				</resourceRelation>
@@ -478,7 +478,7 @@
 				<commit/>
 			</xforms:instance>
 			<!-- LOD CRUD INSTANCES -->
-			<xforms:instance id="rdf" xxforms:exclude-result-prefixes="#all">
+			<xforms:instance id="rdf" xxf:exclude-result-prefixes="#all">
 				<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"/>
 			</xforms:instance>
 			<xforms:instance id="sparqlUpdate-template">
@@ -584,10 +584,10 @@ UNION { <URI> ?p ?o . ?s ?p ?o . FILTER (?s = <URI>) }}]]>
 			<!-- ******************* SUBMISSIONS ****************** -->
 			<!-- load preliminary instances -->
 			<xforms:submission id="load-config" serialization="none" method="get" action="{instance('exist-config')/url}xeac/config.xml" replace="instance" instance="config"
-				xxforms:username="{instance('exist-config')/username}" xxforms:password="{instance('exist-config')/password}"/>
+				xxf:username="{instance('exist-config')/username}" xxf:password="{instance('exist-config')/password}"/>
 			<!-- Submission to get the document -->
 			<xforms:submission id="load-doc" serialization="none" method="get" action="{instance('exist-config')/url}xeac/records/{instance('doc')/eac:control/eac:recordId}.xml"
-				replace="instance" instance="doc" xxforms:username="{instance('exist-config')/username}" xxforms:password="{instance('exist-config')/password}">
+				replace="instance" instance="doc" xxf:username="{instance('exist-config')/username}" xxf:password="{instance('exist-config')/password}">
 				<xforms:message ev:event="xforms-submit-error" level="modal">Unable to load EAC record</xforms:message>
 				<xforms:action ev:event="xforms-submit-done">
 					<!-- set publicationStatus in control-instance -->
@@ -598,7 +598,7 @@ UNION { <URI> ?p ?o . ?s ?p ?o . FILTER (?s = <URI>) }}]]>
 					<xforms:setvalue ref="instance('doc')/eac:control/eac:maintenanceStatus" if="instance('doc')/eac:control/eac:maintenanceStatus = 'new'"
 						>revised</xforms:setvalue>
 					<!-- create relations list for diff -->
-					<xforms:action xxforms:iterate="instance('doc')/eac:cpfDescription/eac:relations/eac:cpfRelation[string(@xlink:href) and not(contains(@xlink:href, 'http://'))]">
+					<xforms:action xxf:iterate="instance('doc')/eac:cpfDescription/eac:relations/eac:cpfRelation[string(@xlink:href) and not(contains(@xlink:href, 'http://'))]">
 						<!-- only set the pre-edited relations @xlink:href if it is an internal link -->
 						<xforms:setvalue ref="instance('rel-template')/@xlink:href" value="context()/@xlink:href"/>
 						<!-- set inverse @xlink:arcrole from config -->
@@ -612,10 +612,10 @@ UNION { <URI> ?p ?o . ?s ?p ?o . FILTER (?s = <URI>) }}]]>
 					<xforms:setvalue ref="instance('doc')/eac:control/eac:maintenanceHistory/eac:maintenanceEvent[last()]/eac:eventType">revised</xforms:setvalue>
 					<xforms:setvalue ref="instance('doc')/eac:control/eac:maintenanceHistory/eac:maintenanceEvent[last()]/eac:eventDateTime/@standardDateTime"
 						value="current-dateTime()"/>
-					<xforms:setvalue ref="instance('doc')/eac:control/eac:maintenanceHistory/eac:maintenanceEvent[last()]/eac:agent" value="xxforms:get-remote-user()"/>
+					<xforms:setvalue ref="instance('doc')/eac:control/eac:maintenanceHistory/eac:maintenanceEvent[last()]/eac:agent" value="xxf:get-remote-user()"/>
 					<!-- insert localTypeDeclaration, if necessary -->
 					<xforms:action
-						xxforms:iterate="instance('config')//localTypeDeclaration[not(abbreviation = instance('doc')/eac:control/eac:localTypeDeclaration/eac:abbreviation)]">
+						xxf:iterate="instance('config')//localTypeDeclaration[not(abbreviation = instance('doc')/eac:control/eac:localTypeDeclaration/eac:abbreviation)]">
 						<xforms:var name="href" select="context()/citation/@href"/>
 						<xforms:insert context="instance('doc')/eac:control" nodeset="./child::node()[last()]" origin="instance('localTypeDeclaration-template')"/>
 						<xforms:setvalue ref="instance('doc')/eac:control/eac:localTypeDeclaration[last()]/eac:abbreviation" value="context()/abbreviation"/>
@@ -626,14 +626,14 @@ UNION { <URI> ?p ?o . ?s ?p ?o . FILTER (?s = <URI>) }}]]>
 						<!--<xforms:insert context="instance('doc')/eac:control/eac:localTypeDeclaration[last()]" nodeset="./child::node()[last()]" origin="instance('descriptiveNote-template')"/>-->
 					</xforms:action>
 					<!-- set conventionDeclaration-list for nameEntry forms -->
-					<!--<xforms:action xxforms:iterate="instance('doc')/eac:control/eac:conventionDeclaration">
+					<!--<xforms:action xxf:iterate="instance('doc')/eac:control/eac:conventionDeclaration">
 						<xforms:insert context="instance('conventionDeclaration-list')" nodeset="./child::node()[last()]" origin="instance('item-template')"/>
 						<xforms:setvalue ref="instance('conventionDeclaration-list')"/>
 						</xforms:action>-->
 				</xforms:action>
 			</xforms:submission>
 			<xforms:submission id="load-temp-doc" serialization="none" method="get" action="{instance('exist-config')/url}xeac/records/{instance('temp-id')/identifier}.xml"
-				replace="instance" instance="temp-doc" xxforms:username="{instance('exist-config')/username}" xxforms:password="{instance('exist-config')/password}">
+				replace="instance" instance="temp-doc" xxf:username="{instance('exist-config')/username}" xxf:password="{instance('exist-config')/password}">
 				<!-- only initiate the following functions for an 'add' -->
 				<!-- load document to create cpfRelation, if it exists -->
 				<xforms:action ev:event="xforms-submit-done">
@@ -657,7 +657,7 @@ UNION { <URI> ?p ?o . ?s ?p ?o . FILTER (?s = <URI>) }}]]>
 						<xforms:insert context="instance('temp-doc')/eac:cpfDescription/eac:relations" nodeset="./child::node()[last()]" origin="instance('cpfRelation-template')"/>
 						<!-- insert localTypeDeclaration, if necessary -->
 						<xforms:action
-							xxforms:iterate="instance('config')//localTypeDeclaration[not(abbreviation = instance('temp-doc')/eac:control/eac:localTypeDeclaration/eac:abbreviation)]">
+							xxf:iterate="instance('config')//localTypeDeclaration[not(abbreviation = instance('temp-doc')/eac:control/eac:localTypeDeclaration/eac:abbreviation)]">
 							<xforms:var name="href" select="context()/citation/@href"/>
 							<xforms:insert context="instance('temp-doc')/eac:control" nodeset="./child::node()[last()]" origin="instance('localTypeDeclaration-template')"/>
 							<xforms:setvalue ref="instance('temp-doc')/eac:control/eac:localTypeDeclaration[last()]/eac:abbreviation" value="context()/abbreviation"/>
@@ -726,16 +726,16 @@ UNION { <URI> ?p ?o . ?s ?p ?o . FILTER (?s = <URI>) }}]]>
 			</xforms:submission>
 			<!-- Submission to save the document -->
 			<xforms:submission id="save-doc" ref="instance('doc')" action="{instance('exist-config')/url}xeac/records/{instance('doc')/eac:control/eac:recordId}.xml" method="put"
-				replace="none" xxforms:username="{instance('exist-config')/username}" xxforms:password="{instance('exist-config')/password}">
+				replace="none" xxf:username="{instance('exist-config')/username}" xxf:password="{instance('exist-config')/password}">
 				<xforms:message ev:event="xforms-submit-error" level="modal">Error Saving Documents. Be sure all required inputs are filled in.</xforms:message>
 				<xforms:action ev:event="xforms-submit-done">
 					<xforms:setvalue ref="instance('control-instance')/status">EAC record saved.</xforms:setvalue>
 					<!-- generate KML -->
-					<xforms:insert nodeset="instance('kml')" origin="xxforms:call-xpl('oxf:/apps/xeac/xpl/views/serializations/eac/kml.xpl', 'data', instance('doc'), 'data')"/>
+					<xforms:insert nodeset="instance('kml')" origin="xxf:call-xpl('oxf:/apps/xeac/xpl/views/serializations/eac/kml.xpl', 'data', instance('doc'), 'data')"/>
 					<xforms:send submission="save-kml"/>
 					<!-- *************** PROCESS RELATIONS **************** -->
 					<!-- generate post-edit list on Save -->
-					<xforms:action xxforms:iterate="instance('doc')/eac:cpfDescription/eac:relations/eac:cpfRelation[string(@xlink:href) and not(contains(@xlink:href, 'http://'))]">
+					<xforms:action xxf:iterate="instance('doc')/eac:cpfDescription/eac:relations/eac:cpfRelation[string(@xlink:href) and not(contains(@xlink:href, 'http://'))]">
 						<xforms:insert context="instance('relations-post')" nodeset="./child::node()[last()]" origin="instance('rel-template')"/>
 						<!-- only set the @xlink:href if it is a local, relative value, i.e., does not contain http:// -->
 						<xforms:setvalue ref="instance('relations-post')/relation[last()]/@xlink:href" value="context()/@xlink:href"/>
@@ -745,7 +745,7 @@ UNION { <URI> ?p ?o . ?s ?p ?o . FILTER (?s = <URI>) }}]]>
 						/>
 					</xforms:action>
 					<!-- ***** GENERATE ACTION LIST ***** -->
-					<xforms:action xxforms:iterate="instance('relations-post')/relation[@xlink:href]">
+					<xforms:action xxf:iterate="instance('relations-post')/relation[@xlink:href]">
 						<!-- create new relations -->
 						<xforms:var name="href" select="@xlink:href"/>
 						<xforms:action if="not(instance('relations-pre')/relation[@xlink:href=$href])">
@@ -764,7 +764,7 @@ UNION { <URI> ?p ?o . ?s ?p ?o . FILTER (?s = <URI>) }}]]>
 						<!-- create changes by comparing pre and post relations with matching xlink:hrefs -->
 					</xforms:action>
 					<!-- add removals to action list: cpfRelations with xlink:hrefs that do not appear in post -->
-					<xforms:action xxforms:iterate="instance('relations-pre')/relation[@xlink:href]">
+					<xforms:action xxf:iterate="instance('relations-pre')/relation[@xlink:href]">
 						<!-- create new relations -->
 						<xforms:var name="href" select="@xlink:href"/>
 						<xforms:action if="not(instance('relations-post')/relation[@xlink:href=$href])">
@@ -777,7 +777,7 @@ UNION { <URI> ?p ?o . ?s ?p ?o . FILTER (?s = <URI>) }}]]>
 					</xforms:action>
 					<!-- ***** PROCESS ACTION LIST ***** -->
 					<!-- iterate through additions -->
-					<xforms:action xxforms:iterate="instance('action-list')/action[add]">
+					<xforms:action xxf:iterate="instance('action-list')/action[add]">
 						<xforms:setvalue ref="instance('temp-id')/identifier" value="context()/@dest"/>
 						<xforms:setvalue ref="instance('temp-id')/href" value="context()/@source"/>
 						<xforms:setvalue ref="instance('temp-id')/arcrole" value="context()/add/@xlink:arcrole"/>
@@ -786,7 +786,7 @@ UNION { <URI> ?p ?o . ?s ?p ?o . FILTER (?s = <URI>) }}]]>
 						<xforms:send submission="load-temp-doc"/>
 					</xforms:action>
 					<!-- iterate through removals -->
-					<xforms:action xxforms:iterate="instance('action-list')/action[remove]">
+					<xforms:action xxf:iterate="instance('action-list')/action[remove]">
 						<xforms:setvalue ref="instance('temp-id')/identifier" value="context()/@dest"/>
 						<xforms:setvalue ref="instance('temp-id')/href" value="context()/@source"/>
 						<xforms:setvalue ref="instance('temp-id')/arcrole"/>
@@ -796,7 +796,7 @@ UNION { <URI> ?p ?o . ?s ?p ?o . FILTER (?s = <URI>) }}]]>
 					</xforms:action>
 					<!-- reprocess pre list -->
 					<xforms:delete nodeset="instance('relations-pre')/*"/>
-					<xforms:action xxforms:iterate="instance('doc')/eac:cpfDescription/eac:relations/eac:cpfRelation[string(@xlink:href) and not(contains(@xlink:href, 'http://'))]">
+					<xforms:action xxf:iterate="instance('doc')/eac:cpfDescription/eac:relations/eac:cpfRelation[string(@xlink:href) and not(contains(@xlink:href, 'http://'))]">
 						<xforms:setvalue ref="instance('rel-template')/@xlink:href" value="context()/@xlink:href"/>
 						<!-- set inverse @xlink:arcrole from config -->
 						<xforms:var name="arcrole" select="context()/@xlink:arcrole"/>
@@ -836,11 +836,11 @@ UNION { <URI> ?p ?o . ?s ?p ?o . FILTER (?s = <URI>) }}]]>
 				</xforms:action>
 			</xforms:submission>
 			<xforms:submission id="save-kml" ref="instance('kml')" action="{instance('exist-config')/url}xeac/kml/{instance('doc')/eac:control/eac:recordId}.kml" method="put"
-				replace="none" xxforms:username="{instance('exist-config')/username}" xxforms:password="{instance('exist-config')/password}">
+				replace="none" xxf:username="{instance('exist-config')/username}" xxf:password="{instance('exist-config')/password}">
 				<xforms:message ev:event="xforms-submit-error" level="modal">Error Saving KML.</xforms:message>
 			</xforms:submission>
 			<xforms:submission id="save-temp-doc" ref="instance('temp-doc')" action="{instance('exist-config')/url}xeac/records/{instance('temp-doc')/eac:control/eac:recordId}.xml"
-				method="put" replace="none" xxforms:username="{instance('exist-config')/username}" xxforms:password="{instance('exist-config')/password}">
+				method="put" replace="none" xxf:username="{instance('exist-config')/username}" xxf:password="{instance('exist-config')/password}">
 				<xforms:message ev:event="xforms-submit-error" level="modal">
 					<xforms:output value="concat('Unable to update relational document: ', instance('temp-doc')/eac:control/eac:recordId)"/>
 				</xforms:message>
@@ -863,7 +863,7 @@ UNION { <URI> ?p ?o . ?s ?p ?o . FILTER (?s = <URI>) }}]]>
 			</xforms:submission>
 			<xforms:submission id="save-eac-template" ref="instance('eac-template')"
 				action="{instance('exist-config')/url}xeac/records/{instance('eac-template')/eac:control/eac:recordId}.xml" method="put" replace="none"
-				xxforms:username="{instance('exist-config')/username}" xxforms:password="{instance('exist-config')/password}">
+				xxf:username="{instance('exist-config')/username}" xxf:password="{instance('exist-config')/password}">
 				<xforms:message ev:event="xforms-submit-error" level="modal">
 					<xforms:output value="concat('Unable generate new document: ', instance('eac-template')/eac:control/eac:recordId)"/>
 				</xforms:message>
@@ -914,18 +914,18 @@ UNION { <URI> ?p ?o . ?s ?p ?o . FILTER (?s = <URI>) }}]]>
 			<xforms:action ev:event="xforms-model-construct-done">
 				<xforms:send submission="load-config"/>
 				<!-- if there is a recordId parameter, load existing EAC record -->
-				<xforms:action if="string(xxforms:get-request-parameter('recordId'))">
-					<xforms:setvalue ref="instance('doc')/eac:control/eac:recordId" value="xxforms:get-request-parameter('recordId')"/>
+				<xforms:action if="string(xxf:get-request-parameter('recordId'))">
+					<xforms:setvalue ref="instance('doc')/eac:control/eac:recordId" value="xxf:get-request-parameter('recordId')"/>
 					<xforms:send submission="load-doc"/>
 				</xforms:action>
-				<xforms:action if="not(string(xxforms:get-request-parameter('recordId')))">
+				<xforms:action if="not(string(xxf:get-request-parameter('recordId')))">
 					<!-- set current dateTime and boilerplate information on creation of new record -->
 					<xforms:setvalue ref="instance('doc')/eac:control/eac:maintenanceHistory/eac:maintenanceEvent/eac:eventDateTime/@standardDateTime" value="current-dateTime()"/>
 					<xforms:setvalue ref="instance('doc')/eac:control/eac:maintenanceAgency/eac:agencyName"
 						value="instance('config')/instances/agencyName-list/item[@default='true']"/>
 					<!-- insert localTypeDeclaration, if necessary -->
 					<xforms:action
-						xxforms:iterate="instance('config')//localTypeDeclaration[not(abbreviation = instance('doc')/eac:control/eac:localTypeDeclaration/eac:abbreviation)]">
+						xxf:iterate="instance('config')//localTypeDeclaration[not(abbreviation = instance('doc')/eac:control/eac:localTypeDeclaration/eac:abbreviation)]">
 						<xforms:var name="href" select="context()/citation/@href"/>
 						<xforms:insert context="instance('doc')/eac:control" nodeset="./child::node()[last()]" origin="instance('localTypeDeclaration-template')"/>
 						<xforms:setvalue ref="instance('doc')/eac:control/eac:localTypeDeclaration[last()]/eac:abbreviation" value="context()/abbreviation"/>
@@ -1145,7 +1145,7 @@ UNION { <URI> ?p ?o . ?s ?p ?o . FILTER (?s = <URI>) }}]]>
 																		<span class="glyphicon glyphicon-plus"></span>Authorized Form</xforms:label>
 																	<xforms:action ev:event="DOMActivate">
 																		<xforms:insert context="." origin="instance('authorizedForm-template')" nodeset="./child::node()[last()]"/>
-																		<xxforms:hide dialog="nameEntry-objects"/>
+																		<xxf:hide dialog="nameEntry-objects"/>
 																	</xforms:action>
 																</xforms:trigger>
 															</xforms:group>
@@ -1155,7 +1155,7 @@ UNION { <URI> ?p ?o . ?s ?p ?o . FILTER (?s = <URI>) }}]]>
 																		<span class="glyphicon glyphicon-plus"></span>Alternative Form</xforms:label>
 																	<xforms:action ev:event="DOMActivate">
 																		<xforms:insert context="." origin="instance('alternativeForm-template')" nodeset="./child::node()[last()]"/>
-																		<xxforms:hide dialog="nameEntry-objects"/>
+																		<xxf:hide dialog="nameEntry-objects"/>
 																	</xforms:action>
 																</xforms:trigger>
 															</xforms:group>
@@ -1166,7 +1166,7 @@ UNION { <URI> ?p ?o . ?s ?p ?o . FILTER (?s = <URI>) }}]]>
 																	<span class="glyphicon glyphicon-plus"></span>Preferred Form</xforms:label>
 																<xforms:action ev:event="DOMActivate">
 																	<xforms:insert context="." origin="instance('preferredForm-template')" nodeset="./child::node()[last()]"/>
-																	<xxforms:hide dialog="nameEntry-objects"/>
+																	<xxf:hide dialog="nameEntry-objects"/>
 																</xforms:action>
 															</xforms:trigger>
 														</xforms:group>
@@ -1176,7 +1176,7 @@ UNION { <URI> ?p ?o . ?s ?p ?o . FILTER (?s = <URI>) }}]]>
 																	<span class="glyphicon glyphicon-plus"></span>Use Dates</xforms:label>
 																<xforms:action ev:event="DOMActivate">
 																	<xforms:insert context="." origin="instance('useDates-template')" nodeset="./child::node()[last()]"/>
-																	<xxforms:hide dialog="nameEntry-objects"/>
+																	<xxf:hide dialog="nameEntry-objects"/>
 																</xforms:action>
 															</xforms:trigger>
 														</xforms:group>
@@ -1306,7 +1306,7 @@ UNION { <URI> ?p ?o . ?s ?p ?o . FILTER (?s = <URI>) }}]]>
 											<span class="add">
 												<xforms:trigger appearance="minimal">
 													<xforms:label><span class="glyphicon glyphicon-plus"></span></xforms:label>
-													<xxforms:show ev:event="DOMActivate" dialog="description-objects"/>
+													<xxf:show ev:event="DOMActivate" dialog="description-objects"/>
 												</xforms:trigger>
 											</span>
 											<xforms:trigger appearance="minimal">
@@ -1315,7 +1315,7 @@ UNION { <URI> ?p ?o . ?s ?p ?o . FILTER (?s = <URI>) }}]]>
 													<span class="glyphicon glyphicon-remove"></span>
 												</xforms:label>
 											</xforms:trigger>
-											<xxforms:dialog id="description-objects" appearance="full" level="modal" close="true" draggable="true" visible="false">
+											<xxf:dialog id="description-objects" appearance="full" level="modal" close="true" draggable="true" visible="false">
 												<xforms:label>Description Objects</xforms:label>
 												<xforms:group ref=".[count(eac:biogHist) = 0]">
 													<xforms:trigger appearance="minimal">
@@ -1323,7 +1323,7 @@ UNION { <URI> ?p ?o . ?s ?p ?o . FILTER (?s = <URI>) }}]]>
 															<span class="glyphicon glyphicon-plus"></span>Biog/Hist</xforms:label>
 														<xforms:action ev:event="DOMActivate">
 															<xforms:insert context="." origin="instance('biogHist-template')"/>
-															<xxforms:hide dialog="description-objects"/>
+															<xxf:hide dialog="description-objects"/>
 														</xforms:action>
 													</xforms:trigger>
 												</xforms:group>
@@ -1333,7 +1333,7 @@ UNION { <URI> ?p ?o . ?s ?p ?o . FILTER (?s = <URI>) }}]]>
 															<span class="glyphicon glyphicon-plus"></span>Dates of Existence</xforms:label>
 														<xforms:action ev:event="DOMActivate">
 															<xforms:insert context="." origin="instance('existDates-template')"/>
-															<xxforms:hide dialog="description-objects"/>
+															<xxf:hide dialog="description-objects"/>
 														</xforms:action>
 													</xforms:trigger>
 												</xforms:group>
@@ -1342,7 +1342,7 @@ UNION { <URI> ?p ?o . ?s ?p ?o . FILTER (?s = <URI>) }}]]>
 														<span class="glyphicon glyphicon-plus"></span>Function</xforms:label>
 													<xforms:action ev:event="DOMActivate">
 														<xforms:insert context="." nodeset="./child::node()[last()]" origin="instance('function-template')"/>
-														<xxforms:hide dialog="description-objects"/>
+														<xxf:hide dialog="description-objects"/>
 													</xforms:action>
 												</xforms:trigger>
 												<xforms:trigger appearance="minimal">
@@ -1350,7 +1350,7 @@ UNION { <URI> ?p ?o . ?s ?p ?o . FILTER (?s = <URI>) }}]]>
 														<span class="glyphicon glyphicon-plus"></span>Functions</xforms:label>
 													<xforms:action ev:event="DOMActivate">
 														<xforms:insert context="." nodeset="./child::node()[last()]" origin="instance('functions-template')"/>
-														<xxforms:hide dialog="description-objects"/>
+														<xxf:hide dialog="description-objects"/>
 													</xforms:action>
 												</xforms:trigger>
 												<xforms:group ref=".[count(eac:generalContext) = 0]">
@@ -1359,7 +1359,7 @@ UNION { <URI> ?p ?o . ?s ?p ?o . FILTER (?s = <URI>) }}]]>
 															<span class="glyphicon glyphicon-plus"></span>General Context</xforms:label>
 														<xforms:action ev:event="DOMActivate">
 															<xforms:insert context="." nodeset="./child::node()[last()]" origin="instance('generalContext-template')"/>
-															<xxforms:hide dialog="description-objects"/>
+															<xxf:hide dialog="description-objects"/>
 														</xforms:action>
 													</xforms:trigger>
 												</xforms:group>
@@ -1368,7 +1368,7 @@ UNION { <URI> ?p ?o . ?s ?p ?o . FILTER (?s = <URI>) }}]]>
 														<span class="glyphicon glyphicon-plus"></span>Language Used</xforms:label>
 													<xforms:action ev:event="DOMActivate">
 														<xforms:insert context="." nodeset="./child::node()[last()]" origin="instance('languageUsed-template')"/>
-														<xxforms:hide dialog="description-objects"/>
+														<xxf:hide dialog="description-objects"/>
 													</xforms:action>
 												</xforms:trigger>
 												<xforms:trigger appearance="minimal">
@@ -1376,7 +1376,7 @@ UNION { <URI> ?p ?o . ?s ?p ?o . FILTER (?s = <URI>) }}]]>
 														<span class="glyphicon glyphicon-plus"></span>Languages Used</xforms:label>
 													<xforms:action ev:event="DOMActivate">
 														<xforms:insert context="." nodeset="./child::node()[last()]" origin="instance('languagesUsed-template')"/>
-														<xxforms:hide dialog="description-objects"/>
+														<xxf:hide dialog="description-objects"/>
 													</xforms:action>
 												</xforms:trigger>
 												<xforms:trigger appearance="minimal">
@@ -1384,7 +1384,7 @@ UNION { <URI> ?p ?o . ?s ?p ?o . FILTER (?s = <URI>) }}]]>
 														<span class="glyphicon glyphicon-plus"></span>Legal Status</xforms:label>
 													<xforms:action ev:event="DOMActivate">
 														<xforms:insert context="." nodeset="./child::node()[last()]" origin="instance('legalStatus-template')"/>
-														<xxforms:hide dialog="description-objects"/>
+														<xxf:hide dialog="description-objects"/>
 													</xforms:action>
 												</xforms:trigger>
 												<xforms:trigger appearance="minimal">
@@ -1392,7 +1392,7 @@ UNION { <URI> ?p ?o . ?s ?p ?o . FILTER (?s = <URI>) }}]]>
 														<span class="glyphicon glyphicon-plus"></span>Legal Statuses</xforms:label>
 													<xforms:action ev:event="DOMActivate">
 														<xforms:insert context="." nodeset="./child::node()[last()]" origin="instance('legalStatuses-template')"/>
-														<xxforms:hide dialog="description-objects"/>
+														<xxf:hide dialog="description-objects"/>
 													</xforms:action>
 												</xforms:trigger>
 												<xforms:trigger appearance="minimal">
@@ -1400,7 +1400,7 @@ UNION { <URI> ?p ?o . ?s ?p ?o . FILTER (?s = <URI>) }}]]>
 														<span class="glyphicon glyphicon-plus"></span>Local Description</xforms:label>
 													<xforms:action ev:event="DOMActivate">
 														<xforms:insert context="." nodeset="./child::node()[last()]" origin="instance('localDescription-template')"/>
-														<xxforms:hide dialog="description-objects"/>
+														<xxf:hide dialog="description-objects"/>
 													</xforms:action>
 												</xforms:trigger>
 												<xforms:trigger appearance="minimal">
@@ -1408,7 +1408,7 @@ UNION { <URI> ?p ?o . ?s ?p ?o . FILTER (?s = <URI>) }}]]>
 														<span class="glyphicon glyphicon-plus"></span>Local Descriptions</xforms:label>
 													<xforms:action ev:event="DOMActivate">
 														<xforms:insert context="." nodeset="./child::node()[last()]" origin="instance('localDescriptions-template')"/>
-														<xxforms:hide dialog="description-objects"/>
+														<xxf:hide dialog="description-objects"/>
 													</xforms:action>
 												</xforms:trigger>
 												<xforms:trigger appearance="minimal">
@@ -1416,7 +1416,7 @@ UNION { <URI> ?p ?o . ?s ?p ?o . FILTER (?s = <URI>) }}]]>
 														<span class="glyphicon glyphicon-plus"></span>Mandate</xforms:label>
 													<xforms:action ev:event="DOMActivate">
 														<xforms:insert context="." nodeset="./child::node()[last()]" origin="instance('mandate-template')"/>
-														<xxforms:hide dialog="description-objects"/>
+														<xxf:hide dialog="description-objects"/>
 													</xforms:action>
 												</xforms:trigger>
 												<xforms:trigger appearance="minimal">
@@ -1424,7 +1424,7 @@ UNION { <URI> ?p ?o . ?s ?p ?o . FILTER (?s = <URI>) }}]]>
 														<span class="glyphicon glyphicon-plus"></span>Mandates</xforms:label>
 													<xforms:action ev:event="DOMActivate">
 														<xforms:insert context="." nodeset="./child::node()[last()]" origin="instance('mandates-template')"/>
-														<xxforms:hide dialog="description-objects"/>
+														<xxf:hide dialog="description-objects"/>
 													</xforms:action>
 												</xforms:trigger>
 												<xforms:trigger appearance="minimal">
@@ -1432,7 +1432,7 @@ UNION { <URI> ?p ?o . ?s ?p ?o . FILTER (?s = <URI>) }}]]>
 														<span class="glyphicon glyphicon-plus"></span>Occupation</xforms:label>
 													<xforms:action ev:event="DOMActivate">
 														<xforms:insert context="." nodeset="./child::node()[last()]" origin="instance('occupation-template')"/>
-														<xxforms:hide dialog="description-objects"/>
+														<xxf:hide dialog="description-objects"/>
 													</xforms:action>
 												</xforms:trigger>
 												<xforms:trigger appearance="minimal">
@@ -1440,7 +1440,7 @@ UNION { <URI> ?p ?o . ?s ?p ?o . FILTER (?s = <URI>) }}]]>
 														<span class="glyphicon glyphicon-plus"></span>Occupations</xforms:label>
 													<xforms:action ev:event="DOMActivate">
 														<xforms:insert context="." nodeset="./child::node()[last()]" origin="instance('occupations-template')"/>
-														<xxforms:hide dialog="description-objects"/>
+														<xxf:hide dialog="description-objects"/>
 													</xforms:action>
 												</xforms:trigger>
 												<xforms:trigger appearance="minimal">
@@ -1448,7 +1448,7 @@ UNION { <URI> ?p ?o . ?s ?p ?o . FILTER (?s = <URI>) }}]]>
 														<span class="glyphicon glyphicon-plus"></span>Place</xforms:label>
 													<xforms:action ev:event="DOMActivate">
 														<xforms:insert context="." nodeset="./child::node()[last()]" origin="instance('place-template')"/>
-														<xxforms:hide dialog="description-objects"/>
+														<xxf:hide dialog="description-objects"/>
 													</xforms:action>
 												</xforms:trigger>
 												<xforms:trigger appearance="minimal">
@@ -1456,7 +1456,7 @@ UNION { <URI> ?p ?o . ?s ?p ?o . FILTER (?s = <URI>) }}]]>
 														<span class="glyphicon glyphicon-plus"></span>Places</xforms:label>
 													<xforms:action ev:event="DOMActivate">
 														<xforms:insert context="." nodeset="./child::node()[last()]" origin="instance('places-template')"/>
-														<xxforms:hide dialog="description-objects"/>
+														<xxf:hide dialog="description-objects"/>
 													</xforms:action>
 												</xforms:trigger>
 												<xforms:group ref=".[count(eac:structureOrGenealogy) = 0]">
@@ -1465,11 +1465,11 @@ UNION { <URI> ?p ?o . ?s ?p ?o . FILTER (?s = <URI>) }}]]>
 															<span class="glyphicon glyphicon-plus"></span>Structure or Genealogy</xforms:label>
 														<xforms:action ev:event="DOMActivate">
 															<xforms:insert context="." nodeset="./child::node()[last()]" origin="instance('structureOrGenealogy-template')"/>
-															<xxforms:hide dialog="description-objects"/>
+															<xxf:hide dialog="description-objects"/>
 														</xforms:action>
 													</xforms:trigger>
 												</xforms:group>
-											</xxforms:dialog>
+											</xxf:dialog>
 											<!-- description elements -->
 											<xforms:group ref="eac:biogHist">
 												<div class="section">
@@ -1479,7 +1479,7 @@ UNION { <URI> ?p ?o . ?s ?p ?o . FILTER (?s = <URI>) }}]]>
 															<xforms:label>
 																<span class="glyphicon glyphicon-plus"></span>
 															</xforms:label>
-															<xxforms:show ev:event="DOMActivate" dialog="biogHist-objects"/>
+															<xxf:show ev:event="DOMActivate" dialog="biogHist-objects"/>
 														</xforms:trigger>
 													</span>
 													<xforms:trigger appearance="minimal">
@@ -1488,7 +1488,7 @@ UNION { <URI> ?p ?o . ?s ?p ?o . FILTER (?s = <URI>) }}]]>
 															<span class="glyphicon glyphicon-remove"></span>
 														</xforms:label>
 													</xforms:trigger>
-													<xxforms:dialog id="biogHist-objects" appearance="full" level="modal" close="true" draggable="true" visible="false">
+													<xxf:dialog id="biogHist-objects" appearance="full" level="modal" close="true" draggable="true" visible="false">
 														<xforms:label>Add Elements</xforms:label>
 														<xforms:group ref=".[count(eac:abstract) = 0]">
 															<xforms:trigger appearance="minimal">
@@ -1496,7 +1496,7 @@ UNION { <URI> ?p ?o . ?s ?p ?o . FILTER (?s = <URI>) }}]]>
 																	<span class="glyphicon glyphicon-plus"></span>Abstract</xforms:label>
 																<xforms:action ev:event="DOMActivate">
 																	<xforms:insert context="." origin="instance('abstract-template')"/>
-																	<xxforms:hide dialog="biogHist-objects"/>
+																	<xxf:hide dialog="biogHist-objects"/>
 																</xforms:action>
 															</xforms:trigger>
 														</xforms:group>
@@ -1506,7 +1506,7 @@ UNION { <URI> ?p ?o . ?s ?p ?o . FILTER (?s = <URI>) }}]]>
 																	<span class="glyphicon glyphicon-plus"></span>Chronological List</xforms:label>
 																<xforms:action ev:event="DOMActivate">
 																	<xforms:insert context="." origin="instance('chronList-template')"/>
-																	<xxforms:hide dialog="biogHist-objects"/>
+																	<xxf:hide dialog="biogHist-objects"/>
 																</xforms:action>
 															</xforms:trigger>
 														</xforms:group>
@@ -1516,7 +1516,7 @@ UNION { <URI> ?p ?o . ?s ?p ?o . FILTER (?s = <URI>) }}]]>
 																	<span class="glyphicon glyphicon-plus"></span>Citation</xforms:label>
 																<xforms:action ev:event="DOMActivate">
 																	<xforms:insert context="." origin="instance('citation-template')"/>
-																	<xxforms:hide dialog="biogHist-objects"/>
+																	<xxf:hide dialog="biogHist-objects"/>
 																</xforms:action>
 															</xforms:trigger>
 														</xforms:group>
@@ -1526,7 +1526,7 @@ UNION { <URI> ?p ?o . ?s ?p ?o . FILTER (?s = <URI>) }}]]>
 																	<span class="glyphicon glyphicon-plus"></span>List</xforms:label>
 																<xforms:action ev:event="DOMActivate">
 																	<xforms:insert context="." origin="instance('list-template')"/>
-																	<xxforms:hide dialog="biogHist-objects"/>
+																	<xxf:hide dialog="biogHist-objects"/>
 																</xforms:action>
 															</xforms:trigger>
 														</xforms:group>
@@ -1536,7 +1536,7 @@ UNION { <URI> ?p ?o . ?s ?p ?o . FILTER (?s = <URI>) }}]]>
 																	<span class="glyphicon glyphicon-plus"></span>Outline</xforms:label>
 																<xforms:action ev:event="DOMActivate">
 																	<xforms:insert context="." origin="instance('outline-template')"/>
-																	<xxforms:hide dialog="biogHist-objects"/>
+																	<xxf:hide dialog="biogHist-objects"/>
 																</xforms:action>
 															</xforms:trigger>
 														</xforms:group>
@@ -1545,10 +1545,10 @@ UNION { <URI> ?p ?o . ?s ?p ?o . FILTER (?s = <URI>) }}]]>
 																<span class="glyphicon glyphicon-plus"></span>Paragraph</xforms:label>
 															<xforms:action ev:event="DOMActivate">
 																<xforms:insert context="." nodeset="./child::node()[last()]" origin="instance('p-template')"/>
-																<xxforms:hide dialog="biogHist-objects"/>
+																<xxf:hide dialog="biogHist-objects"/>
 															</xforms:action>
 														</xforms:trigger>
-													</xxforms:dialog>
+													</xxf:dialog>
 												</div>
 												<xforms:group ref="eac:abstract">
 													<div>
@@ -2054,7 +2054,7 @@ UNION { <URI> ?p ?o . ?s ?p ?o . FILTER (?s = <URI>) }}]]>
 											<xforms:action ev:event="DOMActivate">
 												<xforms:var name="auth" select="eac:conventionDeclaration[position() = instance('control-instance')/pos]/eac:abbreviation"/>
 												<!-- blank the values for all nameEntry forms which are equal to the convention declaration abbreviation -->
-												<xforms:action xxforms:iterate="instance('doc')//eac:nameEntry[*[. = $auth]]">
+												<xforms:action xxf:iterate="instance('doc')//eac:nameEntry[*[. = $auth]]">
 													<xforms:setvalue ref="context()/*[contains(local-name(), 'Form')]"/>
 												</xforms:action>
 												<!-- remove node -->

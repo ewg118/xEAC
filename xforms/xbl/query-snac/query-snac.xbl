@@ -1,5 +1,5 @@
 <xbl:xbl xmlns="http://www.w3.org/1999/xhtml" xmlns:xforms="http://www.w3.org/2002/xforms" xmlns:ev="http://www.w3.org/2001/xml-events"
-	xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:eac="urn:isbn:1-931666-33-4" xmlns:xxforms="http://orbeon.org/oxf/xml/xforms"
+	xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:eac="urn:isbn:1-931666-33-4" xmlns:xxf="http://orbeon.org/oxf/xml/xforms"
 	xmlns:xbl="http://www.w3.org/ns/xbl" xmlns:xxbl="http://orbeon.org/oxf/xml/xbl" xmlns:xeac="https://github.com/ewg118/xEAC">
 	<xbl:binding id="xeac-query-snac" element="xeac|query-snac">
 		<xbl:template>
@@ -7,7 +7,7 @@
 				<xbl:content includes="xforms|label,xforms|help,xforms|hint,xforms|alert"/>
 				<xforms:group xxbl:scope="inner">
 					<xforms:var name="binding" as="node()?">
-						<xxforms:sequence select="." xxbl:scope="outer"/>
+						<xxf:sequence select="." xxbl:scope="outer"/>
 					</xforms:var>
 
 					<xforms:group ref="$binding">
@@ -20,11 +20,11 @@
 									<xforms:setvalue ref="instance('query-json')/term" value="$binding/eac:cpfDescription/eac:identity/eac:nameEntry[1]/eac:part[1]"/>
 									<xforms:send submission="query-snac"/>
 								</xforms:action>								
-								<xxforms:show dialog="snac-dialog"/>
+								<xxf:show dialog="snac-dialog"/>
 							</xforms:action>
 						</xforms:trigger>
 
-						<xxforms:dialog id="snac-dialog" appearance="full" level="modal" close="true" draggable="true" visible="false">
+						<xxf:dialog id="snac-dialog" appearance="full" level="modal" close="true" draggable="true" visible="false">
 							<xforms:label>Query SNAC</xforms:label>
 							<div>
 								<xforms:input ref="instance('query-json')/term">
@@ -66,7 +66,7 @@
 										<xforms:insert context="$binding/eac:control" nodeset="./child::node()[last()]"
 											origin="instance('localTypeDeclaration-template')"
 											if="not($binding/eac:control/eac:localTypeDeclaration[eac:abbreviation='skos'])"/>
-										<xxforms:hide dialog="snac-dialog"/>
+										<xxf:hide dialog="snac-dialog"/>
 									</xforms:action>
 								</xforms:trigger>
 								
@@ -83,7 +83,7 @@
 									</p>
 								</xforms:group>
 							</xforms:group>
-						</xxforms:dialog>
+						</xxf:dialog>
 					</xforms:group>
 
 					<!-- ***************** MODEL ***************-->
@@ -112,15 +112,15 @@
 						</xforms:instance>
 
 						<!-- EAC templates -->
-						<xforms:instance id="entityId-template" xxforms:exclude-result-prefixes="#all">
+						<xforms:instance id="entityId-template" xxf:exclude-result-prefixes="#all">
 							<entityId localType="skos:exactMatch" xmlns="urn:isbn:1-931666-33-4"/>
 						</xforms:instance>
 
-						<xforms:instance id="sources-template" xxforms:exclude-result-prefixes="#all">
+						<xforms:instance id="sources-template" xxf:exclude-result-prefixes="#all">
 							<sources xmlns="urn:isbn:1-931666-33-4"/>
 						</xforms:instance>
 
-						<xforms:instance id="localTypeDeclaration-template" xxforms:exclude-result-prefixes="#all">
+						<xforms:instance id="localTypeDeclaration-template" xxf:exclude-result-prefixes="#all">
 							<localTypeDeclaration xmlns="urn:isbn:1-931666-33-4">
 								<abbreviation>skos</abbreviation>
 								<citation xlink:type="simple" xlink:role="semantic" xlink:href="http://www.w3.org/2004/02/skos/core#"
