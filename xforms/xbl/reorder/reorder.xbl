@@ -1,7 +1,7 @@
 <!-- Ethan Gruber, American Numismatic Society
 	Modification Date: June, 2012
 	Establish connection between an EAC-CPF record in xEAC to another record in xEAC -->
-<xbl:xbl xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:xforms="http://www.w3.org/2002/xforms" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:xxforms="http://orbeon.org/oxf/xml/xforms"
+<xbl:xbl xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:xforms="http://www.w3.org/2002/xforms" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:xxf="http://orbeon.org/oxf/xml/xforms"
 	xmlns:exist="http://exist.sourceforge.net/NS/exist" xmlns:xbl="http://www.w3.org/ns/xbl" xmlns:xxbl="http://orbeon.org/oxf/xml/xbl" xmlns:xeac="https://github.com/ewg118/xEAC"
 	xmlns:fr="http://orbeon.org/oxf/xml/form-runner" xmlns:eac="urn:isbn:1-931666-33-4" xmlns="urn:isbn:1-931666-33-4">
 	<xbl:binding id="xeac-reorder" element="xeac|reorder">
@@ -10,7 +10,7 @@
 				<xbl:content includes="xforms|label,xforms|help,xforms|hint,xforms|alert"/>
 				<xforms:group xxbl:scope="inner">
 					<xforms:var name="binding" as="node()?">
-						<xxforms:sequence select="." xxbl:scope="outer"/>
+						<xxf:sequence select="." xxbl:scope="outer"/>
 					</xforms:var>
 					<xforms:var name="count" select="count($binding/*)"/>
 					<xforms:var name="display_path">../../</xforms:var>
@@ -19,11 +19,11 @@
 						<xforms:trigger appearance="minimal">
 							<xforms:label>⇅</xforms:label>
 							<xforms:action ev:event="DOMActivate">
-								<xxforms:show dialog="reorder-dialog"/>
+								<xxf:show dialog="reorder-dialog"/>
 							</xforms:action>
 						</xforms:trigger>
 					</span>
-					<xxforms:dialog id="reorder-dialog" appearance="full" level="modal" close="false" draggable="true" visible="false">
+					<xxf:dialog id="reorder-dialog" appearance="full" level="modal" close="false" draggable="true" visible="false">
 						<xforms:label>Reorder Elements</xforms:label>
 						<xforms:repeat nodeset="$binding/*">
 							<xforms:var name="position" select="position()"/>
@@ -67,12 +67,12 @@
 						<div style="text-align:right">
 							<xforms:trigger>
 								<xforms:action ev:event="DOMActivate">
-									<xxforms:hide dialog="reorder-dialog"/>
+									<xxf:hide dialog="reorder-dialog"/>
 								</xforms:action>
 								<xforms:label>Close</xforms:label>
 							</xforms:trigger>
 						</div>
-					</xxforms:dialog>
+					</xxf:dialog>
 
 					<!-- ***********************  INTERNAL MODEL *********************** -->
 					<xforms:model id="reorder-model" xmlns:xi="http://www.w3.org/2001/XInclude">

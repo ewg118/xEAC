@@ -1,4 +1,4 @@
-<xbl:xbl xmlns="http://www.w3.org/1999/xhtml" xmlns:xforms="http://www.w3.org/2002/xforms" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:xxforms="http://orbeon.org/oxf/xml/xforms"
+<xbl:xbl xmlns="http://www.w3.org/1999/xhtml" xmlns:xforms="http://www.w3.org/2002/xforms" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:xxf="http://orbeon.org/oxf/xml/xforms"
 	xmlns:xbl="http://www.w3.org/ns/xbl" xmlns:fr="http://orbeon.org/oxf/xml/form-runner" xmlns:xxbl="http://orbeon.org/oxf/xml/xbl" xmlns:xeac="https://github.com/ewg118/xEAC"
 	xmlns:eac="urn:isbn:1-931666-33-4">
 	<xbl:binding id="xeac-nameEntry" element="xeac|nameEntry">
@@ -7,7 +7,7 @@
 				<xbl:content includes="xforms|label,xforms|help,xforms|hint,xforms|alert"/>
 				<xforms:group xxbl:scope="inner">
 					<xforms:var name="binding" as="node()?">
-						<xxforms:sequence select="." xxbl:scope="outer"/>
+						<xxf:sequence select="." xxbl:scope="outer"/>
 					</xforms:var>
 					<xforms:var name="display_path">../../</xforms:var>
 					<xforms:action ev:event="xforms-enabled" ev:target="#observer">
@@ -31,7 +31,7 @@
 									<xforms:label>
 										<span class="glyphicon glyphicon-plus"/>
 									</xforms:label>
-									<xxforms:show ev:event="DOMActivate" dialog="nameEntry-objects"/>
+									<xxf:show ev:event="DOMActivate" dialog="nameEntry-objects"/>
 								</xforms:trigger>
 							</span>
 							<xforms:group ref=".[count(parent::node()/eac:nameEntry) &gt; 1 or count(parent::node()/eac:nameEntryParallel) &gt; 1]">
@@ -42,14 +42,14 @@
 									</xforms:label>
 								</xforms:trigger>
 							</xforms:group>
-							<xxforms:dialog id="nameEntry-objects" appearance="full" level="modal" close="true" draggable="true" visible="false">
+							<xxf:dialog id="nameEntry-objects" appearance="full" level="modal" close="true" draggable="true" visible="false">
 								<xforms:label>Name Entry Objects</xforms:label>
 								<xforms:trigger appearance="minimal">
 									<xforms:label>
 										<span class="glyphicon glyphicon-plus"/>Part</xforms:label>
 									<xforms:action ev:event="DOMActivate">
 										<xforms:insert context="." origin="instance('part-template')" nodeset="eac:part" position="after"/>
-										<xxforms:hide dialog="nameEntry-objects"/>
+										<xxf:hide dialog="nameEntry-objects"/>
 									</xforms:action>
 								</xforms:trigger>
 								<xforms:group ref=".[not(parent::eac:nameEntryParallel)]">
@@ -59,7 +59,7 @@
 												<span class="glyphicon glyphicon-plus"/>Authorized Form</xforms:label>
 											<xforms:action ev:event="DOMActivate">
 												<xforms:insert context="." origin="instance('authorizedForm-template')" nodeset="./child::node()[last()]"/>
-												<xxforms:hide dialog="nameEntry-objects"/>
+												<xxf:hide dialog="nameEntry-objects"/>
 											</xforms:action>
 
 										</xforms:trigger>
@@ -70,7 +70,7 @@
 												<span class="glyphicon glyphicon-plus"/>Alternative Form</xforms:label>
 											<xforms:action ev:event="DOMActivate">
 												<xforms:insert context="." origin="instance('alternativeForm-template')" nodeset="./child::node()[last()]"/>
-												<xxforms:hide dialog="nameEntry-objects"/>
+												<xxf:hide dialog="nameEntry-objects"/>
 											</xforms:action>
 										</xforms:trigger>
 									</xforms:group>
@@ -81,7 +81,7 @@
 											<span class="glyphicon glyphicon-plus"/>Preferred Form</xforms:label>
 										<xforms:action ev:event="DOMActivate">
 											<xforms:insert context="." origin="instance('preferredForm-template')" nodeset="./child::node()[last()]"/>
-											<xxforms:hide dialog="nameEntry-objects"/>
+											<xxf:hide dialog="nameEntry-objects"/>
 										</xforms:action>
 									</xforms:trigger>
 								</xforms:group>
@@ -91,11 +91,11 @@
 											<span class="glyphicon glyphicon-plus"/>Use Dates</xforms:label>
 										<xforms:action ev:event="DOMActivate">
 											<xforms:insert context="." origin="instance('useDates-template')" nodeset="./child::node()[last()]"/>
-											<xxforms:hide dialog="nameEntry-objects"/>
+											<xxf:hide dialog="nameEntry-objects"/>
 										</xforms:action>
 									</xforms:trigger>
 								</xforms:group>
-							</xxforms:dialog>
+							</xxf:dialog>
 
 							<xforms:repeat nodeset="eac:part">
 								<div>
@@ -195,31 +195,31 @@
 
 					<!-- ********************************************************************** -->
 					<xforms:model id="nameEntry-model" xmlns="urn:isbn:1-931666-33-4">
-						<xforms:instance id="conventionDeclaration-list" xxforms:exclude-result-prefixes="#all">
+						<xforms:instance id="conventionDeclaration-list" xxf:exclude-result-prefixes="#all">
 							<list/>
 						</xforms:instance>
 
-						<xforms:instance id="duplicate" xxforms:exclude-result-prefixes="#all">
+						<xforms:instance id="duplicate" xxf:exclude-result-prefixes="#all">
 							<duplicate/>
 						</xforms:instance>
 
-						<xforms:instance id="part-template" xxforms:exclude-result-prefixes="#all">
+						<xforms:instance id="part-template" xxf:exclude-result-prefixes="#all">
 							<part/>
 						</xforms:instance>
 
-						<xforms:instance id="authorizedForm-template" xxforms:exclude-result-prefixes="#all">
+						<xforms:instance id="authorizedForm-template" xxf:exclude-result-prefixes="#all">
 							<authorizedForm/>
 						</xforms:instance>
 
-						<xforms:instance id="alternativeForm-template" xxforms:exclude-result-prefixes="#all">
+						<xforms:instance id="alternativeForm-template" xxf:exclude-result-prefixes="#all">
 							<alternativeForm/>
 						</xforms:instance>
 
-						<xforms:instance id="preferredForm-template" xxforms:exclude-result-prefixes="#all">
+						<xforms:instance id="preferredForm-template" xxf:exclude-result-prefixes="#all">
 							<preferredForm/>
 						</xforms:instance>
 
-						<xforms:instance id="useDates-template" xxforms:exclude-result-prefixes="#all">
+						<xforms:instance id="useDates-template" xxf:exclude-result-prefixes="#all">
 							<useDates/>
 						</xforms:instance>
 					</xforms:model>

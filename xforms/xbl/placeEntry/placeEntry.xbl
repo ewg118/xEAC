@@ -1,4 +1,4 @@
-<xbl:xbl xmlns="http://www.w3.org/1999/xhtml" xmlns:xforms="http://www.w3.org/2002/xforms" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:xxforms="http://orbeon.org/oxf/xml/xforms"
+<xbl:xbl xmlns="http://www.w3.org/1999/xhtml" xmlns:xforms="http://www.w3.org/2002/xforms" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:xxf="http://orbeon.org/oxf/xml/xforms"
 	xmlns:fr="http://orbeon.org/oxf/xml/form-runner" xmlns:xbl="http://www.w3.org/ns/xbl" xmlns:xxbl="http://orbeon.org/oxf/xml/xbl" xmlns:res="http://www.w3.org/2005/sparql-results#"
 	xmlns:xeac="https://github.com/ewg118/xEAC" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:rss="http://purl.org/rss/1.0/" xmlns:eac="urn:isbn:1-931666-33-4">
 	<xbl:binding id="xeac-placeEntry" element="xeac|placeEntry">
@@ -7,7 +7,7 @@
 				<xbl:content includes="xforms|label,xforms|help,xforms|hint,xforms|alert"/>
 				<xforms:group xxbl:scope="inner">
 					<xforms:var name="binding" as="node()?">
-						<xxforms:sequence select="." xxbl:scope="outer"/>
+						<xxf:sequence select="." xxbl:scope="outer"/>
 					</xforms:var>
 					<xforms:group ref="$binding">
 						<xforms:group ref=".[string(text())]">
@@ -85,7 +85,7 @@
 												<xforms:setvalue ref="instance('search-query')"/>
 												<!-- create attributes, clear $binding text when applicable -->
 												<xforms:setvalue ref="$binding"/>
-												<xforms:insert context="$binding" origin="xxforms:attribute('vocabularySource', '')" if="not($binding/@vocabularySource)"/>
+												<xforms:insert context="$binding" origin="xxf:attribute('vocabularySource', '')" if="not($binding/@vocabularySource)"/>
 												<xforms:toggle case="geonames-search"/>
 											</xforms:action>
 											<xforms:action if=". = 'tgn'">
@@ -95,7 +95,7 @@
 												<xforms:setvalue ref="instance('search-query')"/>
 												<!-- add attributes -->
 												<xforms:setvalue ref="$binding"/>
-												<xforms:insert context="$binding" origin="xxforms:attribute('vocabularySource', '')" if="not($binding/eac:term/@vocabularySource)"/>
+												<xforms:insert context="$binding" origin="xxf:attribute('vocabularySource', '')" if="not($binding/eac:term/@vocabularySource)"/>
 												<xforms:toggle case="tgn-search"/>
 											</xforms:action>
 											<xforms:action if=". = 'lcnaf'">
@@ -105,7 +105,7 @@
 												<xforms:setvalue ref="instance('search-query')"/>
 												<!-- create attributes, clear $binding text when applicable -->
 												<xforms:setvalue ref="$binding"/>
-												<xforms:insert context="$binding" origin="xxforms:attribute('vocabularySource', '')" if="not($binding/@vocabularySource)"/>
+												<xforms:insert context="$binding" origin="xxf:attribute('vocabularySource', '')" if="not($binding/@vocabularySource)"/>
 												<xforms:toggle case="lcnaf-search"/>
 											</xforms:action>
 											<xforms:action if=". = 'pleiades'">
@@ -115,7 +115,7 @@
 												<xforms:setvalue ref="instance('search-query')"/>
 												<!-- create attributes, clear $binding text when applicable -->
 												<xforms:setvalue ref="$binding"/>
-												<xforms:insert context="$binding" origin="xxforms:attribute('vocabularySource', '')" if="not($binding/@vocabularySource)"/>
+												<xforms:insert context="$binding" origin="xxf:attribute('vocabularySource', '')" if="not($binding/@vocabularySource)"/>
 												<xforms:toggle case="pleiades-search"/>
 											</xforms:action>
 											<xforms:action if=". = 'local'">
@@ -206,7 +206,7 @@
 											<xforms:output ref="instance('description')">
 												<xforms:label>Description</xforms:label>
 											</xforms:output>
-											<xforms:trigger appearance="xxforms:link">
+											<xforms:trigger appearance="xxf:link">
 												<xforms:label>
 													<span class="glyphicon glyphicon-new-window"></span>
 												</xforms:label>
@@ -252,7 +252,7 @@
 											<xforms:output ref="instance('description')">
 												<xforms:label>Description</xforms:label>
 											</xforms:output>
-											<xforms:trigger appearance="xxforms:link">
+											<xforms:trigger appearance="xxf:link">
 												<xforms:label>
 													<span class="glyphicon glyphicon-new-window"></span>
 												</xforms:label>
@@ -467,7 +467,7 @@ luc:term "SEARCH_QUERY"} LIMIT 20]]>
 						</xforms:instance>
 						<!-- ********* SUBMISSIONS ***********-->
 						<xforms:submission id="load-config" serialization="none" method="get" action="{instance('exist-config')/url}xeac/config.xml" replace="instance" instance="config"
-							xxforms:username="{instance('exist-config')/username}" xxforms:password="{instance('exist-config')/password}">
+							xxf:username="{instance('exist-config')/username}" xxf:password="{instance('exist-config')/password}">
 							<xforms:message ev:event="xforms-submit-error" level="modal">Unable to load config.</xforms:message>
 						</xforms:submission>
 						<xforms:submission id="query-pleiades" serialization="none" method="get" action="http://pleiades.stoa.org/search_rss?Title={instance('search-query')}&amp;portal_type=Place"
@@ -498,7 +498,7 @@ luc:term "SEARCH_QUERY"} LIMIT 20]]>
 							<xforms:action ev:event="xforms-submit-done">
 								<xforms:message if="number(instance('geoname-temp')/totalResultsCount) = 0" level="modal">No results found for query.</xforms:message>
 								<!--<xforms:insert if="number(instance('geoname-temp')/totalResultsCount) &gt; 0" context="instance('geonames')" origin="instance('geoname-temp')"/>-->
-								<xforms:action xxforms:iterate="instance('geoname-temp')//geoname">
+								<xforms:action xxf:iterate="instance('geoname-temp')//geoname">
 									<xforms:var name="countryCode" select="countryCode"/>
 									<xforms:var name="countryName" select="countryName"/>
 									<xforms:var name="name" select="name"/>
@@ -525,7 +525,7 @@ luc:term "SEARCH_QUERY"} LIMIT 20]]>
 								<xforms:value>application/sparql-results+xml</xforms:value>
 							</xforms:header>
 							<xforms:message ev:event="xforms-submit-error" level="modal">SPARQL query failed.</xforms:message>
-							<!--<xforms:action xxforms:iterate="instance('getty-response')//res:result" ev:event="xforms-submit-done">
+							<!--<xforms:action xxf:iterate="instance('getty-response')//res:result" ev:event="xforms-submit-done">
 								<xforms:var name="link" select="context()/res:binding[@name='c']/res:uri"/>
 								<xforms:var name="title" select="context()/res:binding[@name='label']/res:literal"/>
 								<xforms:var name="scopeNote" select="context()/res:binding[@name='scopeNote']/res:literal"/>

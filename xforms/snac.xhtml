@@ -6,7 +6,7 @@
     License: Apache License 2.0
 -->
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:xforms="http://www.w3.org/2002/xforms" xmlns:xs="http://www.w3.org/2001/XMLSchema"
-	xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:xxforms="http://orbeon.org/oxf/xml/xforms" xmlns:xi="http://www.w3.org/2001/XInclude"
+	xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:xxf="http://orbeon.org/oxf/xml/xforms" xmlns:xi="http://www.w3.org/2001/XInclude"
 	xmlns:fr="http://orbeon.org/oxf/xml/form-runner" xmlns:xeac="https://github.com/ewg118/xEAC" xmlns:xlink="http://www.w3.org/1999/xlink"
 	xmlns:xxi="http://orbeon.org/oxf/xml/xinclude" xmlns:eac="urn:isbn:1-931666-33-4" xmlns:xxbl="http://orbeon.org/oxf/xml/xbl"
 	xmlns:exf="http://www.exforms.org/exf/1-0" xmlns:saxon="http://saxon.sf.net/" xmlns:oxf="http://www.orbeon.com/oxf/processors"
@@ -24,7 +24,7 @@
 
 		<xforms:model>
 			<!-- ******************* INSTANCES ****************** -->
-			<xforms:instance id="control-instance" xxforms:exclude-result-prefixes="#all">
+			<xforms:instance id="control-instance" xxf:exclude-result-prefixes="#all">
 				<control xmlns="">
 					<recordId></recordId>
 					<uri></uri>
@@ -68,7 +68,7 @@
 				</control>
 			</xforms:instance>
 
-			<xforms:instance id="doc" xxforms:exclude-result-prefixes="#all">
+			<xforms:instance id="doc" xxf:exclude-result-prefixes="#all">
 				<eac-cpf xmlns="urn:isbn:1-931666-33-4" xmlns:xlink="http://www.w3.org/1999/xlink"/>
 			</xforms:instance>
 
@@ -77,20 +77,20 @@
 				<xi:include href="../exist-config.xml"/>
 			</xforms:instance>
 
-			<xforms:instance id="config" xxforms:exclude-result-prefixes="#all">
+			<xforms:instance id="config" xxf:exclude-result-prefixes="#all">
 				<config></config>
 			</xforms:instance>
 
 			<!-- EAC templates -->
-			<xforms:instance id="entityId-template" xxforms:exclude-result-prefixes="#all">
+			<xforms:instance id="entityId-template" xxf:exclude-result-prefixes="#all">
 				<entityId localType="skos:exactMatch" xmlns="urn:isbn:1-931666-33-4"/>
 			</xforms:instance>
 
-			<xforms:instance id="snacID-template" xxforms:exclude-result-prefixes="#all">
+			<xforms:instance id="snacID-template" xxf:exclude-result-prefixes="#all">
 				<entityId localType="snacID" xmlns="urn:isbn:1-931666-33-4"/>
 			</xforms:instance>
 
-			<xforms:instance id="localTypeDeclaration-template" xxforms:exclude-result-prefixes="#all">
+			<xforms:instance id="localTypeDeclaration-template" xxf:exclude-result-prefixes="#all">
 				<localTypeDeclaration xmlns="urn:isbn:1-931666-33-4">
 					<abbreviation>skos</abbreviation>
 					<citation xlink:type="simple" xlink:role="semantic" xlink:href="http://www.w3.org/2004/02/skos/core#"
@@ -98,7 +98,7 @@
 				</localTypeDeclaration>
 			</xforms:instance>
 			
-			<xforms:instance id="maintenanceEvent-template" xxforms:exclude-result-prefixes="#all">
+			<xforms:instance id="maintenanceEvent-template" xxf:exclude-result-prefixes="#all">
 				<maintenanceEvent xmlns="urn:isbn:1-931666-33-4">
 					<eventType>revised</eventType>
 					<eventDateTime standardDateTime=""/>
@@ -109,17 +109,17 @@
 			</xforms:instance>
 
 			<!-- ***** SNAC Instances ***** -->
-			<xforms:instance id="snac-response" xxforms:exclude-result-prefixes="#all">
+			<xforms:instance id="snac-response" xxf:exclude-result-prefixes="#all">
 				<json type="object" xmlns=""></json>
 			</xforms:instance>
 
 			<!-- the SNAC query is XML that must conform to the XForms 2.0 JSON model for serialization into application/json -->
-			<xforms:instance id="snac-query" xxforms:exclude-result-prefixes="#all">
+			<xforms:instance id="snac-query" xxf:exclude-result-prefixes="#all">
 				<json type="object" xmlns=""></json>
 			</xforms:instance>
 
 			<!-- JSON templates for SNAC -->
-			<xforms:instance id="constellation-template" xxforms:exclude-result-prefixes="#all">
+			<xforms:instance id="constellation-template" xxf:exclude-result-prefixes="#all">
 				<constellation type="object" xmlns="">
 					<dataType>Constellation</dataType>
 					<id></id>
@@ -127,7 +127,7 @@
 				</constellation>
 			</xforms:instance>
 
-			<xforms:instance id="entityType-template" xxforms:exclude-result-prefixes="#all">
+			<xforms:instance id="entityType-template" xxf:exclude-result-prefixes="#all">
 				<entityType type="object" xmlns="">
 					<dataType>Term</dataType>
 					<id type="number"></id>
@@ -135,7 +135,7 @@
 				</entityType>
 			</xforms:instance>
 
-			<xforms:instance id="nameEntry-template" xxforms:exclude-result-prefixes="#all">
+			<xforms:instance id="nameEntry-template" xxf:exclude-result-prefixes="#all">
 				<_ type="object" xmlns="">
 					<dataType>NameEntry</dataType>
 					<original></original>
@@ -145,7 +145,7 @@
 				</_>
 			</xforms:instance>
 
-			<xforms:instance id="nameComponent-template" xxforms:exclude-result-prefixes="#all">
+			<xforms:instance id="nameComponent-template" xxf:exclude-result-prefixes="#all">
 				<_ type="object" xmlns="">
 					<dataType>NameComponent</dataType>
 					<text></text>
@@ -157,7 +157,7 @@
 				</_>
 			</xforms:instance>
 
-			<xforms:instance id="sources-template" xxforms:exclude-result-prefixes="#all">
+			<xforms:instance id="sources-template" xxf:exclude-result-prefixes="#all">
 				<sources type="array" xmlns="">
 					<_ type="object">
 						<dataType>Source</dataType>
@@ -169,7 +169,7 @@
 				</sources>
 			</xforms:instance>
 
-			<xforms:instance id="otherRecordID-template" xxforms:exclude-result-prefixes="#all">
+			<xforms:instance id="otherRecordID-template" xxf:exclude-result-prefixes="#all">
 				<_ type="object" xmlns="">
 					<dataType>SameAs</dataType>
 					<type type="object">
@@ -180,7 +180,7 @@
 				</_>
 			</xforms:instance>
 
-			<xforms:instance id="dates-template" xxforms:exclude-result-prefixes="#all">
+			<xforms:instance id="dates-template" xxf:exclude-result-prefixes="#all">
 				<_ type="object" xmlns="">
 					<dataType>SNACDate</dataType>
 					<fromDate></fromDate>
@@ -202,7 +202,7 @@
 				</_>
 			</xforms:instance>
 
-			<xforms:instance id="biogHists-template" xxforms:exclude-result-prefixes="#all">
+			<xforms:instance id="biogHists-template" xxf:exclude-result-prefixes="#all">
 				<biogHists type="array" xmlns="">
 					<_ type="object">
 						<dataType>BiogHist</dataType>
@@ -224,7 +224,7 @@
 			</xforms:instance>
 
 			<!-- template for adding a resource into a constellation -->
-			<xforms:instance id="resource-template" xxforms:exclude-result-prefixes="#all">
+			<xforms:instance id="resource-template" xxf:exclude-result-prefixes="#all">
 				<_ type="object" xmlns="">
 					<dataType>ResourceRelation</dataType>
 					<resource type="object">
@@ -241,7 +241,7 @@
 			</xforms:instance>
 
 			<!-- instances for insert_resource -->
-			<xforms:instance id="insert-resource-template" xxforms:exclude-result-prefixes="#all">
+			<xforms:instance id="insert-resource-template" xxf:exclude-result-prefixes="#all">
 				<resource type="object" xmlns="">
 					<dataType>Resource</dataType>
 					<documentType type="object">
@@ -274,7 +274,7 @@
 				<temp href="" abstract="" xmlns=""></temp>
 			</xforms:instance>
 
-			<xforms:instance id="search-results-statement" xxforms:exclude-result-prefixes="#all">
+			<xforms:instance id="search-results-statement" xxf:exclude-result-prefixes="#all">
 				<statement xmlns=""></statement>
 			</xforms:instance>
 
@@ -283,7 +283,7 @@
 				<query></query>
 			</xforms:instance>
 
-			<xforms:instance id="sparql-templates" xxforms:exclude-result-prefixes="#all">
+			<xforms:instance id="sparql-templates" xxf:exclude-result-prefixes="#all">
 				<queries xmlns="">
 					<query id="get-resources"><![CDATA[PREFIX rdf:      <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX dcterms:  <http://purl.org/dc/terms/>
@@ -304,7 +304,7 @@ WHERE { ?concept foaf:focus <URI> }]]></query>
 				</queries>
 			</xforms:instance>
 
-			<xforms:instance id="sparqlResponse" xxforms:exclude-result-prefixes="#all">
+			<xforms:instance id="sparqlResponse" xxf:exclude-result-prefixes="#all">
 				<sparql xmlns="http://www.w3.org/2005/sparql-results#"/>
 			</xforms:instance>
 
@@ -313,7 +313,7 @@ WHERE { ?concept foaf:focus <URI> }]]></query>
 			</xforms:instance>
 
 			<!-- a list of actions (CRUD) to perform between related resources about an entity extracted from SPARQL vs. resources in the constellation -->
-			<xforms:instance id="relatedResource-actions" xxforms:exclude-result-prefixes="#all">
+			<xforms:instance id="relatedResource-actions" xxf:exclude-result-prefixes="#all">
 				<resources xmlns=""></resources>
 			</xforms:instance>
 
@@ -401,12 +401,12 @@ WHERE { ?concept foaf:focus <URI> }]]></query>
 			<!-- ******************* SUBMISSIONS ****************** -->
 			<!-- eXist-db interactivity -->
 			<xforms:submission id="load-config" serialization="none" method="get" action="{instance('exist-config')/url}xeac/config.xml" replace="instance"
-				instance="config" xxforms:username="{instance('exist-config')/username}" xxforms:password="{instance('exist-config')/password}">
+				instance="config" xxf:username="{instance('exist-config')/username}" xxf:password="{instance('exist-config')/password}">
 				<xforms:message ev:event="xforms-submit-error" level="modal">Unable to load configuration file</xforms:message>
 			</xforms:submission>
 
-			<xforms:submission id="save-config" ref="instance('config')" xxforms:username="{instance('exist-config')/username}"
-				xxforms:password="{instance('exist-config')/password}" action="{instance('exist-config')/url}xeac/config.xml" method="put" replace="none">
+			<xforms:submission id="save-config" ref="instance('config')" xxf:username="{instance('exist-config')/username}"
+				xxf:password="{instance('exist-config')/password}" action="{instance('exist-config')/url}xeac/config.xml" method="put" replace="none">
 				<xforms:action ev:event="xforms-submit-done">
 					<xforms:setvalue ref="instance('control-instance')/status">User data updated in config. Note that the 'access_token' and 'expires' expire
 						after roughly 24 hours.</xforms:setvalue>
@@ -417,14 +417,14 @@ WHERE { ?concept foaf:focus <URI> }]]></query>
 			<!-- Submission to get the document -->
 			<xforms:submission id="load-doc" serialization="none" method="get"
 				action="{instance('exist-config')/url}xeac/records/{instance('control-instance')/recordId}.xml" replace="instance" instance="doc"
-				xxforms:username="{instance('exist-config')/username}" xxforms:password="{instance('exist-config')/password}">
+				xxf:username="{instance('exist-config')/username}" xxf:password="{instance('exist-config')/password}">
 				<xforms:message ev:event="xforms-submit-error" level="modal">Unable to load EAC record</xforms:message>
 			</xforms:submission>
 
 			<!-- Submission to save the document -->
 			<xforms:submission id="save-doc" ref="instance('doc')"
 				action="{instance('exist-config')/url}xeac/records/{instance('doc')/eac:control/eac:recordId}.xml" method="put" replace="none"
-				xxforms:username="{instance('exist-config')/username}" xxforms:password="{instance('exist-config')/password}">
+				xxf:username="{instance('exist-config')/username}" xxf:password="{instance('exist-config')/password}">
 				<xforms:message ev:event="xforms-submit-error" level="modal">Error Saving Documents. Be sure all required inputs are filled in.</xforms:message>
 				<xforms:action ev:event="xforms-submit-done">
 					<!-- if there is a SPARQL endpoint, post to endpoint and index into Solr -->
@@ -492,7 +492,7 @@ WHERE { ?concept foaf:focus <URI> }]]></query>
 						</xforms:action>
 
 						<!-- iterate through each otherRecordID to add URIs to the list -->
-						<xforms:action xxforms:iterate="instance('snac-response')/constellation/otherRecordIDs/_[matches(uri, '^https?://')]">
+						<xforms:action xxf:iterate="instance('snac-response')/constellation/otherRecordIDs/_[matches(uri, '^https?://')]">
 							<xforms:var name="uri" select="data(context()/uri)"/>
 							<xforms:insert context="instance('control-instance')/constellation/otherRecordIDs" origin="xforms:element('uri', $uri)"/>
 						</xforms:action>
@@ -549,8 +549,8 @@ WHERE { ?concept foaf:focus <URI> }]]></query>
 			<xforms:action ev:event="xforms-model-construct-done">
 				<xforms:send submission="load-config"/>
 				<!-- if there is a recordId parameter, load existing EAC record -->
-				<xforms:action if="string(xxforms:get-request-parameter('recordId'))">
-					<xforms:setvalue ref="instance('control-instance')/recordId" value="xxforms:get-request-parameter('recordId')"/>
+				<xforms:action if="string(xxf:get-request-parameter('recordId'))">
+					<xforms:setvalue ref="instance('control-instance')/recordId" value="xxf:get-request-parameter('recordId')"/>
 
 					<xforms:send submission="load-doc"/>
 
@@ -587,7 +587,7 @@ WHERE { ?concept foaf:focus <URI> }]]></query>
 							<xforms:send submission="submit-sparqlQuery"/>
 
 							<!-- iterate through all of the results and populate a list of actions to take vs. resource relations already in the constellation -->
-							<xforms:action xxforms:iterate="instance('sparqlResponse')//res:result" ev:event="xforms-submit-done">
+							<xforms:action xxf:iterate="instance('sparqlResponse')//res:result" ev:event="xforms-submit-done">
 								<xforms:var name="uri" select="context()/res:binding[@name='uri']/res:uri"/>
 								<xforms:var name="title" select="context()/res:binding[@name='title']/res:literal"/>
 								<xforms:var name="extent" select="context()/res:binding[@name='extent']/res:literal"/>
@@ -1144,7 +1144,7 @@ WHERE { ?concept foaf:focus <URI> }]]></query>
 											<xforms:label value="if (string(instance('control-instance')/constellation/id)) then 'Update' else 'Create'"/>
 											<xforms:action ev:event="DOMActivate">
 												<!-- ***** 1. INSERT_RESOURCE WORKFLOW: Iterate through new resources ***** -->
-												<xforms:action xxforms:iterate="instance('relatedResource-actions')/resource">
+												<xforms:action xxf:iterate="instance('relatedResource-actions')/resource">
 													<!-- create new resources -->
 													<xforms:action if="@checked = true() and @exists = false()">
 														<xforms:var name="abstract" select="context()/@abstract"/>
@@ -1235,12 +1235,12 @@ WHERE { ?concept foaf:focus <URI> }]]></query>
 														origin="xforms:element('nameEntries', (xforms:attribute('type', 'array'), ''))"/>
 
 													<!-- note: nameEntries only functional with one part so far! -->
-													<xforms:action xxforms:iterate="instance('doc')/eac:cpfDescription/eac:identity/eac:nameEntry">
+													<xforms:action xxf:iterate="instance('doc')/eac:cpfDescription/eac:identity/eac:nameEntry">
 														<xforms:insert context="instance('snac-query')/constellation/nameEntries"
 															nodeset="./child::node()[last()]" origin="instance('nameEntry-template')"/>
 														<xforms:setvalue ref="instance('snac-query')/constellation/nameEntries/_[last()]/original"
 															value="data(context()/eac:part[1])"/>
-														<xforms:action xxforms:iterate="context()/eac:part">
+														<xforms:action xxf:iterate="context()/eac:part">
 															<xforms:var name="position" select="position()"/>
 
 															<xforms:insert context="instance('snac-query')/constellation/nameEntries/_[last()]/components"
@@ -1346,7 +1346,7 @@ WHERE { ?concept foaf:focus <URI> }]]></query>
 
 														<!-- insert new sameAs URIs from other entityIDs -->
 														<xforms:action
-															xxforms:iterate="instance('doc')/eac:cpfDescription/eac:identity/eac:entityId[@localType='skos:exactMatch'][not(matches(., '^http://n2t\.net/ark:/99166/[A-Za-z0-9]+$'))]">
+															xxf:iterate="instance('doc')/eac:cpfDescription/eac:identity/eac:entityId[@localType='skos:exactMatch'][not(matches(., '^http://n2t\.net/ark:/99166/[A-Za-z0-9]+$'))]">
 															<xforms:var name="uri" select="normalize-space(text())"/>
 
 															<!-- only insert if it doesn't already exist in the constellation -->
@@ -1377,7 +1377,7 @@ WHERE { ?concept foaf:focus <URI> }]]></query>
 																origin="xforms:element('dates', (xforms:attribute('type', 'array'), ''))"/>
 
 															<!-- iterate through existDates in the EAC-CPF record -->
-															<xforms:action xxforms:iterate="instance('doc')/eac:cpfDescription/eac:description/eac:existDates">
+															<xforms:action xxf:iterate="instance('doc')/eac:cpfDescription/eac:description/eac:existDates">
 																<xforms:var name="fromDate"
 																	select="if (context()/eac:date) then context()/eac:date/@standardDate else context()/eac:dateRange/eac:fromDate/@standardDate"/>
 																<xforms:var name="toDate"
@@ -1457,7 +1457,7 @@ WHERE { ?concept foaf:focus <URI> }]]></query>
 															origin="xforms:element('resourceRelations', (xforms:attribute('type', 'array'), ''))"/>
 
 														<!-- iterate through resources and evaluate CRUD operations -->
-														<xforms:action xxforms:iterate="instance('relatedResource-actions')/resource">
+														<xforms:action xxf:iterate="instance('relatedResource-actions')/resource">
 															<!-- insert new resources -->
 															<xforms:action if="@checked = true() and @exists = false()">
 																<xforms:var name="title" select="data(context()/@title)"/>
@@ -1572,7 +1572,7 @@ WHERE { ?concept foaf:focus <URI> }]]></query>
 																	value="current-dateTime()"/>		
 																<xforms:setvalue
 																	ref="instance('doc')/eac:control/eac:maintenanceHistory/eac:maintenanceEvent[last()]/eac:agent"
-																	value="xxforms:get-remote-user()"/>
+																	value="xxf:get-remote-user()"/>
 															</xforms:action>
 
 															<!-- save the document -->
