@@ -59,22 +59,25 @@
 					<h3>Navigation</h3>
 					<ul>
 						<li>
-							<a href="http://numismatics.org/Archives/Research">Conducting Research</a>
+							<a href="https://numismatics.org/governance/awards/">Awards</a>
 						</li>
 						<li>
-							<a href="http://numismatics.org/Archives/CitationFormat">Citation Format</a>
+							<a href="https://numismatics.org/proper-citation-format/">Citation Format</a>
 						</li>
 						<li>
-							<a href="http://numismatics.org/Archives/ANSPastOfficers">Officers</a>
+							<a href="https://numismatics.org/conducting-research-in-the-ans-archives/">Conducting Research</a>
 						</li>
 						<li>
-							<a href="http://numismatics.org/Archives/Awards">Awards</a>
+							<a href="https://numismatics.org/seminar/">Graduate Seminar</a>
 						</li>
 						<li>
-							<a href="http://numismatics.org/Archives/GraduateSeminar">Graduate Seminar</a>
+							<a href="https://numismatics.org/pastofficers/">Past Officers</a>
 						</li>
 						<li>
-							<a href="http://numismatics.org/Archives/PublicationHistory">Publications Program</a>
+							<a href="https://numismatics.org/about-us/publications/">Publications Program</a>
+						</li>
+						<li>
+							<a href="https://numismatics.org/visiting-scholar/">Visiting Scholar </a>
 						</li>
 					</ul>
 				</div>
